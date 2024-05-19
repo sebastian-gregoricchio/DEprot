@@ -1,0 +1,337 @@
+#' @title diff.analyses
+#'
+#' @description Allows for the computation of differential analyses. Includes means, Fold Changes, and pvalues.
+#'
+#' @param DEprot.object An object of class \code{DEprot}.
+#' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
+#' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
+#' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
+#' @param padj.th Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: \code{0.05}.
+#' @param padj.method String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{BH}.
+#' @param stat.test String indicating the type of statistic test to use. One among: "t-test" and "wilcoxon". Default: \code{"t.test"}.
+#' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
+#' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
+#' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
+#' @param null.color String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.
+#' @param use.normalized.data Logical value to indicate whether to use the normalized counts for the analyses. Default: \code{TRUE}.
+#' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
+#'
+#' @export diff.analyses
+
+diff.analyses =
+  function(DEprot.object,
+           contrast.list,
+           linear.FC.th = 2,
+           linear.FC.unresp.range = c(1/1.1, 1.1),
+           padj.th = 0.05,
+           padj.method = "BH", # c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+           stat.test = "t.test",
+           up.color = "indianred",
+           down.color = "steelblue",
+           unresponsive.color = "purple",
+           null.color = "gray",
+           use.normalized.data = TRUE,
+           overwrite.analyses = FALSE) {
+
+    ### Packages
+    require(dplyr)
+    require(patchwork)
+
+    ### check object
+    if (!("DEprot" %in% class(DEprot.object))) {
+      warning("The input must be an object of class 'DEprot'.")
+      ibmAcousticR:::stop_quietly("")
+    }
+
+
+    ### Check contrasts
+    if (is.na(attributes(DEprot.object)$contrasts)) {
+      if ("character" %in% class(contrast.list)) {
+        contrasts = list(contrast.list)
+      } else if ("list" %in% class(contrast.list)) {
+        contrasts = contrast.list
+      } else {
+        warning("The 'contrast.list' must be a list of 3-elements vectors indicating: metadata_column, variable_1, variable_2.")
+        ibmAcousticR:::stop_quietly("")
+      }
+
+    } else if (overwrite.analyses == FALSE) {
+      warning("The DEprot object contains already a contrast list.\n",
+              "To overwrite the contrast list set the parameter 'overwrite.analyses = TRUE'")
+      attributes(DEprot.object)$contrasts
+      ibmAcousticR:::stop_quietly("")
+    } else {
+      if ("character" %in% class(contrast.list)) {
+        contrasts = list(contrast.list)
+      } else if ("list" %in% class(contrast.list)) {
+        contrasts = contrast.list
+      } else {
+        warning("The 'contrast.list' must be a list of 3-elements vector indicating: metadata_column, variable_1, variable_2.")
+        ibmAcousticR:::stop_quietly("")
+      }
+    }
+
+
+    # check the presence of columns and variables in the contrast
+    contrasts.info = list()
+
+    for (i in 1:length(contrasts)) {
+      if (!(contrasts[[i]][1] %in% colnames(DEprot.object$metadata))) {
+        warning(paste0("The column indicated in the contrast #", i, " ('",contrasts[[i]][1],"'), it is not available in the metadata table."))
+        ibmAcousticR:::stop_quietly("")
+      } else if (!(contrasts[[i]][2] %in% DEprot.object$metadata[,contrasts[[i]][1]])) {
+        warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][2],"') is not available."))
+        ibmAcousticR:::stop_quietly("")
+      } else if (!(contrasts[[i]][3] %in% DEprot.object$metadata[,contrasts[[i]][1]])) {
+        warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][2],"') is not available."))
+        ibmAcousticR:::stop_quietly("")
+      } else {
+        # Collect info
+        contrasts.info[[i]] = list(metadata.column = contrasts[[i]][1],
+                                   var.1 = contrasts[[i]][2],
+                                   var.2 = contrasts[[i]][3],
+                                   group.1 = DEprot.object$metadata[DEprot.object$metadata[,contrasts[[i]][1]] == contrasts[[i]][2],"column.id"],
+                                   group.2 = DEprot.object$metadata[DEprot.object$metadata[,contrasts[[i]][1]] == contrasts[[i]][3],"column.id"])
+        names(contrasts.info)[i] = paste0(contrasts[[i]][2], ".vs.", contrasts[[i]][3])
+      }
+    }
+
+    ### Add the contrasts.info to the attributes
+    attributes(DEprot.object)$contrasts = contrasts.info
+
+
+
+    ### Check and extract table
+    if (use.normalized.data == TRUE) {
+      if (!is.null(DEprot.object$norm.counts)) {
+        mat = DEprot.object$norm.counts
+      } else {
+        return(warning("Use of normalized counts have been required, but not normalized data are available."))
+      }
+    } else {
+      if (!is.null(DEprot.object$raw.counts)) {
+        mat = DEprot.object$raw.counts
+      } else {
+        return(warning("Use of raw counts have been required, but not raw data are available."))
+      }
+    }
+
+    ## Convert table to log2
+    if (!is.numeric(attributes(DEprot.object)$log.base)) {
+      message("The log.base is not numeric, linear counts are assumed. Counts matrix will be converted to log2+1 values to analyze the data.")
+      mat.log2 = log2(mat + 1)
+    } else if (as.numeric(attributes(DEprot.object)$log.base) != 2) {
+      message("The log.base is not 2, counts will be converted to log2 values to analyze the data.")
+      mat.log2 = log2(attributes(DEprot.object)$log.base^mat)
+    } else {
+      mat.log2 = mat
+    }
+
+
+
+    ############
+    ### Compute differential analyses
+    linear.FC.unresp.range = sort(linear.FC.unresp.range)
+    diff.analyses.list = list()
+
+    for (i in 1:length(contrasts.info)) {
+      # means and FoldChange
+      diff.tb =
+        data.frame(prot.id = rownames(mat.log2),
+                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], na.rm = T),
+                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1], na.rm = T),
+                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2], na.rm = T)) %>%
+        dplyr::mutate(log2.Fold_group1.vs.group2 = log2.mean.group1 - log2.mean.group2)
+
+      ## Wilcox t.test pval
+      # split the matrix in vectors
+      pval.list = c()
+      if (stat.test == "t.test") {
+        for (k in 1:nrow(mat.log2)){
+          pval.list[k] = suppressWarnings(t.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
+                                                 y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
+                                                 paired = F,
+                                                 exact = T))$p.value
+        }
+      } else {
+        for (k in 1:nrow(mat.log2)){
+          pval.list[k] = suppressWarnings(wilcox.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
+                                                      y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
+                                                      paired = F,
+                                                      exact = T))$p.value
+        }
+      }
+
+
+      diff.tb$p.value = pval.list
+      diff.tb$padj = p.adjust(p = diff.tb$p.value, method = padj.method)
+
+
+      ## Define signif status
+      DE.status =
+        function(FC, p) {
+          ifelse(p < padj.th,
+                 yes = ifelse(abs(FC) >= log2(linear.FC.th),
+                              yes = ifelse(sign(FC) == 1,
+                                           yes = contrasts.info[[i]]$var.1,
+                                           no = contrasts.info[[i]]$var.2),
+                              no = "null"),
+                 no = ifelse(FC >= log2(linear.FC.unresp.range[1]) & FC <= log2(linear.FC.unresp.range[2]),
+                             yes = "unresponsive",
+                             no = "null"))
+        }
+
+      diff.tb$diff.status =
+        unlist(purrr::pmap(.l = list(FC = diff.tb$log2.Fold_group1.vs.group2,
+                                     p = diff.tb$padj),
+                           .f = function(FC,p){DE.status(FC,p)}))
+
+      diff.tb =
+        diff.tb %>%
+        dplyr::mutate(diff.status = factor(diff.status,
+                                           levels = c(contrasts.info[[i]]$var.2,
+                                                      contrasts.info[[i]]$var.1,
+                                                      "unresponsive",
+                                                      "null")))
+
+
+      ## Run PCA
+      PCA.data = perform.PCA(DEprot.object = DEprot.object,
+                             column.subset = c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2))
+
+      scatter.PC1.2 = plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column)
+      scatter.PC2.3 = plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 3, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column)
+
+
+
+      ## Define params and counts
+      colors.plots = c(up.color, down.color, null.color, unresponsive.color)
+      names(colors.plots) = c(contrasts.info[[i]]$var.1, contrasts.info[[i]]$var.2, "null", "unresponsive")
+
+      n.diff =
+        data.frame(diff.tb %>%
+                     dplyr::group_by(diff.status) %>%
+                     dplyr::summarise(n = n()))
+
+
+      ## Make volcano plot
+      volcano =
+        ggplot(diff.tb,
+               aes(x = log2.Fold_group1.vs.group2,
+                   y = -log10(padj),
+                   color = diff.status)) +
+        geom_point(stroke = NA,
+                   alpha = 0.5,
+                   size = 2) +
+        scale_color_manual(values = colors.plots,
+                           name = "Differential\nstatus") +
+        geom_hline(yintercept = -log10(padj.th), linetype = 2, color = "gray40") +
+        geom_vline(xintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
+        ylab("-log~10~(*P~adj~*)") +
+        #xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
+        xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub>)")) +
+        ggtitle(paste0("**",contrasts.info[[i]]$var.1, " vs ", contrasts.info[[i]]$var.2, "**")) +
+        theme_classic() +
+        theme(axis.text = ggtext::element_markdown(color = "black"),
+              axis.title = ggtext::element_markdown(color = "black"),
+              axis.ticks = element_line(color = "black"),
+              plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
+              aspect.ratio = 1)
+
+      x.max = max(abs(ggplot_build(volcano)$layout$panel_params[[1]]$x.range))
+
+      volcano =
+        volcano +
+        xlim(c(-1,1)*x.max) +
+        annotate(geom = "text",
+                 x = -Inf, y = +Inf,
+                 color = colors.plots[2],
+                 hjust = -0.2, vjust = 1.5,
+                 label = paste0("n = ",n.diff[n.diff$diff.status == contrasts.info[[i]]$var.2,"n"])) +
+        annotate(geom = "text",
+                 x = +Inf, y = +Inf,
+                 hjust = 1.2, vjust = 1.5,
+                 color = colors.plots[1],
+                 label = paste0("n = ",n.diff[n.diff$diff.status == contrasts.info[[i]]$var.1,"n"]))
+
+
+
+      ## Make MA-plot
+      ma.plot =
+        ggplot() +
+        stat_density_2d(data = diff.tb,
+                        aes(x = basemean.log2,
+                            y = log2.Fold_group1.vs.group2,
+                            fill = after_stat(count)),
+                        geom = "raster",
+                        contour = FALSE,
+                        show.legend = T,
+                        n = 200,
+                        adjust = 5) +
+        scale_fill_gradientn(colours = colorRampPalette(colors = RColorBrewer::brewer.pal(9, "Blues"))(101),
+                             name = "Count") +
+        geom_point(data = dplyr::filter(diff.tb, diff.status %in% c(contrasts.info[[i]]$var.1,contrasts.info[[i]]$var.2)),
+                   mapping = aes(x = basemean.log2,
+                                 y = log2.Fold_group1.vs.group2,
+                                 color = diff.status),
+                   alpha = 0.5,
+                   size = 2,
+                   stroke = NA,
+                   show.legend = T,
+                   inherit.aes = F) +
+        scale_color_manual(values = colors.plots, name = "Differential\nstatus") +
+        geom_hline(yintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
+        geom_hline(yintercept = 0, linetype = 1, color = "steelblue") +
+        theme_classic() +
+        xlab("log~2~(Base Mean)") +
+        ylab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub>)")) +
+        ggtitle(paste0("**",contrasts.info[[i]]$var.1, " vs ", contrasts.info[[i]]$var.2, "**")) +
+        scale_x_continuous(expand = c(0,0)) +
+        annotate(geom = "text",
+                 x = -Inf, y = -Inf,
+                 color = colors.plots[2],
+                 hjust = -0.2, vjust = -0.5,
+                 label = paste0("n = ",n.diff[n.diff$diff.status == contrasts.info[[i]]$var.2,"n"])) +
+        annotate(geom = "text",
+                 x = -Inf, y = +Inf,
+                 hjust = -0.2, vjust = 1.5,
+                 color = colors.plots[1],
+                 label = paste0("n = ",n.diff[n.diff$diff.status == contrasts.info[[i]]$var.1,"n"])) +
+        theme(axis.ticks = element_line(color = "black"),
+              axis.text = element_text(color = "black"),
+              axis.title = ggtext::element_markdown(color = "black"),
+              plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
+              aspect.ratio = 0.6)
+
+      y.max = max(abs(ggplot_build(ma.plot)$layout$panel_params[[1]]$y.range))
+      ma.plot = ma.plot + scale_y_continuous(expand = c(0,0), limits = c(-1,1)*y.max)
+
+
+
+      ### rename columns
+      colnames(diff.tb) = gsub("group1", contrasts.info[[i]]$var.1, colnames(diff.tb))
+      colnames(diff.tb) = gsub("group2", contrasts.info[[i]]$var.2, colnames(diff.tb))
+
+      ### Build list
+      diff.analyses.list[[i]] = list(results = diff.tb,
+                                     PCA.data = PCA.data,
+                                     PCA.plots = (scatter.PC1.2 | scatter.PC2.3) / attributes(PCA.data)$cumulative.PC.plot,
+                                     volcano = volcano,
+                                     MA.plot = ma.plot)
+    }
+
+    names(diff.analyses.list) = names(contrasts.info)
+
+
+    ### Parameters list
+    attributes(DEprot.object)$differential.analyses.params = list(linear.FC.th = linear.FC.th,
+                                                                  linear.FC.unresp.range = linear.FC.unresp.range,
+                                                                  padj.th = padj.th,
+                                                                  padj.method = padj.method)
+
+    DEprot.object$contrast.list = diff.analyses.list
+
+    attributes(DEprot.object)$class = unique(c(attributes(DEprot.object)$class, "DEprot.analyses"))
+
+    return(DEprot.object)
+  } # END function

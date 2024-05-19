@@ -1,0 +1,22 @@
+Package: DEprot
+Type: Package
+Title: An R-package for proteomics differential analyses
+Version: 0.1.01
+Author: Sebastian Gregoricchio
+Maintainer: Sebastian Gregoricchio <sebastian.gregoricchio@gmail.com>
+Description: An R-package for proteomics differential analyses using LFQ values.
+License: GNU GENERAL PUBLIC LICENSE version 3
+Depends:
+	R (>= 4.0.3)
+Imports:
+	BiocManager, data.table, dplyr, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, ibmAcousticR, matrixStats, MBQN, patchwork, plyr, pryr, stringr, tidyr, purrr, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, viridis
+biocViews:
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.3.1
+VignetteBuilder: knitr
+URL:
+	https://sebastian-gregoricchio.github.io/DEprot/
+	https://github.com/sebastian-gregoricchio/DEprot/
+	https://sebastian-gregoricchio.github.io/
+BugReports: https://github.com/sebastian-gregoricchio/DEprot/issues
