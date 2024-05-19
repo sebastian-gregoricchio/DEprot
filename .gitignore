@@ -2,4 +2,5 @@
 .Rproj
 .ai
 .lock
+renv.lock
 .Rbuildignore
