@@ -7,7 +7,7 @@
 
 # DEprot [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.svg" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
 
-XYZ
+R package to impute, normalize and perform differential analyses on proteomics data (LFQ-based)
 
 
 ## Introduction
