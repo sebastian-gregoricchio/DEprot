@@ -1,5 +1,5 @@
-unimputed.counts = readRDS(url("https://sebastian-gregoricchio.github.io/Rseb/inst/extdata/qPCR_results_rep1.rds"))
-sample.config = readRDS(url("https://sebastian-gregoricchio.github.io/Rseb/inst/extdata/qPCR_results_rep2.rds"))
+unimputed.counts = readRDS(url("https://sebastian-gregoricchio.github.io/Rseb/inst/extdata/unimputed.counts.rds"))
+sample.config = readRDS(url("https://sebastian-gregoricchio.github.io/Rseb/inst/extdata/sample.config.rds"))
 
 ################################################################################
 # Generate data files
