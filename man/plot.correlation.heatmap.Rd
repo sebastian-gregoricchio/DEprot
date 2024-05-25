@@ -7,8 +7,8 @@
 \method{plot}{correlation.heatmap}(
   DEprot.object,
   correlation.method = "pearson",
-  column.subset = NULL,
-  use.normalized.data = TRUE,
+  sample.subset = NULL,
+  which.data = "imputed",
   palette = viridis::mako(100, direction = -1),
   correlation.scale.limits = c(0, 1),
   exclude.diagonal = FALSE,
@@ -30,9 +30,9 @@
 
 \item{correlation.method}{String indicating the clustering method to use to generate the correlation matrix. Possible options: 'pearson', 'spearman', 'kendall'. Default: \code{"pearson"}.}
 
-\item{column.subset}{Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).}
+\item{sample.subset}{Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).}
 
-\item{use.normalized.data}{Logical value to indicate whether to use the normalized data or not. Default: \code{TRUE}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{palette}{Vector of colors corresponding to the palette to use for the heatmap color scale. Default: \code{viridis::mako(100, direction = -1)}.}
 

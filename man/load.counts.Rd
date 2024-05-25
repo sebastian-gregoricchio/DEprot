@@ -9,7 +9,7 @@ load.counts(
   metadata,
   log.base = NA,
   imputation = NA,
-  normalization.method = NULL,
+  normalization.method = NA,
   column.id = "column.id"
 )
 }
@@ -22,12 +22,12 @@ load.counts(
 
 \item{imputation}{A string indicating the imputation method used. If none, use the default value \code{NA}.}
 
-\item{normalization.method}{String or list indicatin the normalzation method used. If none, use the default value \code{NULL}.}
+\item{normalization.method}{String or list indicating the normalization method used. If none, use the default value \code{NA}.}
 
 \item{column.id}{String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of \code{counts}.}
 }
 \value{
-A \code{DEprot} object.
+A \code{DEprot} object (S4 vector).
 }
 \description{
 Function used to generate a \code{DEprot} object starting from counts and metadata.

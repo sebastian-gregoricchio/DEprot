@@ -4,7 +4,7 @@
 \alias{rename.samples}
 \title{rename.samples}
 \usage{
-rename.samples(DEprot.object, metadata.column = "column.id")
+\method{rename}{samples}(DEprot.object, metadata.column = "column.id")
 }
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot}.}
@@ -12,7 +12,7 @@ rename.samples(DEprot.object, metadata.column = "column.id")
 \item{metadata.column}{A string indicating any column from the \code{metadata} table to use to rename the \code{counts} table columns. Default \code{"column.id"} (no renaming).}
 }
 \value{
-An object of class \code{DEprot}. A column called \code{old.column.id} will be added to the \code{metadata} in order to keep track of the original names.
+An object of class \code{DEprot} (S4 vector). A column called \code{old.column.id} will be added to the \code{metadata} in order to keep track of the original names.
 }
 \description{
 Function that allows for the renaming of the columns of the counts table in a \code{DEprot} object.

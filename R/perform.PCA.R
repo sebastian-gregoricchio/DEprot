@@ -3,8 +3,8 @@
 #' @description This function performs principal component analyses (PCA).
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
-#' @param column.subset String vector indicating the column names to keep in the counts table (or 'column.id' in the metdata table). Default: \code{NULL} (no subsetting).
-#' @param use.normalized.data Logical value to indicate whether to use the normalized data or not. Default: \code{TRUE}.
+#' @param sample.subset String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
 #'
 #' @return A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
 #'
@@ -12,8 +12,8 @@
 
 perform.PCA =
   function(DEprot.object,
-           column.subset = NULL,
-           use.normalized.data = TRUE) {
+           sample.subset = NULL,
+           which.data = "imputed") {
 
     ### Libraries
     require(dplyr)
@@ -26,26 +26,58 @@ perform.PCA =
     }
 
     ### Check and extract table
-    if (use.normalized.data == TRUE) {
-      if (!is.null(DEprot.object$norm.counts)) {
-        mat = DEprot.object$norm.counts
+    if (tolower(which.data) == "raw") {
+      if (!is.null(DEprot.object@raw.counts)) {
+        mat = DEprot.object@raw.counts
+        data.used = "raw"
       } else {
-        return(warning("Use of normalized counts have been required, but not normalized data are available."))
+        warning(paste0("Use of RAW counts was required, but not available.\n",
+                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
+      if (!is.null(DEprot.object@norm.counts)) {
+        mat = DEprot.object@norm.counts
+        data.used = "normalized"
+      } else {
+        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
+      if (!is.null(DEprot.object@imputed.counts)) {
+        mat = DEprot.object@imputed.counts
+        data.used = "imputed"
+      } else {
+        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
+                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        return(DEprot.object)
       }
     } else {
-      if (!is.null(DEprot.object$raw.counts)) {
-        mat = DEprot.object$raw.counts
-      } else {
-        return(warning("Use of raw counts have been required, but not raw data are available."))
-      }
+      warning(paste0("The 'which.data' value is not recognized.\n",
+                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      return(DEprot.object)
+    }
+
+
+
+    ## Convert table to log2
+    if (!is.numeric(DEprot.object@log.base)) {
+      message("The log.base is not numeric, linear counts are assumed. Counts matrix will be converted to log2(score+1) values to analyze the data.")
+      mat.log2 = log2(mat + 1)
+    } else if (as.numeric(DEprot.object@log.base) != 2) {
+      message("The log.base is not 2, counts will be converted to log2 values to analyze the data.")
+      mat.log2 = log2(DEprot.object@log.base^mat)
+    } else {
+      mat.log2 = mat
     }
 
     ### subset table
-    if (!is.null(column.subset)) {
-      mat = mat[,which(colnames(mat) %in% column.subset)]
-      PCA.meta = dplyr::filter(DEprot.object$metadata, column.id %in% column.subset)
+    if (!is.null(sample.subset)) {
+      mat = mat[,which(colnames(mat) %in% sample.subset)]
+      PCA.meta = dplyr::filter(DEprot.object@metadata, column.id %in% sample.subset)
     } else {
-      PCA.meta = DEprot.object$metadata
+      PCA.meta = DEprot.object@metadata
     }
 
 
@@ -98,16 +130,14 @@ perform.PCA =
 
 
     DEprot.PCA.object =
-      structure(list(PCs = combo.tb,
-                     importance = importance.tb),
-                # classes
-                class = c("DEprot", "DEprot.PCA"),
-                # packgs
-                package = "DEprot",
-                # attributes
-                cumulative.PC.plot = cumulative_plot,
-                PCA.metadata = PCA.meta)
-
+      new(Class = "DEprot.PCA",
+          PCA.metadata = PCA.meta,
+          sample.subset = paste(PCA.meta$column.id, collapse = ", "),
+          data.used = which.data,
+          prcomp = pc,
+          PCs = combo.tb,
+          importance = importance.tb,
+          cumulative.PC.plot = cumulative_plot)
 
     return(DEprot.PCA.object)
   } # END function

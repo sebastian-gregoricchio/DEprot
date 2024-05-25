@@ -16,7 +16,7 @@
   down.color = "steelblue",
   unresponsive.color = "purple",
   null.color = "gray",
-  use.normalized.data = TRUE,
+  which.data = "imputed",
   overwrite.analyses = FALSE
 )
 }
@@ -43,7 +43,7 @@
 
 \item{null.color}{String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.}
 
-\item{use.normalized.data}{Logical value to indicate whether to use the normalized counts for the analyses. Default: \code{TRUE}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }

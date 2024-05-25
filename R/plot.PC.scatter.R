@@ -37,30 +37,32 @@ plot.PC.scatter =
 
 
     ### check feature/aes column
-    if (!(color.column %in% colnames(DEprot.PCA.object$PCs))) {
+    if (!(color.column %in% colnames(DEprot.PCA.object@PCs))) {
       return(warning(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
-                            "Available columns: ", paste0(colnames(DEprot.PCA.object$PCs)[!grepl("^PC", colnames(DEprot.PCA.object$PCs))],
+                            "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
                                                           collapse = ", "))))
     }
 
 
     if (!is.null(shape.column)) {
-      if (!(shape.column %in% colnames(DEprot.PCA.object$PCs))) {
+      if (!(shape.column %in% colnames(DEprot.PCA.object@PCs))) {
         return(warning(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
-                              "Available columns: ", paste0(colnames(DEprot.PCA.object$PCs)[!grepl("^PC", colnames(DEprot.PCA.object$PCs))],
+                              "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
                                                             collapse = ", "))))
       } else {
-        shape.scores = DEprot.PCA.object$PCs[,shape.column]
+        shape.scores = DEprot.PCA.object@PCs[,shape.column]
+        shape.label = guide_legend(title = stringr::str_to_title(shape.column))
       }
     } else {
       shape.scores = "Samples"
+      shape.label = "none"
     }
 
 
     if (!is.null(label.column)) {
-      if (!(label.column %in% colnames(DEprot.PCA.object$PCs))) {
+      if (!(label.column %in% colnames(DEprot.PCA.object@PCs))) {
         return(warning(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
-                              "Available columns: ", paste0(colnames(DEprot.PCA.object$PCs)[!grepl("^PC", colnames(DEprot.PCA.object$PCs))],
+                              "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
                                                             collapse = ", "))))
       } else {
         show.labels = T
@@ -72,11 +74,11 @@ plot.PC.scatter =
 
 
     ### Build table for plot
-    tb = data.frame(PC.x = DEprot.PCA.object$PCs[,paste0("PC",PC.x)],
-                    PC.y = DEprot.PCA.object$PCs[,paste0("PC",PC.y)],
-                    color = DEprot.PCA.object$PCs[,color.column],
-                    shape = shape.scores,
-                    label = DEprot.PCA.object$PCs[,label.column])
+    tb = data.frame(PC.x = DEprot.PCA.object@PCs[,paste0("PC",PC.x)],
+                    PC.y = DEprot.PCA.object@PCs[,paste0("PC",PC.y)],
+                    color = factor(DEprot.PCA.object@PCs[,color.column]),
+                    shape = factor(shape.scores),
+                    label = DEprot.PCA.object@PCs[,label.column])
 
 
     ### Make basic plot
@@ -97,11 +99,10 @@ plot.PC.scatter =
 
     PCA.plot =
       PCA.plot +
-      geom_point(stroke = NA,
-                 size = 3) +
+      geom_point(size = 3) +
       theme_classic() +
-      xlab(paste0("PC", PC.x, " (", round(DEprot.PCA.object$importance$Percentage.of.Variance[PC.x],1), "%)")) +
-      ylab(paste0("PC", PC.y, " (", round(DEprot.PCA.object$importance$Percentage.of.Variance[PC.y],1), "%)")) +
+      xlab(paste0("PC", PC.x, " (", round(DEprot.PCA.object@importance$Percentage.of.Variance[PC.x],1), "%)")) +
+      ylab(paste0("PC", PC.y, " (", round(DEprot.PCA.object@importance$Percentage.of.Variance[PC.y],1), "%)")) +
       theme(aspect.ratio = 1,
             axis.line = element_blank(),
             axis.ticks = element_line(color = "black"),
@@ -114,6 +115,11 @@ plot.PC.scatter =
       PCA.plot = PCA.plot + ggrepel::geom_text_repel(max.overlaps = 100,
                                                      show.legend = F)
     }
+
+    PCA.plot =
+      PCA.plot +
+      guides(color = guide_legend(title = ifelse(color.column == "column.id", yes = "Samples", no = stringr::str_to_title(color.column))),
+             shape = shape.label)
 
 
     return(PCA.plot)

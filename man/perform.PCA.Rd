@@ -4,14 +4,14 @@
 \alias{perform.PCA}
 \title{perform.PCA}
 \usage{
-perform.PCA(DEprot.object, column.subset = NULL, use.normalized.data = TRUE)
+perform.PCA(DEprot.object, sample.subset = NULL, which.data = "imputed")
 }
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot}.}
 
-\item{column.subset}{String vector indicating the column names to keep in the counts table (or 'column.id' in the metdata table). Default: \code{NULL} (no subsetting).}
+\item{sample.subset}{String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).}
 
-\item{use.normalized.data}{Logical value to indicate whether to use the normalized data or not. Default: \code{TRUE}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
 }
 \value{
 A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).

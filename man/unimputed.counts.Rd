@@ -5,7 +5,7 @@
 \alias{unimputed.counts}
 \title{Unimputed proteomics (LFQ) data}
 \format{
-A data frame with 13239 rows and 24 columns:
+A data frame with 13,239 rows and 12 columns:
 \describe{
   \item{\code{rows}}{proteins}
   \item{\code{columns}}{samples}

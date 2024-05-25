@@ -5,8 +5,8 @@
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param palette Vector of colors corresponding to the palette to use for the heatmap color scale. Default: \code{viridis::mako(100, direction = -1)}.
 #' @param correlation.method String indicating the clustering method to use to generate the correlation matrix. Possible options: 'pearson', 'spearman', 'kendall'. Default: \code{"pearson"}.
-#' @param column.subset Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).
-#' @param use.normalized.data Logical value to indicate whether to use the normalized data or not. Default: \code{TRUE}.
+#' @param sample.subset Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param correlation.scale.limits Two-elements vector to indicate lower and higher limits, respectively, to apply to the correlation coefficient color scale. Default: \code{c(0,1)}.
 #' @param dendrogram.position String indicating the position of the dendrogram. One among: "top", "bottom", "left", "right". Default: \code{"left"}.
 #' @param dendrogram.color String indicating the color of the dendrogram lines. Default: \code{"black"}.
@@ -29,8 +29,8 @@
 plot.correlation.heatmap =
   function(DEprot.object,
            correlation.method = "pearson", #c("pearson", "kendall", "spearman")
-           column.subset = NULL,
-           use.normalized.data = TRUE,
+           sample.subset = NULL,
+           which.data = "imputed",
            palette = viridis::mako(100, direction = -1),
            correlation.scale.limits = c(0,1),
            exclude.diagonal = FALSE,
@@ -57,18 +57,37 @@ plot.correlation.heatmap =
     }
 
     ### Check and extract table
-    if (use.normalized.data == TRUE) {
-      if (!is.null(DEprot.object$norm.counts)) {
-        mat = DEprot.object$norm.counts
+    if (tolower(which.data) == "raw") {
+      if (!is.null(DEprot.object@raw.counts)) {
+        mat = DEprot.object@raw.counts
+        data.used = "raw"
       } else {
-        return(warning("Use of normalized counts have been required, but not normalized data are available."))
+        warning(paste0("Use of RAW counts was required, but not available.\n",
+                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
+      if (!is.null(DEprot.object@norm.counts)) {
+        mat = DEprot.object@norm.counts
+        data.used = "normalized"
+      } else {
+        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
+      if (!is.null(DEprot.object@imputed.counts)) {
+        mat = DEprot.object@imputed.counts
+        data.used = "imputed"
+      } else {
+        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
+                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        return(DEprot.object)
       }
     } else {
-      if (!is.null(DEprot.object$raw.counts)) {
-        mat = DEprot.object$raw.counts
-      } else {
-        return(warning("Use of raw counts have been required, but not raw data are available."))
-      }
+      warning(paste0("The 'which.data' value is not recognized.\n",
+                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      return(DEprot.object)
     }
 
 
@@ -90,11 +109,11 @@ plot.correlation.heatmap =
 
 
     ### subset table
-    if (!is.null(column.subset)) {
-      mat = mat[,which(colnames(mat) %in% column.subset)]
-      corr.meta = dplyr::filter(DEprot.object$metadata, column.id %in% column.subset)
+    if (!is.null(sample.subset)) {
+      mat = mat[,which(colnames(mat) %in% sample.subset)]
+      corr.meta = dplyr::filter(DEprot.object@metadata, column.id %in% sample.subset)
     } else {
-      corr.meta = DEprot.object$metadata
+      corr.meta = DEprot.object@metadata
     }
 
 
@@ -183,16 +202,14 @@ plot.correlation.heatmap =
 
 
     DEprot.corr.object =
-      structure(corr_heatmap,
-                # classes
-                class = c("DEprot", "DEprot.correlation", "gg", "ggplot"),
-                # packgs
-                package = "DEprot",
-                # attributes
-                corr.metadata = corr.meta,
-                corr.matrix = corr.mat,
-                distance = distance,
-                cluster = corr_clust)
+      new(Class = "DEprot.correlation",
+          heatmap = corr_heatmap,
+          sample.subset = sample.subset,
+          data.used = which.data,
+          corr.metadata = corr.meta,
+          corr.matrix = corr.mat,
+          distance = distance,
+          cluster = corr_clust)
 
     return(DEprot.corr.object)
   } # END function

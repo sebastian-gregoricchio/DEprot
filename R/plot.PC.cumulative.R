@@ -30,7 +30,7 @@ plot.PC.cumulative =
 
     ### Generate plot
     cumulative.plot =
-      ggplot(data = DEprot.PCA.object$importance,
+      ggplot(data = DEprot.PCA.object@importance,
              aes(x = PC)) +
       geom_bar(mapping = aes(y = Proportion.of.Variance),
                stat = "identity",
