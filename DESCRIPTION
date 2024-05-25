@@ -1,7 +1,7 @@
 Package: DEprot
 Type: Package
 Title: An R-package for proteomics differential analyses
-Version: 0.1.01
+Version: 0.1.0
 Author: Sebastian Gregoricchio
 Maintainer: Sebastian Gregoricchio <sebastian.gregoricchio@gmail.com>
 Description: An R-package for proteomics differential analyses using LFQ values.
@@ -9,7 +9,7 @@ License: GNU GENERAL PUBLIC LICENSE version 3
 Depends:
 	R (>= 4.0.3)
 Imports:
-	BiocManager, data.table, dplyr, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, ibmAcousticR, matrixStats, MBQN, patchwork, plyr, pryr, stringr, tidyr, purrr, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, viridis
+	BiocManager, cowplot, data.table, doParallel, dplyr, doRNG, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, matrixStats, MBQN, patchwork, plyr, pryr, prettydoc, S4Vectors, stringr, tidyr, purrr, randomForest, methods, missForest, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, viridis
 biocViews:
 Encoding: UTF-8
 LazyData: true
