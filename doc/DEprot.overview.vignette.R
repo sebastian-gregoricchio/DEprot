@@ -207,10 +207,38 @@ corr.ERa.active <-
 
 corr.ERa.active
 
-## ----compute_diff_exp---------------------------------------------------------
+## ----compute_diff_exp_examples, eval=F----------------------------------------
+#  ## Unpaired test
+#  dpo_analyses <- diff.analyses(DEprot.object = dpo,
+#                                contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                     c("condition", "6h.10nM.E2", "FBS")),
+#                                linear.FC.th = 2,
+#                                padj.th = 0.05,
+#                                padj.method = "bonferroni",
+#                                stat.test = "t.test",
+#                                which.data = "imputed")
+#  
+#  ## Paired test
+#  dpo_analyses <- diff.analyses(DEprot.object = dpo,
+#                                contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                     c("condition", "6h.10nM.E2", "FBS")),
+#                                replicate.column = "replicate",
+#                                paired.test = TRUE,
+#                                linear.FC.th = 2,
+#                                padj.th = 0.05,
+#                                padj.method = "bonferroni",
+#                                stat.test = "t.test",
+#                                which.data = "imputed")
+#  
+#  dpo_analyses
+
+## ----compute_diff_exp_paired, echo=FALSE--------------------------------------
+## Paired test
 dpo_analyses <- diff.analyses(DEprot.object = dpo,
                               contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
                                                    c("condition", "6h.10nM.E2", "FBS")),
+                              replicate.column = "replicate",
+                              paired.test = TRUE,
                               linear.FC.th = 2,
                               padj.th = 0.05,
                               padj.method = "bonferroni",
