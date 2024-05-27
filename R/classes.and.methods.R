@@ -129,7 +129,8 @@ setMethod(f = "show",
                               cbind(data.frame(contrast.id = rep(paste0(object@contrasts[[i]]$metadata.column, ": ", object@contrasts[[i]]$var.1, " vs ", object@contrasts[[i]]$var.2), 4),
                                                group.factor = rep(object@contrasts[[i]]$metadata.column, 4),
                                                group1 = rep(object@contrasts[[i]]$var.1, 4),
-                                               group2 = rep(object@contrasts[[i]]$var.2, 4)),
+                                               group2 = rep(object@contrasts[[i]]$var.2, 4),
+                                               paired.test = object@contrasts[[i]]$paired.test),
                                     object@analyses.result.list[[1]]$n.diff))
 
               }
@@ -165,7 +166,8 @@ setMethod(f = "summary",
                               cbind(data.frame(contrast.id = rep(paste0(object@contrasts[[i]]$metadata.column, ": ", object@contrasts[[i]]$var.1, " vs ", object@contrasts[[i]]$var.2), 4),
                                                group.factor = rep(object@contrasts[[i]]$metadata.column, 4),
                                                group1 = rep(object@contrasts[[i]]$var.1, 4),
-                                               group2 = rep(object@contrasts[[i]]$var.2, 4)),
+                                               group2 = rep(object@contrasts[[i]]$var.2, 4),
+                                               paired.test = object@contrasts[[i]]$paired.test),
                                     object@analyses.result.list[[1]]$n.diff))
 
               }

@@ -108,7 +108,8 @@ plot.volcano =
                  alpha = point.alpha,
                  size = point.size) +
       scale_color_manual(values = colors.plots,
-                         name = "Differential\nstatus") +
+                         name = "Differential\nstatus",
+                         drop = FALSE) +
       geom_hline(yintercept = -log10(DEprot.analyses.object@differential.analyses.params$padj.th), linetype = 2, color = "gray40") +
       geom_vline(xintercept = c(-1,1)*log2(DEprot.analyses.object@differential.analyses.params$linear.FC.th), linetype = 2, color = "gray40") +
       ylab(ifelse(use.uncorrected.pvalue == F, yes = "-log~10~(*P~adj~*)", no = "-log~10~(*P*)")) +

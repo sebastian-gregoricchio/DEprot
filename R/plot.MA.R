@@ -125,7 +125,7 @@ plot.MA =
                    stroke = NA,
                    show.legend = T,
                    inherit.aes = F) +
-        scale_color_manual(values = colors.plots, name = "Differential\nstatus")
+        scale_color_manual(values = colors.plots, name = "Differential\nstatus", drop = FALSE)
     }
 
     ma.plot =
