@@ -7,11 +7,13 @@
 \method{diff}{analyses}(
   DEprot.object,
   contrast.list,
+  replicate.column = NULL,
   linear.FC.th = 2,
   linear.FC.unresp.range = c(1/1.1, 1.1),
   padj.th = 0.05,
   padj.method = "BH",
   stat.test = "t.test",
+  paired.test = FALSE,
   up.color = "indianred",
   down.color = "steelblue",
   unresponsive.color = "purple",
@@ -25,6 +27,8 @@
 
 \item{contrast.list}{List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.}
 
+\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.}
+
 \item{linear.FC.th}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}
 
 \item{linear.FC.unresp.range}{A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.}
@@ -34,6 +38,8 @@
 \item{padj.method}{String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{BH}.}
 
 \item{stat.test}{String indicating the type of statistic test to use. One among: "t-test" and "wilcoxon". Default: \code{"t.test"}.}
+
+\item{paired.test}{Logical value indicating whether paired statistical test should be performed. For each contrast it will be verified that replicate IDs are not repeated within a group and, that replicate number and the identifiers coincide between the two groups. Default: \code{FALSE}.}
 
 \item{up.color}{String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.}
 
@@ -48,5 +54,5 @@
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }
 \description{
-Allows for the computation of differential analyses. Includes means, Fold Changes, and pvalues.
+Allows for the computation of differential analyses. Includes means, Fold Changes, and p-values.
 }
