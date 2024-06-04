@@ -25,19 +25,19 @@ impute.counts =
            overwrite.imputation = FALSE,
            cores = 1,
            parallel.mode = "variables") {
-
+    
     ### Libraries
     require(dplyr)
     require(ggplot2)
-
+    
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
       warning("The input must be an object of class 'DEprot'.")
       return(DEprot.object)
     }
-
-
-
+    
+    
+    
     ### Check if imputation already available
     if (DEprot.object@imputed == T) {
       if (overwrite.imputation == F) {
@@ -46,8 +46,8 @@ impute.counts =
         return(DEprot.object)
       }
     }
-
-
+    
+    
     ### Check if normalized data are available
     if (use.normalized.data == T) {
       if (is.null(DEprot.object@norm.counts)) {
@@ -60,25 +60,23 @@ impute.counts =
     } else {
       cnt = DEprot.object@raw.counts
     }
-
-
-
+    
+    
+    
     ### Run missForest algorithm
     # Parallelize if required
     start.time = Sys.time()
-
-    if (cores > 1) {
-      require(doParallel)
-      registerDoParallel(cores = cores)
-      #getDoParWorkers()
-
-      require(doRNG)
-      registerDoRNG(seed = 1.618)
-      DoRNG.check = try(invisible(foreach(i=1:3) %dorng% sqrt(i)))
-    }
-
-
-    if (!("list" %in% class(DoRNG.check) | cores <= 1)) {
+    
+    require(doParallel)
+    registerDoParallel(cores = cores)
+    #getDoParWorkers()
+      
+    require(doRNG)
+    registerDoRNG(seed = 1.618)
+    DoRNG.check = try(invisible(foreach(i=1:3) %dorng% sqrt(i)))
+    
+    
+    if (cores <= 1) {
       imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror)
     } else {
       if (tolower(parallel.mode) %in% c("variables", "forests")) {
@@ -88,28 +86,28 @@ impute.counts =
         return(DEprot.object)
       }
     }
-
+    
     if (variable.wise.OOBerror == TRUE) {
       names(imputed.cnt$OOBerror) = colnames(cnt)
     }
-
+    
     end.time = Sys.time()
     time.taken = round(end.time - start.time,2)
-
-
+    
+    
     ### Replot distributions
     # melt counts table
     melt.cnt =
       suppressMessages(reshape2::melt(as.data.frame(imputed.cnt$ximp))) %>%
       dplyr::mutate(variable = factor(variable, levels = colnames(imputed.cnt$ximp)))
-
+    
     # compute stats
     cnt.stats =
       melt.cnt %>%
       dplyr::group_by(variable) %>%
       dplyr::summarise(min = min(value, na.rm = T),
                        max = max(value, na.rm = T))
-
+    
     boxplot =
       ggplot() +
       geom_violin(data = melt.cnt,
@@ -161,8 +159,8 @@ impute.counts =
             plot.title = ggtext::element_markdown(hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(hjust = 0.5),
             aspect.ratio = 10/ncol(imputed.cnt$ximp))
-
-
+    
+    
     ### Update object with new counts, imputation method and boxplot
     DEprot.object@imputed = T
     DEprot.object@imputation = list(method = "missForest",
@@ -171,12 +169,12 @@ impute.counts =
                                     parallelization.mode = ifelse(cores <=1, yes = "none", no = parallel.mode),
                                     cores = cores,
                                     processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
-
+    
     DEprot.object@imputed.counts = imputed.cnt$ximp
     DEprot.object@boxplot.imputed = boxplot
-
-
+    
+    
     ### Return updated object
     return(DEprot.object)
-
+    
   } # END function
