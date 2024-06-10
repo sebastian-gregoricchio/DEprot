@@ -130,36 +130,59 @@ load.counts =
             plot.title = ggtext::element_markdown(hjust = 0.5),
             aspect.ratio = 10/ncol(cnt))
 
-    if (is.null(normalization.method)) {
+
+    ### Define DEprot object values depending on counts input type
+    ## base values
+    boxplot.raw = NA
+    boxplot.norm = NA
+    boxplot.imputed = NA
+    raw.counts = NULL
+    norm.counts = NULL
+    imputed.counts = NULL
+    imputed = F
+    normalized = F
+    normalization.method = normalization.method
+
+
+    ## add raw data?
+    if (is.null(normalization.method) & is.na(imputation)) {
       boxplot.raw = boxplot
-      boxplot.norm = NA
-      boxplot.imputed = NA
+      #boxplot.norm = NA
+      #boxplot.imputed = NA
       raw.counts = cnt
-      norm.counts = NULL
-      imputed.counts = NULL
-      imputed = F
-      normalized = F
+      #norm.counts = NULL
+      #imputed.counts = NULL
+      #imputed = F
+      #normalized = F
       normalization.method = "none"
-    } else if (is.na(imputation)) {
-      boxplot.raw = NA
-      boxplot.norm = boxplot
-      boxplot.imputed = NA
-      raw.counts = NULL
-      imputed.counts = NULL
-      imputed = F
-      norm.counts = cnt
-      normalized = T
-      normalization.method = normalization.method
-    } else { #imputed data
-      boxplot.raw = NA
-      boxplot.norm = NA
-      boxplot.imputed = boxplot
-      raw.counts = NULL
-      norm.counts = NULL
-      imputed.counts = cnt
-      imputed = T
-      normalized = T
-      normalization.method = normalization.method
+
+    } else {
+      ## add imputed data?
+      if (!is.na(imputation)) {
+        #boxplot.raw = NA
+        #boxplot.norm = NA
+        boxplot.imputed = boxplot
+        #raw.counts = NULL
+        #norm.counts = NULL
+        imputed.counts = cnt
+        imputed = T
+        normalized = T
+        normalization.method = normalization.method
+      }
+
+
+      ## add normalized data?
+      if (!is.null(normalization.method)) {
+        #boxplot.raw = NA
+        boxplot.norm = boxplot
+        #boxplot.imputed = NA
+        #raw.counts = NULL
+        #imputed.counts = NULL
+        #imputed = F
+        norm.counts = cnt
+        normalized = T
+        normalization.method = normalization.method
+      }
     }
 
 
