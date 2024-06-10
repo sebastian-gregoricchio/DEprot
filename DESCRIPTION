@@ -9,7 +9,7 @@ License: GNU GENERAL PUBLIC LICENSE version 3
 Depends:
 	R (>= 4.0.3)
 Imports:
-	BiocManager, cowplot, data.table, doParallel, dplyr, doRNG, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, matrixStats, MBQN, patchwork, plyr, pryr, prettydoc, S4Vectors, stringr, tidyr, purrr, randomForest, methods, missForest, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, viridis
+	BiocManager, colorspace, cowplot, data.table, doParallel, dplyr, doRNG, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, matrixStats, MBQN, patchwork, plyr, pryr, prettydoc, S4Vectors, stringr, tidyr, purrr, randomForest, methods, missForest, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, viridis
 biocViews:
 Encoding: UTF-8
 LazyData: true
