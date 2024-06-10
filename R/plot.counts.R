@@ -8,10 +8,11 @@
 #' @param max.line.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param min.line.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param title String indicating the title to use. Default: \code{NULL} (automatic title).
+#' @param convert.log2 Logical value to define whether counts should be log2 transformed. Default: \code{TRUE}.
 #'
 #' @return A ggplot object.
 #'
-#' @export plot.volcano
+#' @export plot.counts
 
 plot.counts =
   function(DEprot.object,
