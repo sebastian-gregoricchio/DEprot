@@ -115,7 +115,7 @@ load.counts =
       ylab(ifelse(is.na(log.base),
                   yes = "Intensity",
                   no = paste0(ifelse(log.base == exp(1),
-                                     yes = "ln", no = paste0("log~",log.base,"~")),
+                                     yes = "ln", no = paste0("log<sub>",log.base,"</sub>")),
                               "(Intensity)"))) +
       ggtitle(ifelse(is.null(normalization.method),
                      yes = "**Unormalized**",
