@@ -137,9 +137,22 @@ PC_2.3 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = T)
+                  plot.zero.lines = TRUE)
 
 patchwork::wrap_plots(PC_1.2, PC_2.3, nrow = 1)
+
+## -----------------------------------------------------------------------------
+plot.PC.scatter.123(DEprot.PCA.object = PCA,
+                    color.column = "condition",
+                    shape.column = "replicate",
+                    label.column = "replicate",
+                    dot.colors = c("6h.10nM.E2" = "indianred",
+                                   "6h.DMSO" = "steelblue",
+                                   "FBS" =  "forestgreen"),
+                    plot.zero.line.y.12 = TRUE,
+                    plot.zero.line.x.12 = FALSE,
+                    plot.zero.line.y.23 = TRUE,
+                    plot.zero.line.x.23 = TRUE)
 
 ## ----make_PCA_subset, fig.width=8---------------------------------------------
 ## Perform the analyses (DEprot.PCA object)
