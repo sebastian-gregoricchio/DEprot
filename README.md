@@ -5,7 +5,7 @@
 ![visits](https://badges.pufler.dev/visits/sebastian-gregoricchio/DEprot) -->
 <!---![downloads](https://img.shields.io/github/downloads/sebastian-gregoricchio/DEprot/total.svg)--->
 
-# DEprot [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.svg" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
+# DEprot [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
 
 R package to impute, normalize and perform differential analyses on proteomics data (LFQ-based)
 
