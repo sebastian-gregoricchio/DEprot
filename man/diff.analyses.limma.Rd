@@ -2,7 +2,7 @@
 % Please edit documentation in R/diff.analyses.limma.R
 \name{diff.analyses.limma}
 \alias{diff.analyses.limma}
-\title{diff.analyses}
+\title{diff.analyses.limma}
 \usage{
 \method{diff}{analyses.limma}(
   DEprot.object,

@@ -231,6 +231,42 @@ patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
 
 <br>
 
+
+## Batch effect correction
+Proteomics is highly susceptible to batch effects. Hereafter we use the package [`HarmonizR`](https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html) package, developed by [H.Voß & S.Schlumbohm (*Nat.Commun.*, 2022)](https://doi.org/10.1038/s41467-022-31007-x). This tool besides handling multiple experiments, allows for the batch correction of data derived by the combination of both DIA (Data-Independent Acquisition) and DDA (Data-Dependent Acquisition).
+
+> `HarmonizR` is not a required dependency, therefore if this fucntion is used and `HarmonizR` is not already installed, a warning will indicate the requred installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
+
+To use the `harmonize.batches` is sufficient to provide a `DEprot` object containing a combined table of multiple experiments and indicate the identifier of a column in the metadata table which corresponds to the batch annotation. The result is a DEprot object with the same structure described in the previous paragraph. <br>
+Here, for simplicity, we will add manually a column to the metadata table with "dummy" batches.
+
+<br>
+
+```{r, eval = F}
+## Adding batch column to the metadata table
+dpo@metadata$batch = rep(c("batch_1","batch_2"), each = 6)
+
+get.metadata(dpo)
+```
+
+```{r echo=FALSE}
+new_meta = dpo@metadata
+new_meta$batch = rep(c("batch_1","batch_2"), each = 6)
+new_meta
+```
+
+<br>
+
+```{r, eval = F}
+## batch correction
+dpo <- harmonize.batches(DEprot.object = dpo,
+                         batch.column = "batch",
+                         cores = 1)
+```
+
+
+<br>
+
 -----------------------------------------
 
 # **Data imputation** {#imputation}

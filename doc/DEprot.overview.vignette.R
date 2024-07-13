@@ -68,6 +68,23 @@ head(dpo@raw.counts[,1:6])
 ## ----plot_norm, fig.width=8---------------------------------------------------
 patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
 
+## ----eval = F-----------------------------------------------------------------
+#  ## Adding batch column to the metadata table
+#  dpo@metadata$batch = rep(c("batch_1","batch_2"), each = 6)
+#  
+#  get.metadata(dpo)
+
+## ----echo=FALSE---------------------------------------------------------------
+new_meta = dpo@metadata
+new_meta$batch = rep(c("batch_1","batch_2"), each = 6)
+new_meta
+
+## ----eval = F-----------------------------------------------------------------
+#  ## batch correction
+#  dpo <- harmonize.batches(DEprot.object = dpo,
+#                           batch.column = "batch",
+#                           cores = 1)
+
 ## ----imputation_example, eval = F---------------------------------------------
 #  ## Without parallelization
 #  dpo <- impute.counts(DEprot.object = dpo,
