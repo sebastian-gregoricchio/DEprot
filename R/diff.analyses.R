@@ -1,6 +1,6 @@
 #' @title diff.analyses
 #'
-#' @description Allows for the computation of differential analyses. Includes means, Fold Changes, and p-values.
+#' @description Allows for the computation of differential analyses using multiple t/Wilcox tests. Includes means, Fold Changes, and p-values.
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
@@ -331,7 +331,7 @@ diff.analyses =
         geom_vline(xintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
         ylab("-log~10~(*P~adj~*)") +
         #xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
-        xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub>)")) +
+        xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
         theme_classic() +
         theme(axis.text = ggtext::element_markdown(color = "black"),
@@ -395,7 +395,7 @@ diff.analyses =
         geom_hline(yintercept = 0, linetype = 1, color = "steelblue") +
         theme_classic() +
         xlab("log~2~(Base Mean)") +
-        ylab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub>)")) +
+        ylab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
         scale_x_continuous(expand = c(0,0)) +
         annotate(geom = "text",

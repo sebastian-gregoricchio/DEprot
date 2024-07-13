@@ -54,5 +54,5 @@
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }
 \description{
-Allows for the computation of differential analyses. Includes means, Fold Changes, and p-values.
+Allows for the computation of differential analyses using multiple t/Wilcox tests. Includes means, Fold Changes, and p-values.
 }

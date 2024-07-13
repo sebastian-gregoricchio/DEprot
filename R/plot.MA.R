@@ -134,7 +134,7 @@ plot.MA =
       geom_hline(yintercept = 0, linetype = 1, color = "steelblue") +
       theme_classic() +
       xlab("log~2~(Base Mean)") +
-      ylab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub>)")) +
+      ylab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
       ggtitle(ifelse(is.null(title), yes = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"), no = title)) +
       scale_x_continuous(expand = c(0,0)) +
       annotate(geom = "text",

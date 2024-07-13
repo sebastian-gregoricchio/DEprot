@@ -113,7 +113,7 @@ plot.volcano =
       geom_hline(yintercept = -log10(DEprot.analyses.object@differential.analyses.params$padj.th), linetype = 2, color = "gray40") +
       geom_vline(xintercept = c(-1,1)*log2(DEprot.analyses.object@differential.analyses.params$linear.FC.th), linetype = 2, color = "gray40") +
       ylab(ifelse(use.uncorrected.pvalue == F, yes = "-log~10~(*P~adj~*)", no = "-log~10~(*P*)")) +
-      xlab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub>)")) +
+      xlab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
       ggtitle(ifelse(is.null(title), yes = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"),no = title)) +
       theme_classic() +
       theme(axis.text = ggtext::element_markdown(color = "black"),

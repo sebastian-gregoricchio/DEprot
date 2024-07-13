@@ -491,15 +491,47 @@ The `DEprot.correlation` correlation object contains the following slots:
 
 # **Differential Expression (DE) analyses** {#diffexp}
 <div style="text-align: justify">
-Differential expression analyse between two conditions can be performed using the function `diff.analyses`.<br>
-The conditions can be compared two-by-two (individual t-/wilcoxon tests). Is is sufficient to provide a list of 3-elements vectors. The latter, should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
+Differential expression analyses between two conditions can be performed employing two different methods using the functions `diff.analyses` and `diff.analyses.limma`. With the first (`diff.analyses`) the conditions will be compared two-by-two (individual t-/Wilcox tests), while with the second (`diff.analyses.limma`) the `limma` package is used to fit the data on a linear model.
 
-When a replicate column is available, it is possible to run the analyses in *paired* mode. It is sufficient to indicate the column from the metadata table that corresponds to the replicate identifiers (in our example `replicate`) and set `paired.test = TRUE`. For each contrast it will be verified that replicate identifiers are not repeated within a group and, that replicate number and identifiers coincide between the two groups. By the default analyses ignore the replicates.
+In both cases, it is sufficient to provide a list of 3-elements vectors. The latter, should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
 
-In the following example we will compare *6h.10nM.E2* vs *6h.DMSO*, and *6h.10nM.E2* vs *FBS*. Both paired and unpaired examples are shown, but further analyses are based on the paired results.
+When a replicate column is available, it is possible to run the analyses in *paired* mode. When using `diff.analyses`, it is sufficient to indicate the column from the metadata table that corresponds to the replicate identifiers (in our example `replicate.column = "replicate"`) and set `paired.test = TRUE`. For each contrast it will be verified that replicate identifiers are not repeated within a group and, that replicate number and identifiers coincide between the two groups. By the default analyses ignore the replicates. <br>
+If `diff.analyses.limma` is used instead, the correlation between replicates will be estimated and incorporated in the fitting model. In this case indicate the replicate column identifier (in our example `replicate.column = "replicate"`) and set `include.rep.model = TRUE`.
+
+> In the following example we will compare *6h.10nM.E2* vs *6h.DMSO*, and *6h.10nM.E2* vs *FBS*. Both paired and unpaired examples are shown, but further analyses are based on the paired results only (multi t-test mode).
 </div>
 
-```{r compute_diff_exp_examples, eval=F}
+
+**LIMMA mode**
+```{r compute_diff_exp_examples_limma, eval=F}
+## Unpaired test
+dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
+                                    contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+                                                         c("condition", "6h.10nM.E2", "FBS")),
+                                    linear.FC.th = 2,
+                                    padj.th = 0.05,
+                                    padj.method = "BH",
+                                    fitting.method = "ls",
+                                    which.data = "imputed")
+
+## Paired test
+dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
+                                    contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+                                                         c("condition", "6h.10nM.E2", "FBS")),
+                                    replicate.column = "replicate",
+                                    include.rep.model = TRUE,
+                                    linear.FC.th = 2,
+                                    padj.th = 0.05,
+                                    padj.method = "BH",
+                                    fitting.method = "ls",
+                                    which.data = "imputed")
+```
+
+
+<br>
+
+**Multiple t-test mode** *(next paragraphs use these results, in paired mode)*
+```{r compute_diff_exp_examples_Ttest, eval=F}
 ## Unpaired test
 dpo_analyses <- diff.analyses(DEprot.object = dpo,
                               contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
@@ -561,13 +593,15 @@ The `analyses.result.list`, for each contrast, stores a list with the following 
 
 | Element        | Description                                                                                                        |
 | -------------: | :----------------------------------------------------------------------------------------------------------------- |
-| *results*      | a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pavalue and p.adj, differential.status |
+| *results*      | a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status |
 | *n.diff*       | a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null) |
 | *PCA.data*     | output of `perform.PCA` for the subset of samples analyzed in a specific contrast                                  |
 | *PCA.plots*    | combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot                            |
 | *correlations* | combination of Pearson and Spearman correlation heatmaps (obtained by `plot.correlation.heatmap`) for the subset of samples analyzed in a specific contrast |
 | *volcano*      | volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using `plot.volcano` |
 | *MA.plot*      | MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using `plot.MA` |
+
+If the function `diff.analyses.limma` was used, an additional slot called `limma.fit` will be available and will contain the results of `limma::contrasts.fit`.
 
 <br>
 
