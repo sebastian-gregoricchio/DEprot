@@ -35,9 +35,9 @@ require(DEprot)
 ```
 
 ![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot)
-![license](https://img.shields.io/badge/License-GPLv3-blue.svg)
+![license](https://img.shields.io/badge/License-GPLv3-blue.png)
 
-[<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.svg" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
+[<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
 
 ----------------------------------------------------------
 
