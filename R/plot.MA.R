@@ -12,6 +12,11 @@
 #' @param title String indicating the title to use. Default: \code{NULL} (automatic title).
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
 #' @param symmetric.x Logical values indicating whether the x-axis scale should be symmetric or not. Default: \code{TRUE}.
+#' @param dot.labels String vector indicating labels to show on the plot that should correspond to \code{prot.id} column values. Default: \code{NULL} (no labels shown).
+#' @param labels.in.boxes Logical value indicating whether the labels should be visualized as boxes. Default: \code{FALSE}.
+#' @param label.font.size Numeric value indicating the size to use for the dot labels. Default: \code{2}.
+#' @param label.max.overlaps Numeric value indicating the maximum number of overlaps allowed between labels. Default: \code{100}.
+#' @param min.segment.length.labels Numeric value indicating the minimal length of the segments that connect the labels to the points. Default: \code{0} (segment always shown).
 #'
 #' @return A ggplot object.
 #'
@@ -27,7 +32,12 @@ plot.MA =
            point.alpha = 0.5,
            title = NULL,
            use.uncorrected.pvalue = FALSE,
-           symmetric.y = TRUE) {
+           symmetric.y = TRUE,
+           dot.labels = NULL,
+           labels.in.boxes = FALSE,
+           label.font.size = 2,
+           label.max.overlaps = 100,
+           min.segment.length.labels = 0) {
 
     ### Libraries
     require(dplyr)
@@ -59,7 +69,8 @@ plot.MA =
 
 
     ### Make a table for plotting
-    diff.tb = data.frame(log2.Fold_group1.vs.group2 = data[,5],
+    diff.tb = data.frame(prot.id = data$prot.id,
+                         log2.Fold_group1.vs.group2 = data[,5],
                          padj = data$padj,
                          basemean.log2 = data$basemean.log2,
                          diff.status = factor(data$diff.status, levels = names(colors.plots)))
@@ -152,6 +163,36 @@ plot.MA =
             axis.title = ggtext::element_markdown(color = "black"),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             aspect.ratio = 0.6)
+
+
+    # add labels if required
+    if (!is.null(dot.labels)) {
+      filt.tb = dplyr::filter(.data = diff.tb, prot.id %in% dot.labels)
+
+      if (nrow(filt.tb) > 0) {
+        if (labels.in.boxes == TRUE) {
+          ma.plot =
+            ma.plot +
+            ggrepel::geom_label_repel(data = filt.tb,
+                                      aes(label = prot.id),
+                                      color = "black",
+                                      show.legend = F,
+                                      min.segment.length = min.segment.length.labels,
+                                      max.overlaps = label.max.overlaps,
+                                      size = label.font.size)
+        } else {
+          ma.plot =
+            ma.plot +
+            ggrepel::geom_text_repel(data = filt.tb,
+                                     aes(label = prot.id),
+                                     color = "black",
+                                     show.legend = F,
+                                     min.segment.length = min.segment.length.labels,
+                                     max.overlaps = label.max.overlaps,
+                                     size = label.font.size)
+        }
+      }
+    }
 
 
     if (symmetric.y == TRUE) {

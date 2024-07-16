@@ -71,7 +71,8 @@ plot.volcano =
 
 
     ### Make a table for plotting
-    diff.tb = data.frame(log2.Fold_group1.vs.group2 = data[,5],
+    diff.tb = data.frame(prot.id = data$prot.id,
+                         log2.Fold_group1.vs.group2 = data[,5],
                          padj = data$padj,
                          diff.status = factor(data$diff.status, levels = names(colors.plots)))
 
