@@ -687,7 +687,7 @@ dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$correlations
 Differential expressed proteins can be visualized as either a volcano plot or an MA-plot.<br>
 Both these plots are available in the `dpo_analyses@analyses.result.list$contrast.id` list, but can also be generated using the functions `plot.volcano` and `plot.MA`.
 
-Of not, if `use.uncorrected.pvalue = TRUE`, the normal p-value will be used instead of the p.adjusted. In this case the FoldChange and p-value thresholds are collected from the `DEprot.analyses` object and reapplied to compute the new differential status of the proteins.
+> Of note, if `use.uncorrected.pvalue = TRUE`, the normal p-value will be used instead of the p.adjusted. In this case the FoldChange and p-value thresholds are collected from the `DEprot.analyses` object and reapplied to compute the new differential status of the proteins.
 
 ```{r DE_volcano_MA, fig.width=9}
 volcano = plot.volcano(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
