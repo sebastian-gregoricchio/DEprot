@@ -22,6 +22,7 @@ plot.counts =
            max.line.color = "indianred",
            min.line.color = "steelblue",
            title = NULL,
+           subtitle = NULL,
            convert.log2 = TRUE) {
 
     ### Libraries
@@ -165,4 +166,3 @@ plot.counts =
     ### Export plot
     return(boxplot)
   } # END of function
-
