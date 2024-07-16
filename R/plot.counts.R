@@ -7,7 +7,8 @@
 #' @param violin.color String indicating the color to use for the violin plots. Default: \code{"darkorange"}.
 #' @param max.line.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param min.line.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
-#' @param title String indicating the title to use. Default: \code{NULL} (automatic title).
+#' @param title String indicating the title to use. Default: \code{NULL}.
+#' @param subtitle String indicating the subtitle to use. Default: \code{NULL}.
 #' @param convert.log2 Logical value to define whether counts should be log2 transformed. Default: \code{TRUE}.
 #'
 #' @return A ggplot object.
@@ -157,6 +158,7 @@ plot.counts =
             axis.ticks.y = element_line(color = "black"),
             axis.ticks.x = element_blank(),
             plot.title = ggtext::element_markdown(hjust = 0.5),
+            plot.subtitle = ggtext::element_markdown(hjust = 0.5),
             aspect.ratio = 10/ncol(mat))
 
 

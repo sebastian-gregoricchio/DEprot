@@ -25,9 +25,11 @@
 
 \item{min.line.color}{String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.}
 
-\item{title}{String indicating the title to use. Default: \code{NULL} (automatic title).}
+\item{title}{String indicating the title to use. Default: \code{NULL}.}
 
 \item{convert.log2}{Logical value to define whether counts should be log2 transformed. Default: \code{TRUE}.}
+
+\item{subtitle}{String indicating the subtitle to use. Default: \code{NULL}.}
 }
 \value{
 A ggplot object.

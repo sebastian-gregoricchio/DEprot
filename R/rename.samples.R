@@ -40,13 +40,32 @@ rename.samples =
       for (i in 1:nrow(DEprot.object@metadata)) {
         colnames(DEprot.object@raw.counts)[which(colnames(DEprot.object@raw.counts) == DEprot.object@metadata$old.column.id[i])] = DEprot.object@metadata$column.id[i]
       }
+      ## replot counts
+      DEprot.object@boxplot.raw =
+        DEprot::plot.counts(DEprot.object = DEprot.object,
+                            which.data = "raw",
+                            violin.color = "darkorange",
+                            title = DEprot.object@boxplot.raw$labels$title,
+                            convert.log2 = T)
+
     }
+
+
 
     # rename normalized counts
     if (!is.null(DEprot.object@norm.counts)) {
       for (i in 1:nrow(DEprot.object@metadata)) {
         colnames(DEprot.object@norm.counts)[which(colnames(DEprot.object@norm.counts) == DEprot.object@metadata$old.column.id[i])] = DEprot.object@metadata$column.id[i]
       }
+
+      ## replot counts
+      DEprot.object@boxplot.norm =
+        DEprot::plot.counts(DEprot.object = DEprot.object,
+                            which.data = "normalized",
+                            violin.color = "purple",
+                            title = DEprot.object@boxplot.norm$labels$title,
+                            subtitle = DEprot.object@boxplot.norm$labels$subtitle,
+                            convert.log2 = T)
     }
 
 
@@ -55,6 +74,15 @@ rename.samples =
       for (i in 1:nrow(DEprot.object@metadata)) {
         colnames(DEprot.object@imputed.counts)[which(colnames(DEprot.object@imputed.counts) == DEprot.object@metadata$old.column.id[i])] = DEprot.object@metadata$column.id[i]
       }
+
+      ## replot counts
+      DEprot.object@boxplot.imputed =
+        DEprot::plot.counts(DEprot.object = DEprot.object,
+                            which.data = "imputed",
+                            violin.color = "forestgreen",
+                            title = DEprot.object@boxplot.imputed$labels$title,
+                            subtitle = DEprot.object@boxplot.imputed$labels$subtitle,
+                            convert.log2 = T)
     }
 
     return(DEprot.object)
