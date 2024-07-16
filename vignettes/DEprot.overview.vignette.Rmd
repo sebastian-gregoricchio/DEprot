@@ -167,7 +167,7 @@ This object is an S4-vector of class `DEprot`. The S4-vectors are containers of 
 
 ## Rename sample columns {#rename}
 <div style="text-align: justify">
-As in our example, sometimes the columns of the counts are not the actual ID of the samples, but rather and identifier. However, it is possible to rename the counts column names indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br>
+As in our example, sometimes the columns of the counts are not the actual ID of the samples, but rather an identifier. However, it is possible to rename the counts column names indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br>
 Notice that the renaming will applied to all counts table available.
 </div>
 
