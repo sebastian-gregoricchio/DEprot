@@ -29,6 +29,8 @@ impute.counts =
     ### Libraries
     require(dplyr)
     require(ggplot2)
+    require(doParallel)
+    require(doRNG)
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
@@ -41,7 +43,7 @@ impute.counts =
     ### Check if imputation already available
     if (DEprot.object@imputed == T) {
       if (overwrite.imputation == F) {
-        warning(paste0("The 'DEprot' object contains already an imputed table.\n.",
+        warning(paste0("The 'DEprot' object contains already an imputed table.\n",
                        "If you wish to overwrite the imputation, set the parameter 'overwrite.imputation = TRUE'."))
         return(DEprot.object)
       }
@@ -51,7 +53,7 @@ impute.counts =
     ### Check if normalized data are available
     if (use.normalized.data == T) {
       if (is.null(DEprot.object@norm.counts)) {
-        warning(paste0("You asked to use normalized data for the imputation, but normalized data are not available\n.",
+        warning(paste0("You asked to use normalized data for the imputation, but normalized data are not available.\n",
                        "To perform imputation on raw data, set 'use.normalized.data = FALSE'."))
         return(DEprot.object)
       } else {
@@ -67,23 +69,18 @@ impute.counts =
     # Parallelize if required
     start.time = Sys.time()
 
-    if (cores > 1) {
-      cores = min(c(cores, nrow(DEprot.object@metadata)))
-      require(doParallel)
-      registerDoParallel(cores = cores)
-      #getDoParWorkers()
-
-      require(doRNG)
-      registerDoRNG(seed = 1.618)
-      DoRNG.check = try(invisible(foreach(i=1:3) %dorng% sqrt(i)))
-    }
+    cores = ifelse(test = cores > 1, yes = min(c(cores, nrow(DEprot.object@metadata))), no = 1)
+    registerDoParallel(cores = cores)
+    #getDoParWorkers()
+    registerDoRNG(seed = 1.618)
+    DoRNG.check = try(invisible(foreach(i=1:3) %dorng% sqrt(i)))
 
 
-    if (!("list" %in% class(DoRNG.check) | cores <= 1)) {
-      imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror)
+    if (!("list" %in% class(DoRNG.check)) | cores <= 1) {
+      imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = "no")
     } else {
       if (tolower(parallel.mode) %in% c("variables", "forests")) {
-        imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, parallelize = tolower(parallel.mode), variablewise = variable.wise.OOBerror)
+        imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = tolower(parallel.mode))
       } else {
         warning(paste0("The parallel.mode must be one among: 'variables', 'forests'."))
         return(DEprot.object)
