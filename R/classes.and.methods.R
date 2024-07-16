@@ -131,7 +131,7 @@ setMethod(f = "show",
                                                group1 = rep(object@contrasts[[i]]$var.1, 4),
                                                group2 = rep(object@contrasts[[i]]$var.2, 4),
                                                paired.test = object@contrasts[[i]]$paired.test),
-                                    object@analyses.result.list[[1]]$n.diff))
+                                    object@analyses.result.list[[i]]$n.diff))
 
               }
 
