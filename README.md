@@ -70,4 +70,4 @@ This package is under a [GNU General Public License (version 3)](https://sebasti
 <br />
 
 #### Contributors
-[![contributors](https://contrib.rocks/image?repo=sebastian-gregoricchio/DEprot)](https://sebastian-gregoricchio.github.io/)
+![contributors](https://contrib.rocks/image?repo=sebastian-gregoricchio/DEprot)
