@@ -2,6 +2,7 @@
 
 export(diff.analyses)
 export(diff.analyses.limma)
+export(filter.proteins)
 export(get.metadata)
 export(get.results)
 export(harmonize.batches)

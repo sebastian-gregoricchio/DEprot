@@ -11,6 +11,7 @@
   max.line.color = "indianred",
   min.line.color = "steelblue",
   title = NULL,
+  subtitle = NULL,
   convert.log2 = TRUE
 )
 }
@@ -27,9 +28,9 @@
 
 \item{title}{String indicating the title to use. Default: \code{NULL}.}
 
-\item{convert.log2}{Logical value to define whether counts should be log2 transformed. Default: \code{TRUE}.}
-
 \item{subtitle}{String indicating the subtitle to use. Default: \code{NULL}.}
+
+\item{convert.log2}{Logical value to define whether counts should be log2 transformed. Default: \code{TRUE}.}
 }
 \value{
 A ggplot object.

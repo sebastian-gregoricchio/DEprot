@@ -21,7 +21,7 @@ perform.PCA =
 
 
     ### check object
-    if (!("DEprot" %in% class(DEprot.object))) {
+    if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
       return(warning("The input must be an object of class 'DEprot'."))
     }
 
