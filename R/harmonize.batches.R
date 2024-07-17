@@ -61,9 +61,13 @@ harmonize.batches =
 
 
     ### Harmonize batches
-    batch.corrected.counts = HarmonizR::harmonizR(data_as_input = data.frame(DEprot.object@raw.counts),
+    batch.corrected.counts = HarmonizR::harmonizR(data_as_input = data.frame(DEprot.object@raw.counts, check.names = F),
                                                   description_as_input = des,
                                                   cores = cores)
+
+    ### Reset original order of the columns
+    batch.corrected.counts = batch.corrected.counts[,colnames(data.frame(DEprot.object@raw.counts, check.names = F))]
+
 
 
     ### Update DEprot object
@@ -77,10 +81,9 @@ harmonize.batches =
       DEprot::plot.counts(DEprot.object = batch.corrected.DEprot,
                           which.data = "normalized",
                           violin.color = "purple",
-                          convert.log2 = T) +
-      ggtitle("**Normalized**",
-              subtitle = "*HarmonizR*") +
-      theme(plot.subtitle = ggtext::element_markdown(hjust = 0.5))
+                          convert.log2 = T,
+                          title = "**Normalized**",
+                          subtitle = "*HarmonizR*")
 
 
     ## Return corrected DEprot object
