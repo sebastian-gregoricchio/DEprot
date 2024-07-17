@@ -14,6 +14,7 @@
   intersection.bar.color = "black",
   setsize.bar.color = "black",
   show.counts = TRUE,
+  min.size = 1,
   height.ratio = 0.5,
   width.ratio = 0.3,
   use.uncorrected.pvalue = FALSE
@@ -37,6 +38,8 @@
 \item{setsize.bar.color}{String indicating the color to use for the set size bar plot. Default: \code{"black"}.}
 
 \item{show.counts}{Logical value indicating whether the counts in the intersection bar pot should be shown. Default: \code{TRUE}.}
+
+\item{min.size}{Numeric value indicating the minimal number of interactions to show. Default: \code{1}.}
 
 \item{height.ratio}{Numeric value indicating the ratio of the intersection matrix to intersection size height. Default: \code{0.5}.}
 
