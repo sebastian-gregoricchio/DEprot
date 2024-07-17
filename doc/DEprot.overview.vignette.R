@@ -335,3 +335,24 @@ MAplot = plot.MA(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
 
 patchwork::wrap_plots(volcano, MAplot)
 
+## ----upset_plot, message=F, warning=F-----------------------------------------
+upset.plot <- plot.upset(DEprot.analyses.object = dpo_analyses,
+                         contrast.subset = c(1,2),
+                         title = "**My upset plot**",
+                         sort.intersections = "cardinality",
+                         sort.sets = "descending",
+                         intersection.bar.color = "navy",
+                         setsize.bar.color = "black",
+                         show.counts = T,
+                         height.ratio = 0.5,
+                         width.ratio = 0.4,
+                         use.uncorrected.pvalue = TRUE)
+
+upset.plot  # or upset.plot@upset
+
+## ----eval=FALSE---------------------------------------------------------------
+#  upset.plot@obs.matrix
+
+## ----upset_tb, echo=FALSE-----------------------------------------------------
+knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
+

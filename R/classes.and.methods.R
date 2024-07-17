@@ -76,6 +76,16 @@ setClass(Class = "DEprot.correlation",
                       cluster = "ANY"))
 
 
+
+#' @title DEprot.upset class
+#' @name DEprot.upset
+#' @exportClass DEprot.upset
+
+setClass(Class = "DEprot.upset",
+         slots = list(upset = "ANY",
+                      obs.matrix = "ANY"))
+
+
 ################# METHODS ################# "DEprot.analyses"
 
 #' @title DEprot show-method
@@ -198,4 +208,12 @@ setMethod(f = "show",
 setMethod(f = "show",
           signature = "DEprot.correlation",
           definition = function(object) {print(object@heatmap)})
+
+
+
+#' @title DEprot.upset show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.upset",
+          definition = function(object) {print(object@upset)})
 

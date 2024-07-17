@@ -2,10 +2,14 @@
 title: "*DEprot*: an R-package for proteomics data normalization, imputationa and Differential Expression analyses"
 date: "Last update: `r format(Sys.time(), '%d<sup>th</sup> %B, %Y')`"
 author:
-- name: "Sebastian Gregoricchio, Ph.D.<br>Nils Eickhoff, Ph.D."
+- name: "Sebastian Gregoricchio, Ph.D."
   affiliation:
     - "Netherlands Cancer Institute, Oncogenomics division, Amsterdam - Netherlands"
-  email: "sebastian.gregoricchio@nki.nl"
+  email: "s.gregoricchio@nki.nl"
+- name: "Nils Eickhoff, Ph.D."
+  affiliation:
+    - "Netherlands Cancer Institute, Oncogenomics division, Amsterdam - Netherlands"
+  email: "n.eickhoff@nki.nl"
 package: "*[DEprot](https://sebastian-gregoricchio.github.io/DEprot/)*"
 output:
   prettydoc::html_pretty:
@@ -167,7 +171,7 @@ This object is an S4-vector of class `DEprot`. The S4-vectors are containers of 
 
 ## Rename sample columns {#rename}
 <div style="text-align: justify">
-As in our example, sometimes the columns of the counts are not the actual ID of the samples, but rather and identifier. However, it is possible to rename the counts column names indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br>
+As in our example, sometimes the columns of the counts are not the actual ID of the samples, but rather an identifier. However, it is possible to rename the counts column names indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br>
 Notice that the renaming will applied to all counts table available.
 </div>
 
@@ -684,10 +688,11 @@ dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$correlations
 <br>
 
 ### Visualize DE analyses
+#### MA and volcano
 Differential expressed proteins can be visualized as either a volcano plot or an MA-plot.<br>
 Both these plots are available in the `dpo_analyses@analyses.result.list$contrast.id` list, but can also be generated using the functions `plot.volcano` and `plot.MA`.
 
-Of not, if `use.uncorrected.pvalue = TRUE`, the normal p-value will be used instead of the p.adjusted. In this case the FoldChange and p-value thresholds are collected from the `DEprot.analyses` object and reapplied to compute the new differential status of the proteins.
+> Of note, if `use.uncorrected.pvalue = TRUE`, the normal p-value will be used instead of the p.adjusted. In this case the FoldChange and p-value thresholds are collected from the `DEprot.analyses` object and reapplied to compute the new differential status of the proteins.
 
 ```{r DE_volcano_MA, fig.width=9}
 volcano = plot.volcano(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
@@ -695,6 +700,46 @@ MAplot = plot.MA(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
 
 patchwork::wrap_plots(volcano, MAplot)
 ```
+
+
+<br>
+
+
+#### Upset-plot
+To identify which differential proteins are common among multiple comparisons, it is possible to generate an upset plot using the function `plot.upset`. With this function all the intersections between all the contrasts including in the provided object can be visualized by co-occurrence. It is also possible to subset only specific contrasts indicating a numeric vector in the flag `sort.intersections`.
+
+
+```{r upset_plot, message=F, warning=F}
+upset.plot <- plot.upset(DEprot.analyses.object = dpo_analyses,
+                         contrast.subset = c(1,2),
+                         title = "**My upset plot**",
+                         sort.intersections = "cardinality",
+                         sort.sets = "descending",
+                         intersection.bar.color = "navy",
+                         setsize.bar.color = "black",
+                         show.counts = T,
+                         height.ratio = 0.5,
+                         width.ratio = 0.4,
+                         use.uncorrected.pvalue = TRUE)
+
+upset.plot  # or upset.plot@upset
+```
+
+<br>
+
+Besides the plot, also a `TRUE`/`FALSE` table is returned. The latter shows for each condition if a protein has been found to be differential. Only proteins that are differential in at least one condition are shown.
+
+```{r, eval=FALSE}
+upset.plot@obs.matrix
+```
+
+```{r upset_tb, echo=FALSE}
+knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
+```
+
+
+
+
 
 <br>
 

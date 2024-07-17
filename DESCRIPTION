@@ -9,11 +9,11 @@ License: GNU GENERAL PUBLIC LICENSE version 3
 Depends:
 	R (>= 4.0.3)
 Imports:
-	BiocManager, colorspace, cowplot, data.table, doParallel, dplyr, doRNG, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, limma, matrixStats, MBQN, patchwork, plyr, pryr, prettydoc, S4Vectors, statmod, stringr, tidyr, purrr, randomForest, methods, missForest, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, progress, viridis
+	BiocManager, colorspace, ComplexUpset, cowplot, data.table, doParallel, dplyr, doRNG, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, limma, matrixStats, MBQN, patchwork, plyr, pryr, prettydoc, S4Vectors, statmod, stringr, tidyr, purrr, randomForest, methods, missForest, reshape2, R.utils, devtools, knitr, rmarkdown, patchwork, progress, viridis
 biocViews:
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr
 URL:
 	https://sebastian-gregoricchio.github.io/DEprot/
