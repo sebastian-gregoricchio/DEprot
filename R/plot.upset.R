@@ -11,6 +11,7 @@
 #' @param intersection.bar.color String indicating the color to use for the intersection size bar plot. Default: \code{"black"}.
 #' @param setsize.bar.color String indicating the color to use for the set size bar plot. Default: \code{"black"}.
 #' @param show.counts Logical value indicating whether the counts in the intersection bar pot should be shown. Default: \code{TRUE}.
+#' @param min.size Numeric value indicating the minimal number of interactions to show. Default: \code{1}.
 #' @param height.ratio Numeric value indicating the ratio of the intersection matrix to intersection size height. Default: \code{0.5}.
 #' @param width.ratio Numeric value indicating the ratio of the overall set size width to intersection matrix width. Default: \code{0.3}.
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
@@ -29,6 +30,7 @@ plot.upset =
            intersection.bar.color = "black",
            setsize.bar.color = "black",
            show.counts = TRUE,
+           min.size = 1,
            height.ratio = 0.5,
            width.ratio = 0.3,
            use.uncorrected.pvalue = FALSE) # 'ascending', 'descending', FALSE
@@ -172,7 +174,8 @@ plot.upset =
               sort_intersections_by = sort.intersections,
               sort_sets = sort.sets,
               height_ratio = height.ratio,
-              width_ratio = width.ratio)
+              width_ratio = width.ratio,
+              min_size = min.size)
     } else {
       warning("No differential proteins have been found. Upset plot cannot be generated")
       return()
