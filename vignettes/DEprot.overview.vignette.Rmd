@@ -1,5 +1,5 @@
 ---
-title: "*DEprot*: an R-package for proteomics data normalization, imputationa and Differential Expression analyses"
+title: "*DEprot*: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses"
 date: "Last update: `r format(Sys.time(), '%d<sup>th</sup> %B, %Y')`"
 author:
 - name: "Sebastian Gregoricchio, Ph.D."
@@ -21,7 +21,7 @@ output:
     fig_caption: true
     fontsize: 11pt
 vignette: >
-  %\VignetteIndexEntry{DEprot: R-package to normalize, impute and perform differential analyses on LFQ-based proteomics data}
+  %\VignetteIndexEntry{DEprot: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -48,7 +48,11 @@ require(DEprot)
 # **Introduction** {#intro}
 <div style="text-align: justify">
 The concept behind the *DEprot* (*D*ifferential *E*xpression *prot*eomics) is to provide a toolkit that allows for the normalization, imputation and analyses of the differential protein expression in proteomics data. The data are assumed to be LFQ (label-free quantitation) values.
+
 </div>
+
+<br>
+
 
 ## Citation
 If you use this package, please cite:
@@ -72,6 +76,21 @@ If you use this package, please cite:
 ```{r citation, message=FALSE, warning=FALSE}
 citation("DEprot")
 ```
+
+<br>
+
+## General workflow
+
+<div style="text-align: justify">
+Data can be loaded as raw MS-counts, pre-normalized unimputed, LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ uimputed tables and load this data as "raw" in order to perform a batch harmonization.
+
+Using normalized and imputed data, `DEprot` will help you in the differential analyses as well in performing quality controls on your data (sample correlation, principal components analyses (PCA)).
+
+</div>
+
+<br>
+
+![](https://sebastian-gregoricchio.github.io/DEprot/resources/DEprot_workflow.png) 
 
 <br>
 
