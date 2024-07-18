@@ -2,12 +2,12 @@
 title: "changeLog"
 ---
 
-# DEprot [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.svg" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
+# DEprot [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
 ![update](https://badges.pufler.dev/updated/sebastian-gregoricchio/DEprot)
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
-#### [v0.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.0) - May 19<sup>th</sup> 2024
+#### [v0.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.0) - July 18<sup>th</sup> 2024
 First release.
 
 
