@@ -50,7 +50,7 @@ devtools::install_github("sebastian-gregoricchio/DEprot",
 <br />
 
 ## Documentation
-With the package a [PDF manual](https://sebastian-gregoricchio.github.io/DEprot/DEprot_manual.pdf) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
+With the package a [web-manual](https://sebastian-gregoricchio.github.io/DEprot/reference/index.html) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
 The vignette can be inspected on R as well by typing `browseVignettes("DEprot")`.
 
 <br />
