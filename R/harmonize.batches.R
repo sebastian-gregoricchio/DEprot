@@ -19,8 +19,15 @@ harmonize.batches =
 
     if (!requireNamespace("HarmonizR", quietly = TRUE)) {
       warning("The 'HarmonizR' (Bioconductor) package must be installed to use this function.")
-      #Either exit or do something without rgl
-      return(NULL)
+
+      ### Ask for installing
+      install = readline("Do you want to install `HarmonizR`? [yes/no] ")
+      if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
+        BiocManager::install("HarmonizR")
+        library(HarmonizR)
+      } else {
+        return(DEprot.object)
+      }
     } else {
       require(HarmonizR)
     }
