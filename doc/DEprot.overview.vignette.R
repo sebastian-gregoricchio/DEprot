@@ -356,3 +356,44 @@ upset.plot  # or upset.plot@upset
 ## ----upset_tb, echo=FALSE-----------------------------------------------------
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
 
+## ----fig.height=3, fig.width=10-----------------------------------------------
+protein.counts <-
+  protein.summary(DEprot.object = dpo_analyses,
+                  n.lables = "counts",
+                  show.frequency = F,
+                  colors = c("gray", "steelblue4"),
+                  title = "**# Proteins identified in each sample**")
+
+protein.counts
+
+## ----fig.width=4, fig.height=3------------------------------------------------
+protein.counts.byCondition <- 
+  protein.summary(DEprot.object = dpo_analyses,
+                  group.column = "condition",
+                  n.lables = "percentage",
+                  show.frequency = T,
+                  x.label.angle = 0,
+                  title = "**# Proteins identified per _Condition_**")
+
+protein.counts.byCondition
+
+## ----eval = F-----------------------------------------------------------------
+#  nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
+#                                   keytype = "GOALL",
+#                                   keys = "GO:0005634", #nucleus
+#                                   columns = c("SYMBOL", "UNIPROT"))
+#  
+#  dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
+#                                          proteins = nucleus$SYMBOL,
+#                                          mode = "keep")
+
+## ----eval = F-----------------------------------------------------------------
+#  cytoplasm <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
+#                                     keytype = "GOALL",
+#                                     keys = "GO:0005737", #cytoplasm
+#                                     columns = c("SYMBOL", "UNIPROT"))
+#  
+#  dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
+#                                          proteins = cytoplasm$SYMBOL,
+#                                          mode = "remove")
+

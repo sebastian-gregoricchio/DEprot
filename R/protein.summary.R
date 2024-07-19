@@ -148,7 +148,9 @@ protein.summary =
                         breaks = names(shared.color)) +
       theme(axis.line.x = element_blank(),
             axis.text.y = element_text(colour = "black"),
-            axis.text.x = element_text(colour = "black", angle = x.labels.angle, hjust = 1),
+            axis.text.x = element_text(colour = "black",
+                                       angle = x.label.angle,
+                                       hjust = ifelse(test = x.label.angle == 0, yes = 0.5, no = 1)),
             axis.ticks.x = element_blank(),
             legend.title = ggtext::element_markdown(color = "black"),
             legend.text = element_text(colour = "black"),

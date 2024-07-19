@@ -756,8 +756,90 @@ upset.plot@obs.matrix
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
 ```
 
+<br>
+
+-----------------
+
+# **Other tools**
+## Count detected proteins
+In order to know how many proteins have been detected in each sample, it is possible to use the function `protein.summary`. A stacked bar plot will be generated per each sample. The input object must belong to either `DEprot` or `DEprot.analyses` classes.
+
+> **NOTE**: this plot is meaningfult only on raw and/or unimputed normalized data. Indeed, estimation of missing values is not possibile on the imputed tables.
 
 
+```{r, fig.height=3, fig.width=10}
+protein.counts <-
+  protein.summary(DEprot.object = dpo_analyses,
+                  n.lables = "counts",
+                  show.frequency = F,
+                  colors = c("gray", "steelblue4"),
+                  title = "**# Proteins identified in each sample**")
+
+protein.counts
+```
+
+<br>
+
+Another possibility is to study the protein co-detection by sample groups. A group can be defined using any column of the metadata table. In the output stacked bar plot, each color will show how many proteins in how many samples within a group  were detected.
+
+```{r, fig.width=4, fig.height=3}
+protein.counts.byCondition <- 
+  protein.summary(DEprot.object = dpo_analyses,
+                  group.column = "condition",
+                  n.lables = "percentage",
+                  show.frequency = T,
+                  x.label.angle = 0,
+                  title = "**# Proteins identified per _Condition_**")
+
+protein.counts.byCondition
+```
+
+
+<br>
+
+## Filter proteins
+For certain analyses it might be necessary to filter-out/keep only certain specific protein (e.g., keep only nuclear proteins).<br>
+With the function `filter.proteins` is possible to indicate a vector containing the protein IDs (it must correspond to the row.names of the counts table) and chose whether to `"keep"` or `"remove"` these proteins.
+
+This function works for both `DEprot` and `DEprot.analyses` classes. The output will look exactly as the original, however counts tables (raw, normalized, imputed), count boxplots, PCAs, correlations, differential tables, differential protein counts, violin and MA-plot will be recomputed.
+
+> **NOTE**: we discourage the filtering before normalization/bacth correction and imputation, as well as before limma-base differential analyses. In all these methods are based on the assumption that the proteins 'available' are 'all' the proteins available, which is not the case.
+
+<br>
+
+
+### Filtering examples
+Hereafter are shown two examples for keeping nuclear proteins or removing cytoplasmic proteins.<br>
+
+>Notice that this is only an example and, since the protein IDs are randomized, it would not applicable for the example dataset availble with `DEprot`. Furthermore `DEprot` does not include the packages `AnnotationDbi` and `org.Hs.eg.db`, which can be installed throug the `Bioconductor` portal.
+
+<br>
+
+**KEEP NUCLEAR PROTEINS**
+```{r, eval = F}
+nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
+                                 keytype = "GOALL",
+                                 keys = "GO:0005634", #nucleus
+                                 columns = c("SYMBOL", "UNIPROT"))
+
+dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
+                                        proteins = nucleus$SYMBOL,
+                                        mode = "keep")
+```
+
+<br>
+
+**REMOVE CYTOPLASMIC PROTEINS**
+```{r, eval = F}
+cytoplasm <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
+                                   keytype = "GOALL",
+                                   keys = "GO:0005737", #cytoplasm
+                                   columns = c("SYMBOL", "UNIPROT"))
+
+dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
+                                        proteins = cytoplasm$SYMBOL,
+                                        mode = "remove")
+```
 
 
 <br>
@@ -783,10 +865,10 @@ A list of all releases and respective description of changes applied could be fo
 
 ## Contact
 <div style="text-align: justify">
-For any suggestion, bug fixing, commentary please contact:
-
-[![contributors](https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&padding=5&bots=true)](https://sebastian-gregoricchio.github.io/) Sebastian Gregoricchio  [sebastian.gregoricchio@nki.nl](mailto:sebastian.gregoricchio@gmail.com)
+For any suggestion, bug fixing, commentary please contact fill an [Issues](https://github.com/sebastian-gregoricchio/DEprot/issues)/[Pull requests](https://github.com/sebastian-gregoricchio/DEprot/pulls) form on the `DEprot` github page.
 </div>
+
+![contributors](https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&padding=5&bots=true)
 
 <br>
 
