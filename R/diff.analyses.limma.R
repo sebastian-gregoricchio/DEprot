@@ -106,7 +106,7 @@ diff.analyses.limma =
         warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][2],"') is not available."))
         return(DEprot.object)
       } else if (!(contrasts[[i]][3] %in% meta.tb[,contrasts[[i]][1]])) {
-        warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][2],"') is not available."))
+        warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][3],"') is not available."))
         return(DEprot.object)
       } else {
 
