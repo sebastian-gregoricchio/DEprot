@@ -68,13 +68,9 @@ plot.PC.scatter.123 =
         return(warning(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
                               "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
                                                             collapse = ", "))))
-      } else {
-        show.labels = T
       }
-    } else {
-      label.column = color.column
-      show.labels = F
     }
+
 
 
     ### Define/check colors

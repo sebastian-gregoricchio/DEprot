@@ -64,6 +64,15 @@ load.counts =
     }
 
 
+    # check whether the column.id is column.id, otherwise added
+    if (column.id != "column.id") {
+      meta$column.id = meta[,column.id]
+      meta = dplyr::relocate(.data = meta, column.id, .before = colnames(meta)[1])
+    }
+
+
+
+
     ### Generate boxplot of counts
     # melt counts table
     melt.cnt =
