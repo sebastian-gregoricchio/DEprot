@@ -724,6 +724,157 @@ patchwork::wrap_plots(volcano, MAplot)
 <br>
 
 
+#### Heatmaps
+To plot results heatmaps there are two functions available:
+
+- `heatmap.counts`: allows for the plotting of raw, normalized or imputed counts.
+- `heatmap.contrasts`: allows for the plotting of log~2~(FoldChange) values.
+
+<br>
+
+##### Counts
+With the `heatmap.counts` function it is possible to generate an heatmap for the raw/normalized/imputed counts. It is possible to select only specific proteins and/or subset samples (from `column.id` column in metadata table). If the object provided is a `DEprot.analyses` object, it is also possible to indicate to plot only differential proteins (or top.n differential proteins) from a specific contrast. <br>
+The protein ranking is define based on the differential scored, computed as: `abs(log2(fold change)) * -log10(Padj)`.
+
+The resulting object is of class `DEprot.counts.heatmap`, and contains the ggplot-hetamap, the row cluster and the column cluster.
+
+
+```{r heatmap_counts, fig.width=13, fig.height=4.5}
+## Plotting from a DEprot object
+imputed_counts_heatmap <- 
+  heatmap.counts(DEprot.object = dpo,
+                 which.data = "imputed",
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 show.protein.names = TRUE,
+                 protein.subset = c("protein.2295", "protein.304", "protein.657",
+                                    "protein.2819", "protein.2168", "protein.10594"),
+                 title = "Imputed counts | protein and sample selection") 
+
+
+
+## Plotting from a DEprot.analyses object
+## top 15 differential proteins from contrast 1
+imputed_counts_heatmap_diffProteins <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 which.data = "imputed",
+                 contrast = 1,
+                 top.n = 15,
+                 palette = viridis::mako(n = 100, direction = -1),
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 use.uncorrected.pvalue = TRUE,
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15) | Imputed counts")
+
+
+## Combine heatmaps
+patchwork::wrap_plots(imputed_counts_heatmap@heatmap,
+                      imputed_counts_heatmap_diffProteins@heatmap)
+```
+
+<br>
+
+Instead of "pure" counts, it is possibile to compute Z-scores of the values and plot a divergent heatmap.<br>
+In this case instead of a palette, it will be required to indicate the color for the positive, negative and 0 values.
+
+We will apply this to the `imputed_counts_heatmap_diffProteins` heatmap from the previous example.
+
+```{r heatmap_counts_zscores, fig.width=10, fig.height=4.5}
+## Z-score by row
+imputed_counts_heatmap_diffProteins_rowScaled <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 which.data = "imputed",
+                 contrast = 1,
+                 top.n = 15,
+                 high.color = "purple4",
+                 low.color = "darkorange",
+                 mid.color = "white",
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 use.uncorrected.pvalue = TRUE,
+                 scale = "rows",
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15)<br>Imputed counts Z-score")
+
+
+## Z-score by column
+imputed_counts_heatmap_diffProteins_columnScaled <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 which.data = "imputed",
+                 contrast = 1,
+                 top.n = 15,
+                 high.color = "firebrick",
+                 low.color = "steelblue",
+                 mid.color = "white",
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 use.uncorrected.pvalue = TRUE,
+                 scale = "columns",
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15)<br>Imputed counts Z-score")
+
+
+## Combine heatmaps
+patchwork::wrap_plots(imputed_counts_heatmap_diffProteins_rowScaled@heatmap,
+                      imputed_counts_heatmap_diffProteins_columnScaled@heatmap)
+
+```
+
+
+<br>
+
+
+Ultimately, With this function is also possible to group data based on the values of a metadata's column. In this way it is possible to average the values by the values of the defined column (e.g., the replicates of a condition).
+
+In the next example we will average the replicates of each condition using the `combined.id` column form the metadata of the `dpo_analyses` object.
+
+
+```{r heatmap_counts_groups, fig.width = 4, fig.height = 6}
+imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 group.by.metadata.column = "combined.id",
+                 which.data = "imputed",
+                 contrast = 1,
+                 high.color = "firebrick",
+                 low.color = "steelblue",
+                 mid.color = "white",
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 use.uncorrected.pvalue = TRUE,
+                 scale = "rows",
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (all)<br>Imputed counts Z-score")
+
+imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition@heatmap
+```
+
+
+<br>
+
+
+##### Fold changes
+Instead of counts, it is possible to plot the fold changes of one or multiple contrasts using the function `heatmap.contrasts`. Only differential proteins are shown.<br>
+Also in this case it is possible to show only the top *N* differential proteins. However the top *N* of each contrast will be shown. This means than *N* proteins might be shown.
+
+```{r heatmap_foldchanges, fig.width = 4, fig.height = 6}
+FC_heatmap <-
+  heatmap.contrasts(DEprot.analyses.object = dpo_analyses,
+                    contrasts = c(1:2),
+                    top.n = 20,
+                    high.color = "#35978F",
+                    low.color = "#BF812D",
+                    mid.color = "white",
+                    show.protein.names = TRUE,
+                    use.uncorrected.pvalue = TRUE)
+
+FC_heatmap@heatmap
+```
+
+
+
+<br>
+
+
+
 #### Upset-plot
 To identify which differential proteins are common among multiple comparisons, it is possible to generate an upset plot using the function `plot.upset`. With this function all the intersections between all the contrasts including in the provided object can be visualized by co-occurrence. It is also possible to subset only specific contrasts indicating a numeric vector in the flag `sort.intersections`.
 

@@ -86,6 +86,29 @@ setClass(Class = "DEprot.upset",
                       obs.matrix = "ANY"))
 
 
+
+#' @title DEprot.contrast.heatmap class
+#' @name DEprot.contrast.heatmap
+#' @exportClass DEprot.contrast.heatmap
+
+setClass(Class = "DEprot.contrast.heatmap",
+         slots = list(heatmap = "ANY",
+                      cluster = "ANY"))
+
+
+#' @title DEprot.counts.heatmap class
+#' @name DEprot.counts.heatmap
+#' @exportClass DEprot.counts.heatmap
+
+setClass(Class = "DEprot.counts.heatmap",
+         slots = list(heatmap = "ANY",
+                      row.cluster = "ANY",
+                      column.cluster = "ANY"))
+
+
+
+
+
 ################# METHODS ################# "DEprot.analyses"
 
 #' @title DEprot show-method
@@ -216,4 +239,18 @@ setMethod(f = "show",
 setMethod(f = "show",
           signature = "DEprot.upset",
           definition = function(object) {print(object@upset)})
+
+
+#' @title DEprot.cluster.heatmap show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.contrast.heatmap",
+          definition = function(object) {print(object@heatmap)})
+
+
+#' @title DEprot.counts.heatmap show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.counts.heatmap",
+          definition = function(object) {print(object@heatmap)})
 

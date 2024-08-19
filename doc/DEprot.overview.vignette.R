@@ -335,6 +335,108 @@ MAplot = plot.MA(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
 
 patchwork::wrap_plots(volcano, MAplot)
 
+## ----heatmap_counts, fig.width=13, fig.height=4.5-----------------------------
+## Plotting from a DEprot object
+imputed_counts_heatmap <- 
+  heatmap.counts(DEprot.object = dpo,
+                 which.data = "imputed",
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 show.protein.names = TRUE,
+                 protein.subset = c("protein.2295", "protein.304", "protein.657",
+                                    "protein.2819", "protein.2168", "protein.10594"),
+                 title = "Imputed counts | protein and sample selection") 
+
+
+
+## Plotting from a DEprot.analyses object
+## top 15 differential proteins from contrast 1
+imputed_counts_heatmap_diffProteins <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 which.data = "imputed",
+                 contrast = 1,
+                 top.n = 15,
+                 palette = viridis::mako(n = 100, direction = -1),
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 use.uncorrected.pvalue = TRUE,
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15) | Imputed counts")
+
+
+## Combine heatmaps
+patchwork::wrap_plots(imputed_counts_heatmap@heatmap,
+                      imputed_counts_heatmap_diffProteins@heatmap)
+
+## ----heatmap_counts_zscores, fig.width=10, fig.height=4.5---------------------
+## Z-score by row
+imputed_counts_heatmap_diffProteins_rowScaled <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 which.data = "imputed",
+                 contrast = 1,
+                 top.n = 15,
+                 high.color = "purple4",
+                 low.color = "darkorange",
+                 mid.color = "white",
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 use.uncorrected.pvalue = TRUE,
+                 scale = "rows",
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15)<br>Imputed counts Z-score")
+
+
+## Z-score by column
+imputed_counts_heatmap_diffProteins_columnScaled <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 which.data = "imputed",
+                 contrast = 1,
+                 top.n = 15,
+                 high.color = "firebrick",
+                 low.color = "steelblue",
+                 mid.color = "white",
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
+                 use.uncorrected.pvalue = TRUE,
+                 scale = "columns",
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15)<br>Imputed counts Z-score")
+
+
+## Combine heatmaps
+patchwork::wrap_plots(imputed_counts_heatmap_diffProteins_rowScaled@heatmap,
+                      imputed_counts_heatmap_diffProteins_columnScaled@heatmap)
+
+
+## ----heatmap_counts_groups, fig.width = 4, fig.height = 6---------------------
+imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition <- 
+  heatmap.counts(DEprot.object = dpo_analyses,
+                 group.by.metadata.column = "combined.id",
+                 which.data = "imputed",
+                 contrast = 1,
+                 high.color = "firebrick",
+                 low.color = "steelblue",
+                 mid.color = "white",
+                 cell.border.color = "white",
+                 show.protein.names = TRUE,
+                 use.uncorrected.pvalue = TRUE,
+                 scale = "rows",
+                 title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (all)<br>Imputed counts Z-score")
+
+imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition@heatmap
+
+## ----heatmap_foldchanges, fig.width = 4, fig.height = 6-----------------------
+FC_heatmap <-
+  heatmap.contrasts(DEprot.analyses.object = dpo_analyses,
+                    contrasts = c(1:2),
+                    top.n = 20,
+                    high.color = "#35978F",
+                    low.color = "#BF812D",
+                    mid.color = "white",
+                    show.protein.names = TRUE,
+                    use.uncorrected.pvalue = TRUE)
+
+FC_heatmap@heatmap
+
 ## ----upset_plot, message=F, warning=F-----------------------------------------
 upset.plot <- plot.upset(DEprot.analyses.object = dpo_analyses,
                          contrast.subset = c(1,2),

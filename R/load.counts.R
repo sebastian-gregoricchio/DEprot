@@ -64,7 +64,7 @@ load.counts =
     }
 
 
-    # check whether the column.id is column.id, otherwise added
+    # check whether the column.id is column.id, otherwise add it
     if (column.id != "column.id") {
       meta$column.id = meta[,column.id]
       meta = dplyr::relocate(.data = meta, column.id, .before = colnames(meta)[1])

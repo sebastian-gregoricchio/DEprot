@@ -3,19 +3,20 @@
 #' @description Plots an heatmap of the log2(FoldChange) for differentially expressed proteins
 #'
 #' @param DEprot.analyses.object An object of class \code{DEprot.analyses}.
-#' @param contrast Numeric vector indicating the position of the contrast to use for the plotting. Default: \code{NULL} (all contrasts).
+#' @param contrasts Numeric vector indicating the position of the contrast to use for the plotting. Default: \code{NULL} (all contrasts).
 #' @param top.n Numeric value indicated the top differentially expressed proteins to consider for each contrast selected. The rank is based on the product of log2Fc and -log10Padj. Default: \code{NULL} (all differential proteins).
 #' @param distance.method The distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Default: \code{"euclidean"}.
 #' @param clustering.method The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). Default: \code{complete"}.
 #' @param high.color String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: \code{"indianred"}.
 #' @param low.color String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: \code{"#2166AC"} (blue).
 #' @param mid.color String indicating the color to use for the 0 in the plots. Default: \code{"white"}.
-#' @param cell.border.color String indicating the color to use for the individual cells border. DSefault: \code{NA} (no border).
+#' @param na.color String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.
+#' @param cell.border.color String indicating the color to use for the individual cells border. Default: \code{NA} (no border).
 #' @param title String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).
 #' @param show.protein.names Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
 #'
-#' @return A \code{DEprot.contrast.heatmap} object, which contains the heatmap and the hclust object used to order the rows.
+#' @return A \code{DEprot.contrast.heatmap} object, which contains the heatmap (ggplot) and the hclust object used to order the rows.
 #'
 #' @export heatmap.contrasts
 
@@ -28,9 +29,10 @@ heatmap.contrasts =
            high.color = "firebrick",
            low.color = "#2166AC",
            mid.color = "white",
+           na.color = "gray",
            cell.border.color = NA,
-           show.protein.names = FALSE,
            title = NULL,
+           show.protein.names = FALSE,
            use.uncorrected.pvalue = FALSE) {
 
     ### Libraries
@@ -162,7 +164,8 @@ heatmap.contrasts =
                            low = low.color,
                            mid = mid.color,
                            high = high.color,
-                           midpoint = 0) +
+                           midpoint = 0,
+                           na.value = na.color) +
       ggtitle(title) +
       theme_classic() +
       theme(axis.line = element_blank(),
@@ -181,7 +184,7 @@ heatmap.contrasts =
 
 
 
-    ### Export upset object
+    ### Export heatmap.contrast object
     DEprot.contrast.heatmap.object =
       new(Class = "DEprot.contrast.heatmap",
           heatmap = heatmap,
@@ -189,3 +192,4 @@ heatmap.contrasts =
 
     return(DEprot.contrast.heatmap.object)
   } # END of function
+
