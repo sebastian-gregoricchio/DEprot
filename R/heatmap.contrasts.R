@@ -12,6 +12,7 @@
 #' @param mid.color String indicating the color to use for the 0 in the plots. Default: \code{"white"}.
 #' @param na.color String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.
 #' @param cell.border.color String indicating the color to use for the individual cells border. Default: \code{NA} (no border).
+#' @param cell.border.width Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.
 #' @param title String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).
 #' @param show.protein.names Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
@@ -31,6 +32,7 @@ heatmap.contrasts =
            mid.color = "white",
            na.color = "gray",
            cell.border.color = NA,
+           cell.border.width = 0.5,
            title = NULL,
            show.protein.names = FALSE,
            use.uncorrected.pvalue = FALSE) {
@@ -157,7 +159,9 @@ heatmap.contrasts =
              aes(x = contrast,
                  y = prot.id,
                  fill = log2.Fold_group1.vs.group2)) +
-      geom_tile(color = cell.border.color, show.legend = T) +
+      geom_tile(color = cell.border.color,
+                linewidth = cell.border.width,
+                show.legend = T) +
       ggh4x::scale_y_dendrogram(hclust = row.clust, name = "Protein ID", expand = c(0,0)) +
       scale_x_discrete(name = "Contrast ID", expand = c(0,0), position = "top") +
       scale_fill_gradient2(name = "log~2~(Fold Change)",

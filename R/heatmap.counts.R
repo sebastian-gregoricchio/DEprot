@@ -20,6 +20,7 @@
 #' @param mid.color String indicating the color to use for the 0 Z-score value for scaled data. Default: \code{"white"}.
 #' @param na.color String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.
 #' @param cell.border.color String indicating the color to use for the individual cells border. Default: \code{NA} (no border).
+#' @param cell.border.width Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.
 #' @param show.protein.names Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.
 #' @param title String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
@@ -47,6 +48,7 @@ heatmap.counts =
            mid.color = "white",
            na.color = "gray",
            cell.border.color = NA,
+           cell.border.width = 0.5,
            show.protein.names = FALSE,
            title = NULL,
            use.uncorrected.pvalue = FALSE) {
@@ -294,7 +296,9 @@ heatmap.counts =
              aes(x = sample,
                  y = prot.id,
                  fill = score)) +
-      geom_tile(color = cell.border.color, show.legend = T) +
+      geom_tile(color = cell.border.color,
+                linewidth = cell.border.width,
+                show.legend = T) +
       ggtitle(title) +
       theme_classic() +
       theme(axis.line = element_blank(),
