@@ -23,6 +23,7 @@ heatmap.counts(
   mid.color = "white",
   na.color = "gray",
   cell.border.color = NA,
+  cell.border.width = 0.5,
   show.protein.names = FALSE,
   title = NULL,
   use.uncorrected.pvalue = FALSE
@@ -64,6 +65,8 @@ heatmap.counts(
 \item{na.color}{String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.}
 
 \item{cell.border.color}{String indicating the color to use for the individual cells border. Default: \code{NA} (no border).}
+
+\item{cell.border.width}{Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.}
 
 \item{show.protein.names}{Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.}
 
