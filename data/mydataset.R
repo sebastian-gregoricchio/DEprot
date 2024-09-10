@@ -1,5 +1,9 @@
 unimputed.counts = readRDS(url("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/unimputed.counts.rds"))
 
+corum_v4.1 = data.table::fread("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/corum_v4.1.tsv", data.table = F)
+
+corum_v5.0 = data.table::fread("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/corum_v5.0.tsv", data.table = F)
+
 sample.config = data.frame(column.id = c("Sample_A", "Sample_B", "Sample_C",
                                          "Sample_D", "Sample_E", "Sample_F", "Sample_G", "Sample_H", "Sample_I",
                                          "Sample_J", "Sample_K", "Sample_L"),
@@ -27,6 +31,8 @@ sample.config = data.frame(column.id = c("Sample_A", "Sample_B", "Sample_C",
 # Generate data files
 usethis::use_data(unimputed.counts,
                   sample.config,
+                  corum_v4.1,
+                  corum_v5.0,
                   #dpo.QN,
                   #dpo.imputed,
                   #dpo.DE.results,
