@@ -107,6 +107,20 @@ setClass(Class = "DEprot.counts.heatmap",
 
 
 
+#' @title DEprot.enrichResult class
+#' @name DEprot.enrichResult
+#' @exportClass DEprot.enrichResult
+
+setClass(Class = "DEprot.enrichResult",
+         slots = list(enrichment.discovery = "ANY",
+                      protein.network = "ANY",
+                      pathway.network = "ANY",
+                      NES.plot = "ANY",
+                      dotplot_gene.ratio = "ANY",
+                      dotplot_fold.enrichment = "ANY",
+                      parameters = "ANY"))
+
+
 
 
 ################# METHODS ################# "DEprot.analyses"
@@ -201,7 +215,7 @@ setMethod(f = "summary",
                                                group1 = rep(object@contrasts[[i]]$var.1, 4),
                                                group2 = rep(object@contrasts[[i]]$var.2, 4),
                                                paired.test = object@contrasts[[i]]$paired.test),
-                                    object@analyses.result.list[[i]]$n.diff))
+                                    object@analyses.result.list[[1]]$n.diff))
 
               }
               recap
@@ -253,3 +267,12 @@ setMethod(f = "show",
 setMethod(f = "show",
           signature = "DEprot.counts.heatmap",
           definition = function(object) {print(object@heatmap)})
+
+
+
+#' @title DEprot.enrichResult show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.enrichResult",
+          definition = function(object) {print(object@enrichment.discovery@result)})
+

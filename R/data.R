@@ -28,12 +28,27 @@
 
 #' @title CORUM version 4.1
 #' @description Collection of CORUM complexes for all organisms available.
-#' @format A data frame with 12 rows and 6 columns:
+#' @format A data frame with 20475 rows and 4 columns:
 #' \describe{
-#'   \item{\code{complex.id}}{Mumeric value idnciating the complex ID}
+#'   \item{\code{complex.id}}{Numeric value idnciating the complex ID}
 #'   \item{\code{complex.name}}{Extended name of the complex}
 #'   \item{\code{organism}}{Specie to which the complex belong}
 #'   \item{\code{protein.members}}{List of the proteins}
 #'}
-#' @source https://mips.helmholtz-muenchen.de/corum
+#' @source https://mips.helmholtz-muenchen.de/corum/download
 "corum_v4.1"
+
+
+
+
+#' @title CORUM version 5.0
+#' @description Collection of CORUM complexes for all organisms available.
+#' @format A data frame with 24705 rows and 4 columns:
+#' \describe{
+#'   \item{\code{complex.id}}{Numeric value idnciating the complex ID}
+#'   \item{\code{complex.name}}{Extended name of the complex}
+#'   \item{\code{organism}}{Specie to which the complex belong}
+#'   \item{\code{protein.members}}{List of the proteins}
+#'}
+#' @source https://mips.helmholtz-muenchen.de/corum/download
+"corum_v5.0"

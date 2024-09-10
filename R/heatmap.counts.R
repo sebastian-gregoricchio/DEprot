@@ -195,7 +195,7 @@ heatmap.counts =
               fc.data =
                 fc.data %>%
                 dplyr::mutate(contrast = names(DEprot.object@contrasts)[contrast],
-                              ranking.score = log2.Fold_group1.vs.group2 * fc.data$padj) %>%
+                              ranking.score = log2.Fold_group1.vs.group2 * -log10(fc.data$padj)) %>%
                 dplyr::arrange(desc(abs(ranking.score))) %>%
                 dplyr::mutate(rank = 1:nrow(fc.data))
 

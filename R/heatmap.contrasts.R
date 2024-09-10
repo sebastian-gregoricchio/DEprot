@@ -103,7 +103,7 @@ heatmap.contrasts =
       fc.tb.list[[i]] =
         fc.tb.list[[i]] %>%
         dplyr::mutate(contrast = names(DEprot.analyses.object@contrasts)[contr.list[i]],
-                      ranking.score = log2.Fold_group1.vs.group2 * fc.tb.list[[i]]$padj) %>%
+                      ranking.score = log2.Fold_group1.vs.group2 * -log10(fc.tb.list[[i]]$padj)) %>%
         dplyr::arrange(desc(abs(ranking.score))) %>%
         dplyr::mutate(rank = 1:nrow(fc.tb.list[[i]]))
 
