@@ -4,7 +4,7 @@
 \alias{filter.proteins}
 \title{filter.proteins}
 \usage{
-\method{filter}{proteins}(DEprot.object, proteins, mode = "keep")
+filter.proteins(DEprot.object, proteins, mode = "keep")
 }
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot}.}

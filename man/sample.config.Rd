@@ -22,6 +22,6 @@ Simulated data
 sample.config
 }
 \description{
-Dummy table for metadata corresponding to the sample configuratiuon of \link{unimputed.counts}.
+Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.
 }
 \keyword{datasets}
