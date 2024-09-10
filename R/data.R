@@ -10,7 +10,7 @@
 
 
 #' @title Example of metadata table
-#' @description Dummy table for metadata corresponding to the sample configuratiuon of \link{unimputed.counts}.
+#' @description Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.
 #' @format A data frame with 12 rows and 6 columns:
 #' \describe{
 #'   \item{\code{column.id}}{IDs of columns in the 'unimputed.counts'}
@@ -22,3 +22,18 @@
 #'}
 #' @source Simulated data
 "sample.config"
+
+
+
+
+#' @title CORUM version 4.1
+#' @description Collection of CORUM complexes for all organisms available.
+#' @format A data frame with 12 rows and 6 columns:
+#' \describe{
+#'   \item{\code{complex.id}}{Mumeric value idnciating the complex ID}
+#'   \item{\code{complex.name}}{Extended name of the complex}
+#'   \item{\code{organism}}{Specie to which the complex belong}
+#'   \item{\code{protein.members}}{List of the proteins}
+#'}
+#' @source https://mips.helmholtz-muenchen.de/corum
+"corum_v4.1"
