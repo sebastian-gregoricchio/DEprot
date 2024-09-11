@@ -8,6 +8,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
 
 # Load libraries required
 require(DEprot)
+require(dplyr)
 
 ## ----citation, message=FALSE, warning=FALSE-----------------------------------
 citation("DEprot")
@@ -458,7 +459,7 @@ upset.plot  # or upset.plot@upset
 ## ----upset_tb, echo=FALSE-----------------------------------------------------
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
 
-## ----fig.height=3, fig.width=10-----------------------------------------------
+## ----protein_summary, fig.height=3, fig.width=10------------------------------
 protein.counts <-
   protein.summary(DEprot.object = dpo_analyses,
                   n.lables = "counts",
@@ -468,7 +469,7 @@ protein.counts <-
 
 protein.counts
 
-## ----fig.width=4, fig.height=3------------------------------------------------
+## ----protein_summary_by_condition, fig.width=4, fig.height=3------------------
 protein.counts.byCondition <- 
   protein.summary(DEprot.object = dpo_analyses,
                   group.column = "condition",
@@ -479,7 +480,7 @@ protein.counts.byCondition <-
 
 protein.counts.byCondition
 
-## ----eval = F-----------------------------------------------------------------
+## ----keep_nuclear_prot, eval = F----------------------------------------------
 #  nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
 #                                   keytype = "GOALL",
 #                                   keys = "GO:0005634", #nucleus
@@ -489,7 +490,7 @@ protein.counts.byCondition
 #                                          proteins = nucleus$SYMBOL,
 #                                          mode = "keep")
 
-## ----eval = F-----------------------------------------------------------------
+## ----remove_cytoplasmic_proteins, eval = F------------------------------------
 #  cytoplasm <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
 #                                     keytype = "GOALL",
 #                                     keys = "GO:0005737", #cytoplasm
@@ -498,4 +499,57 @@ protein.counts.byCondition
 #  dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
 #                                          proteins = cytoplasm$SYMBOL,
 #                                          mode = "remove")
+
+## ----define_corum, eval = F---------------------------------------------------
+#  ## GeneSet Enrichment Analyses
+#  data("corum_v5.0", package = "DEprot")
+#  
+#  corum_geneSet =
+#    corum_v5.0 %>%
+#    dplyr::filter(organism == "Human") %>%
+#    dplyr::rename(gs_name = complex.name,
+#                  gene_symbol = protein.members) %>%
+#    dplyr::select(gs_name, gene_symbol)
+#  
+#  corum_geneSet
+
+## ----print_corum_geneset, echo=FALSE------------------------------------------
+## GeneSet Enrichment Analyses
+data("corum_v5.0", package = "DEprot")
+
+corum_geneSet =
+  corum_v5.0 %>%
+  dplyr::filter(organism == "Human") %>%
+  dplyr::rename(gs_name = complex.name,
+                gene_symbol = protein.members) %>%
+  dplyr::select(gs_name, gene_symbol)
+
+knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
+
+## ----enrichment_analyses, eval = F--------------------------------------------
+#  ### GSEA
+#  GSEA.results =
+#    geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+#                       contrast = 1,
+#                       TERM2GENE = corum_geneSet,
+#                       enrichment.type = "GSEA",
+#                       gsub.pattern.prot.id = "_HUMAN|;.*",
+#                       pvalueCutoff = 0.05,
+#                       pAdjustMethod = "BH",
+#                       dotplot.n = 10)
+#  
+#  
+#  
+#  ### OverRepresentation Analyses (ORA)
+#  ORA.results =
+#    geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+#                       contrast = 1,
+#                       TERM2GENE = corum_geneSet,
+#                       enrichment.type = "GSEA",
+#                       gsub.pattern.prot.id = "_HUMAN|;.*",
+#                       pvalueCutoff = 0.05,
+#                       qvalueCutoff = 0.05,
+#                       pAdjustMethod = "BH",
+#                       diff.status.category = "6h.10nM.E2",
+#                       dotplot.n = 10)
 
