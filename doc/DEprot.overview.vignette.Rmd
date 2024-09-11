@@ -735,9 +735,9 @@ To plot results heatmaps there are two functions available:
 
 ##### Counts
 With the `heatmap.counts` function it is possible to generate an heatmap for the raw/normalized/imputed counts. It is possible to select only specific proteins and/or subset samples (from `column.id` column in metadata table). If the object provided is a `DEprot.analyses` object, it is also possible to indicate to plot only differential proteins (or top.n differential proteins) from a specific contrast. <br>
-The protein ranking is define based on the differential scored, computed as: `abs(log2(fold change)) * -log10(Padj)`.
+The protein ranking definition is based on the differential score, computed as: `abs(log2(fold change)) * -log10(Padj)`.
 
-The resulting object is of class `DEprot.counts.heatmap`, and contains the ggplot-hetamap, the row cluster and the column cluster.
+The resulting object is of class `DEprot.counts.heatmap`, and contains the ggplot-heatmap, the row cluster and the column cluster.
 
 
 ```{r heatmap_counts, fig.width=13, fig.height=4.5}
