@@ -248,9 +248,7 @@ geneset.enrichment =
                                       error = function(x)(return(NULL)))
 
 
-      ## plot networks
-      protein.network = tryCatch(clusterProfiler::cnetplot(enrichment.discovery), error = function(x)(return(NULL)))
-
+      ## plot pathway networks
       pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
       pathway.network.plot = tryCatch(aPEAR::enrichmentNetwork(enrichment.discovery@result, drawEllipses = TRUE, colorBy = "NES"),
                                       error = function(x)(return(NULL)))
@@ -271,11 +269,9 @@ geneset.enrichment =
                                                        pAdjustMethod = pAdjustMethod,
                                                        TERM2GENE = TERM2GENE)
 
-      ## plot networks
-      protein.network = tryCatch(clusterProfiler::cnetplot(enrichment.discovery), error = function(x)(return(NULL)))
-
+      ## plot pathway networks
       pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
-      pathway.network.plot = tryCatch(aPEAR::enrichmentNetwork(enrichment.discovery@result, colorBy = 'pvalue', colorType = 'pval', pCutoff = -5),
+      pathway.network.plot = tryCatch(aPEAR::enrichmentNetwork(enrichment.discovery@result, colorBy = 'pvalue', colorType = 'pval', pCutoff = -5, nodeSize = "Count"),
                                       error = function(x)(return(NULL)))
 
       NES.plot = NULL
@@ -293,6 +289,10 @@ geneset.enrichment =
     }
 
 
+    ## plot protein networks
+    protein.network = tryCatch(clusterProfiler::cnetplot(enrichment.discovery), error = function(x)(return(NULL)))
+
+
     ## plot dotplot
     dotplot_gene.ratio =
       tryCatch(clusterProfiler::dotplot(enrichment.discovery,
@@ -303,11 +303,6 @@ geneset.enrichment =
                  theme(plot.title = ggtext::element_markdown(hjust = 0.5),
                        axis.ticks.y = element_blank()))
 
-    ## Pathway network list
-    pathway.network = list(clusters = pathway.network.clusters,
-                           plot = pathway.network.plot)
-
-
 
     ##################################################
     ### build object
@@ -315,7 +310,8 @@ geneset.enrichment =
       new(Class = "DEprot.enrichResult",
           enrichment.discovery = enrichment.discovery,
           protein.network = protein.network,
-          pathway.network = pathway.network,
+          pathway.network = list(clusters = pathway.network.clusters,
+                                 plot = pathway.network.plot),
           NES.plot = NES.plot,
           dotplot_gene.ratio = dotplot_gene.ratio,
           dotplot_fold.enrichment = dotplot_fold.enrichment,
