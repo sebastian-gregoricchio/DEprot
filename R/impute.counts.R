@@ -77,10 +77,10 @@ impute.counts =
 
 
     if (!("list" %in% class(DoRNG.check)) | cores <= 1) {
-      imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = "no")
+      imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = "no")
     } else {
       if (tolower(parallel.mode) %in% c("variables", "forests")) {
-        imputed.cnt = missForest::missForest(xmis = cnt, maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = tolower(parallel.mode))
+        imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = tolower(parallel.mode))
       } else {
         warning(paste0("The parallel.mode must be one among: 'variables', 'forests'."))
         return(DEprot.object)
@@ -88,7 +88,7 @@ impute.counts =
     }
 
     if (variable.wise.OOBerror == TRUE) {
-      names(imputed.cnt$OOBerror) = colnames(cnt)
+      names(imputed.cnt$OOBerror) = colnames(t(cnt))
     }
 
     end.time = Sys.time()
@@ -98,8 +98,8 @@ impute.counts =
     ### Replot distributions
     # melt counts table
     melt.cnt =
-      suppressMessages(reshape2::melt(as.data.frame(imputed.cnt$ximp))) %>%
-      dplyr::mutate(variable = factor(variable, levels = colnames(imputed.cnt$ximp)))
+      suppressMessages(reshape2::melt(as.data.frame(t(imputed.cnt$ximp)))) %>%
+      dplyr::mutate(variable = factor(variable, levels = colnames(t(imputed.cnt$ximp))))
 
     # compute stats
     cnt.stats =
@@ -158,7 +158,7 @@ impute.counts =
             axis.ticks.x = element_blank(),
             plot.title = ggtext::element_markdown(hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(hjust = 0.5),
-            aspect.ratio = 10/ncol(imputed.cnt$ximp))
+            aspect.ratio = 10/ncol(t(imputed.cnt$ximp)))
 
 
     ### Update object with new counts, imputation method and boxplot
@@ -170,7 +170,7 @@ impute.counts =
                                     cores = cores,
                                     processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
 
-    DEprot.object@imputed.counts = imputed.cnt$ximp
+    DEprot.object@imputed.counts = t(imputed.cnt$ximp)
     DEprot.object@boxplot.imputed = boxplot
 
 
