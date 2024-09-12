@@ -1077,7 +1077,7 @@ The output is an object of class `DEprot.enrichResult`:
 
 * *enrichment.discovery*: the direct output from `clusterProfiler::GSEA/enricher` (GSEA and ORA, respectively);
 * *protein.network* (GSEA only): a string plot showing protein networks (`clusterProfiler::cnetplot`);
-* *pathway.network* (GSEA only): a list with clusters and string plot showing pathway/set networks (`aPEAR::enrichmentNetwork`);
+* *pathway.network*: a list with clusters and string plot showing pathway/set networks (`aPEAR::enrichmentNetwork`);
 * *NES.plot* (GSEA only): a bar plot showing the NES scores for each significantly enriched geneSet;
 * *dotplot_gene.ratio*: a dotplot showing the geneRatios for each significantly enriched geneSet;
 * *dotplot_fold.enrichment* (ORA only): a dotplot showing the foldEnrichment for each significantly enriched geneSet,
