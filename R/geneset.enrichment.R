@@ -251,19 +251,9 @@ geneset.enrichment =
       ## plot networks
       protein.network = tryCatch(clusterProfiler::cnetplot(enrichment.discovery), error = function(x)(return(NULL)))
 
-      pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result), error = function(x)(return(NULL)))
-
-      if (class(pathway.network.clusters) == "list") {
-        pathway.network.plot = tryCatch(aPEAR::enrichmentNetwork(enrichment.discovery@result, drawEllipses = TRUE, colorBy = "NES"),
-                                        error = function(x)(return(NULL)))
-
-        pathway.network = list(clusters = pathway.network.clusters,
-                               plot = pathway.network.plot)
-      } else {
-        pathway.network = list(clusters = NULL,
-                               plot = NULL)
-      }
-
+      pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
+      pathway.network.plot = tryCatch(aPEAR::enrichmentNetwork(enrichment.discovery@result, drawEllipses = TRUE, colorBy = "NES"),
+                                      error = function(x)(return(NULL)))
 
       NES.plot = tryCatch(plot_NES(gsea.object = enrichment.discovery,
                                    pos.NES.label = contrasts.info$var.1,
@@ -281,9 +271,13 @@ geneset.enrichment =
                                                        pAdjustMethod = pAdjustMethod,
                                                        TERM2GENE = TERM2GENE)
 
-      protein.network = NULL
-      pathway.network = list(clusters = NULL,
-                             plot = NULL)
+      ## plot networks
+      protein.network = tryCatch(clusterProfiler::cnetplot(enrichment.discovery), error = function(x)(return(NULL)))
+
+      pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
+      pathway.network.plot = tryCatch(aPEAR::enrichmentNetwork(enrichment.discovery@result, colorBy = 'pvalue', colorType = 'pval', pCutoff = -5),
+                                      error = function(x)(return(NULL)))
+
       NES.plot = NULL
 
 
@@ -308,6 +302,10 @@ geneset.enrichment =
                  viridis::scale_fill_viridis(option = "rocket", direction = -1, begin = 0.3) +
                  theme(plot.title = ggtext::element_markdown(hjust = 0.5),
                        axis.ticks.y = element_blank()))
+
+    ## Pathway network list
+    pathway.network = list(clusters = pathway.network.clusters,
+                           plot = pathway.network.plot)
 
 
 
