@@ -11,7 +11,8 @@ impute.counts(
   use.normalized.data = TRUE,
   overwrite.imputation = FALSE,
   cores = 1,
-  parallel.mode = "variables"
+  parallel.mode = "variables",
+  verbose = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ impute.counts(
 \item{cores}{Number of cores used to run the missForest algorithm. If \code{cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{parallel.mode}. Default: \code{1}.}
 
 \item{parallel.mode}{Define the mode to use for the parallelization, ignored when \code{cores} is more than 1. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.}
+
+\item{verbose}{Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.}
 }
 \value{
 A \code{DEprot} object. The boxplot showing the distribution of the protein intensity is remade and added to the slot (\code{boxplot.imputed}). A list with parameters and other info about the imputation is added as well in the \code{imputation} slot.
