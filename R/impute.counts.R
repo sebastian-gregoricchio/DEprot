@@ -9,6 +9,7 @@
 #' @param overwrite.imputation Logical value to indicate whether, in the case already available, the table of imputed counts should be overwritten. Default: \code{FALSE}.
 #' @param cores Number of cores used to run the missForest algorithm. If \code{cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{parallel.mode}. Default: \code{1}.
 #' @param parallel.mode Define the mode to use for the parallelization, ignored when \code{cores} is more than 1. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.
+#' @param verbose Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.
 #'
 #' @seealso \href{https://www.rdocumentation.org/packages/missForest/}{missForest package}.
 #'
@@ -24,7 +25,8 @@ impute.counts =
            use.normalized.data = TRUE,
            overwrite.imputation = FALSE,
            cores = 1,
-           parallel.mode = "variables") {
+           parallel.mode = "variables",
+           verbose = FALSE) {
 
     ### Libraries
     require(dplyr)
@@ -77,10 +79,10 @@ impute.counts =
 
 
     if (!("list" %in% class(DoRNG.check)) | cores <= 1) {
-      imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = "no")
+      imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = max.iterations, verbose = verbose, variablewise = variable.wise.OOBerror, parallelize = "no")
     } else {
       if (tolower(parallel.mode) %in% c("variables", "forests")) {
-        imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = max.iterations, verbose = F, variablewise = variable.wise.OOBerror, parallelize = tolower(parallel.mode))
+        imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = max.iterations, verbose = verbose, variablewise = variable.wise.OOBerror, parallelize = tolower(parallel.mode))
       } else {
         warning(paste0("The parallel.mode must be one among: 'variables', 'forests'."))
         return(DEprot.object)
