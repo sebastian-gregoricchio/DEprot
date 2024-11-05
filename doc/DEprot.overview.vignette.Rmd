@@ -83,7 +83,7 @@ citation("DEprot")
 ## General workflow
 
 <div style="text-align: justify">
-Data can be loaded as raw MS-counts, pre-normalized unimputed, LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ uimputed tables and load this data as "raw" in order to perform a batch harmonization.
+Data can be loaded as raw values, pre-normalized unimputed LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ uimputed tables and load this data as "raw" in order to perform a batch harmonization.
 
 Using normalized and imputed data, `DEprot` will help you in the differential analyses as well in performing quality controls on your data (sample correlation, principal components analyses (PCA)).
 
@@ -295,26 +295,49 @@ dpo <- harmonize.batches(DEprot.object = dpo,
 
 # **Data imputation** {#imputation}
 <div style="text-align: justify">
-Often many `NA`/`NaN` values are present in the LFQ tables due to the techanical limitaions of the protein detection by Mass Spectrometry (MS) experiments.
+Often many `NA`/`NaN` values are present in the LFQ tables due to the technical limitations of the protein detection by Mass Spectrometry (MS) experiments.
 
-Here we use the package [`missForest`](https://www.rdocumentation.org/packages/missForest/) package, developed by [DJ.Stekhoven & P.Buehlmann (*Bioinformatics*, 2012)](https://doi.org/10.1093/bioinformatics/btr597). This tool will impute the NaN and assign and estimated value. It also yields an out-of-bag (OOB) imputation error estimate (general, or per each sample). Moreover, it can be run parallel to save computation time (both examples reported here after).
+Here we provide the possibility to use 4 different methods for the imputation the data:
+
+* [`missForest`](https://www.rdocumentation.org/packages/missForest/): developed by [DJ.Stekhoven & P.Buehlmann (*Bioinformatics*, 2012)](https://doi.org/10.1093/bioinformatics/btr597), this tool will impute the NaN and assign and estimated value. It also yields an out-of-bag (OOB) imputation error estimate (general, or per each sample). Moreover, it can be run parallel to save computation time (both examples reported here after).
+* k-Nearest Neighbors (kNN) algorithm
+* Local Least Squares (LLS) imputation, using the pearson correlation coefficient
+* Singular Value Decomposition (SVD)
+
+<br>
+
+Of note, there are cases in which the missing data are not due to the random but rather consequent to real biological effects (i.e., knock-down, knock-out, degron systems and PROTACs, etc.). This may lead to the issue that a protein completely missing in all the replicates of an individual condition will be imputed with relatively high numbers. This would ultimately lead to the incorrect definition of the differential status of this protein.
+To overcome this possibility, it is possible to use the function `randomize.missing.values` to assign - only to completely missing proteins in a certain condition - random values from the bottom distribution of the full dataset. It will be sufficient to indicate the ID of a column belonging to the metadata which indicates the groups/conditions and the percentage of distribution from which select random numbers ("tail.percentage").
+
+```{r randomize_data}
+dpo <- randomize.missing.values(DEprot.object = dpo,
+                                group.column = "combined.id",
+                                tail.percentage = 5)
+```
+
+
+<br>
+
+Hereafeter, an example in how to use the `missForest` method to impute the data:
 </div>
 
 ```{r imputation_example, eval = F}
 ## Without parallelization
 dpo <- impute.counts(DEprot.object = dpo,
-                     max.iterations = 100,
-                     variable.wise.OOBerror = T,
-                     use.normalized.data = T)
+                     method = "missForest",
+                     use.normalized.data = TRUE,
+                     missForest.max.iterations = 100,
+                     missForest.variable.wise.OOBerror = T)
 
 
 ## With parallelization
 dpo <- impute.counts(DEprot.object = dpo,
-                     max.iterations = 100,
-                     variable.wise.OOBerror = T,
-                     use.normalized.data = T,
-                     cores = 10,
-                     parallel.mode = "variables")
+                     method = "missForest",
+                     use.normalized.data = TRUE,
+                     missForest.max.iterations = 100,
+                     missForest.variable.wise.OOBerror = TRUE,
+                     missForest.cores = 10,
+                     missForest.parallel.mode = "variables")
 
 dpo
 
@@ -324,7 +347,7 @@ data.frame(dpo@imputation[-3])
 ```
 
 ```{r load_imputation, echo=FALSE}
-dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/DEprot/dpo.imputed.rds"))
+dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/deprot/dpo.imputed.rds"))
 dpo
 ```
 ```{r load_imputation2, echo=FALSE}

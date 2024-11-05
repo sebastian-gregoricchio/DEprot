@@ -86,21 +86,28 @@ new_meta
 #                           batch.column = "batch",
 #                           cores = 1)
 
+## ----randomize_data-----------------------------------------------------------
+dpo <- randomize.missing.values(DEprot.object = dpo,
+                                group.column = "combined.id",
+                                tail.percentage = 5)
+
 ## ----imputation_example, eval = F---------------------------------------------
 #  ## Without parallelization
 #  dpo <- impute.counts(DEprot.object = dpo,
-#                       max.iterations = 100,
-#                       variable.wise.OOBerror = T,
-#                       use.normalized.data = T)
+#                       method = "missForest",
+#                       use.normalized.data = TRUE,
+#                       missForest.max.iterations = 100,
+#                       missForest.variable.wise.OOBerror = T)
 #  
 #  
 #  ## With parallelization
 #  dpo <- impute.counts(DEprot.object = dpo,
-#                       max.iterations = 100,
-#                       variable.wise.OOBerror = T,
-#                       use.normalized.data = T,
-#                       cores = 10,
-#                       parallel.mode = "variables")
+#                       method = "missForest",
+#                       use.normalized.data = TRUE,
+#                       missForest.max.iterations = 100,
+#                       missForest.variable.wise.OOBerror = TRUE,
+#                       missForest.cores = 10,
+#                       missForest.parallel.mode = "variables")
 #  
 #  dpo
 #  
@@ -109,7 +116,7 @@ new_meta
 #  data.frame(dpo@imputation[-3])
 
 ## ----load_imputation, echo=FALSE----------------------------------------------
-dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/DEprot/dpo.imputed.rds"))
+dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/deprot/dpo.imputed.rds"))
 dpo
 
 ## ----load_imputation2, echo=FALSE---------------------------------------------
