@@ -111,7 +111,7 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
 #  
 #  dpo
 #  
-#  dpo@imputation$OOBerror
+#  head(dpo@imputation$OOBerror)
 #  
 #  data.frame(dpo@imputation[-3])
 
@@ -122,7 +122,7 @@ dpo
 ## ----load_imputation2, echo=FALSE---------------------------------------------
 error = dpo@imputation$OOBerror
 names(error) = colnames(dpo@imputed.counts)
-error
+head(error)
 
 knitr::kable(data.frame(dpo@imputation[-3]), row.names = F)
 
