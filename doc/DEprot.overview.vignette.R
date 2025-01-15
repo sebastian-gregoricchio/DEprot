@@ -368,6 +368,7 @@ imputed_counts_heatmap_diffProteins <-
                  show.protein.names = TRUE,
                  sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
                  use.uncorrected.pvalue = TRUE,
+                 protein.names.pattern = "protein[.]",
                  title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15) | Imputed counts")
 
 
@@ -441,7 +442,8 @@ FC_heatmap <-
                     low.color = "#BF812D",
                     mid.color = "white",
                     show.protein.names = TRUE,
-                    use.uncorrected.pvalue = TRUE)
+                    use.uncorrected.pvalue = TRUE,
+                    protein.names.pattern = "protein[.]")
 
 FC_heatmap@heatmap
 
@@ -507,6 +509,19 @@ protein.counts.byCondition
 #                                          proteins = cytoplasm$SYMBOL,
 #                                          mode = "remove")
 
+## -----------------------------------------------------------------------------
+dpo_analyses_fc1.5 =
+  reapply.thresholds(dpo_analyses,
+                     linear.FC = 1.5,
+                     p.adjusted = 0.05,
+                     linear.FC.unresp.range = c(1/1.1, 1.1),
+                     up.color = "indianred",
+                     down.color = "steelblue",
+                     unresponsive.color = "purple",
+                     null.color = "gray")
+
+summary(dpo_analyses_fc1.5)
+
 ## ----define_corum, eval = F---------------------------------------------------
 #  ## GeneSet Enrichment Analyses
 #  data("corum_v5.0", package = "DEprot")
@@ -521,7 +536,6 @@ protein.counts.byCondition
 #  corum_geneSet
 
 ## ----print_corum_geneset, echo=FALSE------------------------------------------
-## GeneSet Enrichment Analyses
 data("corum_v5.0", package = "DEprot")
 
 corum_geneSet =
@@ -534,7 +548,7 @@ corum_geneSet =
 knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
 
 ## ----enrichment_analyses, eval = F--------------------------------------------
-#  ### GSEA
+#  ## GeneSet Enrichment Analyses (GSEA)
 #  GSEA.results =
 #    geneset.enrichment(DEprot.analyses.object = dpo_analyses,
 #                       contrast = 1,

@@ -788,6 +788,7 @@ imputed_counts_heatmap_diffProteins <-
                  show.protein.names = TRUE,
                  sample.subset = dpo@metadata$column.id[grep("6h", dpo@metadata$column.id)],
                  use.uncorrected.pvalue = TRUE,
+                 protein.names.pattern = "protein[.]",
                  title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (top 15) | Imputed counts")
 
 
@@ -888,7 +889,8 @@ FC_heatmap <-
                     low.color = "#BF812D",
                     mid.color = "white",
                     show.protein.names = TRUE,
-                    use.uncorrected.pvalue = TRUE)
+                    use.uncorrected.pvalue = TRUE,
+                    protein.names.pattern = "protein[.]")
 
 FC_heatmap@heatmap
 ```
@@ -1020,8 +1022,27 @@ dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
 <br>
 
 
+## Re-apply thresholds to `DEprot.analyses` object
+In certain cases, when several contrasts are defined, the differential analysis computation can be time consuming. On the other hand, one might want to change the thresholds used to define the differential status of the proteins. To avoid the re-computation of the differentials from the beginning, the function `reapply.thresholds` can be used to re-compute the differential status, re-plot volcanos and MA-plots, and the n.diff summary table.
+
+```{r}
+dpo_analyses_fc1.5 =
+  reapply.thresholds(dpo_analyses,
+                     linear.FC = 1.5,
+                     p.adjusted = 0.05,
+                     linear.FC.unresp.range = c(1/1.1, 1.1),
+                     up.color = "indianred",
+                     down.color = "steelblue",
+                     unresponsive.color = "purple",
+                     null.color = "gray")
+
+summary(dpo_analyses_fc1.5)
+```
+
+
+<br>
+
 ## GSEA and OverRepresentation Analyses (ORA) {#enrichments}
-### Define GenSet
 Enrichment analyses can be performed on a full contrast of a `DEprot.analyses` object (GSEA) or on the subset of proteins that belong to a specific category of `diff.status` in the results table of the given contrast (ORA).
 
 For this analyses a geneSet table will be required as "reference". The latter must be a data.frame with two columns: "gs_name" (geneSet name) and "gene_symbol" (corresponding to the protein id).
@@ -1048,7 +1069,6 @@ corum_geneSet =
 corum_geneSet
 ```
 ```{r print_corum_geneset, echo=FALSE}
-## GeneSet Enrichment Analyses
 data("corum_v5.0", package = "DEprot")
 
 corum_geneSet =
@@ -1066,7 +1086,7 @@ knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein com
 
 ### Perform enrichment analyses
 ```{r enrichment_analyses, eval = F}
-### GSEA
+## GeneSet Enrichment Analyses (GSEA)
 GSEA.results =
   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
                      contrast = 1,
