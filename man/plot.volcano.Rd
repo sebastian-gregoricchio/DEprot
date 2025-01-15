@@ -17,6 +17,7 @@
   use.uncorrected.pvalue = FALSE,
   symmetric.x = TRUE,
   dot.labels = NULL,
+  protein.names.pattern = "",
   labels.in.boxes = FALSE,
   label.font.size = 2,
   label.max.overlaps = 100,
@@ -47,6 +48,8 @@
 \item{symmetric.x}{Logical values indicating whether the x-axis scale should be symmetric or not. Default: \code{TRUE}.}
 
 \item{dot.labels}{String vector indicating labels to show on the plot that should correspond to \code{prot.id} column values. Default: \code{NULL} (no labels shown).}
+
+\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default: \code{""}, no alterations in the protein IDs.}
 
 \item{labels.in.boxes}{Logical value indicating whether the labels should be visualized as boxes. Default: \code{FALSE}.}
 
