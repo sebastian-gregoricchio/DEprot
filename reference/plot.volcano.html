@@ -74,6 +74,7 @@
 <span>  use.uncorrected.pvalue <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  symmetric.x <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  dot.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  protein.names.pattern <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  labels.in.boxes <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  label.font.size <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  label.max.overlaps <span class="op">=</span> <span class="fl">100</span>,</span>
@@ -131,6 +132,10 @@
 
 <dt id="arg-dot-labels">dot.labels<a class="anchor" aria-label="anchor" href="#arg-dot-labels"></a></dt>
 <dd><p>String vector indicating labels to show on the plot that should correspond to <code>prot.id</code> column values. Default: <code>NULL</code> (no labels shown).</p></dd>
+
+
+<dt id="arg-protein-names-pattern">protein.names.pattern<a class="anchor" aria-label="anchor" href="#arg-protein-names-pattern"></a></dt>
+<dd><p>Character indicating a regular expression to remove from the protein IDs. Default: <code>""</code>, no alterations in the protein IDs.</p></dd>
 
 
 <dt id="arg-labels-in-boxes">labels.in.boxes<a class="anchor" aria-label="anchor" href="#arg-labels-in-boxes"></a></dt>
