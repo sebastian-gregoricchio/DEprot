@@ -7,7 +7,7 @@
 #' @param contrast Numeric vector indicating the position of the contrast to use for the plotting. Only differential proteins in this contrast will be shown. Option available only for an object of class \code{DEprot.analyses}. Default: \code{NULL} (non differential protein selection).
 #' @param top.n Numeric value indicated the top differentially expressed proteins to consider for the contrast selected. The rank is based on the product of log2Fc and -log10Padj. Option available only for an object of class \code{DEprot.analyses}. Default: \code{NULL} (all differential proteins of that contrast).
 #' @param sample.subset Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).
-#' @param protein.subset Character vector indicating a subset of proteins to display. The identifiers must correspond to the row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).
+#' @param protein.subset Character vector indicating a subset of proteins to display. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).
 #' @param group.by.metadata.column String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{NULL} (no groups).
 #' @param scale String indicating whether Z-scores should be computed. Possible choices: "row" or "column". Default: \code{NULL} (no scaling),
 #' @param clust.rows Logical value indicating whether heatmap rows (proteins) should be clustered. Default: \code{TRUE}.
@@ -22,6 +22,7 @@
 #' @param cell.border.color String indicating the color to use for the individual cells border. Default: \code{NA} (no border).
 #' @param cell.border.width Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.
 #' @param show.protein.names Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.
+#' @param protein.names.pattern Character indicating a regular expression to remove from the protein IDs. Default" \code{NULL}, no alterations in the protein IDs.
 #' @param title String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
 #'
@@ -50,6 +51,7 @@ heatmap.counts =
            cell.border.color = NA,
            cell.border.width = 0.5,
            show.protein.names = FALSE,
+           protein.names.pattern = NULL,
            title = NULL,
            use.uncorrected.pvalue = FALSE) {
 
@@ -149,7 +151,7 @@ heatmap.counts =
 
     ### Filter table of counts
     if (!is.null(sample.subset)) {
-      mat.filtered = mat[,which(colnames(mat) %in% sample.subset)]
+      mat.filtered = mat[,which(colnames(mat) %in% sample.subset), drop=F]
     } else {
       mat.filtered = mat
     }
@@ -157,7 +159,7 @@ heatmap.counts =
 
 
     if (!is.null(protein.subset)) {
-      mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% protein.subset),]
+      mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% protein.subset),,drop=F]
     } else {
       mat.filtered = mat.filtered
     }
@@ -208,7 +210,7 @@ heatmap.counts =
 
 
             ## filter the matrix for these proteins
-            mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% diff.prot),]
+            mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% diff.prot),,drop=F]
             check.matrix(mat.filtered)
 
 
@@ -238,7 +240,7 @@ heatmap.counts =
       new.data = list()
       for (i in 1:length(groups)) {
         samples.in.group = (dplyr::filter(.data = groups.tb, group == groups[i]))$column.id
-        new.data[[i]] = rowMeans(mat.filtered[,samples.in.group], na.rm = T)
+        new.data[[i]] = rowMeans(mat.filtered[,samples.in.group, drop = F], na.rm = T)
       }
 
       new.data = data.frame(new.data)
@@ -246,6 +248,7 @@ heatmap.counts =
       rownames(new.data) = rownames(mat.filtered)
       mat.filtered = as.matrix(new.data)
     }
+
 
 
 
@@ -289,6 +292,16 @@ heatmap.counts =
       dplyr::mutate(prot.id = rownames(final.mat)) %>%
       reshape2::melt(value.name = "score", id.vars = "prot.id", variable.name = "sample")
 
+    ### remove protein pattern if required
+    if (!is.null(protein.names.pattern)) {
+      if ("character" %in% class(protein.names.pattern)) {
+        plotting.matrix = plotting.matrix %>% dplyr::mutate(prot.id = gsub(protein.names.pattern, "", prot.id))
+      } else {
+        return(warning("The 'protein.names.pattern' must be a character indicating a regular expression to remove from the protein IDs."))
+      }
+    }
+
+
 
     ## generate basic plot
     heatmap =
@@ -310,11 +323,12 @@ heatmap.counts =
 
 
     ## Perform clustering
-    if (clust.rows == TRUE) {
+    if (clust.rows == TRUE & nrow(final.mat) > 1) {
       row.clust = hclust(d = dist(x = final.mat,
                                   method = distance.method),
                          method = clustering.method)
       row.clust$call = "hclust(d = dist(x = counts.matrix, method = distance.method), method = clustering.method)"
+      if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
       heatmap = heatmap + ggh4x::scale_y_dendrogram(hclust = row.clust, name = "Protein ID", expand = c(0,0))
     } else {
       row.clust = NULL
@@ -322,7 +336,7 @@ heatmap.counts =
     }
 
 
-    if (clust.columns == TRUE) {
+    if (clust.columns == TRUE & ncol(final.mat) > 1) {
       columns.clust = hclust(d = dist(x = t(final.mat),
                                   method = distance.method),
                          method = clustering.method)

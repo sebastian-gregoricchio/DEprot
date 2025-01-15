@@ -15,6 +15,7 @@
 #' @param cell.border.width Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.
 #' @param title String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).
 #' @param show.protein.names Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.
+#' @param protein.names.pattern Character indicating a regular expression to remove from the protein IDs. Default" \code{NULL}, no alterations in the protein IDs.
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
 #'
 #' @return A \code{DEprot.contrast.heatmap} object, which contains the heatmap (ggplot) and the hclust object used to order the rows.
@@ -35,6 +36,7 @@ heatmap.contrasts =
            cell.border.width = 0.5,
            title = NULL,
            show.protein.names = FALSE,
+           protein.names.pattern = NULL,
            use.uncorrected.pvalue = FALSE) {
 
     ### Libraries
@@ -136,20 +138,14 @@ heatmap.contrasts =
     if (nrow(combined.fc) == 0) {return(warning("No data to be shown."))}
 
 
-
-    ### Define row cluster
-    combined.matrix =
-      reshape2::dcast(data = combined.fc[,c("prot.id","contrast","log2.Fold_group1.vs.group2")],
-                      formula = prot.id ~ contrast,
-                      value.var = "log2.Fold_group1.vs.group2")
-
-    rownames(combined.matrix) = combined.matrix$prot.id
-
-    row.clust = hclust(d = dist(x = as.matrix(dplyr::select(.data = combined.matrix, -prot.id)),
-                                method = distance.method),
-                       method = clustering.method)
-
-    row.clust$call = "hclust(d = dist(x = foldchange.matrix, method = distance.method), method = clustering.method)"
+    ### remove protein pattern if required
+    if (!is.null(protein.names.pattern)) {
+      if ("character" %in% class(protein.names.pattern)) {
+        combined.fc = combined.fc %>% dplyr::mutate(prot.id = gsub(protein.names.pattern, "", prot.id))
+      } else {
+        return(warning("The 'protein.names.pattern' must be a character indicating a regular expression to remove from the protein IDs."))
+      }
+    }
 
 
 
@@ -162,7 +158,6 @@ heatmap.contrasts =
       geom_tile(color = cell.border.color,
                 linewidth = cell.border.width,
                 show.legend = T) +
-      ggh4x::scale_y_dendrogram(hclust = row.clust, name = "Protein ID", expand = c(0,0)) +
       scale_x_discrete(name = "Contrast ID", expand = c(0,0), position = "top") +
       scale_fill_gradient2(name = "log~2~(Fold Change)",
                            low = low.color,
@@ -179,6 +174,29 @@ heatmap.contrasts =
             panel.border = element_rect(fill = NA, color = "black", linewidth = 1),
             legend.title = ggtext::element_markdown(color = "black"),
             axis.title = element_blank())
+
+    if (length(unique(combined.fc$prot.id)) > 1) {
+      ### Define row cluster
+      combined.matrix =
+        reshape2::dcast(data = combined.fc[,c("prot.id","contrast","log2.Fold_group1.vs.group2")],
+                        formula = prot.id ~ contrast,
+                        value.var = "log2.Fold_group1.vs.group2")
+
+      rownames(combined.matrix) = combined.matrix$prot.id
+
+      row.clust = hclust(d = dist(x = as.matrix(dplyr::select(.data = combined.matrix, -prot.id)),
+                                  method = distance.method),
+                         method = clustering.method)
+      if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
+
+      row.clust$call = "hclust(d = dist(x = foldchange.matrix, method = distance.method), method = clustering.method)"
+      heatmap = heatmap + ggh4x::scale_y_dendrogram(hclust = row.clust, name = "Protein ID", expand = c(0,0))
+    } else {
+      heatmap = heatmap + scale_y_discrete(name = "Protein ID", expand = c(0,0))
+      row.clust = NULL
+    }
+
+
 
     if (show.protein.names == TRUE) {
       heatmap = heatmap + theme(axis.text.y = ggtext::element_markdown(color = "black"))

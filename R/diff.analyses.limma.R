@@ -265,20 +265,23 @@ diff.analyses.limma =
                                      sample.subset = c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2),
                                      which.data = which.data)
 
-      scatter.PC1.2 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column) + theme(legend.position = "none")
-      scatter.PC2.3 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 3, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column)
+      scatter.PC1.2 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(include.rep.model)+1, NULL, replicate.column), plot.zero.lines = F) + geom_hline(yintercept = 0, colour = "gray", linetype = 2) + theme(legend.position = "none")
+      if (length(unique(sign(PCA.data@PCs$PC1))) > 1){scatter.PC1.2 + geom_vline(xintercept = 0, colour = "gray", linetype = 2)}
+      scatter.PC2.3 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 3, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(include.rep.model)+1, NULL, replicate.column))
 
 
       ## Run Correlations
       corr.data.pearson = DEprot::plot.correlation.heatmap(DEprot.object = DEprot.object,
                                                            correlation.method = "pearson",
                                                            sample.subset = c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2),
-                                                           which.data = which.data)
+                                                           which.data = which.data,
+                                                           correlation.scale.limits = c(NA,1))
 
       corr.data.spearman = DEprot::plot.correlation.heatmap(DEprot.object = DEprot.object,
                                                             correlation.method = "spearman",
                                                             sample.subset = c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2),
-                                                            which.data = which.data)
+                                                            which.data = which.data,
+                                                            correlation.scale.limits = c(NA,1))
 
 
 

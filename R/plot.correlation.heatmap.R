@@ -12,7 +12,7 @@
 #' @param dendrogram.color String indicating the color of the dendrogram lines. Default: \code{"black"}.
 #' @param dendrogram.linewidth Numeric value indicating the line.width of the dendrogram. Default: \code{"black"}.
 #' @param display.values Logical value indicating whether the correlation coefficient should be displayed for each cell. Default: \code{TRUE}.
-#' @param values.color String indicating the color to use for the correlation coefficient labels. Default: \code{"white"}.
+#' @param values.color String indicating the color to use for the correlation coefficient labels. Default: \code{"NULL"}: colors will be assigned automatically depending on the background contrast, white for dark colors and black for light ones.
 #' @param values.decimals Numeric value indicating the number of decimals at which round the correlation coefficient labels. Default: \code{2}.
 #' @param values.font.size Numeric value indicating the font size of the correlation coefficient labels. Default: \code{2}.
 #' @param values.transparency Numeric value between 0-1 indicating the transparency (alpha) of the correlation coefficient labels. Default: \code{1}, full color.
@@ -38,7 +38,7 @@ plot.correlation.heatmap =
            dendrogram.color = "black",
            dendrogram.linewidth = 0.5,
            display.values = TRUE,
-           values.color = "white",
+           values.color = NULL,
            values.decimals = 2,
            values.font.size = 2,
            values.transparency = 1,
@@ -49,6 +49,20 @@ plot.correlation.heatmap =
     ### Libraries
     require(dplyr)
     require(ggplot2)
+    # require(farver)
+
+    ### Functions
+    contrast =
+      function(colour) {
+        out = rep("black", length(colour))
+        light = farver::get_channel(colour, "l", space = "hcl")
+        out[light < 50] = "white"
+        out
+      }
+
+    autocontrast = aes(colour = after_scale(contrast(fill)))
+
+    #############################################
 
 
     ### check object
@@ -146,10 +160,6 @@ plot.correlation.heatmap =
       geom_tile() +
       xlab(NULL) +
       ylab(NULL) +
-      scale_fill_gradientn(name = "Correlation\ncoefficient",
-                           colours = palette,
-                           limits = correlation.scale.limits,
-                           na.value = palette[ncol(palette)]) +
       coord_fixed() +
       ggtitle(label = plot.title, subtitle = plot.subtitle) +
       theme(axis.text = element_text(color = "black"),
@@ -187,13 +197,30 @@ plot.correlation.heatmap =
 
     ## Add values if required
     if (display.values == TRUE) {
-      corr_heatmap =
-        corr_heatmap +
-        geom_text(aes(label = round(correlation, values.decimals)),
-                  color = values.color,
-                  size = values.font.size,
-                  alpha = 1)
+      if (!is.null(values.color)) {
+        corr_heatmap =
+          corr_heatmap +
+          geom_text(aes(label = round(correlation, values.decimals)),
+                    color = values.color,
+                    size = values.font.size,
+                    alpha = 1)
+      } else {
+        corr_heatmap =
+          corr_heatmap +
+          geom_text(aes(label = round(correlation, values.decimals), !!!autocontrast),
+                    size = values.font.size,
+                    alpha = 1)
+      }
     }
+
+
+    # Remake color map
+    corr_heatmap =
+      corr_heatmap +
+      scale_fill_gradientn(name = "Correlation\ncoefficient",
+                           colours = palette,
+                           limits = correlation.scale.limits,
+                           na.value = palette[ncol(palette)])
 
 
     # Build out object
