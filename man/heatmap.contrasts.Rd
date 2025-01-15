@@ -18,6 +18,7 @@ heatmap.contrasts(
   cell.border.width = 0.5,
   title = NULL,
   show.protein.names = FALSE,
+  protein.names.pattern = NULL,
   use.uncorrected.pvalue = FALSE
 )
 }
@@ -47,6 +48,8 @@ heatmap.contrasts(
 \item{title}{String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).}
 
 \item{show.protein.names}{Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.}
+
+\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default" \code{NULL}, no alterations in the protein IDs.}
 
 \item{use.uncorrected.pvalue}{Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.}
 }

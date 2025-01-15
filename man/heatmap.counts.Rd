@@ -25,6 +25,7 @@ heatmap.counts(
   cell.border.color = NA,
   cell.border.width = 0.5,
   show.protein.names = FALSE,
+  protein.names.pattern = NULL,
   title = NULL,
   use.uncorrected.pvalue = FALSE
 )
@@ -40,7 +41,7 @@ heatmap.counts(
 
 \item{sample.subset}{Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).}
 
-\item{protein.subset}{Character vector indicating a subset of proteins to display. The identifiers must correspond to the row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).}
+\item{protein.subset}{Character vector indicating a subset of proteins to display. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).}
 
 \item{group.by.metadata.column}{String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{NULL} (no groups).}
 
@@ -69,6 +70,8 @@ heatmap.counts(
 \item{cell.border.width}{Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.}
 
 \item{show.protein.names}{Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.}
+
+\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default" \code{NULL}, no alterations in the protein IDs.}
 
 \item{title}{String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).}
 

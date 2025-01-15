@@ -16,7 +16,7 @@
   dendrogram.color = "black",
   dendrogram.linewidth = 0.5,
   display.values = TRUE,
-  values.color = "white",
+  values.color = NULL,
   values.decimals = 2,
   values.font.size = 2,
   values.transparency = 1,
@@ -46,7 +46,7 @@
 
 \item{display.values}{Logical value indicating whether the correlation coefficient should be displayed for each cell. Default: \code{TRUE}.}
 
-\item{values.color}{String indicating the color to use for the correlation coefficient labels. Default: \code{"white"}.}
+\item{values.color}{String indicating the color to use for the correlation coefficient labels. Default: \code{"NULL"}: colors will be assigned automatically depending on the background contrast, white for dark colors and black for light ones.}
 
 \item{values.decimals}{Numeric value indicating the number of decimals at which round the correlation coefficient labels. Default: \code{2}.}
 
