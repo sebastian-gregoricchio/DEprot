@@ -81,6 +81,7 @@
 <span>  cell.border.color <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  cell.border.width <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  show.protein.names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  protein.names.pattern <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  use.uncorrected.pvalue <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -111,7 +112,7 @@
 
 
 <dt id="arg-protein-subset">protein.subset<a class="anchor" aria-label="anchor" href="#arg-protein-subset"></a></dt>
-<dd><p>Character vector indicating a subset of proteins to display. The identifiers must correspond to the row.names of the counts table (equivalent to the <code>prot.id</code> column of the fold change table of <code>DEprot.analyses</code> object). This options is can be used in combination with <code>contrast</code> and <code>top.n</code>. Default: <code>NULL</code> (all proteins are shown).</p></dd>
+<dd><p>Character vector indicating a subset of proteins to display. The identifiers must correspond to the full row.names of the counts table (equivalent to the <code>prot.id</code> column of the fold change table of <code>DEprot.analyses</code> object). This options is can be used in combination with <code>contrast</code> and <code>top.n</code>. Default: <code>NULL</code> (all proteins are shown).</p></dd>
 
 
 <dt id="arg-group-by-metadata-column">group.by.metadata.column<a class="anchor" aria-label="anchor" href="#arg-group-by-metadata-column"></a></dt>
@@ -156,6 +157,10 @@
 
 <dt id="arg-show-protein-names">show.protein.names<a class="anchor" aria-label="anchor" href="#arg-show-protein-names"></a></dt>
 <dd><p>Logical value to indicate whether the protein names should be displayed. Default: <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-protein-names-pattern">protein.names.pattern<a class="anchor" aria-label="anchor" href="#arg-protein-names-pattern"></a></dt>
+<dd><p>Character indicating a regular expression to remove from the protein IDs. Default" <code>NULL</code>, no alterations in the protein IDs.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
