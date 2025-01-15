@@ -14,6 +14,7 @@
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
 #' @param symmetric.x Logical values indicating whether the x-axis scale should be symmetric or not. Default: \code{TRUE}.
 #' @param dot.labels String vector indicating labels to show on the plot that should correspond to \code{prot.id} column values. Default: \code{NULL} (no labels shown).
+#' @param protein.names.pattern Character indicating a regular expression to remove from the protein IDs. Default: \code{""}, no alterations in the protein IDs.
 #' @param labels.in.boxes Logical value indicating whether the labels should be visualized as boxes. Default: \code{FALSE}.
 #' @param label.font.size Numeric value indicating the size to use for the dot labels. Default: \code{2}.
 #' @param label.max.overlaps Numeric value indicating the maximum number of overlaps allowed between labels. Default: \code{100}.
@@ -36,6 +37,7 @@ plot.volcano =
            use.uncorrected.pvalue = FALSE,
            symmetric.x = TRUE,
            dot.labels = NULL,
+           protein.names.pattern = "",
            labels.in.boxes = FALSE,
            label.font.size = 2,
            label.max.overlaps = 100,
@@ -144,7 +146,7 @@ plot.volcano =
           volcano =
             volcano +
             ggrepel::geom_label_repel(data = filt.tb,
-                                      aes(label = prot.id),
+                                      aes(label = gsub(protein.names.pattern,"",prot.id)),
                                       color = "black",
                                       show.legend = F,
                                       min.segment.length = min.segment.length.labels,
@@ -154,7 +156,7 @@ plot.volcano =
           volcano =
             volcano +
             ggrepel::geom_text_repel(data = filt.tb,
-                                     aes(label = prot.id),
+                                     aes(label = gsub(protein.names.pattern,"",prot.id)),
                                      color = "black",
                                      show.legend = F,
                                      min.segment.length = min.segment.length.labels,
