@@ -17,9 +17,11 @@ check.pvalues(
 
 \item{contrast}{Number indicating the position of the contrast to use for the plotting. Default: \code{1}.}
 
-\item{histogram.binwidth}{Numeric value indicating   Default: \code{0.05}}
+\item{histogram.binwidth}{Numeric value indicating. Default: \code{0.05}}
 
-\item{p.value.color}{String indicating the color to use for the p-values adjusted. Default: \code{"indianred"}.}
+\item{p.value.color}{String indicating the color to use for the p-values. Default: \code{"steelblue"}.}
+
+\item{p.adjusted.color}{String indicating the color to use for the p-values adjusted. Default: \code{"indianred"}.}
 }
 \value{
 A DEprot.pvalues object containing 3 slots: distribution histogram of p-values and p-values adjusted and, line plot of ranked p-values.

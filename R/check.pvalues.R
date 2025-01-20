@@ -4,9 +4,9 @@
 #'
 #' @param DEprot.analyses.object An object of class \code{DEprot.analyses}.
 #' @param contrast Number indicating the position of the contrast to use for the plotting. Default: \code{1}.
-#' @param histogram.binwidth Numeric value indicating   Default: \code{0.05}
+#' @param histogram.binwidth Numeric value indicating. Default: \code{0.05}
 #' @param p.value.color String indicating the color to use for the p-values. Default: \code{"steelblue"}.
-#' @param p.value.color String indicating the color to use for the p-values adjusted. Default: \code{"indianred"}.
+#' @param p.adjusted.color String indicating the color to use for the p-values adjusted. Default: \code{"indianred"}.
 #'
 #' @return A DEprot.pvalues object containing 3 slots: distribution histogram of p-values and p-values adjusted and, line plot of ranked p-values.
 #'
