@@ -122,6 +122,17 @@ setClass(Class = "DEprot.enrichResult",
 
 
 
+#' @title DEprot.pvalues class
+#' @name DEprot.pvalues
+#' @exportClass DEprot.pvalues
+
+setClass(Class = "DEprot.pvalues",
+         slots = list(pvalue.distribution = "ANY",
+                      padjusted.distribution = "ANY",
+                      pvalue.rank = "ANY"))
+
+
+
 
 ################# METHODS ################# "DEprot.analyses"
 
@@ -275,4 +286,16 @@ setMethod(f = "show",
 setMethod(f = "show",
           signature = "DEprot.enrichResult",
           definition = function(object) {print(object@enrichment.discovery@result)})
+
+
+#' @title DEprot.pvalues show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.pvalues",
+          definition =
+            function(object) {
+              require(patchwork, quietly = T)
+              plot = (object@pvalue.distribution / object@padjusted.distribution) | object@pvalue.rank
+              print(plot)
+            })
 

@@ -4,7 +4,7 @@
 \alias{rename.samples}
 \title{rename.samples}
 \usage{
-\method{rename}{samples}(DEprot.object, metadata.column = "column.id")
+rename.samples(DEprot.object, metadata.column = "column.id")
 }
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot}.}
