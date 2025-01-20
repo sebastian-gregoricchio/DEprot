@@ -14,18 +14,18 @@ require(dplyr)
 citation("DEprot")
 
 ## ----read_metadata, eval=F----------------------------------------------------
-#  # Metadata
-#  data("sample.config", package = "DEprot")
-#  sample.config
+# # Metadata
+# data("sample.config", package = "DEprot")
+# sample.config
 
 ## ----print_metadata, echo=FALSE-----------------------------------------------
 data("sample.config", package = "DEprot")
 knitr::kable(sample.config, row.names = F, caption = "**Sample metadata table**")
 
 ## ----read_counts, eval=F------------------------------------------------------
-#  # log2(LFQ) values (not imputed)
-#  data("unimputed.counts", package = "DEprot")
-#  head(unimputed.counts[,1:6])
+# # log2(LFQ) values (not imputed)
+# data("unimputed.counts", package = "DEprot")
+# head(unimputed.counts[,1:6])
 
 ## ----print_counts, echo=FALSE-------------------------------------------------
 data("unimputed.counts", package = "DEprot")
@@ -70,10 +70,10 @@ head(dpo@raw.counts[,1:6])
 patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
 
 ## ----eval = F-----------------------------------------------------------------
-#  ## Adding batch column to the metadata table
-#  dpo@metadata$batch = rep(c("batch_1","batch_2"), each = 6)
-#  
-#  get.metadata(dpo)
+# ## Adding batch column to the metadata table
+# dpo@metadata$batch = rep(c("batch_1","batch_2"), each = 6)
+# 
+# get.metadata(dpo)
 
 ## ----echo=FALSE---------------------------------------------------------------
 new_meta = dpo@metadata
@@ -81,10 +81,10 @@ new_meta$batch = rep(c("batch_1","batch_2"), each = 6)
 new_meta
 
 ## ----eval = F-----------------------------------------------------------------
-#  ## batch correction
-#  dpo <- harmonize.batches(DEprot.object = dpo,
-#                           batch.column = "batch",
-#                           cores = 1)
+# ## batch correction
+# dpo <- harmonize.batches(DEprot.object = dpo,
+#                          batch.column = "batch",
+#                          cores = 1)
 
 ## ----randomize_data-----------------------------------------------------------
 dpo <- randomize.missing.values(DEprot.object = dpo,
@@ -92,28 +92,28 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
                                 tail.percentage = 5)
 
 ## ----imputation_example, eval = F---------------------------------------------
-#  ## Without parallelization
-#  dpo <- impute.counts(DEprot.object = dpo,
-#                       method = "missForest",
-#                       use.normalized.data = TRUE,
-#                       missForest.max.iterations = 100,
-#                       missForest.variable.wise.OOBerror = T)
-#  
-#  
-#  ## With parallelization
-#  dpo <- impute.counts(DEprot.object = dpo,
-#                       method = "missForest",
-#                       use.normalized.data = TRUE,
-#                       missForest.max.iterations = 100,
-#                       missForest.variable.wise.OOBerror = TRUE,
-#                       missForest.cores = 10,
-#                       missForest.parallel.mode = "variables")
-#  
-#  dpo
-#  
-#  head(dpo@imputation$OOBerror)
-#  
-#  data.frame(dpo@imputation[-3])
+# ## Without parallelization
+# dpo <- impute.counts(DEprot.object = dpo,
+#                      method = "missForest",
+#                      use.normalized.data = TRUE,
+#                      missForest.max.iterations = 100,
+#                      missForest.variable.wise.OOBerror = T)
+# 
+# 
+# ## With parallelization
+# dpo <- impute.counts(DEprot.object = dpo,
+#                      method = "missForest",
+#                      use.normalized.data = TRUE,
+#                      missForest.max.iterations = 100,
+#                      missForest.variable.wise.OOBerror = TRUE,
+#                      missForest.cores = 10,
+#                      missForest.parallel.mode = "variables")
+# 
+# dpo
+# 
+# head(dpo@imputation$OOBerror)
+# 
+# data.frame(dpo@imputation[-3])
 
 ## ----load_imputation, echo=FALSE----------------------------------------------
 dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/deprot/dpo.imputed.rds"))
@@ -246,52 +246,52 @@ corr.ERa.active <-
 corr.ERa.active
 
 ## ----compute_diff_exp_examples_limma, eval=F----------------------------------
-#  ## Unpaired test
-#  dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
-#                                      contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-#                                                           c("condition", "6h.10nM.E2", "FBS")),
-#                                      linear.FC.th = 2,
-#                                      padj.th = 0.05,
-#                                      padj.method = "BH",
-#                                      fitting.method = "ls",
-#                                      which.data = "imputed")
-#  
-#  ## Paired test
-#  dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
-#                                      contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-#                                                           c("condition", "6h.10nM.E2", "FBS")),
-#                                      replicate.column = "replicate",
-#                                      include.rep.model = TRUE,
-#                                      linear.FC.th = 2,
-#                                      padj.th = 0.05,
-#                                      padj.method = "BH",
-#                                      fitting.method = "ls",
-#                                      which.data = "imputed")
+# ## Unpaired test
+# dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
+#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                          c("condition", "6h.10nM.E2", "FBS")),
+#                                     linear.FC.th = 2,
+#                                     padj.th = 0.05,
+#                                     padj.method = "BH",
+#                                     fitting.method = "ls",
+#                                     which.data = "imputed")
+# 
+# ## Paired test
+# dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
+#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                          c("condition", "6h.10nM.E2", "FBS")),
+#                                     replicate.column = "replicate",
+#                                     include.rep.model = TRUE,
+#                                     linear.FC.th = 2,
+#                                     padj.th = 0.05,
+#                                     padj.method = "BH",
+#                                     fitting.method = "ls",
+#                                     which.data = "imputed")
 
 ## ----compute_diff_exp_examples_Ttest, eval=F----------------------------------
-#  ## Unpaired test
-#  dpo_analyses <- diff.analyses(DEprot.object = dpo,
-#                                contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-#                                                     c("condition", "6h.10nM.E2", "FBS")),
-#                                linear.FC.th = 2,
-#                                padj.th = 0.05,
-#                                padj.method = "bonferroni",
-#                                stat.test = "t.test",
-#                                which.data = "imputed")
-#  
-#  ## Paired test
-#  dpo_analyses <- diff.analyses(DEprot.object = dpo,
-#                                contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-#                                                     c("condition", "6h.10nM.E2", "FBS")),
-#                                replicate.column = "replicate",
-#                                paired.test = TRUE,
-#                                linear.FC.th = 2,
-#                                padj.th = 0.05,
-#                                padj.method = "bonferroni",
-#                                stat.test = "t.test",
-#                                which.data = "imputed")
-#  
-#  dpo_analyses
+# ## Unpaired test
+# dpo_analyses <- diff.analyses(DEprot.object = dpo,
+#                               contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                    c("condition", "6h.10nM.E2", "FBS")),
+#                               linear.FC.th = 2,
+#                               padj.th = 0.05,
+#                               padj.method = "BH",
+#                               stat.test = "t.test",
+#                               which.data = "imputed")
+# 
+# ## Paired test
+# dpo_analyses <- diff.analyses(DEprot.object = dpo,
+#                               contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                    c("condition", "6h.10nM.E2", "FBS")),
+#                               replicate.column = "replicate",
+#                               paired.test = TRUE,
+#                               linear.FC.th = 2,
+#                               padj.th = 0.05,
+#                               padj.method = "BH",
+#                               stat.test = "t.test",
+#                               which.data = "imputed")
+# 
+# dpo_analyses
 
 ## ----compute_diff_exp_paired, echo=FALSE--------------------------------------
 ## Paired test
@@ -302,29 +302,29 @@ dpo_analyses <- diff.analyses(DEprot.object = dpo,
                               paired.test = TRUE,
                               linear.FC.th = 2,
                               padj.th = 0.05,
-                              padj.method = "bonferroni",
+                              padj.method = "BH",
                               stat.test = "t.test",
                               which.data = "imputed")
 
 dpo_analyses
 
 ## ----analyses_summary, eval=F-------------------------------------------------
-#  diff.analyses_summary = summary(dpo)
+# diff.analyses_summary = summary(dpo)
 
 ## ----get_results, eval = F----------------------------------------------------
-#  ## Direct access
-#  results = dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results
-#  
-#  ## Function
-#  results = get.results(dpo_analyses, contrast = 1)
-#  
-#  head(results)
+# ## Direct access
+# results = dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results
+# 
+# ## Function
+# results = get.results(dpo_analyses, contrast = 1)
+# 
+# head(results)
 
 ## ----get_results2, echo=FALSE-------------------------------------------------
 knitr::kable(get.results(dpo_analyses, contrast = 1)[1:6,], row.names = F)
 
 ## ----DE_PCA_scatters, fig.width=8, eval=F-------------------------------------
-#  dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$PCA.plots
+# dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$PCA.plots
 
 ## ----DE_PCA_scatters_replotting, echo=FALSE, fig.width=8----------------------
 scatter_PC12 = plot.PC.scatter(dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$PCA.data, 1,2, color.column = "condition") + theme(legend.position = "none")
@@ -336,6 +336,13 @@ cowplot::plot_grid(scatters, cumulative, ncol = 1, axis = "tblr")
 
 ## ----DE_correlations, fig.width=10--------------------------------------------
 dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$correlations
+
+## ----check_pvalues, fig.width = 8, fig.height = 4-----------------------------
+pval.distribution <- check.pvalues(DEprot.analyses.object = dpo_analyses,
+                                   contrast = 2,
+                                   histogram.binwidth = 0.025)
+
+pval.distribution
 
 ## ----DE_volcano_MA, fig.width=9-----------------------------------------------
 volcano = plot.volcano(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
@@ -463,7 +470,7 @@ upset.plot <- plot.upset(DEprot.analyses.object = dpo_analyses,
 upset.plot  # or upset.plot@upset
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  upset.plot@obs.matrix
+# upset.plot@obs.matrix
 
 ## ----upset_tb, echo=FALSE-----------------------------------------------------
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
@@ -490,24 +497,24 @@ protein.counts.byCondition <-
 protein.counts.byCondition
 
 ## ----keep_nuclear_prot, eval = F----------------------------------------------
-#  nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
-#                                   keytype = "GOALL",
-#                                   keys = "GO:0005634", #nucleus
-#                                   columns = c("SYMBOL", "UNIPROT"))
-#  
-#  dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
-#                                          proteins = nucleus$SYMBOL,
-#                                          mode = "keep")
+# nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
+#                                  keytype = "GOALL",
+#                                  keys = "GO:0005634", #nucleus
+#                                  columns = c("SYMBOL", "UNIPROT"))
+# 
+# dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
+#                                         proteins = nucleus$SYMBOL,
+#                                         mode = "keep")
 
 ## ----remove_cytoplasmic_proteins, eval = F------------------------------------
-#  cytoplasm <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
-#                                     keytype = "GOALL",
-#                                     keys = "GO:0005737", #cytoplasm
-#                                     columns = c("SYMBOL", "UNIPROT"))
-#  
-#  dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
-#                                          proteins = cytoplasm$SYMBOL,
-#                                          mode = "remove")
+# cytoplasm <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
+#                                    keytype = "GOALL",
+#                                    keys = "GO:0005737", #cytoplasm
+#                                    columns = c("SYMBOL", "UNIPROT"))
+# 
+# dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
+#                                         proteins = cytoplasm$SYMBOL,
+#                                         mode = "remove")
 
 ## -----------------------------------------------------------------------------
 dpo_analyses_fc1.5 =
@@ -523,17 +530,17 @@ dpo_analyses_fc1.5 =
 summary(dpo_analyses_fc1.5)
 
 ## ----define_corum, eval = F---------------------------------------------------
-#  ## GeneSet Enrichment Analyses
-#  data("corum_v5.0", package = "DEprot")
-#  
-#  corum_geneSet =
-#    corum_v5.0 %>%
-#    dplyr::filter(organism == "Human") %>%
-#    dplyr::rename(gs_name = complex.name,
-#                  gene_symbol = protein.members) %>%
-#    dplyr::select(gs_name, gene_symbol)
-#  
-#  corum_geneSet
+# ## GeneSet Enrichment Analyses
+# data("corum_v5.0", package = "DEprot")
+# 
+# corum_geneSet =
+#   corum_v5.0 %>%
+#   dplyr::filter(organism == "Human") %>%
+#   dplyr::rename(gs_name = complex.name,
+#                 gene_symbol = protein.members) %>%
+#   dplyr::select(gs_name, gene_symbol)
+# 
+# corum_geneSet
 
 ## ----print_corum_geneset, echo=FALSE------------------------------------------
 data("corum_v5.0", package = "DEprot")
@@ -548,29 +555,29 @@ corum_geneSet =
 knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
 
 ## ----enrichment_analyses, eval = F--------------------------------------------
-#  ## GeneSet Enrichment Analyses (GSEA)
-#  GSEA.results =
-#    geneset.enrichment(DEprot.analyses.object = dpo_analyses,
-#                       contrast = 1,
-#                       TERM2GENE = corum_geneSet,
-#                       enrichment.type = "GSEA",
-#                       gsub.pattern.prot.id = "_HUMAN|;.*",
-#                       pvalueCutoff = 0.05,
-#                       pAdjustMethod = "BH",
-#                       dotplot.n = 10)
-#  
-#  
-#  
-#  ### OverRepresentation Analyses (ORA)
-#  ORA.results =
-#    geneset.enrichment(DEprot.analyses.object = dpo_analyses,
-#                       contrast = 1,
-#                       TERM2GENE = corum_geneSet,
-#                       enrichment.type = "GSEA",
-#                       gsub.pattern.prot.id = "_HUMAN|;.*",
-#                       pvalueCutoff = 0.05,
-#                       qvalueCutoff = 0.05,
-#                       pAdjustMethod = "BH",
-#                       diff.status.category = "6h.10nM.E2",
-#                       dotplot.n = 10)
+# ## GeneSet Enrichment Analyses (GSEA)
+# GSEA.results =
+#   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+#                      contrast = 1,
+#                      TERM2GENE = corum_geneSet,
+#                      enrichment.type = "GSEA",
+#                      gsub.pattern.prot.id = "_HUMAN|;.*",
+#                      pvalueCutoff = 0.05,
+#                      pAdjustMethod = "BH",
+#                      dotplot.n = 10)
+# 
+# 
+# 
+# ### OverRepresentation Analyses (ORA)
+# ORA.results =
+#   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+#                      contrast = 1,
+#                      TERM2GENE = corum_geneSet,
+#                      enrichment.type = "GSEA",
+#                      gsub.pattern.prot.id = "_HUMAN|;.*",
+#                      pvalueCutoff = 0.05,
+#                      qvalueCutoff = 0.05,
+#                      pAdjustMethod = "BH",
+#                      diff.status.category = "6h.10nM.E2",
+#                      dotplot.n = 10)
 

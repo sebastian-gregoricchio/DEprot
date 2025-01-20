@@ -621,7 +621,7 @@ dpo_analyses <- diff.analyses(DEprot.object = dpo,
                                                    c("condition", "6h.10nM.E2", "FBS")),
                               linear.FC.th = 2,
                               padj.th = 0.05,
-                              padj.method = "bonferroni",
+                              padj.method = "BH",
                               stat.test = "t.test",
                               which.data = "imputed")
 
@@ -633,7 +633,7 @@ dpo_analyses <- diff.analyses(DEprot.object = dpo,
                               paired.test = TRUE,
                               linear.FC.th = 2,
                               padj.th = 0.05,
-                              padj.method = "bonferroni",
+                              padj.method = "BH",
                               stat.test = "t.test",
                               which.data = "imputed")
 
@@ -649,7 +649,7 @@ dpo_analyses <- diff.analyses(DEprot.object = dpo,
                               paired.test = TRUE,
                               linear.FC.th = 2,
                               padj.th = 0.05,
-                              padj.method = "bonferroni",
+                              padj.method = "BH",
                               stat.test = "t.test",
                               which.data = "imputed")
 
@@ -731,6 +731,21 @@ dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$correlations
 <br>
 
 ### Visualize DE analyses
+#### P-values distributions
+Good practice is to visualize the distribution of the p-values and compare it with the adjusted ones in order to estimate the quality of the statistical tools used.<br>
+This can be performed using the `check.pvalues` function:
+```{r check_pvalues, fig.width = 8, fig.height = 4}
+pval.distribution <- check.pvalues(DEprot.analyses.object = dpo_analyses,
+                                   contrast = 2,
+                                   histogram.binwidth = 0.025)
+
+pval.distribution
+```
+
+
+
+<br>
+
 #### MA and volcano
 Differential expressed proteins can be visualized as either a volcano plot or an MA-plot.<br>
 Both these plots are available in the `dpo_analyses@analyses.result.list$contrast.id` list, but can also be generated using the functions `plot.volcano` and `plot.MA`.
