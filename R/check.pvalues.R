@@ -57,7 +57,7 @@ check.pvalues =
                      color = p.value.color,
                      fill = p.value.color,
                      alpha = 0.5) +
-      geom_hline(yintercept = mean(hist(data$p.value, breaks = 1/histogram.binwidth, plot = F)$counts, na.rm = T), linetype = 2, color = "gray30") +
+      geom_hline(yintercept = median(hist(data$p.value, breaks = 1/histogram.binwidth, plot = F)$counts, na.rm = T), linetype = 2, color = "gray30") +
       scale_x_continuous(expand = c(0.01,0)) +
       scale_y_continuous(expand = c(0,0)) +
       xlab("*P*-value") +
@@ -81,7 +81,7 @@ check.pvalues =
                      color = p.adjusted.color,
                      fill = p.adjusted.color,
                      alpha = 0.5) +
-      geom_hline(yintercept = mean(hist(data$padj, breaks = 1/histogram.binwidth, plot = F)$counts, na.rm = T), linetype = 2, color = "gray30") +
+      geom_hline(yintercept = median(hist(data$padj, breaks = 1/histogram.binwidth, plot = F)$counts, na.rm = T), linetype = 2, color = "gray30") +
       scale_x_continuous(expand = c(0.01,0)) +
       scale_y_continuous(expand = c(0,0)) +
       xlab("*P*~adjusted~") +
