@@ -45,7 +45,7 @@ heatmap.counts(
 
 \item{group.by.metadata.column}{String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{NULL} (no groups).}
 
-\item{scale}{String indicating whether Z-scores should be computed. Possible choices: "row" or "column". Default: \code{NULL} (no scaling),}
+\item{scale}{String indicating whether Z-scores should be computed. Possible choices: "row" or "column". Default: \code{NULL} (no scaling).}
 
 \item{clust.rows}{Logical value indicating whether heatmap rows (proteins) should be clustered. Default: \code{TRUE}.}
 

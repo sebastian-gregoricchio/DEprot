@@ -9,7 +9,7 @@
 #' @param sample.subset Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).
 #' @param protein.subset Character vector indicating a subset of proteins to display. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).
 #' @param group.by.metadata.column String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{NULL} (no groups).
-#' @param scale String indicating whether Z-scores should be computed. Possible choices: "row" or "column". Default: \code{NULL} (no scaling),
+#' @param scale String indicating whether Z-scores should be computed. Possible choices: "row" or "column". Default: \code{NULL} (no scaling).
 #' @param clust.rows Logical value indicating whether heatmap rows (proteins) should be clustered. Default: \code{TRUE}.
 #' @param clust.columns Logical value indicating whether heatmap columns (samples or groups) should be clustered. Default: \code{TRUE}.
 #' @param distance.method The distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Default: \code{"euclidean"}.

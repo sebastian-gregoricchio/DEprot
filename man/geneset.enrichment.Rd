@@ -9,6 +9,7 @@ geneset.enrichment(
   contrast,
   TERM2GENE,
   enrichment.type,
+  gsea.rank.method = "foldchange",
   diff.status.category = NULL,
   gsub.pattern.prot.id = NULL,
   pvalueCutoff = 0.05,
@@ -23,6 +24,8 @@ geneset.enrichment(
 \item{contrast}{Number indicating the position of the contrast to use for the plotting.}
 
 \item{enrichment.type}{String indicating the type of analyses to perform. One among: GSEA, ORA. No default.}
+
+\item{gsea.rank.method}{String indicating the type of gene ranking to use for GSEA analyses. Possible options: \code{"foldchange"} (log2FC value of the contrast), \code{"correlation"} (spearman's correlation coefficient of the imputed counts between the two groups in the contrast). Default: \code{"foldchange"}.}
 
 \item{diff.status.category}{String indicating a diff.status among the ones present in the results table of the specific contrast. Used only one 'ORA' is performed. Default: \code{NULL}.}
 

@@ -5,6 +5,7 @@
 #' @param DEprot.analyses.object An object of class \code{DEprot.analyses}.
 #' @param contrast Number indicating the position of the contrast to use for the plotting.
 #' @param enrichment.type String indicating the type of analyses to perform. One among: GSEA, ORA. No default.
+#' @param gsea.rank.method String indicating the type of gene ranking to use for GSEA analyses. Possible options: \code{"foldchange"} (log2FC value of the contrast), \code{"correlation"} (spearman's correlation coefficient of the imputed counts between the two groups in the contrast). Default: \code{"foldchange"}.
 #' @param diff.status.category String indicating a diff.status among the ones present in the results table of the specific contrast. Used only one 'ORA' is performed. Default: \code{NULL}.
 #' @param gsub.pattern.prot.id String indicating a pattern to be passed to gsub and to remove from the prot.id. Default: \code{NULL} (non changes in the IDs).
 #' @param pvalueCutoff Numeric value indicating the adjusted pvalue cutoff on enrichment tests to report. Default: \code{0.05}.
@@ -21,6 +22,7 @@ geneset.enrichment =
            contrast,
            TERM2GENE,
            enrichment.type,
+           gsea.rank.method = "foldchange",
            diff.status.category = NULL,
            gsub.pattern.prot.id = NULL,
            pvalueCutoff = 0.05,
@@ -234,13 +236,25 @@ geneset.enrichment =
 
     #####################################################################################
 
-    #### perform enrichments
+    #### rank genes
     if (toupper(enrichment.type) == "GSEA") {
-      gene_list = data[,5]
-      names(gene_list) = data$prot.id
-      gene_list = sort(gene_list, decreasing = T)
+      if (tolower(gsea.rank.method) %in% c("fold","fc","foldchange", "fold change")) {
+        gene_list = data[,5]
+        names(gene_list) = data$prot.id
+        gene_list = sort(gene_list, decreasing = T)
+      } else { ### correlation mode
+        ### extract tables by group
+        counts_var1 = DEprot.analyses.object@imputed.counts[,contrasts.info$group.1]
+        counts_var2 = DEprot.analyses.object@imputed.counts[,contrasts.info$group.2]
+        group_idx = c(rep(1, ncol(counts_var2)), rep(2, ncol(counts_var1)))
+
+        corr_scores = sapply(1:nrow(counts_var1), function(x){suppressWarnings(cor.test(x = group_idx, y = c(counts_var2[x,],counts_var1[x,]), method = "spearman"))$estimate}, USE.NAMES = F)
+        names(corr_scores) = rownames(counts_var1)
+        gene_list = sort(corr_scores, decreasing = T)
+        }
 
 
+      #### perform enrichments
       enrichment.discovery = tryCatch(clusterProfiler::GSEA(geneList = gene_list,
                                                             pvalueCutoff = pvalueCutoff,
                                                             pAdjustMethod = pAdjustMethod,
@@ -262,12 +276,13 @@ geneset.enrichment =
       dotplot_fold.enrichment = NULL
 
     } else {
-      enrichment.discovery = clusterProfiler::enricher(gene = dplyr::filter(.data = data,
-                                                                            diff.status == diff.status.category)$prot.id,
-                                                       pvalueCutoff = pvalueCutoff,
-                                                       qvalueCutoff = qvalueCutoff,
-                                                       pAdjustMethod = pAdjustMethod,
-                                                       TERM2GENE = TERM2GENE)
+      enrichment.discovery = tryCatch(clusterProfiler::enricher(gene = dplyr::filter(.data = data,
+                                                                                     diff.status == diff.status.category)$prot.id,
+                                                                pvalueCutoff = pvalueCutoff,
+                                                                qvalueCutoff = qvalueCutoff,
+                                                                pAdjustMethod = pAdjustMethod,
+                                                                TERM2GENE = TERM2GENE),
+                                      error = function(x)(return(NULL)))
 
       ## plot pathway networks
       pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
