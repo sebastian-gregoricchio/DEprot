@@ -65,6 +65,7 @@
 <span>  <span class="va">contrast</span>,</span>
 <span>  <span class="va">TERM2GENE</span>,</span>
 <span>  <span class="va">enrichment.type</span>,</span>
+<span>  gsea.rank.method <span class="op">=</span> <span class="st">"foldchange"</span>,</span>
 <span>  diff.status.category <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gsub.pattern.prot.id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
@@ -88,6 +89,10 @@
 
 <dt id="arg-enrichment-type">enrichment.type<a class="anchor" aria-label="anchor" href="#arg-enrichment-type"></a></dt>
 <dd><p>String indicating the type of analyses to perform. One among: GSEA, ORA. No default.</p></dd>
+
+
+<dt id="arg-gsea-rank-method">gsea.rank.method<a class="anchor" aria-label="anchor" href="#arg-gsea-rank-method"></a></dt>
+<dd><p>String indicating the type of gene ranking to use for GSEA analyses. Possible options: <code>"foldchange"</code> (log2FC value of the contrast), <code>"correlation"</code> (spearman's correlation coefficient of the imputed counts between the two groups in the contrast). Default: <code>"foldchange"</code>.</p></dd>
 
 
 <dt id="arg-diff-status-category">diff.status.category<a class="anchor" aria-label="anchor" href="#arg-diff-status-category"></a></dt>
@@ -131,7 +136,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
