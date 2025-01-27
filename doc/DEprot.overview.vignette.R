@@ -50,7 +50,7 @@ get.metadata(dpo)
 ## ----display_rename_samples---------------------------------------------------
 head(dpo@raw.counts[,1:6])
 
-## ----display_boxplot_raw, fig.width=5, fig.cap='<div style="text-align: justify"> <font size="-0.5"> **Violin/boxplot LFQ intensities of unnormalized data** <br> Boxplots display the quantiles of the LFQ intensities, while red and blue dahsed lines correspond to maximum and minimum LFQ value for each sample. </font> </div> <br>'----
+## ----display_boxplot_raw, fig.width=5-----------------------------------------
 dpo@boxplot.raw
 
 ## ----normalize----------------------------------------------------------------
@@ -350,6 +350,18 @@ MAplot = plot.MA(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
 
 patchwork::wrap_plots(volcano, MAplot)
 
+## ----contrast_scatter, fig.width=5, fig.height=5------------------------------
+contrast.scatter <-
+  contrast.scatter(DEprot.analyses.object = dpo_analyses,
+                   contrast.x = 1,
+                   contrast.y = 2,
+                   regression.line.color = "firebrick",
+                   correlation.method = "pearson",
+                   add.foldchange.threshold = TRUE,
+                   symmetric.axes = TRUE)
+
+contrast.scatter
+
 ## ----heatmap_counts, fig.width=13, fig.height=4.5-----------------------------
 ## Plotting from a DEprot object
 imputed_counts_heatmap <- 
@@ -496,6 +508,32 @@ protein.counts.byCondition <-
 
 protein.counts.byCondition
 
+## ----expression_boxplot, fig.width=7, fig.height=3.5--------------------------
+### raw expression
+protein.1733_raw <-
+  expression.boxplot(DEprot.object = dpo,
+                     protein.id = "protein.1733",
+                     which.data = "imputed",
+                     shape.column = "replicate",
+                     group.by.metadata.column = "condition",
+                     group.levels = c("6h.DMSO", "6h.10nM.E2", "FBS"),
+                     scale.expression = FALSE,
+                     x.label.angle = 90)
+
+
+### scaled expression
+protein.1733_scaled <-
+  expression.boxplot(DEprot.object = dpo,
+                     protein.id = "protein.1733",
+                     which.data = "imputed",
+                     shape.column = "replicate",
+                     group.by.metadata.column = "condition",
+                     group.levels = c("6h.DMSO", "6h.10nM.E2", "FBS"),
+                     scale.expression = TRUE,
+                     x.label.angle = 90)
+
+patchwork::wrap_plots(protein.1733_raw, protein.1733_scaled, nrow = 1)
+
 ## ----keep_nuclear_prot, eval = F----------------------------------------------
 # nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
 #                                  keytype = "GOALL",
@@ -554,21 +592,23 @@ corum_geneSet =
 
 knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
 
-## ----enrichment_analyses, eval = F--------------------------------------------
-# ## GeneSet Enrichment Analyses (GSEA)
+## ----compare_ranking, fig.width=10, fig.height=5------------------------------
+compare.ranking(DEprot.analyses.object = dpo_analyses,
+                contrast = 2)
+
+## ----GSEA, eval = F-----------------------------------------------------------
 # GSEA.results =
 #   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
 #                      contrast = 1,
 #                      TERM2GENE = corum_geneSet,
 #                      enrichment.type = "GSEA",
+#                      gsea.rank.method = "foldchange", # or correlation
 #                      gsub.pattern.prot.id = "_HUMAN|;.*",
 #                      pvalueCutoff = 0.05,
 #                      pAdjustMethod = "BH",
 #                      dotplot.n = 10)
-# 
-# 
-# 
-# ### OverRepresentation Analyses (ORA)
+
+## ----ORA, eval = F------------------------------------------------------------
 # ORA.results =
 #   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
 #                      contrast = 1,
