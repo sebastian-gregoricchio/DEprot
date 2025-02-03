@@ -9,8 +9,8 @@ License: GNU GENERAL PUBLIC LICENSE version 3
 Depends:
 	R (>= 4.0.3)
 Imports:
-	BiocManager, colorspace, ComplexUpset, cowplot, data.table, doParallel, dplyr, doRNG, farver, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, knitr, laeken, limma, matrixStats, MBQN, patchwork, pcaMethods, pheatmap, plyr, pryr, prettydoc, S4Vectors, statmod, stringr, tidyr, purrr, randomForest, rmarkdown, methods, missForest, reshape2, R.utils, devtools, patchwork, progress, VIM, viridis
-Suggests: HarmonizR
+	BiocManager, colorspace, ComplexUpset, curl, data.table, devtools, doParallel, dplyr, doRNG, farver, ggplot2 (>= 3.3.3), ggdendro, ggh4x, ggtext, ggrepel, ggpubr, laeken, limma, matrixStats, MBQN, methods, missForest, nortest, patchwork, pcaMethods, pheatmap, plyr, progress, pryr, purrr, randomForest, reshape2, R.utils, rvcheck, S4Vectors, statmod, stringr, tidyr, VIM, viridis
+Suggests: HarmonizR, rmarkdown, knitr, prettydoc
 biocViews:
 Encoding: UTF-8
 LazyData: true
