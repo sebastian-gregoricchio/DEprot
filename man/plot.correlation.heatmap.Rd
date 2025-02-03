@@ -38,6 +38,8 @@
 
 \item{correlation.scale.limits}{Two-elements vector to indicate lower and higher limits, respectively, to apply to the correlation coefficient color scale. Default: \code{c(0,1)}.}
 
+\item{exclude.diagonal}{Logical value indicating whether the plot diagonal (y = x) should be omitted. Default: \code{FALSE}.}
+
 \item{dendrogram.position}{String indicating the position of the dendrogram. One among: "top", "bottom", "left", "right". Default: \code{"left"}.}
 
 \item{dendrogram.color}{String indicating the color of the dendrogram lines. Default: \code{"black"}.}

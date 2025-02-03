@@ -7,7 +7,7 @@
 perform.PCA(DEprot.object, sample.subset = NULL, which.data = "imputed")
 }
 \arguments{
-\item{DEprot.object}{An object of class \code{DEprot}.}
+\item{DEprot.object}{An object of class \code{DEprot} or \code{DEprot.analyses}.}
 
 \item{sample.subset}{String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).}
 
