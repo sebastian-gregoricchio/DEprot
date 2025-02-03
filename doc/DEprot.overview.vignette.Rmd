@@ -314,13 +314,14 @@ Here we provide the possibility to use 4 different methods for the imputation th
 <br>
 
 Of note, there are cases in which the missing data are not due to the random but rather consequent to real biological effects (i.e., knock-down, knock-out, degron systems and PROTACs, etc.). This may lead to the issue that a protein completely missing in all the replicates of an individual condition will be imputed with relatively high numbers. This would ultimately lead to the incorrect definition of the differential status of this protein.
-To overcome this possibility, it is possible to use the function `randomize.missing.values` to assign - only to completely missing proteins in a certain condition - random values from the bottom distribution of the full dataset. It will be sufficient to indicate the ID of a column belonging to the metadata which indicates the groups/conditions and the percentage of distribution from which select random numbers ("tail.percentage").
+To overcome this possibility, it is possible to use the function `randomize.missing.values` to assign random values from the bottom distribution of the full dataset. The user can define a percentage threshold of minimal missing values within the group; for instance if the threshold is 75% and in each group there are 4 samples, it means that only proteins with at least 3 out of 4 missing values will be imputed. It will be sufficient to indicate the ID of a column belonging to the metadata which indicates the groups/conditions and the percentage of distribution from which select random numbers ("tail.percentage").
 </div>
 
 ```{r randomize_data}
 dpo <- randomize.missing.values(DEprot.object = dpo,
                                 group.column = "combined.id",
-                                tail.percentage = 5)
+                                percentage.missing = 100, # completely missing
+                                tail.percentage = 3)
 ```
 
 >Using the `"column.id"` as *group.column* is equivalent to impute all the data with this method.
@@ -595,8 +596,38 @@ If `diff.analyses.limma` is used instead, the correlation between replicates wil
 
 </div>
 
+<br>
 
-**LIMMA mode**
+## Differential analyses algorithms
+### `limma` mode
+#### Verify normality of the data
+<div style="text-align: justify">
+The main assumption to run `limma` is that the data are normally distributed. For this reason is good practice verify that the data are normally distributed for each sample. This can be accomplished using the function `check.normality`. It will return a S4 vector composed by:
+
+* `norm.statement`: logical value indicating whether all the samples are normally distributed (TRUE) or not (FALSE);
+* `norm.AD.tests`: list of Anderson-Darling normality test outputs (statistics, p-value, etc;
+* `qqplots`: a list of Q-Q plots (ggplot objects) showing the "correlation" between the distribution of your data and the theoretical normal distribution
+* `densities`: a list of density curves (ggplot objects) depicted the distribution of your data and the overlay with the theoretical normal distribution.
+
+> When a sample is not normally distributed (p-value of the AD normality test < p.threshold) the plot will be red instead of black/blue. Furthermore, a message will tell if all samples are normally distributed; and if not, which ones are not normally distributed.
+
+</div>
+
+```{r normality_test, message=T, fig.width=10, fig.height=10}
+normality <- check.normality(DEprot.object = dpo,
+                             p.threshold = 0.05,
+                             which.data = "imputed",
+                             verbose = T)
+```
+
+```{r normality_test_plots}
+## example of Q-Q and density plots
+patchwork::wrap_plots(normality@qqplots[[1]], normality@densities[[1]])
+```
+
+<br>
+
+#### Run analyses with `limma`
 ```{r compute_diff_exp_examples_limma, eval=F}
 ## Unpaired test
 dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
@@ -624,7 +655,9 @@ dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
 
 <br>
 
-**Multiple t-test mode** *(next paragraphs use these results, in paired mode)*
+### Multiple t-test mode 
+> Next paragraphs use these results, in paired mode
+
 ```{r compute_diff_exp_examples_Ttest, eval=F}
 ## Unpaired test
 dpo_analyses <- diff.analyses(DEprot.object = dpo,

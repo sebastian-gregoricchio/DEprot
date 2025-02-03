@@ -89,7 +89,8 @@ new_meta
 ## ----randomize_data-----------------------------------------------------------
 dpo <- randomize.missing.values(DEprot.object = dpo,
                                 group.column = "combined.id",
-                                tail.percentage = 5)
+                                percentage.missing = 100, # completely missing
+                                tail.percentage = 3)
 
 ## ----imputation_example, eval = F---------------------------------------------
 # ## Without parallelization
@@ -244,6 +245,16 @@ corr.ERa.active <-
                            display.values = TRUE)
 
 corr.ERa.active
+
+## ----normality_test, message=T, fig.width=10, fig.height=10-------------------
+normality <- check.normality(DEprot.object = dpo,
+                             p.threshold = 0.05,
+                             which.data = "imputed",
+                             verbose = T)
+
+## ----normality_test_plots-----------------------------------------------------
+## example of Q-Q and density plots
+patchwork::wrap_plots(normality@qqplots[[1]], normality@densities[[1]])
 
 ## ----compute_diff_exp_examples_limma, eval=F----------------------------------
 # ## Unpaired test
