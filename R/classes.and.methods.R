@@ -134,6 +134,18 @@ setClass(Class = "DEprot.pvalues",
 
 
 
+#' @title DEprot.normality class
+#' @name DEprot.normality
+#' @exportClass DEprot.normality
+
+setClass(Class = "DEprot.normality",
+         slots = list(norm.statement = "ANY",
+                      norm.AD.tests = "ANY",
+                      qqplots = "ANY",
+                      densities = "ANY"))
+
+
+
 ################# METHODS ################# "DEprot.analyses"
 
 #' @title DEprot show-method
@@ -297,5 +309,22 @@ setMethod(f = "show",
               require(patchwork, quietly = T)
               plot = (object@pvalue.distribution / object@padjusted.distribution) | object@pvalue.rank
               print(plot)
+            })
+
+
+#' @title DEprot.normality show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.normality",
+          definition =
+            function(object) {
+              if (object@norm.statement == T) {
+                message("All samples display a normal distribution.")
+
+              } else {
+                normality = sapply(X = object@norm.AD.tests, FUN = function(x){x$p.value < p.threshold}, USE.NAMES = T)
+                message(paste0("The following samples do not display a normal distribution: ",
+                               paste0(names(normality)[isFALSE(normality)], collapse = ", "), "."))
+              }
             })
 

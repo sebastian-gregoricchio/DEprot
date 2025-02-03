@@ -2,7 +2,7 @@
 #'
 #' @description This function performs principal component analyses (PCA).
 #'
-#' @param DEprot.object An object of class \code{DEprot}.
+#' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param sample.subset String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
 #'

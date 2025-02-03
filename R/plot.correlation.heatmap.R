@@ -8,6 +8,7 @@
 #' @param sample.subset Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param correlation.scale.limits Two-elements vector to indicate lower and higher limits, respectively, to apply to the correlation coefficient color scale. Default: \code{c(0,1)}.
+#' @param exclude.diagonal Logical value indicating whether the plot diagonal (y = x) should be omitted. Default: \code{FALSE}.
 #' @param dendrogram.position String indicating the position of the dendrogram. One among: "top", "bottom", "left", "right". Default: \code{"left"}.
 #' @param dendrogram.color String indicating the color of the dendrogram lines. Default: \code{"black"}.
 #' @param dendrogram.linewidth Numeric value indicating the line.width of the dendrogram. Default: \code{"black"}.
