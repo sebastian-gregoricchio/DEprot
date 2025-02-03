@@ -60,7 +60,14 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">randomize.missing.values</span><span class="op">(</span><span class="va">DEprot.object</span>, <span class="va">group.column</span>, tail.percentage <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">randomize.missing.values</span><span class="op">(</span></span>
+<span>  <span class="va">DEprot.object</span>,</span>
+<span>  <span class="va">group.column</span>,</span>
+<span>  percentage.missing <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  tail.percentage <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  seed <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">floor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">1</span>, min <span class="op">=</span> <span class="fl">0</span>, max <span class="op">=</span> <span class="fl">50000</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">T</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -75,13 +82,25 @@
 <dd><p>String indicating a column for the metadata table which indicates the IDs of the conditions within which the missing values should be tested.</p></dd>
 
 
+<dt id="arg-percentage-missing">percentage.missing<a class="anchor" aria-label="anchor" href="#arg-percentage-missing"></a></dt>
+<dd><p>Numeric value between 0 and 100 (included) indicated the minimal percentage of missing values per group required to apply the imputation. For instance, if <code>percentage.missing = 75</code> and the sample group contains 4 samples, imputation will be applied when at least 3 out of 4 values are missing. Default: <code>100</code> (all values are missing in the group).</p></dd>
+
+
 <dt id="arg-tail-percentage">tail.percentage<a class="anchor" aria-label="anchor" href="#arg-tail-percentage"></a></dt>
-<dd><p>Numeric value between 0 and 100 (excluded) indicating the threshold percentage of the distribution from which random values should be sampled. Default: <code>5</code> (percent).</p></dd>
+<dd><p>Numeric value between 0 and 100 (excluded) indicating the threshold percentage of the distribution from which random values should be sampled. Default: <code>3</code> (percent).</p></dd>
+
+
+<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
+<dd><p>Numeric value value indicating the random seed used for the imputation. By default a random integer between 0 and 50000 is selected (if <code>verbose = TRUE</code> a message is printed indicating the seed used).</p></dd>
+
+
+<dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
+<dd><p>Logical value to define whether the message indicating which random seed was used should be printed. Default: <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>DEprot</code> object in which the completely missing values have been substituted in the normalized counts table.</p>
+    <p>A <code>DEprot</code> object in which values for proteins which display a number of NAs above a user-defined threshold have been substituted in the normalized counts table with bottom-distribution random values.</p>
     </div>
 
   </div>
@@ -96,7 +115,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
       </footer></div>
