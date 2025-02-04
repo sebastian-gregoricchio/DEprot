@@ -98,7 +98,7 @@ randomize.missing.values =
       ## assign random values to this subset (if a protein has completely missing values)
       if (length(prot.missing) > 0) {
         n.missing.values = length(counts.subset[prot.missing,][is.na(counts.subset[prot.missing,])])
-        counts.subset[prot.missing,][is.na(counts.subset[prot.missing,])] = sample(x = random.pool, size = n.missing.values)
+        counts.subset[prot.missing,][is.na(counts.subset[prot.missing,])] = sample(x = random.pool, size = n.missing.values, replace = T)
       }
 
       list.counts[[i]] = counts.subset
