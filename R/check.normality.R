@@ -72,7 +72,7 @@ check.normality =
 
     for (i in 1:ncol(mat)) {
       AD.test[[i]] = nortest::ad.test(mat[,i])
-      pval.label = paste0(gsub("e-","\u00D710<sup>-", as.character(AD.test[[i]]$p.value)),"</sup>")
+      pval.label = paste0(gsub("e-","\u00D710<sup>-", as.character(formatC(AD.test[[i]]$p.value, format = "e", digits = 2))),"</sup>")
 
       ### Q-Q plots
       qqplot[[i]] =
