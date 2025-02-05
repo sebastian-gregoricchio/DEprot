@@ -150,7 +150,7 @@ plot.counts =
                   no = paste0(ifelse(log.base == exp(1),
                                      yes = "ln", no = paste0("log<sub>",log.base,"</sub>")),
                               "(Intensity)"))) +
-      ggtitle(title) +
+      ggtitle(title, subtitle = subtitle) +
       xlab("Sample") +
       theme_classic() +
       theme(axis.text.y = element_text(color = "black"),
