@@ -70,7 +70,8 @@ harmonize.batches =
     ### Harmonize batches
     batch.corrected.counts = HarmonizR::harmonizR(data_as_input = data.frame(DEprot.object@raw.counts, check.names = F),
                                                   description_as_input = des,
-                                                  cores = cores)
+                                                  cores = cores,
+                                                  output_file = FALSE)
 
     ### Reset original order of the columns
     batch.corrected.counts = batch.corrected.counts[,colnames(data.frame(DEprot.object@raw.counts, check.names = F))]
