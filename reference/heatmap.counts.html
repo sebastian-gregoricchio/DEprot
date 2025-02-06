@@ -78,6 +78,7 @@
 <span>  low.color <span class="op">=</span> <span class="st">"#2166AC"</span>,</span>
 <span>  mid.color <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  na.color <span class="op">=</span> <span class="st">"gray"</span>,</span>
+<span>  color.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
 <span>  cell.border.color <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  cell.border.width <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  show.protein.names <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -145,6 +146,10 @@
 
 <dt id="arg-na-color">na.color<a class="anchor" aria-label="anchor" href="#arg-na-color"></a></dt>
 <dd><p>String indicating the color to use for the NA values in the heatmap. Default: <code>"gray"</code>.</p></dd>
+
+
+<dt id="arg-color-limits">color.limits<a class="anchor" aria-label="anchor" href="#arg-color-limits"></a></dt>
+<dd><p>Numeric vector of length 2 indicating lower and upper limit of the color scale values. Default: <code>c(NA,NA)</code>, automatic limits applied.</p></dd>
 
 
 <dt id="arg-cell-border-color">cell.border.color<a class="anchor" aria-label="anchor" href="#arg-cell-border-color"></a></dt>
