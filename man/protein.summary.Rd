@@ -7,7 +7,7 @@
 protein.summary(
   DEprot.object,
   group.column = "column.id",
-  n.lables = NULL,
+  n.labels = NULL,
   label.color = "white",
   x.label.angle = 30,
   show.frequency = FALSE,
@@ -21,7 +21,7 @@ protein.summary(
 
 \item{group.column}{String indicating a column among the ones in the metadata table. Default: \code{"column.id"} (no groups).}
 
-\item{n.lables}{String indicating the type of values to display on the barplot. One among: \code{NULL} (no labels), "frequency", "percentage", "counts". Default: \code{NULL} (no labels).}
+\item{n.labels}{String indicating the type of values to display on the barplot. One among: \code{NULL} (no labels), "frequency", "percentage", "counts". Default: \code{NULL} (no labels).}
 
 \item{label.color}{String indicating the font-color to use for the barplot values labels. Default: \code{"white"}.}
 
