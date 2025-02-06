@@ -22,6 +22,7 @@ heatmap.counts(
   low.color = "#2166AC",
   mid.color = "white",
   na.color = "gray",
+  color.limits = c(NA, NA),
   cell.border.color = NA,
   cell.border.width = 0.5,
   show.protein.names = FALSE,
@@ -64,6 +65,8 @@ heatmap.counts(
 \item{mid.color}{String indicating the color to use for the 0 Z-score value for scaled data. Default: \code{"white"}.}
 
 \item{na.color}{String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.}
+
+\item{color.limits}{Numeric vector of length 2 indicating lower and upper limit of the color scale values. Default: \code{c(NA,NA)}, automatic limits applied.}
 
 \item{cell.border.color}{String indicating the color to use for the individual cells border. Default: \code{NA} (no border).}
 
