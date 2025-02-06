@@ -27,6 +27,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<style>
+body {
+text-align: justify}
+</style>
+
+
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
                       warning = F, message = F, fig.align = "center",
@@ -263,7 +269,7 @@ Proteomics is highly susceptible to batch effects. Hereafter we use the package 
 </div>
 
 
-> `HarmonizR` is not a required dependency, therefore if this fucntion is used and `HarmonizR` is not already installed, a warning will indicate the requred installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
+> `HarmonizR` is not a required dependency, therefore if this function is used and `HarmonizR` is not already installed, a warning will indicate the requred installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
 
 
 <div style="text-align: justify">
@@ -737,6 +743,17 @@ If the function `diff.analyses.limma` was used, an additional slot called `limma
 
 <br>
 
+<div style="text-align: justify">
+The full object can be automatically exported - including tables, PCA, correlations, volcano and MA-plots, etc. - using the built-in function `export.analyses`:
+</div>
+
+```{r export_analyses, eval = F}
+export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
+```
+
+
+<br>
+
 ### DE table
 <div style="text-align: justify">
 The table with the results of the differential analyses can be retrieved directly from the list in the `DEprot.analyses` object (`dpo_analyses@analyses.result.list$contrast.id$results`) or using the `get.results` function.
@@ -1201,7 +1218,7 @@ summary(dpo_analyses_fc1.5)
 <div style="text-align: justify">
 Enrichment analyses can be performed on a full contrast of a `DEprot.analyses` object (GSEA) or on the subset of proteins that belong to a specific category of `diff.status` in the results table of the given contrast (ORA).
 
-For this analyses a geneSet table will be required as "reference". The latter must be a data.frame with two columns: "gs_name" (geneSet name) and "gene_symbol" (corresponding to the protein id).
+For these analyses a geneSet table will be required as "reference". The latter must be a data.frame with two columns: "gs_name" (geneSet name) and "gene_symbol" (corresponding to the protein id).<br>
 In `DEprot` we provide a ready-to-use list of protein complexes obtained by the [CORUM](https://mips.helmholtz-muenchen.de/corum/) database.
 
 > Notice that the "gene_symbol" values must match the "prot.id" in the result tables. To this goal, the `geneset.enrichment` function contains the parameter `gsub.pattern.prot.id` that will be used to remove a pattern from the "prot.id"s.
@@ -1278,7 +1295,7 @@ ORA.results =
   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
                      contrast = 1,
                      TERM2GENE = corum_geneSet,
-                     enrichment.type = "GSEA",
+                     enrichment.type = "ORA",
                      gsub.pattern.prot.id = "_HUMAN|;.*",
                      pvalueCutoff = 0.05,
                      qvalueCutoff = 0.05,

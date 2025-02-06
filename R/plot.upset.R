@@ -44,7 +44,8 @@ plot.upset =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      warning("The input must be an object of class 'DEprot.analyses'.")
+      return()
     }
 
 

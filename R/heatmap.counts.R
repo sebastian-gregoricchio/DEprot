@@ -19,6 +19,7 @@
 #' @param low.color String indicating the color to use for negative Z-score for scaled data. Default: \code{"#2166AC"} (blue).
 #' @param mid.color String indicating the color to use for the 0 Z-score value for scaled data. Default: \code{"white"}.
 #' @param na.color String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.
+#' @param color.limits Numeric vector of length 2 indicating lower and upper limit of the color scale values. Default: \code{c(NA,NA)}, automatic limits applied.
 #' @param cell.border.color String indicating the color to use for the individual cells border. Default: \code{NA} (no border).
 #' @param cell.border.width Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.
 #' @param show.protein.names Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.
@@ -48,6 +49,7 @@ heatmap.counts =
            low.color = "#2166AC",
            mid.color = "white",
            na.color = "gray",
+           color.limits = c(NA,NA),
            cell.border.color = NA,
            cell.border.width = 0.5,
            show.protein.names = FALSE,
@@ -373,10 +375,11 @@ heatmap.counts =
                                mid = mid.color,
                                high = high.color,
                                midpoint = 0,
-                               na.value = na.color)
+                               na.value = na.color,
+                               limits = color.limits)
       }
     } else {
-      heatmap = heatmap + scale_fill_gradientn(name = scale.legend.title, colors = palette, na.value = na.color)
+      heatmap = heatmap + scale_fill_gradientn(name = scale.legend.title, colors = palette, na.value = na.color, limits = color.limits)
     }
 
 

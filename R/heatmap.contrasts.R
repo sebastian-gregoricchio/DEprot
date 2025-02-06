@@ -11,6 +11,7 @@
 #' @param low.color String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: \code{"#2166AC"} (blue).
 #' @param mid.color String indicating the color to use for the 0 in the plots. Default: \code{"white"}.
 #' @param na.color String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.
+#' @param color.limits Numeric vector of length 2 indicating lower and upper limit of the color scale values. Default: \code{c(NA,NA)}, automatic limits applied.
 #' @param cell.border.color String indicating the color to use for the individual cells border. Default: \code{NA} (no border).
 #' @param cell.border.width Numeric value indicating the width of the cell border line. Ignored when \code{cell.border.color = NA}. Default: \code{0.5}.
 #' @param title String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).
@@ -32,6 +33,7 @@ heatmap.contrasts =
            low.color = "#2166AC",
            mid.color = "white",
            na.color = "gray",
+           color.limits = c(NA,NA),
            cell.border.color = NA,
            cell.border.width = 0.5,
            title = NULL,
@@ -164,7 +166,8 @@ heatmap.contrasts =
                            mid = mid.color,
                            high = high.color,
                            midpoint = 0,
-                           na.value = na.color) +
+                           na.value = na.color,
+                           limits = color.limits) +
       ggtitle(title) +
       theme_classic() +
       theme(axis.line = element_blank(),
