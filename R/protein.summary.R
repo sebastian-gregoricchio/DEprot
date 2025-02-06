@@ -4,7 +4,7 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param group.column String indicating a column among the ones in the metadata table. Default: \code{"column.id"} (no groups).
-#' @param n.lables String indicating the type of values to display on the barplot. One among: \code{NULL} (no labels), "frequency", "percentage", "counts". Default: \code{NULL} (no labels).
+#' @param n.labels String indicating the type of values to display on the barplot. One among: \code{NULL} (no labels), "frequency", "percentage", "counts". Default: \code{NULL} (no labels).
 #' @param label.color String indicating the font-color to use for the barplot values labels. Default: \code{"white"}.
 #' @param x.label.angle Numeric value indicating the rotation angle to use for the x-axis labels. Default: \code{30} (degrees).
 #' @param show.frequency Logical value indicating whether the barplot should show the y-axis as frequency or as absolute counts. Default: \code{FALSE} (counts).
@@ -19,7 +19,7 @@
 protein.summary =
   function(DEprot.object,
            group.column = "column.id",
-           n.lables = NULL, # frequency, percentage, counts
+           n.labels = NULL, # frequency, percentage, counts
            label.color = "white",
            x.label.angle = 30,
            show.frequency = FALSE,
@@ -159,15 +159,15 @@ protein.summary =
 
 
     ### Add labels with numbers
-    if (!is.null(n.lables)) {
-      if (tolower(n.lables) %in% c("freq", "frequency", "frequence", "fraction", "frac")) {
+    if (!is.null(n.labels)) {
+      if (tolower(n.labels) %in% c("freq", "frequency", "frequence", "fraction", "frac")) {
         barplot =
           barplot +
           geom_text(aes(label = round(fraction, digits = 2)),
                     color = label.color,
                     show.legend = F,
                     position = position_stack(vjust = 0.5))
-      } else if (tolower(n.lables) %in% c("percentage", "perc", "%")) {
+      } else if (tolower(n.labels) %in% c("percentage", "perc", "%")) {
         barplot =
           barplot +
           geom_text(aes(label = round(percentage, digits = 1)),
