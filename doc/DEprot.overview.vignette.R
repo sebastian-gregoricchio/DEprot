@@ -322,6 +322,9 @@ dpo_analyses
 ## ----analyses_summary, eval=F-------------------------------------------------
 # diff.analyses_summary = summary(dpo)
 
+## ----export_analyses, eval = F------------------------------------------------
+# export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
+
 ## ----get_results, eval = F----------------------------------------------------
 # ## Direct access
 # results = dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results
@@ -624,7 +627,7 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 #   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
 #                      contrast = 1,
 #                      TERM2GENE = corum_geneSet,
-#                      enrichment.type = "GSEA",
+#                      enrichment.type = "ORA",
 #                      gsub.pattern.prot.id = "_HUMAN|;.*",
 #                      pvalueCutoff = 0.05,
 #                      qvalueCutoff = 0.05,
