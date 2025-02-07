@@ -294,6 +294,12 @@ heatmap.counts =
       dplyr::mutate(prot.id = rownames(final.mat)) %>%
       reshape2::melt(value.name = "score", id.vars = "prot.id", variable.name = "sample")
 
+
+    if (!is.null(protein.subset)) {
+      plotting.matrix = dplyr::mutate(.data = plotting.matrix, prot.id = factor(prot.id, levels = rev(unique(protein.subset))))
+    }
+
+
     ### remove protein pattern if required
     if (!is.null(protein.names.pattern)) {
       if ("character" %in% class(protein.names.pattern)) {
