@@ -93,7 +93,7 @@ randomize.missing.values =
       n.NA.per.row = rowSums(is.na(counts.subset))
 
       # identify proteins for which imputation is required (# missing prot >= percentage.missing)
-      prot.missing = names(n.NA.per.row)[n.NA.per.row >= ((percentage.missing/100) * n.samples)]
+      prot.missing = names(n.NA.per.row)[n.NA.per.row >= floor((percentage.missing/100) * n.samples)]
 
       ## assign random values to this subset (if a protein has completely missing values)
       if (length(prot.missing) > 0) {
