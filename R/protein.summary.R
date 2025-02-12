@@ -4,6 +4,7 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param group.column String indicating a column among the ones in the metadata table. Default: \code{"column.id"} (no groups).
+#' @param sample.subset String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). If subset is applied, the proteins with all NAs will be removed (total number of protains will be alterated). Default: \code{NULL} (no subsetting).
 #' @param n.labels String indicating the type of values to display on the barplot. One among: \code{NULL} (no labels), "frequency", "percentage", "counts". Default: \code{NULL} (no labels).
 #' @param label.color String indicating the font-color to use for the barplot values labels. Default: \code{"white"}.
 #' @param x.label.angle Numeric value indicating the rotation angle to use for the x-axis labels. Default: \code{30} (degrees).
@@ -19,6 +20,7 @@
 protein.summary =
   function(DEprot.object,
            group.column = "column.id",
+           sample.subset = NULL,
            n.labels = NULL, # frequency, percentage, counts
            label.color = "white",
            x.label.angle = 30,
@@ -53,6 +55,7 @@ protein.summary =
     }
 
 
+
     ### check group column
     if (!(group.column %in% colnames(DEprot.object@metadata))) {
       warning(paste0("The group column '", group.column, "' is not present in the metadata table.\n",
@@ -61,6 +64,19 @@ protein.summary =
     } else {
       meta = DEprot.object@metadata
     }
+
+
+
+    ### subset table
+    if (!is.null(sample.subset)) {
+      mat = mat[,which(colnames(mat) %in% sample.subset)]
+      meta = dplyr::filter(DEprot.object@metadata, column.id %in% sample.subset)
+    }
+
+
+    ### Remove completely missing rows (after filtering can be different than original)
+    mat = mat[rowSums(mat,na.rm = T)>0, ]
+
 
 
     ### Convert NaN to NA
@@ -138,7 +154,9 @@ protein.summary =
 
     barplot =
       barplot +
-      ylab(ifelse(test = show.frequency == T, yes = "Protein frequency", no = "Protein count")) +
+      ylab(ifelse(test = show.frequency == T,
+                  yes = paste0("Protein frequency\n(# total proteins: ",nrow(mat),")"),
+                  no = paste0("Protein count\n(# total proteins: ",nrow(mat),")"))) +
       xlab(NULL) +
       ggtitle(label = title, subtitle = subtitle) +
       scale_y_continuous(expand = c(0,0)) +
