@@ -48,7 +48,7 @@ plot.PC.cumulative =
       xlab("Principal Component (PC)") +
       ggtitle(title) +
       theme_classic() +
-      scale_y_continuous(expand = c(0,0)) +
+      scale_y_continuous(expand = c(0,0), limits = c(0,1)) +
       theme(axis.ticks.x = element_blank(),
             axis.text = element_text(color = "black"),
             axis.line.x = element_blank(),

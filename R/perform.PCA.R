@@ -18,6 +18,7 @@ perform.PCA =
     ### Libraries
     require(dplyr)
     require(ggplot2)
+    # require(pcaMethods)
 
 
     ### check object
@@ -82,24 +83,54 @@ perform.PCA =
 
 
     ### Compute PCA
-    pc = prcomp(mat, center = TRUE, scale. = TRUE)
-    pc.summary = summary(pc)
+    # -----------------------------
+    # for imputed data
+    if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
+      pc = prcomp(mat, center = TRUE, scale. = TRUE)
+      pc.summary = summary(pc)
 
 
-    ### Combine PCA with metadata
-    combo.tb = dplyr::left_join(dplyr::mutate(data.frame(pc.summary$rotation),
-                                              column.id = rownames(data.frame(pc.summary$rotation))),
-                                PCA.meta,
-                                by = "column.id")
+      ### Combine PCA with metadata
+      combo.tb = dplyr::left_join(dplyr::mutate(data.frame(pc.summary$rotation),
+                                                column.id = rownames(data.frame(pc.summary$rotation))),
+                                  PCA.meta,
+                                  by = "column.id")
 
 
+      ### Create importance tb
+      importance.tb =
+        data.frame(t(pc.summary$importance)) %>%
+        dplyr::mutate(PC = factor(gsub("PC", "", rownames(t(pc.summary$importance))),
+                                  levels = gsub("PC", "", rownames(t(pc.summary$importance)))),
+                      Percentage.of.Variance = Proportion.of.Variance*100)
+
+      # ---------------------------
+      # If raw/normalized data, it will contain NA/NaN, so we need to use a different method
+    } else {
+      mat[is.nan(mat)] = NA
+      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = 10000, center = T, scale. = T)
+
+
+      ### Combine PCA with metadata
+      combo.tb = dplyr::left_join(dplyr::mutate(data.frame(pc@scores),
+                                                column.id = rownames(data.frame(pc@scores))),
+                                  PCA.meta,
+                                  by = "column.id")
+
+      ### Create importance tb
+      importance.tb =
+        data.frame(Standard.deviation = pc@sDev,
+                   Proportion.of.Variance = pc@R2,
+                   Cumulative.Proportion = pc@R2cum,
+                   PC = factor(gsub("PC", "", colnames(data.frame(pc@scores))),
+                               levels = gsub("PC", "", colnames(data.frame(pc@scores)))),
+                   Percentage.of.Variance = pc@R2 * 100)
+    }
+
+
+
+    ##################### PLOTS ##########################
     ### Plot cumulative plot
-    importance.tb =
-      data.frame(t(pc.summary$importance)) %>%
-      dplyr::mutate(PC = factor(gsub("PC", "", rownames(t(pc.summary$importance))),
-                                levels = gsub("PC", "", rownames(t(pc.summary$importance)))),
-                    Percentage.of.Variance = Proportion.of.Variance*100)
-
     cumulative_plot =
       ggplot(data = importance.tb,
              aes(x = PC)) +
