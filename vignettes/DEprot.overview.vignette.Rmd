@@ -54,10 +54,7 @@ require(dplyr)
 ----------------------------------------------------------
 
 # **Introduction** {#intro}
-<div style="text-align: justify">
 The concept behind the *DEprot* (*D*ifferential *E*xpression *prot*eomics) is to provide a toolkit that allows for the normalization, imputation and analyses of the differential protein expression in proteomics data. The data are assumed to be LFQ (label-free quantitation) values.
-
-</div>
 
 <br>
 
@@ -88,13 +85,9 @@ citation("DEprot")
 <br>
 
 ## General workflow
-
-<div style="text-align: justify">
 Data can be loaded as raw values, pre-normalized unimputed LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ uimputed tables and load this data as "raw" in order to perform a batch harmonization.
 
 Using normalized and imputed data, `DEprot` will help you in the differential analyses as well in performing quality controls on your data (sample correlation, principal components analyses (PCA)).
-
-</div>
 
 <br>
 
@@ -105,7 +98,6 @@ Using normalized and imputed data, `DEprot` will help you in the differential an
 ---------------------------------------------------
 
 # **Loading the data** {#loadingdata}
-<div style="text-align: justify">
 The package starting point is the building of a `DEprot` object. This class of objects is specific to this package and requires at least two elements:
 
 * *counts table*: this must be a matrix in which the column names represent the samples while the row names identify the proteins. The values in the matrix are assumed to be LFQ (label-free quantification) values, either in linear or log-transformed format.
@@ -114,14 +106,12 @@ The package starting point is the building of a `DEprot` object. This class of o
 
 In the next paragraph we will refer to a dataset (pre-loaded in `DEprot`), in which a breast cancer (BCa) cell line was cultured in either hormone-deprived media or in full media (FBS). If cultured in hormone-deprived condition, it was then treated for 6 hrs with either $\beta$-estradiol (E2) or vehicle (DMSO). 4 biological replicates have been analyzed. Hence, the datasets consists of 1 cell lines x 3 conditions x 4 replicates, for a total of 12 sample.\n
 Proteins and samples have been "anonymized".
-</div>
 
 <br>
 
+
 ## Collect pre-loaded data {#preloadeddata}
-<div style="text-align: justify">
 The counts represent LFQ values in the log2 format and are not-imputed.
-</div>
 
 ```{r read_metadata, eval=F}
 # Metadata
@@ -148,7 +138,6 @@ knitr::kable(data.frame(head(unimputed.counts[,1:6])), row.names = T, caption = 
 <br>
 
 ## Build `DEprot` object {#deprotobject}
-<div style="text-align: justify">
 Now we will combine the the counts and metadata to create a `DEprot` object (hereafter defined as *dpo*).<br></br>
 Notice that another import information is whether the data are log transformed, and if yes, which is the log base. Recommended transformation is the *log~2~(score + 1)*.
 
@@ -156,7 +145,6 @@ If data are pre-normalized and/or pre-imputed, it can be indicated with the corr
 If this is not the case, leave the parameters as `NA` (not `NULL`!).
 
 Ultimately, if the metadata table does not contain a `column.id` column corresponding to the row names of the `counts_table`, it is possible to indicate the name of another column that should be assumed as to be the `column.id`.
-</div>
 
 ```{r make_dpo}
 dpo <- load.counts(counts = unimputed.counts,
@@ -172,7 +160,6 @@ dpo
 <br>
 
 
-<div style="text-align: justify">
 This object is an S4-vector of class `DEprot`. The S4-vectors are containers of slots that can be accessed using the symbol `@` (e.g., `object@slot.id`.<br></br>The structure of an object of class `DEprot` (and `DEprot.analyses`) is the following:
 </div>
 
@@ -197,10 +184,8 @@ This object is an S4-vector of class `DEprot`. The S4-vectors are containers of 
 <br>
 
 ## Rename sample columns {#rename}
-<div style="text-align: justify">
 As in our example, sometimes the columns of the counts are not the actual ID of the samples, but rather an identifier. However, it is possible to rename the counts column names indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br></br>
 Notice that the renaming will applied to all counts table available.
-</div>
 
 ```{r rename_samples}
 dpo <- rename.samples(DEprot.object = dpo,
@@ -219,20 +204,16 @@ head(dpo@raw.counts[,1:6])
 ----------------------------------
 
 # **Data normalization** {#normalization}
-<div style="text-align: justify">
 When a `DEprot` object is loaded, automatically a box/violin plot showing the distribution of the LFQ values per samples is generated.<br></br>
 This representation is useful to estimate whether the data are normalized or not. Boxplots display the quantiles of the LFQ intensities, while red and blue dashed lines correspond to maximum and minimum LFQ value for each sample.
-</div>
 
 ```{r display_boxplot_raw, fig.width=5}
 dpo@boxplot.raw
 ```
 
 
-<div style="text-align: justify">
-In this package we apply the Modified Balanced Quantile Normalization (MBQN) from the [`MBQN`](https://www.bioconductor.org/packages/release/bioc/html/MBQN.html) package and developed by [E.Brombacher *et al.* (*Proteomics*, 2020)](https://doi.org/10.1002/pmic.202000068). The modification balances the median (or mean) intensity of features (rows) which are rank invariant (RI) or nearly rank invariant (NRI) across samples (columns) before quantile normalization. This prevents an over-correction of the intensity profiles of RI and NRI features by classical quantile normalization and therefore supports the reduction of systematics in downstream analyses.
-</div>
 
+In this package we apply the Modified Balanced Quantile Normalization (MBQN) from the [`MBQN`](https://www.bioconductor.org/packages/release/bioc/html/MBQN.html) package and developed by [E.Brombacher *et al.* (*Proteomics*, 2020)](https://doi.org/10.1002/pmic.202000068). The modification balances the median (or mean) intensity of features (rows) which are rank invariant (RI) or nearly rank invariant (NRI) across samples (columns) before quantile normalization. This prevents an over-correction of the intensity profiles of RI and NRI features by classical quantile normalization and therefore supports the reduction of systematics in downstream analyses.
 
 ```{r normalize}
 dpo <- normalize.counts(DEprot.object = dpo,
@@ -252,9 +233,8 @@ head(dpo@raw.counts[,1:6])
 
 <br>
 
-<div style="text-align: justify">
+
 Also in this case a box/violin plot with the corresponding normalized LFQ values per each sample is generated and stored in a vector slot.
-</div>
 
 ```{r plot_norm, fig.width=8}
 patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
@@ -264,18 +244,13 @@ patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
 
 
 ## Batch effect correction
-<div style="text-align: justify">
 Proteomics is highly susceptible to batch effects. Hereafter we use the package [`HarmonizR`](https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html) package, developed by [H.Voß & S.Schlumbohm (*Nat.Commun.*, 2022)](https://doi.org/10.1038/s41467-022-31007-x). This tool besides handling multiple experiments, allows for the batch correction of data derived by the combination of both DIA (Data-Independent Acquisition) and DDA (Data-Dependent Acquisition).
-</div>
-
 
 > `HarmonizR` is not a required dependency, therefore if this function is used and `HarmonizR` is not already installed, a warning will indicate the requred installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
 
 
-<div style="text-align: justify">
 To use the `harmonize.batches` is sufficient to provide a `DEprot` object containing a combined table of multiple experiments and indicate the identifier of a column in the metadata table which corresponds to the batch annotation. The result is a DEprot object with the same structure described in the previous paragraph. <br>
 Here, for simplicity, we will add manually a column to the metadata table with "dummy" batches.
-</div>
 
 <br>
 
@@ -307,7 +282,6 @@ dpo <- harmonize.batches(DEprot.object = dpo,
 -----------------------------------------
 
 # **Data imputation** {#imputation}
-<div style="text-align: justify">
 Often many `NA`/`NaN` values are present in the LFQ tables due to the technical limitations of the protein detection by Mass Spectrometry (MS) experiments.
 
 Here we provide the possibility to use 4 different methods for the imputation the data:
@@ -321,7 +295,7 @@ Here we provide the possibility to use 4 different methods for the imputation th
 
 Of note, there are cases in which the missing data are not due to the random but rather consequent to real biological effects (i.e., knock-down, knock-out, degron systems and PROTACs, etc.). This may lead to the issue that a protein completely missing in all the replicates of an individual condition will be imputed with relatively high numbers. This would ultimately lead to the incorrect definition of the differential status of this protein.
 To overcome this possibility, it is possible to use the function `randomize.missing.values` to assign random values from the bottom distribution of the full dataset. The user can define a percentage threshold of minimal missing values within the group; for instance if the threshold is 75% and in each group there are 4 samples, it means that only proteins with at least 3 out of 4 missing values will be imputed. It will be sufficient to indicate the ID of a column belonging to the metadata which indicates the groups/conditions and the percentage of distribution from which select random numbers ("tail.percentage").
-</div>
+
 
 ```{r randomize_data}
 dpo <- randomize.missing.values(DEprot.object = dpo,
@@ -375,9 +349,8 @@ knitr::kable(data.frame(dpo@imputation[-3]), row.names = F)
 
 <br>
 
-<div style="text-align: justify">
+
 Also in this case a box/violin plot with the corresponding imputed LFQ values per each sample is generated and stored in a vector slot.
-</div>
 
 ```{r plot_imputed, fig.width=9, fig.align='center'}
 patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, dpo@boxplot.imputed, nrow = 1)
@@ -389,12 +362,10 @@ patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, dpo@boxplot.imputed, nr
 
 # **Sample similarities** {#pcacorrelation}
 ## Principal Component Analyses (PCA) {#pca}
-<div style="text-align: justify">
 PCA can be performed in order to perform a dimensional reduction and determine which factor explains the variability of the samples.<br></br>
 `DEprot` includes function dedicated to this aim and specifically build to work with `DEprot` objects.
 
 Notice that, even if the data are not log-transformed, `perform.PCA` will do it before performing the analyses.
-</div>
 
 ### Compute PCs
 ```{r make_PCA, fig.width=8}
@@ -403,9 +374,8 @@ PCA <- perform.PCA(DEprot.object = dpo,
                    which.data = "imputed") # possible: raw, normalized, imputed
 ```
 
-<div style="text-align: justify">
+
 The `DEprot.PCA` object contains the following slots:
-</div>
 
 | Slot                 | Description                                                                                             |
 | -------------------: | :------------------------------------------------------------------------------------------------------ |
@@ -457,9 +427,9 @@ patchwork::wrap_plots(PC_1.2, PC_2.3, nrow = 1)
 
 <br>
 
-<div style="text-align: justify">
+
 Alternatively, the combination of PC1.2 and PC2.3 can be automatically generated using the function `plot.PC.scatter.123`:
-</div>
+
 ```{r}
 plot.PC.scatter.123(DEprot.PCA.object = PCA,
                     color.column = "condition",
@@ -477,10 +447,8 @@ plot.PC.scatter.123(DEprot.PCA.object = PCA,
 
 
 ### Analyze PCs on a sample subset
-<div style="text-align: justify">
 These analyses can also be performed for a subset of samples by indicated the sample names of interest.<br></br>
 In the example below we will use only the sample in which the estrogen receptor is active (E2 and FBS conditions).
-</div>
 
 ```{r make_PCA_subset, fig.width=8}
 ## Perform the analyses (DEprot.PCA object)
@@ -529,11 +497,8 @@ patchwork::wrap_plots(PC.fbs.e2_1.2, PC.fbs.e2_2.3, nrow = 1)
 
 
 ## Correlations {#correlataion}
-<div style="text-align: justify">
 Another method to define the sample clustering/groups, is the overall correlation between the samples.<br></br>
 Hierarchical clustering is performed using the `1 - correlation` values, since the hierarchical clustering algorithm is based on dissimilarities while the correlations are an index of similarity.
-</div>
-
 
 ```{r make_correlation_all, fig.width=9}
 corr.all.samples <-
@@ -548,9 +513,7 @@ corr.all.samples
 ```
 
 
-<div style="text-align: justify">
 Also in this case the sample correlation can be computed for a subset of samples as shown before for the [PCAs](#pca).
-</div>
 
 ```{r make_correlation_subset}
 corr.ERa.active <-
@@ -570,9 +533,7 @@ corr.ERa.active
 
 
 
-<div style="text-align: justify">
 The `DEprot.correlation` correlation object contains the following slots:
-</div>
 
 | Slot               | Description                                                                                             |
 | -----------------: | :------------------------------------------------------------------------------------------------------ |
@@ -590,7 +551,6 @@ The `DEprot.correlation` correlation object contains the following slots:
 -----------------------------------------
 
 # **Differential Expression (DE) analyses** {#diffexp}
-<div style="text-align: justify">
 Differential expression analyses between two conditions can be performed employing two different methods using the functions `diff.analyses` and `diff.analyses.limma`. With the first (`diff.analyses`) the conditions will be compared two-by-two (individual t-/Wilcox tests), while with the second (`diff.analyses.limma`) the `limma` package is used to fit the data on a linear model.
 
 In both cases, it is sufficient to provide a list of 3-elements vectors. The latter, should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
@@ -600,14 +560,12 @@ If `diff.analyses.limma` is used instead, the correlation between replicates wil
 
 > In the following example we will compare *6h.10nM.E2* vs *6h.DMSO*, and *6h.10nM.E2* vs *FBS*. Both paired and unpaired examples are shown, but further analyses are based on the paired results only (multi t-test mode).
 
-</div>
 
 <br>
 
 ## Differential analyses algorithms
 ### `limma` mode
 #### Verify normality of the data
-<div style="text-align: justify">
 The main assumption to run `limma` is that the data are normally distributed. For this reason is good practice verify that the data are normally distributed for each sample. This can be accomplished using the function `check.normality`. It will return a S4 vector composed by:
 
 * `norm.statement`: logical value indicating whether all the samples are normally distributed (TRUE) or not (FALSE);
@@ -616,8 +574,6 @@ The main assumption to run `limma` is that the data are normally distributed. Fo
 * `densities`: a list of density curves (ggplot objects) depicted the distribution of your data and the overlay with the theoretical normal distribution.
 
 > When a sample is not normally distributed (p-value of the AD normality test < p.threshold) the plot will be red instead of black/blue. Furthermore, a message will tell if all samples are normally distributed; and if not, which ones are not normally distributed.
-
-</div>
 
 ```{r normality_test, message=T, fig.width=10, fig.height=10}
 normality <- check.normality(DEprot.object = dpo,
@@ -716,7 +672,6 @@ diff.analyses_summary = summary(dpo)
 
 
 ## DE results
-<div style="text-align: justify">
 The output will be a `DEprot.analyses` object. This class is similar to the base `DEprot` one, however 3 slots are now available:
 
 * *contrasts*: corresponds to the list used to define the contrasts, but includes also the IDs of the counts matrix belonging to each subgroup and whether the statistical test was performed in *paired* mode.
@@ -725,7 +680,6 @@ The output will be a `DEprot.analyses` object. This class is similar to the base
 
 The `analyses.result.list`, for each contrast, stores a list with the following elements:
 
-</div>
 
 | Element        | Description                                                                                                        |
 | -------------: | :----------------------------------------------------------------------------------------------------------------- |
@@ -737,15 +691,12 @@ The `analyses.result.list`, for each contrast, stores a list with the following 
 | *volcano*      | volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using `plot.volcano` |
 | *MA.plot*      | MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using `plot.MA` |
 
-<div style="text-align: justify">
+
 If the function `diff.analyses.limma` was used, an additional slot called `limma.fit` will be available and will contain the results of `limma::contrasts.fit`.
-</div>
 
 <br>
 
-<div style="text-align: justify">
 The full object can be automatically exported - including tables, PCA, correlations, volcano and MA-plots, etc. - using the built-in function `export.analyses`:
-</div>
 
 ```{r export_analyses, eval = F}
 export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
@@ -755,9 +706,7 @@ export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export
 <br>
 
 ### DE table
-<div style="text-align: justify">
 The table with the results of the differential analyses can be retrieved directly from the list in the `DEprot.analyses` object (`dpo_analyses@analyses.result.list$contrast.id$results`) or using the `get.results` function.
-</div>
 
 ```{r get_results, eval = F}
 ## Direct access
@@ -776,9 +725,7 @@ knitr::kable(get.results(dpo_analyses, contrast = 1)[1:6,], row.names = F)
 <br>
 
 ### PCA and correlation within the comparison
-<div style="text-align: justify">
 The `DEprot.analyses` object includes PCA and correlation analyses of the samples involved in the contrast.
-</div>
 
 ```{r DE_PCA_scatters, fig.width=8, eval=F}
 dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$PCA.plots
@@ -802,10 +749,8 @@ dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$correlations
 
 ### Visualize DE analyses
 #### P-values distributions
-<div style="text-align: justify">
 Good practice is to visualize the distribution of the p-values and compare it with the adjusted ones in order to estimate the quality of the statistical tools used. In the histograms, the horizontal dashed line indicates the median of the frequency, while the vertical dotted line demarcates the P-value threshold used for the differential analyses.<br></br>
 This can be performed using the `check.pvalues` function:
-</div>
 
 ```{r check_pvalues, fig.width = 8, fig.height = 4}
 pval.distribution <- check.pvalues(DEprot.analyses.object = dpo_analyses,
@@ -820,10 +765,8 @@ pval.distribution
 <br>
 
 #### MA and volcano
-<div style="text-align: justify">
 Differential expressed proteins can be visualized as either a volcano plot or an MA-plot.<br></br>
 Both these plots are available in the `dpo_analyses@analyses.result.list$contrast.id` list, but can also be generated using the functions `plot.volcano` and `plot.MA`.
-</div>
 
 > Of note, if `use.uncorrected.pvalue = TRUE`, the normal p-value will be used instead of the p.adjusted. In this case the FoldChange and p-value thresholds are collected from the `DEprot.analyses` object and reapplied to compute the new differential status of the proteins.
 
@@ -839,9 +782,7 @@ patchwork::wrap_plots(volcano, MAplot)
 <br>
 
 #### Correlation between contrasts
-<div style="text-align: justify">
 Using the function `contrast.scatter` it is possible to visualize the log~2~(Fold Change) correlation between two contrasts of a differential expression analyses object.
-</div>
 
 ```{r contrast_scatter, fig.width=5, fig.height=5}
 contrast.scatter <-
@@ -861,24 +802,18 @@ contrast.scatter
 
 
 #### Heatmaps
-<div style="text-align: justify">
 To plot results heatmaps there are two functions available:
 
 - `heatmap.counts`: allows for the plotting of raw, normalized or imputed counts.
 - `heatmap.contrasts`: allows for the plotting of log~2~(FoldChange) values.
 
-</div>
-
 <br>
 
 ##### Counts
-<div style="text-align: justify">
 With the `heatmap.counts` function it is possible to generate an heatmap for the raw/normalized/imputed counts. It is possible to select only specific proteins and/or subset samples (from `column.id` column in metadata table). If the object provided is a `DEprot.analyses` object, it is also possible to indicate to plot only differential proteins (or top.n differential proteins) from a specific contrast. <br></br>
 The protein ranking definition is based on the differential score, computed as: `abs(log2(fold change)) * -log10(Padj)`.
 
 The resulting object is of class `DEprot.counts.heatmap`, and contains the ggplot-heatmap, the row cluster and the column cluster.
-
-</div>
 
 ```{r heatmap_counts, fig.width=13, fig.height=4.5}
 ## Plotting from a DEprot object
@@ -916,12 +851,10 @@ patchwork::wrap_plots(imputed_counts_heatmap@heatmap,
 
 <br>
 
-<div style="text-align: justify">
-Instead of "pure" counts, it is possibile to compute Z-scores of the values and plot a divergent heatmap.<br></br>
+Instead of "pure" counts, it is possible to compute Z-scores of the values and plot a divergent heatmap.<br></br>
 In this case instead of a palette, it will be required to indicate the color for the positive, negative and 0 values.
 
 We will apply this to the `imputed_counts_heatmap_diffProteins` heatmap from the previous example.
-</div>
 
 ```{r heatmap_counts_zscores, fig.width=10, fig.height=4.5}
 ## Z-score by row
@@ -967,11 +900,9 @@ patchwork::wrap_plots(imputed_counts_heatmap_diffProteins_rowScaled@heatmap,
 
 <br>
 
-<div style="text-align: justify">
 Ultimately, With this function is also possible to group data based on the values of a metadata's column. In this way it is possible to average the values by the values of the defined column (e.g., the replicates of a condition).
 
 In the next example we will average the replicates of each condition using the `combined.id` column form the metadata of the `dpo_analyses` object.
-</div>
 
 ```{r heatmap_counts_groups, fig.width = 4, fig.height = 6}
 imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition <- 
@@ -996,10 +927,8 @@ imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition@heatmap
 
 
 ##### Fold changes
-<div style="text-align: justify">
 Instead of counts, it is possible to plot the fold changes of one or multiple contrasts using the function `heatmap.contrasts`. Only differential proteins are shown.<br></br>
 Also in this case it is possible to show only the top *N* differential proteins. However the top *N* of each contrast will be shown. This means than *N* proteins might be shown.
-</div>
 
 ```{r heatmap_foldchanges, fig.width = 4, fig.height = 6}
 FC_heatmap <-
@@ -1023,9 +952,7 @@ FC_heatmap@heatmap
 
 
 #### Upset-plot
-<div style="text-align: justify">
 To identify which differential proteins are common among multiple comparisons, it is possible to generate an upset plot using the function `plot.upset`. With this function all the intersections between all the contrasts including in the provided object can be visualized by co-occurrence. It is also possible to subset only specific contrasts indicating a numeric vector in the flag `sort.intersections`.
-</div>
 
 ```{r upset_plot, message=F, warning=F}
 upset.plot <- plot.upset(DEprot.analyses.object = dpo_analyses,
@@ -1045,9 +972,7 @@ upset.plot  # or upset.plot@upset
 
 <br>
 
-<div style="text-align: justify">
 Besides the plot, also a `TRUE`/`FALSE` table is returned. The latter shows for each condition if a protein has been found to be differential. Only proteins that are differential in at least one condition are shown.
-</div>
 
 ```{r, eval=FALSE}
 upset.plot@obs.matrix
@@ -1063,18 +988,14 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 
 # **Other tools**
 ## Count detected proteins
-<div style="text-align: justify">
 In order to know how many proteins have been detected in each sample, it is possible to use the function `protein.summary`. A stacked bar plot will be generated per each sample. The input object must belong to either `DEprot` or `DEprot.analyses` classes.
 
 > **NOTE**: this plot is meaningfult only on raw and/or unimputed normalized data. Indeed, estimation of missing values is not possibile on the imputed tables.
 
-</div>
-
-
 ```{r protein_summary, fig.height=3, fig.width=10}
 protein.counts <-
   protein.summary(DEprot.object = dpo_analyses,
-                  n.lables = "counts",
+                  n.labels = "counts",
                   show.frequency = F,
                   colors = c("gray", "steelblue4"),
                   title = "**# Proteins identified in each sample**")
@@ -1084,15 +1005,13 @@ protein.counts
 
 <br>
 
-<div style="text-align: justify">
 Another possibility is to study the protein co-detection by sample groups. A group can be defined using any column of the metadata table. In the output stacked bar plot, each color will show how many proteins in how many samples within a group were detected.
-</div>
 
 ```{r protein_summary_by_condition, fig.width=4, fig.height=3}
 protein.counts.byCondition <- 
   protein.summary(DEprot.object = dpo_analyses,
                   group.column = "condition",
-                  n.lables = "percentage",
+                  n.labels = "percentage",
                   show.frequency = T,
                   x.label.angle = 0,
                   title = "**# Proteins identified per _Condition_**")
@@ -1103,10 +1022,8 @@ protein.counts.byCondition
 <br>
 
 ## Individual protein expression
-<div style="text-align: justify">
 Using the function `expression.boxplot` is possible to generate boxplots of the expression of individual proteins.<br></br>
 The expression can be grouped by a column of the metadata using the `group.by.metadata.column` parameter. Furthermore it is possible to scale the values using Z-scores (parameter `scale.expression = TRUE`).
-</div>
 
 ```{r expression_boxplot, fig.width=7, fig.height=3.5}
 ### raw expression
@@ -1139,7 +1056,6 @@ patchwork::wrap_plots(protein.1733_raw, protein.1733_scaled, nrow = 1)
 <br>
 
 ## Filter proteins
-<div style="text-align: justify">
 For certain analyses it might be necessary to filter-out/keep only certain specific protein (e.g., keep only nuclear proteins).<br></br>
 With the function `filter.proteins` is possible to indicate a vector containing the protein IDs (it must correspond to the row.names of the counts table) and chose whether to `"keep"` or `"remove"` these proteins.
 
@@ -1147,18 +1063,13 @@ This function works for both `DEprot` and `DEprot.analyses` classes. The output 
 
 > **NOTE**: we discourage the filtering before normalization/bacth correction and imputation, as well as before limma-base differential analyses. In all these methods are based on the assumption that the proteins 'available' are 'all' the proteins available, which is not the case.
 
-</div>
-
 <br>
 
 
 ### Filtering examples
-<div style="text-align: justify">
 Hereafter are shown two examples for keeping nuclear proteins or removing cytoplasmic proteins.
 
 >Notice that this is only an example and, since the protein IDs are randomized, it would not applicable for the example dataset availble with `DEprot`. Furthermore `DEprot` does not include the packages `AnnotationDbi` and `org.Hs.eg.db`, which can be installed throug the `Bioconductor` portal.
-
-</div>
 
 <br>
 
@@ -1193,9 +1104,7 @@ dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
 
 
 ## Re-apply thresholds to `DEprot.analyses` object
-<div style="text-align: justify">
 In certain cases, when several contrasts are defined, the differential analysis computation can be time consuming. On the other hand, one might want to change the thresholds used to define the differential status of the proteins. To avoid the re-computation of the differentials from the beginning, the function `reapply.thresholds` can be used to re-compute the differential status, re-plot volcanos and MA-plots, and the n.diff summary table.
-</div>
 
 ```{r}
 dpo_analyses_fc1.5 =
@@ -1215,7 +1124,6 @@ summary(dpo_analyses_fc1.5)
 <br>
 
 ## GSEA and OverRepresentation Analyses (ORA) {#enrichments}
-<div style="text-align: justify">
 Enrichment analyses can be performed on a full contrast of a `DEprot.analyses` object (GSEA) or on the subset of proteins that belong to a specific category of `diff.status` in the results table of the given contrast (ORA).
 
 For these analyses a geneSet table will be required as "reference". The latter must be a data.frame with two columns: "gs_name" (geneSet name) and "gene_symbol" (corresponding to the protein id).<br>
@@ -1227,7 +1135,6 @@ In `DEprot` we provide a ready-to-use list of protein complexes obtained by the 
 
 In the following example we will show how to create a geneSet table from the CORUM data and use it for GSEA and ORA analyses.
 
-</div>
 
 ### Define geneSet
 ```{r define_corum, eval = F}
@@ -1261,9 +1168,8 @@ knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein com
 
 ### Perform enrichment analyses
 #### Compare ranking methods for GSEA
-<div style="text-align: justify">
 For GSEA analyses the genes in the differential table of the provided contrast can be ranked either by using the log~2~(Fold Change) [default] or the Spearman's correlation of the imputed counts between the two groups. Depending on the sample size, this two methods can lead to different ranking. To compare the two methods it is possible to plot the correlation of the two ranks and scores using `compare.ranking`:
-</div>
+
 
 ```{r compare_ranking, fig.width=10, fig.height=5}
 compare.ranking(DEprot.analyses.object = dpo_analyses,
@@ -1308,7 +1214,6 @@ ORA.results =
 <br>
 
 #### Enrichment output
-<div style="text-align: justify">
 The output is an object of class `DEprot.enrichResult`:
 
 * *enrichment.discovery*: the direct output from `clusterProfiler::GSEA/enricher` (GSEA and ORA, respectively);
@@ -1318,41 +1223,29 @@ The output is an object of class `DEprot.enrichResult`:
 * *dotplot_gene.ratio*: a dotplot showing the geneRatios for each significantly enriched geneSet;
 * *dotplot_fold.enrichment* (ORA only): a dotplot showing the foldEnrichment for each significantly enriched geneSet,
 * *parameters*: a list containing the parameters used to run the analyses.
-</div>
 
 <br>
 
 -----------------
 # **Package information** {#info}
 ## Documentation
-<div style="text-align: justify">
 With the package a detailed [PDF manual](https://sebastian-gregoricchio.github.io/DEprot/DEprot_manual.pdf) with details for each function and respective parameters is available.
 
 The R-package have been published on [GitHub](https://github.com/sebastian-gregoricchio/DEprot) and a [git-pages website](https://sebastian-gregoricchio.github.io/DEprot) is available as well. At both these sites it is possible to find the installation procedure, required dependencies, and the links for changeLog, manual and vignette.
-</div>
 
 <br>
 
 ## Package history and releases
-<div style="text-align: justify">
 A list of all releases and respective description of changes applied could be found [here](https://sebastian-gregoricchio.github.io/DEprot/NEWS).
-</div>
 
 
 <br>
 
 ## Contact
-<div style="text-align: justify">
 For any suggestion, bug fixing, commentary please contact fill an [Issues](https://github.com/sebastian-gregoricchio/DEprot/issues)/[Pull requests](https://github.com/sebastian-gregoricchio/DEprot/pulls) form on the `DEprot` github page.
-</div>
 
-![contributors](https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&padding=5&bots=true)
+![](https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&padding=5&bots=true)
 
-<br>
 
 ## License
-<div style="text-align: justify">
 This package is under a [GNU General Public License (version 3)](https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE).
-</div>
-
-<br>
