@@ -68,12 +68,16 @@ export.analyses =
 
     ### Export counts
     if (isTRUE(verbose)) {message("Exporting all counts...")}
-    dir.create(path = paste0(outdir,"/counts"), showWarnings = F, recursive = T)
+    dir.create(path = paste0(outdir,"/counts/boxplots"), showWarnings = F, recursive = T)
 
     if (!is.null(DEprot.analyses.object@raw.counts)) {
       write.table(x = as.data.frame(DEprot.analyses.object@raw.counts) %>% dplyr::mutate(prot.id = rownames(DEprot.analyses.object@raw.counts)) %>% dplyr::relocate(prot.id),
                   file = paste0(outdir,"/counts/raw_counts.tsv"),
                   sep = "\t", quote = F, col.names = T, row.names = F)
+
+      pdf(file = paste0(outdir,"/counts/boxplots/raw_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
+      DEprot.analyses.object@boxplot.raw
+      invisible(dev.off())
     }
 
 
@@ -81,6 +85,10 @@ export.analyses =
       write.table(x = as.data.frame(DEprot.analyses.object@norm.counts) %>% dplyr::mutate(prot.id = rownames(DEprot.analyses.object@norm.counts)) %>% dplyr::relocate(prot.id),
                   file = paste0(outdir,"/counts/normalized_counts.tsv"),
                   sep = "\t", quote = F, col.names = T, row.names = F)
+
+      pdf(file = paste0(outdir,"/counts/boxplots/normalized_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
+      DEprot.analyses.object@boxplot.norm
+      invisible(dev.off())
     }
 
 
@@ -88,6 +96,10 @@ export.analyses =
       write.table(x = as.data.frame(DEprot.analyses.object@imputed.counts) %>% dplyr::mutate(prot.id = rownames(DEprot.analyses.object@imputed.counts)) %>% dplyr::relocate(prot.id),
                   file = paste0(outdir,"/counts/imputed_counts.tsv"),
                   sep = "\t", quote = F, col.names = T, row.names = F)
+
+      pdf(file = paste0(outdir,"/counts/boxplots/imputed_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
+      DEprot.analyses.object@boxplot.imputed
+      invisible(dev.off())
     }
 
 
@@ -124,7 +136,7 @@ export.analyses =
     pdf(file = paste0(outdir,"/differential_analyses/differential_analyses_upsetplot.pdf"),
         width = 40, height = 10)
     print(DEprot::plot.upset(DEprot.analyses.object = DEprot.analyses.object, contrast.subset = contrasts))
-    dev.off()
+    invisible(dev.off())
 
 
 
@@ -169,7 +181,7 @@ export.analyses =
       pdf(file = paste0(outdir,"/differential_analyses/",contrast.id,"/PCA.123_",contrast.id,".pdf"),
           width = 8, height = 8)
       print(DEprot.analyses.object@analyses.result.list[[i]]$PCA.plots)
-      dev.off()
+      invisible(dev.off())
 
       saveRDS(object = DEprot.analyses.object@analyses.result.list[[i]]$PCA.data,
               file = paste0(outdir,"/differential_analyses/",contrast.id,"/PCA.DATA_",contrast.id,".Rds"))
@@ -178,7 +190,7 @@ export.analyses =
       pdf(file = paste0(outdir,"/differential_analyses/",contrast.id,"/CORRELATION_",contrast.id,".pdf"),
           width = 16, height = 8)
       print(DEprot.analyses.object@analyses.result.list[[i]]$correlations)
-      dev.off()
+      invisible(dev.off())
 
 
 
@@ -187,13 +199,13 @@ export.analyses =
       pdf(file = paste0(outdir,"/differential_analyses/",contrast.id,"/VOLCANO_",contrast.id,".pdf"),
           width = 8, height = 5)
       print(DEprot.analyses.object@analyses.result.list[[i]]$volcano)
-      dev.off()
+      invisible(dev.off())
 
 
       pdf(file = paste0(outdir,"/differential_analyses/",contrast.id,"/MA.PLOT_",contrast.id,".pdf"),
           width = 8, height = 5)
       print(DEprot.analyses.object@analyses.result.list[[i]]$MA.plot)
-      dev.off()
+      invisible(dev.off())
 
 
 
