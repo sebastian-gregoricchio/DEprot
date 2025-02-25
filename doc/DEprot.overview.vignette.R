@@ -504,7 +504,7 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 ## ----protein_summary, fig.height=3, fig.width=10------------------------------
 protein.counts <-
   protein.summary(DEprot.object = dpo_analyses,
-                  n.lables = "counts",
+                  n.labels = "counts",
                   show.frequency = F,
                   colors = c("gray", "steelblue4"),
                   title = "**# Proteins identified in each sample**")
@@ -515,7 +515,7 @@ protein.counts
 protein.counts.byCondition <- 
   protein.summary(DEprot.object = dpo_analyses,
                   group.column = "condition",
-                  n.lables = "percentage",
+                  n.labels = "percentage",
                   show.frequency = T,
                   x.label.angle = 0,
                   title = "**# Proteins identified per _Condition_**")
