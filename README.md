@@ -11,7 +11,7 @@ R package to impute, normalize and perform differential analyses on proteomics d
 
 
 ## Introduction
-The concept behind `DEprot` (Differential Expression proteomics) is to provide a toolkit that allows for the normalization, imputation and analyses of the differential protein expression in proteomics data. The data are assumed to be LFQ (label-free quantitation) values or MS-counts.
+The concept behind `DEprot` (Differential Expression proteomics) is to provide a toolkit that allows for the normalization, imputation and analyses of the differential protein expression in proteomics data. The data are assumed to be LFQ (label-free quantitation) values.
 
 [<img src="https://github.com/sebastian-gregoricchio/DEprot/blob/main/resources/DEprot_workflow.png" align="center" height=400 class="center"/>](https://sebastian-gregoricchio.github.io/DEprot)
 
@@ -64,6 +64,9 @@ devtools::install_github("https://github.com/kerseviciute/aPEAR",
 ## Documentation
 With the package a [web-manual](https://sebastian-gregoricchio.github.io/DEprot/reference/index.html) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
 The vignette can be inspected on R as well by typing `browseVignettes("DEprot")`.
+
+Other examples of `DEprot` usage can be found on [Zenodo](https://doi.org/10.5281/zenodo.14823763).
+
 
 <br />
 
