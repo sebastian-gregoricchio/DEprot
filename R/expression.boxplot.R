@@ -208,7 +208,7 @@ expression.boxplot =
     if (!is.null(shape.column)) {
       boxplot =
         boxplot +
-        geom_point(aes(shape = shape),
+        geom_point(aes(shape = factor(shape)),
                    #stroke = NA,
                    size = 3,
                    alpha = 0.5,
