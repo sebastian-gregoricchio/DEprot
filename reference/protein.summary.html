@@ -63,6 +63,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">protein.summary</span><span class="op">(</span></span>
 <span>  <span class="va">DEprot.object</span>,</span>
 <span>  group.column <span class="op">=</span> <span class="st">"column.id"</span>,</span>
+<span>  sample.subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  n.labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label.color <span class="op">=</span> <span class="st">"white"</span>,</span>
 <span>  x.label.angle <span class="op">=</span> <span class="fl">30</span>,</span>
@@ -83,6 +84,10 @@
 
 <dt id="arg-group-column">group.column<a class="anchor" aria-label="anchor" href="#arg-group-column"></a></dt>
 <dd><p>String indicating a column among the ones in the metadata table. Default: <code>"column.id"</code> (no groups).</p></dd>
+
+
+<dt id="arg-sample-subset">sample.subset<a class="anchor" aria-label="anchor" href="#arg-sample-subset"></a></dt>
+<dd><p>String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). If subset is applied, the proteins with all NAs will be removed (total number of protains will be alterated). Default: <code>NULL</code> (no subsetting).</p></dd>
 
 
 <dt id="arg-n-labels">n.labels<a class="anchor" aria-label="anchor" href="#arg-n-labels"></a></dt>
