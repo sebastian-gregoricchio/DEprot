@@ -15,6 +15,7 @@ simplify.enrichment =
 
     ## Libraries
     require(dplyr)
+    require(ggplot2)
 
     ## check the objects
     if (!("DEprot.enrichResult" %in% class(enrichment.results))) {
