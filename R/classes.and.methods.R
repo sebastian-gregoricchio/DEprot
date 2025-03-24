@@ -118,7 +118,8 @@ setClass(Class = "DEprot.enrichResult",
                       NES.plot = "ANY",
                       dotplot_gene.ratio = "ANY",
                       dotplot_fold.enrichment = "ANY",
-                      parameters = "ANY"))
+                      parameters = "ANY",
+                      affinity.propagation = "ANY"))
 
 
 

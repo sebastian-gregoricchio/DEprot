@@ -334,10 +334,12 @@ geneset.enrichment =
                             contrast = contrasts.info,
                             diff.status.category = diff.status.category,
                             gsub.pattern.prot.id = gsub.pattern.prot.id,
+                            gsea.rank.method = gsea.rank.method,
                             pvalueCutoff = pvalueCutoff,
                             qvalueCutoff = qvalueCutoff,
                             pAdjustMethod = pAdjustMethod,
-                            dotplot.n = dotplot.n))
+                            dotplot.n = dotplot.n),
+          affinity.propagation = FALSE)
 
     return(DEprot.enrichResult.object)
   } #END function
