@@ -26,22 +26,20 @@ simplify.enrichment =
 
 
     ### get contrast index and idirectly check the dpo.analyses object
-    i=1
+    i=0
     contrast.idx = 0
     stop = F
-    while (stop == F) {
-      if (dpo.analyses.object@contrasts[[i]]$metadata.column == enrichment.results@parameters$contrast$metadata.column &
-          all(dpo.analyses.object@contrasts[[i]]$group.1 == enrichment.results@parameters$contrast$group.1) &
-          all(dpo.analyses.object@contrasts[[i]]$group.2 == enrichment.results@parameters$contrast$group.2)) {
+    while (stop == F & i < (length(dpo.analyses.object@contrasts)+1)) {
+      i = i+1
+      if (i > length(dpo.analyses.object@contrasts)) {
+        stop = T
+        warning("The contrast cannot be found in the dpo.analyses.object. Verify that the latter was the one used for the original enrichment.genset analyses.")
+        return()
+      }  else if (dpo.analyses.object@contrasts[[i]]$metadata.column == enrichment.results@parameters$contrast$metadata.column &
+          all(dpo.analyses.object@contrasts[[i]]$group.1 %in% enrichment.results@parameters$contrast$group.1) &
+          all(dpo.analyses.object@contrasts[[i]]$group.2 %in% enrichment.results@parameters$contrast$group.2)) {
         contrast.idx = i
         stop = T
-      } else {
-        i=i+1
-      }
-      ## safe stop
-      if (i == length(dpo.analyses.object@contrasts) & contrast.idx == 0) {
-        stop = T
-        return("The contrast cannot be found in the dpo.analyses.object. Verify that the latter was the ones used for the original analyses.")
       }
     }
 
