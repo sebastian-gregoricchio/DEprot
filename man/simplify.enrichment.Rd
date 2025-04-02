@@ -4,12 +4,10 @@
 \alias{simplify.enrichment}
 \title{simplify.enrichment}
 \usage{
-simplify.enrichment(enrichment.results, dpo.analyses.object)
+simplify.enrichment(enrichment.results)
 }
 \arguments{
 \item{enrichment.results}{Object of class \code{DEprot.enrichResult} as generated using \link{geneset.enrichment}.}
-
-\item{DEprot.analyses.object}{An object of class \code{DEprot.analyses}.}
 }
 \value{
 An object of class \code{DEprot.enrichResult}.

@@ -6,6 +6,12 @@
 \usage{
 jaccardSim(idsInSet, score)
 }
+\arguments{
+\item{idsInSet}{A list of set names and their member IDs.}
+
+\item{score}{A vector of addible scores with the same length used to assign input preference;
+higher score has larger weight, i.e. -logP.}
+}
 \value{
 A list of similarity matrix \code{sim.mat} and input preference vector \code{ip.vec}.
 }
