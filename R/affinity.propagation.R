@@ -51,7 +51,7 @@ affinity.propagation <- function(idsInSet, score) {
 #'
 #' @description Calculate Jaccard Similarity.
 #'
-#' @inheritParams affinityPropagation
+#' @inheritParams affinity.propagation
 #'
 #' @return A list of similarity matrix \code{sim.mat} and input preference vector \code{ip.vec}.
 #'
