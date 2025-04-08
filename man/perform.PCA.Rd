@@ -4,7 +4,12 @@
 \alias{perform.PCA}
 \title{perform.PCA}
 \usage{
-perform.PCA(DEprot.object, sample.subset = NULL, which.data = "imputed")
+perform.PCA(
+  DEprot.object,
+  sample.subset = NULL,
+  which.data = "imputed",
+  n.PCs = 10
+)
 }
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot} or \code{DEprot.analyses}.}
@@ -12,6 +17,8 @@ perform.PCA(DEprot.object, sample.subset = NULL, which.data = "imputed")
 \item{sample.subset}{String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).}
 
 \item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+
+\item{n.PCs}{Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{10}.}
 }
 \value{
 A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
