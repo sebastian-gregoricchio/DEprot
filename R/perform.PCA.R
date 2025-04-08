@@ -112,7 +112,7 @@ perform.PCA =
       # ---------------------------
       # For data with NA/NaN, such as raw/normalized data
     } else {
-      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = round(n.PCs,0), center = T, scale. = T)
+      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = max(c(3, round(n.PCs,0)), na.rm = T), center = T, scale. = T)
 
 
       ### Combine PCA with metadata
