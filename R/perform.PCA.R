@@ -5,6 +5,7 @@
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param sample.subset String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param n.PCs Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{10}.
 #'
 #' @return A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
 #'
@@ -13,7 +14,8 @@
 perform.PCA =
   function(DEprot.object,
            sample.subset = NULL,
-           which.data = "imputed") {
+           which.data = "imputed",
+           n.PCs = 10) {
 
     ### Libraries
     require(dplyr)
@@ -81,11 +83,14 @@ perform.PCA =
       PCA.meta = DEprot.object@metadata
     }
 
+    ### Convert all NaN/NA
+    mat[is.nan(mat)] = NA
+
 
     ### Compute PCA
     # -----------------------------
-    # for imputed data
-    if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
+    # Data without NAs (e.g., imputed data)
+    if (!(TRUE %in% is.na(mat))) {
       pc = prcomp(mat, center = TRUE, scale. = TRUE)
       pc.summary = summary(pc)
 
@@ -105,10 +110,9 @@ perform.PCA =
                       Percentage.of.Variance = Proportion.of.Variance*100)
 
       # ---------------------------
-      # If raw/normalized data, it will contain NA/NaN, so we need to use a different method
+      # For data with NA/NaN, such as raw/normalized data
     } else {
-      mat[is.nan(mat)] = NA
-      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = 10000, center = T, scale. = T)
+      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = round(n.PCs,0), center = T, scale. = T)
 
 
       ### Combine PCA with metadata
