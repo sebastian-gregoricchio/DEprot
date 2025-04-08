@@ -60,7 +60,12 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">perform.PCA</span><span class="op">(</span><span class="va">DEprot.object</span>, sample.subset <span class="op">=</span> <span class="cn">NULL</span>, which.data <span class="op">=</span> <span class="st">"imputed"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">perform.PCA</span><span class="op">(</span></span>
+<span>  <span class="va">DEprot.object</span>,</span>
+<span>  sample.subset <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  which.data <span class="op">=</span> <span class="st">"imputed"</span>,</span>
+<span>  n.PCs <span class="op">=</span> <span class="fl">10</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -77,6 +82,10 @@
 
 <dt id="arg-which-data">which.data<a class="anchor" aria-label="anchor" href="#arg-which-data"></a></dt>
 <dd><p>String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: <code>"imputed"</code>.</p></dd>
+
+
+<dt id="arg-n-pcs">n.PCs<a class="anchor" aria-label="anchor" href="#arg-n-pcs"></a></dt>
+<dd><p>Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: <code>10</code>.</p></dd>
 
 </dl></div>
     <div id="value">
