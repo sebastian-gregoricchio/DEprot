@@ -233,7 +233,7 @@ expression.boxplot =
       ylab(ifelse(test = scale.expression == T,
                   yes = paste0("centered log~",DEprot.object@log.base,"~(expression)"),
                   no = paste0("log~",DEprot.object@log.base,"~(expression)"))) +
-      ggpubr::stat_compare_means(method = "kruskal", show.legend = F) +
+      ggpubr::stat_compare_means(method = ifelse(test = length(unique(exp.tb$group)) == 2, yes = "wilcox", no = "kruskal"), show.legend = F) +
       guides(color = "none", fill = "none") +
       theme_classic() +
       theme(axis.title = ggtext::element_markdown(color = "black"),
