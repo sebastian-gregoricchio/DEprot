@@ -33,14 +33,17 @@ contrast.scatter =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      warning("The input must be an object of class 'DEprot.analyses'.")
+      return(invisible())
     }
 
     ### check and collect contrast
     if (!(contrast.x %in% 1:length(DEprot.analyses.object@analyses.result.list))) {
-      return(warning("The 'contrast.x' is not available in the DEprot.analyses object."))
+      warning("The 'contrast.x' is not available in the DEprot.analyses object.")
+      return(invisible())
     } else if (!(contrast.y %in% 1:length(DEprot.analyses.object@analyses.result.list))) {
-      return(warning("The 'contrast.y' is not available in the DEprot.analyses object."))
+      warning("The 'contrast.y' is not available in the DEprot.analyses object.")
+      return(invisible())
     }
 
 

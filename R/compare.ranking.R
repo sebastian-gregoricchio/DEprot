@@ -27,7 +27,8 @@ compare.ranking =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      warning("The input must be an object of class 'DEprot.analyses'.")
+      return(invisible())
     }
 
     ### check and collect contrast
@@ -36,10 +37,12 @@ compare.ranking =
         data = DEprot.analyses.object@analyses.result.list[[contrast]]$results
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
       } else {
-        return(warning("The 'contrast' indicated is not available."))
+        warning("The 'contrast' indicated is not available.")
+        return(invisible())
       }
     } else {
-      return(warning("The 'contrast' must be a numeric value."))
+      warning("The 'contrast' must be a numeric value.")
+      return(invisible())
     }
 
 
