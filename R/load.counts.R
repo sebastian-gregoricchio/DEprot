@@ -28,12 +28,27 @@ load.counts =
 
 
     ### Check counts
-    if ("data.frame" %in% class(counts)) {
-      cnt = as.matrix(counts)
-    } else if ("matrix" %in% class(counts)) {
-      cnt = as.matrix(counts)
+    check.rownames =
+      function(x) {
+        ### Check if "" (empty names) are present
+        if ("" %in% rownames(x) | NA %in% rownames(x)) {
+          warning("Thw rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
+          return(return())
+        ### Check if rownames are duplicated
+        } else if (TRUE %in% duplicated(rownames(counts))) {
+          message("One or more rownames in the counts tables are duplicated. Only unique values are allowed. The `make.unique` function is applied on counts rownames unisng a '.' as separator.")
+          rownames(x) = make.unique(names = rownames(x), sep = ".")
+          return(x)
+        } else {
+          return(x)
+        }
+      }
+
+    if ("data.frame" %in% class(counts) | "matrix" %in% class(counts)) {
+      cnt = as.matrix(check.rownames(counts))
     } else{
-      return(warning("The 'counts' table must be either a matrix or a data.frame. Rows are the protein.IDs and columns the samples."))
+      warning("The 'counts' table must be either a matrix or a data.frame. Rows are the protein.IDs and columns the samples.")
+      return()
     }
 
     ### Convert normalization method
@@ -50,17 +65,20 @@ load.counts =
     } else if ("character" %in% class(metadata)) {
       meta = data.table::fread(metadata, data.table = F)
     } else {
-      return(warning("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table."))
+      warning("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
+      return()
     }
 
     # check that column.id is present in metadata
     if (!(column.id %in% colnames(meta))) {
-      return(warning("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table."))
+      warning("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
+      return()
     } else if (!all(sort(colnames(cnt)) == sort(meta[,column.id]))) {
-      return(warning(paste0("Not all column names of the counts table correspond to the IDs indicated in the column '",
-                            column.id,"' of the metadata table:\n",
-                            "- counts IDs:\n", paste0(colnames(cnt), collapse = ", "), "\n\n",
-                            "- metadata IDs ('",column.id,"'):\n", paste0(meta[,column.id], collapse = ", "))))
+      warning(paste0("Not all column names of the counts table correspond to the IDs indicated in the column '",
+                     column.id,"' of the metadata table:\n",
+                     "- counts IDs:\n", paste0(colnames(cnt), collapse = ", "), "\n\n",
+                     "- metadata IDs ('",column.id,"'):\n", paste0(meta[,column.id], collapse = ", ")))
+      return()
     }
 
 

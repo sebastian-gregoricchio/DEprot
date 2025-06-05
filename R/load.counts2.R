@@ -30,11 +30,25 @@ load.counts2 =
 
 
     ### Check counts
-    if ("data.frame" %in% class(counts)) {
-      cnt = as.matrix(counts)
-    } else if ("matrix" %in% class(counts)) {
-      cnt = as.matrix(counts)
-    } else {
+    check.rownames =
+      function(x) {
+        ### Check if "" (empty names) are present
+        if ("" %in% rownames(x) | NA %in% rownames(x)) {
+          warning("Thw rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
+          return(return())
+          ### Check if rownames are duplicated
+        } else if (TRUE %in% duplicated(rownames(counts))) {
+          message("One or more rownames in the counts tables are duplicated. Only unique values are allowed. The `make.unique` function is applied on counts rownames unisng a '.' as separator.")
+          rownames(x) = make.unique(names = rownames(x), sep = ".")
+          return(x)
+        } else {
+          return(x)
+        }
+      }
+
+    if ("data.frame" %in% class(counts) | "matrix" %in% class(counts)) {
+      cnt = as.matrix(check.rownames(counts))
+    } else{
       warning("The 'counts' table must be either a matrix or a data.frame. Rows are the protein.IDs and columns the samples.")
       return()
     }
