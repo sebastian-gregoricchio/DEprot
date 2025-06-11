@@ -61,7 +61,7 @@ load.counts =
 
     if (nrow(cnt) != pre.clean.nrow) {
       n.del.rows = pre.clean.nrow - nrow(cnt)
-      message(paste("The counts matrix contained", n.del.rows, ifelse(n.del.rows == 1, yes = "row", no = "rows"), "with only NA values.\nThe latter have been removed from the matrix."))
+      message(paste("The counts matrix contained", n.del.rows, ifelse(n.del.rows == 1, yes = "row", no = "rows"), "with only NA values.\nThe latter", ifelse(n.del.rows == 1, yes = "has", no = "have"), "been removed from the matrix."))
     }
 
 
