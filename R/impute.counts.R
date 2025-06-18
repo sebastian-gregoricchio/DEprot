@@ -81,6 +81,14 @@ impute.counts =
       require(doParallel)
       require(doRNG)
 
+      ### Check whether there are at least 3 known values per each protein in the counts table (otherwise miss Forest cannot compute)
+      n.present.values = rowSums(!is.na(cnt))
+
+      if (TRUE %in% (n.present.values < 3)) {
+        warning("The following proteins display less than 3 known values; this might break the `missForest` imputation:")
+        print(which(n.present.values < 3))
+      }
+
       ### Run missForest algorithm
       # Parallelize if required
       start.time = Sys.time()
