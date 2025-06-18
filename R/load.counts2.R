@@ -47,6 +47,12 @@ load.counts2 =
       }
 
 
+    # Check counts type
+    if (!(tolower(data.type) %in% c("raw", "r", "n", "nor", "norm", "normalized", "i", "imp", "im", "imputed"))) {
+      warning("The `data.type` must be one among: 'raw', 'normalized', 'imputed'")
+      return()
+    }
+
 
     ### Load intensities
     if ("data.frame" %in% class(counts) | "matrix" %in% class(counts)) {
@@ -55,6 +61,7 @@ load.counts2 =
       warning("The 'counts' table must be either a matrix or a data.frame. Rows are the protein.IDs and columns the samples.")
       return()
     }
+
 
     # Remove rows with all NA values in the intensity matrix
     cnt[is.nan(cnt)] = NA
@@ -65,13 +72,6 @@ load.counts2 =
     if (nrow(cnt) != pre.clean.nrow) {
       n.del.rows = pre.clean.nrow - nrow(cnt)
       message(paste("The counts matrix contained", n.del.rows, ifelse(n.del.rows == 1, yes = "row", no = "rows"), "with only NA values.\nThe latter", ifelse(n.del.rows == 1, yes = "has", no = "have"), "been removed from the matrix."))
-    }
-
-
-    # Check counts type
-    if (!(tolower(data.type) %in% c("raw", "r", "n", "nor", "norm", "normalized", "i", "imp", "im", "imputed"))) {
-      warning("The `data.type` must be one among: 'raw', 'normalized', 'imputed'")
-      return()
     }
 
 
