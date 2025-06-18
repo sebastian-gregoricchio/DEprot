@@ -34,7 +34,7 @@ load.counts2 =
       function(x) {
         ### Check if "" (empty names) are present
         if ("" %in% rownames(x) | NA %in% rownames(x)) {
-          warning("Thw rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
+          warning("The rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
           return(return())
           ### Check if rownames are duplicated
         } else if (TRUE %in% duplicated(rownames(counts))) {
