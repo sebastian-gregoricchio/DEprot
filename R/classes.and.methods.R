@@ -147,6 +147,24 @@ setClass(Class = "DEprot.normality",
 
 
 
+
+
+#' @title DEprot.RMSE class
+#' @name DEprot.RMSE
+#' @exportClass DEprot.RMSE
+
+setClass(Class = "DEprot.RMSE",
+         slots = list(original.DEprot.object = "ANY",
+                      percentage.test = "ANY",
+                      seed = "ANY",
+                      fraction.missing.values = "ANY",
+                      test.dataset = "ANY",
+                      imputated.objects = "ANY",
+                      RMSE.tables = "ANY",
+                      RMSE.scores = "ANY",
+                      correlation.plots = "ANY"))
+
+
 ################# METHODS ################# "DEprot.analyses"
 
 #' @title DEprot show-method
@@ -327,5 +345,17 @@ setMethod(f = "show",
                 message(paste0("The following samples do not display a normal distribution: ",
                                paste0(names(normality)[isFALSE(normality)], collapse = ", "), "."))
               }
+            })
+
+
+
+#' @title DEprot.RMSE show-method
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.RMSE",
+          definition =
+            function(object) {
+              plot = patchwork::wrap_plots(object@correlation.plots)
+              print(plot)
             })
 

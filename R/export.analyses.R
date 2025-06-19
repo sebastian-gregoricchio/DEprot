@@ -76,7 +76,7 @@ export.analyses =
                   sep = "\t", quote = F, col.names = T, row.names = F)
 
       pdf(file = paste0(outdir,"/counts/boxplots/raw_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
-      DEprot.analyses.object@boxplot.raw
+      print(DEprot.analyses.object@boxplot.raw)
       invisible(dev.off())
     }
 
@@ -87,7 +87,7 @@ export.analyses =
                   sep = "\t", quote = F, col.names = T, row.names = F)
 
       pdf(file = paste0(outdir,"/counts/boxplots/normalized_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
-      DEprot.analyses.object@boxplot.norm
+      print(DEprot.analyses.object@boxplot.norm)
       invisible(dev.off())
     }
 
@@ -98,7 +98,7 @@ export.analyses =
                   sep = "\t", quote = F, col.names = T, row.names = F)
 
       pdf(file = paste0(outdir,"/counts/boxplots/imputed_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
-      DEprot.analyses.object@boxplot.imputed
+      print(DEprot.analyses.object@boxplot.imputed)
       invisible(dev.off())
     }
 
