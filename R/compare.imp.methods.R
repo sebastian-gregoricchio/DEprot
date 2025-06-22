@@ -208,7 +208,7 @@ compare.imp.methods =
         geom_abline(slope = 1, intercept = 0, linetype = "dotted", color = "gray50") +
         geom_point(aes(fill = residuals), color = "black", size = 2.5, alpha = 0.75, shape = 21) +
         geom_smooth(formula = y ~ x, method = "glm", fill = "steelblue") +
-        ggpubr::stat_cor(mapping = aes(group = 1)) +
+        ggpubr::stat_cor(mapping = aes(group = 1), r.digits = 3) +
         scale_fill_gradient2(low = "firebrick",
                              mid = "white",
                              high = "steelblue4",
