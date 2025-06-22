@@ -60,6 +60,33 @@
     </div>
 
 
+    <div id="slots">
+    <h2>Slots</h2>
+
+
+<p></p><dl><dt><code>enrichment.discovery</code>:</dt>
+<dd><p>the direct output from <code>clusterProfiler::GSEA/enricher</code> (GSEA and ORA, respectively). Class: <code>"ANY"</code>.</p></dd>
+
+   <dt><code>protein.network</code>:</dt>
+<dd><p>a string plot showing protein networks (<code><a href="https://rdrr.io/pkg/enrichplot/man/cnetplot.html" class="external-link">clusterProfiler::cnetplot</a></code>). Class: <code>"ANY"</code>.</p></dd>
+
+   <dt><code>pathway.network</code>:</dt>
+<dd><p>a list with clusters and string plot showing pathway/set networks (<code><a href="https://rdrr.io/pkg/aPEAR/man/enrichmentNetwork.html" class="external-link">aPEAR::enrichmentNetwork</a></code>). Class: <code>"ANY"</code>.</p></dd>
+
+   <dt><code>NES.plot</code>:</dt>
+<dd><p>(GSEA only) a bar plot showing the NES scores for each significantly enriched geneSet. Class: <code>"ANY"</code>.</p></dd>
+
+   <dt><code>dotplot_gene.ratio</code>:</dt>
+<dd><p>a dotplot showing the geneRatios for each significantly enriched geneSet. Class: <code>"ANY"</code>.</p></dd>
+
+   <dt><code>dotplot_fold.enrichment</code>:</dt>
+<dd><p>(ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: <code>"ANY"</code>.</p></dd>
+
+   <dt><code>parameters</code>:</dt>
+<dd><p>a list containing the parameters used to run the analyses. Class: <code>"ANY"</code>.</p></dd>
+
+
+</dl></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -73,7 +100,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>
