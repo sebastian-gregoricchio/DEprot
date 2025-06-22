@@ -8,6 +8,10 @@ compare.imp.methods(
   DEprot.object,
   percentage.test = 30,
   use.normalized.data = TRUE,
+  run.missForest = TRUE,
+  run.kNN = TRUE,
+  run.LLS = TRUE,
+  run.SVD = TRUE,
   missForest.max.iterations = 100,
   missForest.variable.wise.OOBerror = TRUE,
   missForest.cores = 1,
@@ -22,6 +26,14 @@ compare.imp.methods(
 \item{percentage.test}{Numeric value between 0 (excluded) and 100 indicating the percentage of proteins to use for the test dataset. Default: \code{30}.}
 
 \item{use.normalized.data}{Logical value indicating whether the imputation should be performed based on the rationalized data. Default: \code{TRUE}.}
+
+\item{run.missForest}{Logical values indicating whether the test for the \code{missForest} imputation should be performed. Default: \code{TRUE}.}
+
+\item{run.kNN}{Logical values indicating whether the test for the \code{kNN} imputation should be performed. Default: \code{TRUE}.}
+
+\item{run.LLS}{Logical values indicating whether the test for the \code{LLS} imputation should be performed. Default: \code{TRUE}.}
+
+\item{run.SVD}{Logical values indicating whether the test for the \code{SVD} imputation should be performed. Default: \code{TRUE}.}
 
 \item{missForest.max.iterations}{Max number of iterations for the missForest algorithm. Default: \code{100}.}
 
