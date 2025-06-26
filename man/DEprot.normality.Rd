@@ -7,3 +7,13 @@
 \description{
 DEprot.normality class
 }
+\section{Slots}{
+
+ \describe{
+   \item{\code{norm.statement}:}{Logical value indicating whether the samples are normally distributed (\code{TRUE}). Class: \code{"ANY"}.}
+   \item{\code{norm.AD.tests}:}{List of Anderson-Darling normality test results for each sample. Class: \code{"ANY"}.}
+   \item{\code{qqplots}:}{List of ggplots objects depicting the Q-Q plots for the Anderson-Darling normality test. Class: \code{"ANY"}.}
+   \item{\code{densities}:}{List of ggplots objects depicting the destiny distribution of the intensities overlapped to a theoretical normal distribution. Class: \code{"ANY"}.}
+ }
+}
+

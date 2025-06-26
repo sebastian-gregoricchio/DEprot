@@ -7,3 +7,28 @@
 \description{
 DEprot.RMSE class
 }
+\section{Slots}{
+
+ \describe{
+   \item{\code{original.DEprot.object}:}{Object of class \code{DEprot} used to compute the RMSE. Class: \code{"ANY"}.}
+   \item{\code{percentage.test}:}{Percentage of the total proteins that should be used to perform the comparisons. Class: \code{"ANY"}.}
+   \item{\code{seed}:}{Seed used for the randomization. Class: \code{"ANY"}.}
+   \item{\code{fraction.missing.values}:}{Fraction of missing values in the original table. Class: \code{"ANY"}.}
+   \item{\code{test.dataset}:}{Subset of the original table used for the comparisons. Class: \code{"ANY"}.}
+   \item{\code{imputed.objects}:}{List of the output of \link{impute.counts} (class \code{DEprot}) using the different imputation methods. Class: \code{"ANY"}.}
+   \item{\code{RMSE.tables}:}{List of data.frames, one per tested imputation method, containing the coordinates of the imputed values and including the following columns (Class: \code{"ANY"}.):
+     \itemize{
+       \item{\code{row.id}:}{id of the row (protein)}
+       \item{\code{col.id}:}{id of the column (sample)}
+       \item{\code{expected.values}:}{value measured in the experiment}
+       \item{\code{imputation.method}:}{id of the method used for the imputation}
+       \item{\code{imputed.values}:}{value imputed by \code{DEprot}}
+       \item{\code{residuals}:}{difference of the the values, \code{imputed - expected}}
+       \item{\code{sq.residuals}:}{the squared value of the residuals}}}
+   \item{\code{contrasts}:}{List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.}
+   \item{\code{RMSE.scores}:}{. Class: \code{"ANY"}.}
+   \item{\code{correlation.plots}:}{. Class: \code{"ANY"}.}
+   \item{\code{density.residuals}:}{. Class: \code{"ANY"}.}
+ }
+}
+

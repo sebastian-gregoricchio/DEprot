@@ -13,6 +13,8 @@ impute.counts(
   missForest.variable.wise.OOBerror = TRUE,
   missForest.cores = 1,
   missForest.parallel.mode = "variables",
+  kNN.n.nearest.neighbours = 10,
+  LLS.k = 2,
   verbose = FALSE
 )
 }
@@ -29,9 +31,13 @@ impute.counts(
 
 \item{missForest.variable.wise.OOBerror}{Logical value to define whether the OOB error is returned for each variable separately. Default: \code{TRUE}.}
 
-\item{missForest.cores}{Number of cores used to run the missForest algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.}
+\item{missForest.cores}{Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.}
 
 \item{missForest.parallel.mode}{Define the mode to use for the parallelization, ignored when \code{cores} is more than 1. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.}
+
+\item{kNN.n.nearest.neighbours}{Numeric value indicating the number of nearest neighbors to use to perform the \code{kNN} imputation. Default: \code{10}.}
+
+\item{LLS.k}{Cluster size, this is the number of similar genes used for regression. Default: \code{2}.}
 
 \item{verbose}{Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.}
 }
@@ -42,5 +48,5 @@ A \code{DEprot} object. The boxplot showing the distribution of the protein inte
 Function that allows for the imputation of missing values using 4 possible algorithms: \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://rdrr.io/cran/VIM/man/kNN.html}{kNN}, \href{https://rdrr.io/bioc/pcaMethods/man/llsImpute.html}{LLS}, \href{https://rdrr.io/bioc/pcaMethods/man/pca.html}{SVD}.
 }
 \seealso{
-\href{https://www.rdocumentation.org/packages/missForest/}{missForest package}, href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM package}, href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods package}.
+\href{https://www.rdocumentation.org/packages/missForest/}{missForest package}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM package}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods package}.
 }

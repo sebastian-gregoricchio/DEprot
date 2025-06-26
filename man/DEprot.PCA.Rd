@@ -13,7 +13,7 @@ DEprot.PCA class
    \item{\code{PCA.metadata}:}{metadata of the samples used in the PCA (subset of the original \code{DEprot@metadata}. Class: \code{"ANY"}.}
    \item{\code{sample.subset}:}{vector containing the list of samples analyzed. Class: \code{"ANY"}.}
    \item{\code{data.used}:}{vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.}
-   \item{\code{prcomp}:}{object of class \code{prcomp} corresponding to the full PCA output. Class: \code{"ANY"}.}
+   \item{\code{prcomp}:}{object of class \code{prcomp} (or output from \code{pcaMethods::pca}, method = "nipals") corresponding to the full PCA output. Class: \code{"ANY"}.}
    \item{\code{PCs}:}{data.frame combining the PC scores and the metadata table, useful for replotting. Class: \code{"ANY"}.}
    \item{\code{importance}:}{statistical summary table for the PCA analyses per each PC. Class: \code{"ANY"}.}
    \item{\code{cumulative.PC.plot}:}{ggplot object corresponding to out put of \code{plot.PC.cumulative} for this object. Class: \code{"ANY"}.}

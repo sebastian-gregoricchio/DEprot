@@ -10,7 +10,7 @@ DEprot.correlation class
 \section{Slots}{
 
  \describe{
-   \item{\code{heatmap}:}{Ggplot object corresponding to the correlation heatmap. Class: \code{"ANY"}.}
+   \item{\code{heatmap}:}{ggplot object corresponding to the correlation heatmap. Class: \code{"ANY"}.}
    \item{\code{corr.metadata}:}{metadata of the samples used in the correlation (subset of the original \code{DEprot@metadata}. Class: \code{"ANY"}.}
    \item{\code{sample.subset}:}{vector containing the list of samples analyzed. Class: \code{"ANY"}.}
    \item{\code{data.used}:}{vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.}

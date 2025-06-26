@@ -7,3 +7,12 @@
 \description{
 DEprot.pvalues class
 }
+\section{Slots}{
+
+ \describe{
+   \item{\code{pvalue.distribution}:}{ggplot object depicting the histogram of the distribution of the p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.}
+   \item{\code{padjusted.distribution}:}{ggplot object depicting the histogram of the distribution of the adjusted p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.}
+   \item{\code{pvalue.rank}:}{ggplot object depicting the curve of the ranked p-values. Class: \code{"ANY"}.}
+ }
+}
+

@@ -10,7 +10,7 @@ DEprot.enrichResult class
 \section{Slots}{
 
  \describe{
-   \item{\code{enrichment.discovery}:}{the direct output from \code{clusterProfiler::GSEA/enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.}
+   \item{\code{enrichment.discovery}:}{the direct output from \code{clusterProfiler::GSEA} or \code{clusterProfiler::enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.}
    \item{\code{protein.network}:}{a string plot showing protein networks (\code{clusterProfiler::cnetplot}). Class: \code{"ANY"}.}
    \item{\code{pathway.network}:}{a list with clusters and string plot showing pathway/set networks (\code{aPEAR::enrichmentNetwork}). Class: \code{"ANY"}.}
    \item{\code{NES.plot}:}{(GSEA only) a bar plot showing the NES scores for each significantly enriched geneSet. Class: \code{"ANY"}.}
