@@ -251,7 +251,20 @@ geneset.enrichment =
         corr_scores = sapply(1:nrow(counts_var1), function(x){suppressWarnings(cor.test(x = group_idx, y = c(counts_var2[x,],counts_var1[x,]), method = "spearman"))$estimate}, USE.NAMES = F)
         names(corr_scores) = rownames(counts_var1)
         gene_list = sort(corr_scores, decreasing = T)
-        }
+      }
+
+
+      ## remove duplicates in gene_list vector
+      gene_list_df =
+        data.frame(gene = names(gene_list),
+                   score = gene_list) %>%
+        dplyr::group_by(gene) %>%
+        dplyr::summarise(mean.score = mean(score, na.rm = T)) %>%
+        dplyr::arrange(desc(mean.score))
+
+      gene_list = gene_list_df$mean.score
+      names(gene_list) = gene_list_df$gene
+
 
 
       #### perform enrichments
