@@ -48,5 +48,5 @@ A \code{DEprot} object. The boxplot showing the distribution of the protein inte
 Function that allows for the imputation of missing values using 4 possible algorithms: \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://rdrr.io/cran/VIM/man/kNN.html}{kNN}, \href{https://rdrr.io/bioc/pcaMethods/man/llsImpute.html}{LLS}, \href{https://rdrr.io/bioc/pcaMethods/man/pca.html}{SVD}.
 }
 \seealso{
-\href{https://www.rdocumentation.org/packages/missForest/}{missForest package}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM package}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods package}.
+\href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages.
 }
