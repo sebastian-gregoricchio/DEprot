@@ -8,11 +8,13 @@
 #' @param overwrite.imputation Logical value to indicate whether, in the case already available, the table of imputed counts should be overwritten. Default: \code{FALSE}.
 #' @param missForest.max.iterations Max number of iterations for the missForest algorithm. Default: \code{100}.
 #' @param missForest.variable.wise.OOBerror Logical value to define whether the OOB error is returned for each variable separately. Default: \code{TRUE}.
-#' @param missForest.cores Number of cores used to run the missForest algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.
+#' @param missForest.cores Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.
 #' @param missForest.parallel.mode Define the mode to use for the parallelization, ignored when \code{cores} is more than 1. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.
+#' @param kNN.n.nearest.neighbours Numeric value indicating the number of nearest neighbors to use to perform the \code{kNN} imputation. Default: \code{10}.
+#' @param LLS.k Cluster size, this is the number of similar genes used for regression. Default: \code{2}.
 #' @param verbose Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.
 #'
-#' @seealso \href{https://www.rdocumentation.org/packages/missForest/}{missForest package}, href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM package}, href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods package}.
+#' @seealso \href{https://www.rdocumentation.org/packages/missForest/}{missForest package}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM package}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods package}.
 #'
 #' @return A \code{DEprot} object. The boxplot showing the distribution of the protein intensity is remade and added to the slot (\code{boxplot.imputed}). A list with parameters and other info about the imputation is added as well in the \code{imputation} slot.
 #'
@@ -28,6 +30,8 @@ impute.counts =
            missForest.variable.wise.OOBerror = TRUE,
            missForest.cores = 1,
            missForest.parallel.mode = "variables",
+           kNN.n.nearest.neighbours = 10,
+           LLS.k = 2,
            verbose = FALSE) {
 
     ### Libraries
@@ -86,7 +90,7 @@ impute.counts =
 
       if (TRUE %in% (n.present.values < 3)) {
         warning("The following proteins display less than 3 known values; this might break the `missForest` imputation:")
-        print(which(n.present.values < 3))
+        print(names(n.present.values[n.present.values < 3]))
       }
 
       ### Run missForest algorithm
@@ -134,7 +138,8 @@ impute.counts =
     } else if (tolower(method) == "knn") {
       start.time = Sys.time()
 
-      imputed.cnt = VIM::kNN(data = t(cnt), numFun = laeken::weightedMean, weightDist = TRUE, imp_var = FALSE, k = 10)
+      imputed.cnt = VIM::kNN(data = t(cnt), numFun = laeken::weightedMean, weightDist = TRUE, imp_var = FALSE, k = kNN.n.nearest.neighbours)
+      rownames(imputed.cnt) = colnames(cnt)
 
       end.time = Sys.time()
       time.taken = round(end.time - start.time,2)
@@ -142,7 +147,7 @@ impute.counts =
       ## Define imputation method list
       imputation = list(method = "kNN",
                         aggregating.function = "weighted mean",
-                        n.nearest.neighbours = 10,
+                        n.nearest.neighbours = kNN.n.nearest.neighbours,
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
 
       ####################################################################################
@@ -150,7 +155,7 @@ impute.counts =
     } else if (tolower(method) == "lls") {
       start.time = Sys.time()
 
-      imputed.cnt = (pcaMethods::llsImpute(Matrix = t(cnt), k = 2, correlation = "pearson", allVariables = TRUE, verbose = verbose))@completeObs
+      imputed.cnt = (pcaMethods::llsImpute(Matrix = t(cnt), k = LLS.k, correlation = "pearson", allVariables = TRUE, verbose = verbose))@completeObs
 
       end.time = Sys.time()
       time.taken = round(end.time - start.time,2)
@@ -158,7 +163,7 @@ impute.counts =
       ## Define imputation method list
       imputation = list(method = "LLS",
                         aggregating.function = "weighted mean",
-                        cluster.size = 2,
+                        cluster.size = LLS.k,
                         correlation.type = "pearson",
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
 
