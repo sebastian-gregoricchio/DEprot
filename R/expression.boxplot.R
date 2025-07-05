@@ -218,7 +218,7 @@ expression.boxplot =
                    #stroke = NA,
                    size = 3,
                    alpha = 0.5,
-                   position = position_jitter(width = 0.15),
+                   position = position_jitter(width = 0.15, height = 0),
                    show.legend = T) +
         guides(shape = guide_legend(title = shape.column))}
     else {
@@ -227,7 +227,7 @@ expression.boxplot =
         geom_point(stroke = NA,
                    size = 3,
                    alpha = 0.5,
-                   position = position_jitter(width = 0.15),
+                   position = position_jitter(width = 0.15, height = 0),
                    show.legend = F)
     }
 
