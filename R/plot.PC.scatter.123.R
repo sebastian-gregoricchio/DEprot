@@ -7,6 +7,7 @@
 #' @param shape.column String indicating the name of the column in the \code{metadata} to use as factor for the dot shapes. Default: \code{NULL} (all dots).
 #' @param label.column String indicating the name of the column in the \code{metadata} to use as label of the dots. Default: \code{NULL} (no labeling).
 #' @param dot.colors Color-vector indicating the colors to use for the points in the plot. If \code{NULL} (default) or the number of colors is lower than the required, automatic colors will be assign using the \code{rainbow} function. Default: \code{NULL}.
+#' @param title String indicating a title to add to the plot (markdown syntax supported). Default: \code{NULL} (no)
 #' @param plot.zero.line.y.12 Logical value to indicate whether to plot two gray dashed lines in correspondence of y=0 in the PC1-vs-PC2 plot. Default: \code{TRUE}.
 #' @param plot.zero.line.x.12 Logical value to indicate whether to plot two gray dashed lines in correspondence of x=0 in the PC1-vs-PC2 plot. Default: \code{TRUE}.
 #' @param plot.zero.line.y.23 Logical value to indicate whether to plot two gray dashed lines in correspondence of y=0 in the PC2-vs-PC3 plot. Default: \code{TRUE}.
@@ -26,6 +27,7 @@ plot.PC.scatter.123 =
            shape.column = NULL,
            label.column = NULL,
            dot.colors = NULL,
+           title = NULL,
            plot.zero.line.y.12 = TRUE,
            plot.zero.line.x.12 = TRUE,
            plot.zero.line.y.23 = TRUE,
@@ -132,5 +134,13 @@ plot.PC.scatter.123 =
 
 
     ### Export combined plot
-    return(patchwork::wrap_plots(pca.1.2, pca.2.3, nrow = 1))
+    if (is.null(title)) {
+      return(patchwork::wrap_plots(pca.1.2, pca.2.3, nrow = 1))
+    } else {
+      return(patchwork::wrap_plots(pca.1.2, pca.2.3, nrow = 1) +
+               patchwork::plot_annotation(title = title,
+                                          theme = theme(plot.title = ggtext::element_markdown(hjust = 0.5)))
+             )
+    }
+
   } # END FUNCTION
