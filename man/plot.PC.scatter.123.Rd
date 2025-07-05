@@ -10,6 +10,7 @@
   shape.column = NULL,
   label.column = NULL,
   dot.colors = NULL,
+  title = NULL,
   plot.zero.line.y.12 = TRUE,
   plot.zero.line.x.12 = TRUE,
   plot.zero.line.y.23 = TRUE,
@@ -26,6 +27,8 @@
 \item{label.column}{String indicating the name of the column in the \code{metadata} to use as label of the dots. Default: \code{NULL} (no labeling).}
 
 \item{dot.colors}{Color-vector indicating the colors to use for the points in the plot. If \code{NULL} (default) or the number of colors is lower than the required, automatic colors will be assign using the \code{rainbow} function. Default: \code{NULL}.}
+
+\item{title}{String indicating a title to add to the plot (markdown syntax supported). Default: \code{NULL} (no)}
 
 \item{plot.zero.line.y.12}{Logical value to indicate whether to plot two gray dashed lines in correspondence of y=0 in the PC1-vs-PC2 plot. Default: \code{TRUE}.}
 
