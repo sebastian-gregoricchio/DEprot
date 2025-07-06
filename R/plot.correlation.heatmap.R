@@ -179,9 +179,9 @@ plot.correlation.heatmap =
       corr_heatmap =
         corr_heatmap +
         scale_x_discrete(expand = c(0,0)) +
-        ggh4x::scale_y_dendrogram(hclust = corr_clust,
-                                  expand = c(0,0),
-                                  position = tolower(dendrogram.position)) +
+        legendry::scale_y_dendro(hclust = corr_clust,
+                                 expand = c(0,0),
+                                 position = tolower(dendrogram.position)) +
         theme(axis.ticks.y = element_line(color = dendrogram.color,
                                           linewidth = dendrogram.linewidth),
               axis.ticks.x = element_blank())
@@ -189,9 +189,9 @@ plot.correlation.heatmap =
       corr_heatmap =
         corr_heatmap +
         scale_y_discrete(expand = c(0,0)) +
-        ggh4x::scale_x_dendrogram(hclust = corr_clust,
-                                  expand = c(0,0),
-                                  position = tolower(dendrogram.position)) +
+        legendry::scale_x_dendro(hclust = corr_clust,
+                                 expand = c(0,0),
+                                 position = tolower(dendrogram.position)) +
         theme(axis.ticks.x = element_line(color = dendrogram.color,
                                           linewidth = dendrogram.linewidth),
               axis.ticks.y = element_blank())

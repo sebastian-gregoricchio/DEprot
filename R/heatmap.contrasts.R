@@ -44,7 +44,7 @@ heatmap.contrasts =
     ### Libraries
     require(dplyr)
     require(ggplot2)
-    require(ggh4x)
+    require(legendry)
 
     ### Internal functions
     de.status =
@@ -193,7 +193,7 @@ heatmap.contrasts =
       if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
 
       row.clust$call = "hclust(d = dist(x = foldchange.matrix, method = distance.method), method = clustering.method)"
-      heatmap = heatmap + ggh4x::scale_y_dendrogram(hclust = row.clust, name = "Protein ID", expand = c(0,0))
+      heatmap = heatmap + legendry::scale_y_dendro(hclust = row.clust, name = "Protein ID", expand = c(0,0))
     } else {
       heatmap = heatmap + scale_y_discrete(name = "Protein ID", expand = c(0,0))
       row.clust = NULL
