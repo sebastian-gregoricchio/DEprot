@@ -97,7 +97,7 @@ impute.counts =
       # Parallelize if required
       start.time = Sys.time()
 
-      cores = ifelse(test = missForest.cores > 1, yes = min(c(missForest.cores, nrow(DEprot.object@metadata))), no = 1)
+      cores = ifelse(test = missForest.cores > 1, yes = min(c(missForest.cores, nrow(cnt))), no = 1)
       registerDoParallel(cores = cores)
       #getDoParWorkers()
       registerDoRNG(seed = 1.618)
