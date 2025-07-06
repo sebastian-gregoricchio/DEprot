@@ -179,7 +179,7 @@ plot.correlation.heatmap =
       corr_heatmap =
         corr_heatmap +
         scale_x_discrete(expand = c(0,0)) +
-        legendry::scale_y_dendro(hclust = corr_clust,
+        legendry::scale_y_dendro(clust = corr_clust,
                                  expand = c(0,0),
                                  position = tolower(dendrogram.position)) +
         theme(axis.ticks.y = element_line(color = dendrogram.color,

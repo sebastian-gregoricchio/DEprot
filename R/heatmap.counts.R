@@ -337,7 +337,7 @@ heatmap.counts =
                          method = clustering.method)
       row.clust$call = "hclust(d = dist(x = counts.matrix, method = distance.method), method = clustering.method)"
       if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
-      heatmap = heatmap + legendry::scale_y_dendro(hclust = row.clust, name = "Protein ID", expand = c(0,0))
+      heatmap = heatmap + legendry::scale_y_dendro(clust = row.clust, name = "Protein ID", expand = c(0,0))
     } else {
       row.clust = NULL
       heatmap = heatmap + scale_y_discrete(name = "Protein ID", expand = c(0,0))
@@ -351,7 +351,7 @@ heatmap.counts =
       columns.clust$call = "hclust(d = dist(x = t(counts.matrix), method = distance.method), method = clustering.method)"
       heatmap =
         heatmap +
-        legendry::scale_x_dendro(hclust = columns.clust, name = "Sample ID", expand = c(0,0), position = "top") +
+        legendry::scale_x_dendro(clust = columns.clust, name = "Sample ID", expand = c(0,0), position = "top") +
         theme(axis.text.x = ggtext::element_markdown(color = "black", angle = 90, hjust = 0))
     } else {
       columns.clust = NULL

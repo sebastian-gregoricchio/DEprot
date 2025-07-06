@@ -193,7 +193,7 @@ heatmap.contrasts =
       if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
 
       row.clust$call = "hclust(d = dist(x = foldchange.matrix, method = distance.method), method = clustering.method)"
-      heatmap = heatmap + legendry::scale_y_dendro(hclust = row.clust, name = "Protein ID", expand = c(0,0))
+      heatmap = heatmap + legendry::scale_y_dendro(clust = row.clust, name = "Protein ID", expand = c(0,0))
     } else {
       heatmap = heatmap + scale_y_discrete(name = "Protein ID", expand = c(0,0))
       row.clust = NULL
