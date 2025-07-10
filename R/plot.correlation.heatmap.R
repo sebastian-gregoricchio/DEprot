@@ -70,7 +70,8 @@ plot.correlation.heatmap =
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
-      return(warning("The input must be an object of class 'DEprot'."))
+      warning("The input must be an object of class 'DEprot'.")
+      return()
     }
 
     ### Check and extract table
@@ -81,7 +82,7 @@ plot.correlation.heatmap =
       } else {
         warning(paste0("Use of RAW counts was required, but not available.\n",
                        "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        return()
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
@@ -90,7 +91,7 @@ plot.correlation.heatmap =
       } else {
         warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
                        "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        return()
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
@@ -99,12 +100,12 @@ plot.correlation.heatmap =
       } else {
         warning(paste0("Use of IMPUTED counts was required, but not available.\n",
                        "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        return()
       }
     } else {
       warning(paste0("The 'which.data' value is not recognized.\n",
                      "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(DEprot.object)
+      return()
     }
 
 
