@@ -332,8 +332,8 @@ heatmap.counts =
 
     ## Perform clustering
     if (clust.rows == TRUE & nrow(final.mat) > 1) {
-      row.clust = hclust(d = dist(x = final.mat,
-                                  method = distance.method),
+      row.clust = hclust(d = stats::dist(x = final.mat,
+                                         method = distance.method),
                          method = clustering.method)
       row.clust$call = "hclust(d = dist(x = counts.matrix, method = distance.method), method = clustering.method)"
       if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
@@ -345,8 +345,8 @@ heatmap.counts =
 
 
     if (clust.columns == TRUE & ncol(final.mat) > 1) {
-      columns.clust = hclust(d = dist(x = t(final.mat),
-                                  method = distance.method),
+      columns.clust = hclust(d = stats::dist(x = t(final.mat),
+                                             method = distance.method),
                          method = clustering.method)
       columns.clust$call = "hclust(d = dist(x = t(counts.matrix), method = distance.method), method = clustering.method)"
       heatmap =

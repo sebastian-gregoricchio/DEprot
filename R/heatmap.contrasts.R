@@ -187,8 +187,8 @@ heatmap.contrasts =
 
       rownames(combined.matrix) = combined.matrix$prot.id
 
-      row.clust = hclust(d = dist(x = as.matrix(dplyr::select(.data = combined.matrix, -prot.id)),
-                                  method = distance.method),
+      row.clust = hclust(d = stats::dist(x = as.matrix(dplyr::select(.data = combined.matrix, -prot.id)),
+                                         method = distance.method),
                          method = clustering.method)
       if (!is.null(protein.names.pattern)) {row.clust$labels = gsub(protein.names.pattern, "", row.clust$labels)}
 
