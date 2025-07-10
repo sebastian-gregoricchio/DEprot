@@ -52,6 +52,7 @@ plot.correlation.heatmap =
     ### Libraries
     require(dplyr)
     require(ggplot2)
+    require(legendry)
     # require(farver)
 
     ### Functions
@@ -139,7 +140,7 @@ plot.correlation.heatmap =
     corr.mat = cor(mat, method = tolower(correlation.method), use = "complete.obs")
 
     ## Define dendrogram
-    distance = as.dist(1-corr.mat)
+    distance = stats::as.dist(1-corr.mat)
     corr_clust = hclust(d = distance, method = tolower(clustering.method))
 
 
