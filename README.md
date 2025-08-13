@@ -1,6 +1,7 @@
 ![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot)
 [![license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE)
 [![R-CMD-check](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml)
+[![pkgdown](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml)
 [![Codecov](https://codecov.io/gh/sebastian-gregoricchio/DEprot/branch/main/graph/badge.svg)](https://codecov.io/gh/sebastian-gregoricchio/DEprot)
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 <!-- ![update](https://badges.pufler.dev/updated/sebastian-gregoricchio/DEprot)

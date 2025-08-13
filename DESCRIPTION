@@ -9,12 +9,62 @@ License: GNU GENERAL PUBLIC LICENSE version 3
 Depends:
 	R (>= 4.0.3)
 Imports:
-	BiocManager, apcluster, clusterProfiler, colorspace, ComplexUpset, curl, data.table, devtools, doParallel, dplyr, doRNG, enrichplot, farver, ggplot2 (>= 3.3.3), ggdendro, ggtext, ggrepel, ggridges, ggpubr, laeken, legendry, limma, matrixStats, MBQN, methods, missForest, nortest, patchwork, pcaMethods, pheatmap, plyr, progress, pryr, purrr, randomForest, reshape2, R.utils, rvcheck, S4Vectors, statmod, stringr, tidyr, VIM, viridis
-Suggests: HarmonizR, rmarkdown, knitr, prettydoc
+	BiocManager,
+	apcluster,
+	clusterProfiler,
+	colorspace,
+	ComplexUpset,
+	curl,
+	data.table,
+	devtools,
+	doParallel,
+	dplyr,
+	doRNG,
+	enrichplot,
+	farver,
+	ggplot2 (>= 3.3.3),
+	ggdendro,
+	ggtext,
+	ggrepel,
+	ggridges,
+	ggpubr,
+	laeken,
+	legendry,
+	limma,
+	matrixStats,
+	MBQN,
+	methods,
+	missForest,
+	nortest,
+	patchwork,
+	pcaMethods,
+	pheatmap,
+	plyr,
+	progress,
+	pryr,
+	purrr,
+	randomForest,
+	reshape2,
+	R.utils,
+	rvcheck,
+	S4Vectors,
+	statmod,
+	stringr,
+	tidyr,
+	VIM,
+	viridis
+Suggests:
+	HarmonizR,
+	rmarkdown,
+	knitr,
+	prettydoc,
+	testthat (>= 3.0.0),
+	covr
 biocViews:
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
+Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL:
 	https://sebastian-gregoricchio.github.io/DEprot/

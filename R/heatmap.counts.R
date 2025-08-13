@@ -32,6 +32,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import legendry
+#' @import ggdendro
 #'
 #' @export heatmap.counts
 

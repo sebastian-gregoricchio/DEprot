@@ -28,6 +28,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import legendry
+#' @import ggdendro
 #'
 #' @export plot.correlation.heatmap
 
