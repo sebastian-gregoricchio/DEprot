@@ -13,7 +13,7 @@
 #' @description Dummy example of full proteomics data (LFQ values in log2). Imputed using missForest algorithm.
 #' @format Object of class \code{DEprot}
 #' @source Simulated data
-"unimputed.counts"
+"dpo.imputed.counts"
 
 
 #' @title Example of metadata table
