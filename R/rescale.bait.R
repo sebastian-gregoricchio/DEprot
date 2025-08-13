@@ -7,6 +7,8 @@
 #'
 #' @return An object of class \code{DEprot} or \code{DEprot.analyses} (same class of the input).
 #'
+#' @import dplyr
+#'
 #' @export rescale.bait
 
 
@@ -14,23 +16,23 @@ rescale.bait =
   function(DEprot.object,
            bait.id){
 
-    ### Libraries
-    require(dplyr)
+    # ### Libraries
+    # require(dplyr)
 
 
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
       if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        warning("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
-        return(DEprot.object)
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
+        #return(DEprot.object)
       }
     }
 
 
     ### Extract the imputed data
     if (isFALSE(DEprot.object@imputed)) {
-      warning("The DEprot.object provided does not contain imputed data. The bai rescaling can be applied only to imputed data.")
-      return(DEprot.object)
+      stop("The DEprot.object provided does not contain imputed data. The bai rescaling can be applied only to imputed data.")
+      #return(DEprot.object)
     } else {
       mat = DEprot.object@imputed.counts
     }
@@ -38,8 +40,8 @@ rescale.bait =
 
     ### Check bait
     if (!(bait.id %in% rownames(mat))) {
-      warning(paste0("The bait.id '", bait.id, "' is not available in the dataset."))
-      return(DEprot.object)
+      stop(paste0("The bait.id '", bait.id, "' is not available in the dataset."))
+      #return(DEprot.object)
     }
 
 

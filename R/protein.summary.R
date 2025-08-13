@@ -15,6 +15,9 @@
 #'
 #' @return A ggplot object.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export protein.summary
 
 protein.summary =
@@ -29,16 +32,16 @@ protein.summary =
            title = NULL,
            subtitle = NULL) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
       if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        warning("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
-        return(DEprot.object)
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
+        #return(DEprot.object)
       }
     }
 
@@ -50,17 +53,17 @@ protein.summary =
     } else if (!is.null(DEprot.object@norm.counts)) {
       mat = DEprot.object@norm.counts
     } else {
-      warning("Your object must contain either 'raw' or 'normalized' data.")
-      return(DEprot.object)
+      stop("Your object must contain either 'raw' or 'normalized' data.")
+      #return(DEprot.object)
     }
 
 
 
     ### check group column
     if (!(group.column %in% colnames(DEprot.object@metadata))) {
-      warning(paste0("The group column '", group.column, "' is not present in the metadata table.\n",
+      stop(paste0("The group column '", group.column, "' is not present in the metadata table.\n",
                      "Available columns: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
-      return(DEprot.object)
+      #return(DEprot.object)
     } else {
       meta = DEprot.object@metadata
     }
@@ -97,7 +100,7 @@ protein.summary =
 
       presence.table = rbind(presence.table,
                              data.frame(group = groups[i],
-                                        shared = rowSums(data.frame(mat.tf[,samples.in.group]), na.rm = T)))
+                                        shared = rowSums(data.frame(mat.tf[,samples.in.group]), na.rm = TRUE)))
     }
 
 
@@ -136,7 +139,7 @@ protein.summary =
 
 
     ### Barplot
-    if (show.frequency == T) {
+    if (show.frequency == TRUE) {
       barplot =
         ggplot(data = presence.recap,
                aes(x = group,
@@ -154,7 +157,7 @@ protein.summary =
 
     barplot =
       barplot +
-      ylab(ifelse(test = show.frequency == T,
+      ylab(ifelse(test = show.frequency == TRUE,
                   yes = paste0("Protein frequency\n(# total proteins: ",nrow(mat),")"),
                   no = paste0("Protein count\n(# total proteins: ",nrow(mat),")"))) +
       xlab(NULL) +
@@ -183,21 +186,21 @@ protein.summary =
           barplot +
           geom_text(aes(label = round(fraction, digits = 2)),
                     color = label.color,
-                    show.legend = F,
+                    show.legend = FALSE,
                     position = position_stack(vjust = 0.5))
       } else if (tolower(n.labels) %in% c("percentage", "perc", "%")) {
         barplot =
           barplot +
           geom_text(aes(label = round(percentage, digits = 1)),
                     color = label.color,
-                    show.legend = F,
+                    show.legend = FALSE,
                     position = position_stack(vjust = 0.5))
       } else {
         barplot =
           barplot +
           geom_text(aes(label = n),
                     color = label.color,
-                    show.legend = F,
+                    show.legend = FALSE,
                     position = position_stack(vjust = 0.5))
       }
     }

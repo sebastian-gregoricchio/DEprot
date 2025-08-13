@@ -11,6 +11,9 @@
 #'
 #' @return A \code{DEprot} object. A boxplot showing the distribution of the protein intensity after normalization for each sample is added to the slot (\code{boxplot.norm}).
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export normalize.counts
 
 
@@ -20,26 +23,26 @@ normalize.counts =
            NRI.RI.ratio.threshold = 0.5,
            overwrite.normalization = FALSE) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
     ### Check if normalization already available
-    if (DEprot.object@normalized == T) {
-      if (overwrite.normalization == F) {
-        warning(paste0("The 'DEprot' object contains already a normalized table.\n",
-                       "If you wish to overwrite the normalization, set the 'overwrite.normalization = TRUE'."))
-        return(DEprot.object)
+    if (DEprot.object@normalized == TRUE) {
+      if (overwrite.normalization == FALSE) {
+        stop(paste0("The 'DEprot' object contains already a normalized table.\n",
+                    "       If you wish to overwrite the normalization, set the 'overwrite.normalization = TRUE'."))
+        #return(DEprot.object)
       } else if (is.null(DEprot.object@raw.counts)) {
-        warning("You asked to overwrite the normalized counts, but not 'raw.counts' are available in the object.")
-        return(DEprot.object)
+        stop("You asked to overwrite the normalized counts, but not 'raw.counts' are available in the object.")
+        #return(DEprot.object)
       }
     }
 
@@ -52,11 +55,11 @@ normalize.counts =
 
     # Add counts and method to DEprot object
     DEprot.object@norm.counts = norm.cnt
-    DEprot.object@normalized = T
+    DEprot.object@normalized = TRUE
     DEprot.object@normalization.method =
       data.frame(param = c("package", "method", "balanced", "function", "NRI/RI ratio threshold"),
                  value = c("MBQN", "Quantile normalization",
-                           ifelse(is.null(balancing.function), yes = F, no = T),
+                           ifelse(is.null(balancing.function), yes = FALSE, no = TRUE),
                            ifelse("character" %in% class(balancing.function), yes = balancing.function, no = NA),
                            NRI.RI.ratio.threshold))
 
@@ -71,8 +74,8 @@ normalize.counts =
     norm.cnt.stats =
       melt.norm.cnt %>%
       dplyr::group_by(variable) %>%
-      dplyr::summarise(min = min(value, na.rm = T),
-                       max = max(value, na.rm = T))
+      dplyr::summarise(min = min(value, na.rm = TRUE),
+                       max = max(value, na.rm = TRUE))
 
     boxplot.norm =
       ggplot() +
@@ -101,14 +104,14 @@ normalize.counts =
                               group = 1),
                 color = "indianred",
                 linetype = 2,
-                inherit.aes = F) +
+                inherit.aes = FALSE) +
       geom_line(data = data.frame(norm.cnt.stats),
                 mapping = aes(x = variable,
                               y = min,
                               group = 1),
                 color = "steelblue",
                 linetype = 2,
-                inherit.aes = F) +
+                inherit.aes = FALSE) +
       ylab(ifelse(is.null(DEprot.object@log.base),
                   yes = "Intensity",
                   no = paste0(ifelse(DEprot.object@log.base == exp(1),
@@ -116,10 +119,10 @@ normalize.counts =
                               "(Intensity)"))) +
       ggtitle("**Normalized**",
               subtitle = paste0("*",DEprot.object@normalization.method[2,2],", ",
-                               ifelse(DEprot.object@normalization.method[3,2] == TRUE,
-                                      yes = paste0(DEprot.object@normalization.method[4,2], " balanced"),
-                                      no = "unbalanced"),
-                               " [MBQN]*")) +
+                                ifelse(DEprot.object@normalization.method[3,2] == TRUE,
+                                       yes = paste0(DEprot.object@normalization.method[4,2], " balanced"),
+                                       no = "unbalanced"),
+                                " [MBQN]*")) +
       xlab("Sample") +
       theme_classic() +
       theme(axis.text.y = element_text(color = "black"),

@@ -9,6 +9,13 @@
 "unimputed.counts"
 
 
+#' @title Imputed proteomics (LFQ) data
+#' @description Dummy example of full proteomics data (LFQ values in log2). Imputed using missForest algorithm.
+#' @format Object of class \code{DEprot}
+#' @source Simulated data
+"unimputed.counts"
+
+
 #' @title Example of metadata table
 #' @description Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.
 #' @format A data frame with 12 rows and 6 columns:

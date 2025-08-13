@@ -485,7 +485,7 @@ setMethod(f = "show",
           signature = "DEprot.pvalues",
           definition =
             function(object) {
-              require(patchwork, quietly = T)
+              require(patchwork, quietly = TRUE)
               plot = (object@pvalue.distribution / object@padjusted.distribution) | object@pvalue.rank
               print(plot)
             })
@@ -497,11 +497,11 @@ setMethod(f = "show",
           signature = "DEprot.normality",
           definition =
             function(object) {
-              if (object@norm.statement == T) {
+              if (object@norm.statement == TRUE) {
                 message("All samples display a normal distribution.")
 
               } else {
-                normality = sapply(X = object@norm.AD.tests, FUN = function(x){x$p.value < p.threshold}, USE.NAMES = T)
+                normality = sapply(X = object@norm.AD.tests, FUN = function(x){x$p.value < p.threshold}, USE.NAMES = TRUE)
                 message(paste0("The following samples do not display a normal distribution: ",
                                paste0(names(normality)[isFALSE(normality)], collapse = ", "), "."))
               }

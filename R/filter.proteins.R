@@ -2,9 +2,9 @@
 #'
 #' @description Function that allows for removing or keeping specific proteins from any \code{DEprot} object class.
 #'
-#' @param DEprot.object An object of class \code{DEprot}.
-#' @param proteins A string vector indicating a list of proteins to be use as filtering criteria. It must correspond to the counts rown names and 'prot.id' column of the analyses object.
-#' @param mode A string indicating the mode to use for the filtering. If 'keep' the proteins are selected and kept, while if 'remove' the proteins are discarded. Default: \code{"keep"}.
+#' @param DEprot.object Object of class \code{DEprot}.
+#' @param proteins String vector indicating a list of proteins to be use as filtering criteria. It must correspond to the counts rown names and 'prot.id' column of the analyses object.
+#' @param mode String indicating the mode to use for the filtering. If 'keep' the proteins are selected and kept, while if 'remove' the proteins are discarded. Default: \code{"keep"}.
 #'
 #' @return An object of class \code{DEprot} (S4 vector).
 #'
@@ -17,14 +17,14 @@ filter.proteins =
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
     ### check mode
     if (!(mode %in% c("keep", "k", "remove", "rm", "r", "rmv"))) {
-      warning("The 'mode' must be one among: 'keep', 'remove'.")
-      return(DEprot.object)
+      stop("The 'mode' must be one among: 'keep', 'remove'.")
+      #return(DEprot.object)
     }
 
 
@@ -62,7 +62,7 @@ filter.proteins =
                             violin.color = "purple",
                             title = DEprot.object@boxplot.norm$labels$title,
                             subtitle = DEprot.object@boxplot.norm$labels$subtitle,
-                            convert.log2 = T)
+                            convert.log2 = TRUE)
     }
 
 
@@ -81,7 +81,7 @@ filter.proteins =
                             violin.color = "forestgreen",
                             title = DEprot.object@boxplot.imputed$labels$title,
                             subtitle = DEprot.object@boxplot.imputed$labels$subtitle,
-                            convert.log2 = T)
+                            convert.log2 = TRUE)
     }
 
 
@@ -106,7 +106,7 @@ filter.proteins =
 
                  x$n.diff =
                    data.frame(diff.tb %>%
-                                dplyr::group_by(diff.status, .drop = F) %>%
+                                dplyr::group_by(diff.status, .drop = FALSE) %>%
                                 dplyr::summarise(n = n(),
                                                  median.FoldChange = median(log2.Fold_group1.vs.group2)))
                  return(x)
@@ -134,9 +134,9 @@ filter.proteins =
                                                                  which.data = "imputed")
 
                       spearman = DEprot::plot.correlation.heatmap(DEprot.object = DEprot.object,
-                                                                 correlation.method = "spearman",
-                                                                 sample.subset = samples,
-                                                                 which.data = "imputed")
+                                                                  correlation.method = "spearman",
+                                                                  sample.subset = samples,
+                                                                  which.data = "imputed")
 
                       res$correlations = patchwork::wrap_plots(pearson@heatmap, spearman@heatmap, nrow = 1)
 

@@ -6,6 +6,9 @@
 #' @param batch.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.
 #' @param cores Numeric value indicating the number of cores to use for the batch correction. Default: \code{1}.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export harmonize.batches
 
 harmonize.batches =
@@ -37,25 +40,25 @@ harmonize.batches =
 
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
     meta.tb = DEprot.object@metadata
 
 
     ### check if raw un-imputed data are available
     if (is.null(DEprot.object@raw.counts)) {
-      warning(paste0("The 'harmonize.batches' function requires that the data are loaded as 'raw'\n",
-                     #"Combine tables of intra-batch normalized data and then use 'harmonize.batches' to correct the signal among batches."
-                     ))
+      stop(paste0("The 'harmonize.batches' function requires the data to be loaded as 'raw'."
+                  #"Combine tables of intra-batch normalized data and then use 'harmonize.batches' to correct the signal among batches."
+      ))
     }
 
 
     ### Check 'batch.column' presence and eventually the paired.test variable
     if (!is.null(batch.column[[1]])) {
       if (!(batch.column %in% colnames(meta.tb))) {
-        warning("The 'batch.column' is not present in the metadata of the object.")
-        return(DEprot.object)
+        stop("The 'batch.column' is not present in the metadata of the object.")
+        #return(DEprot.object)
       } else {
         meta.tb[,batch.column[[1]]] = as.character(meta.tb[,batch.column[[1]]])
       }
@@ -68,13 +71,13 @@ harmonize.batches =
 
 
     ### Harmonize batches
-    batch.corrected.counts = HarmonizR::harmonizR(data_as_input = data.frame(DEprot.object@raw.counts, check.names = F),
+    batch.corrected.counts = HarmonizR::harmonizR(data_as_input = data.frame(DEprot.object@raw.counts, check.names = FALSE),
                                                   description_as_input = des,
                                                   cores = cores,
                                                   output_file = FALSE)
 
     ### Reset original order of the columns
-    batch.corrected.counts = batch.corrected.counts[,colnames(data.frame(DEprot.object@raw.counts, check.names = F))]
+    batch.corrected.counts = batch.corrected.counts[,colnames(data.frame(DEprot.object@raw.counts, check.names = FALSE))]
 
 
 
@@ -82,7 +85,7 @@ harmonize.batches =
     batch.corrected.DEprot = DEprot.object
 
     batch.corrected.DEprot@norm.counts = as.matrix(batch.corrected.counts)
-    batch.corrected.DEprot@normalized = T
+    batch.corrected.DEprot@normalized = TRUE
     batch.corrected.DEprot@normalization.method = "HarmonizR"
 
     batch.corrected.DEprot@boxplot.norm =

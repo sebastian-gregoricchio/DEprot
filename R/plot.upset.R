@@ -20,6 +20,10 @@
 #'
 #' @name plot.upset
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import ComplexUpset
+#'
 #' @export plot.upset
 
 plot.upset =
@@ -38,16 +42,16 @@ plot.upset =
            use.uncorrected.pvalue = FALSE) # 'ascending', 'descending', FALSE
     {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(ComplexUpset)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # require(ComplexUpset)
 
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return()
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return()
     }
 
 
@@ -57,8 +61,8 @@ plot.upset =
         analyses.result.list = DEprot.analyses.object@analyses.result.list[contrast.subset]
         contrasts = DEprot.analyses.object@contrasts[contrast.subset]
       } else {
-        warning("Not all the contrasts indicated in the subset are present in the 'analyses.result.list' of the object provided.")
-        return()
+        stop("Not all the contrasts indicated in the subset are present in the 'analyses.result.list' of the object provided.")
+        #return()
       }
     } else {
       analyses.result.list = DEprot.analyses.object@analyses.result.list
@@ -120,7 +124,7 @@ plot.upset =
           if (nrow(group1) > 0) {
             overlaps.tb = dplyr::mutate(.data = overlaps.tb, group1 = prot.id %in% group1$prot.id)
           } else {
-            overlaps.tb$group1 = F
+            overlaps.tb$group1 = FALSE
           }
           colnames(overlaps.tb)[ncol(overlaps.tb)] = groups[1]
         }
@@ -131,7 +135,7 @@ plot.upset =
           if (nrow(group2) > 0) {
             overlaps.tb = dplyr::mutate(.data = overlaps.tb, group2 = prot.id %in% group2$prot.id)
           } else {
-            overlaps.tb$group2 = F
+            overlaps.tb$group2 = FALSE
           }
           colnames(overlaps.tb)[ncol(overlaps.tb)] = groups[2]
         }
@@ -143,8 +147,8 @@ plot.upset =
       # Remove proteins missing everywhere
       overlaps.tb = overlaps.tb[rowSums(overlaps.tb[,-1]) > 0,]
     } else {
-      warning("No differential proteins have been found. Upset plot cannot be generated")
-      return()
+      stop("No differential proteins have been found. Upset plot cannot be generated")
+      #return()
     }
 
 
@@ -180,8 +184,8 @@ plot.upset =
               width_ratio = width.ratio,
               min_size = min.size)
     } else {
-      warning("No differential proteins have been found. Upset plot cannot be generated")
-      return()
+      stop("No differential proteins have been found. Upset plot cannot be generated")
+      #return()
     }
 
 

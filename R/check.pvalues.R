@@ -10,6 +10,8 @@
 #'
 #' @return A DEprot.pvalues object containing 3 slots: distribution histogram of p-values and p-values adjusted and, line plot of ranked p-values.
 #'
+#' @import ggplot2
+#'
 #' @export check.pvalues
 
 
@@ -26,8 +28,8 @@ check.pvalues =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return(invisible())
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return(invisible())
     }
 
     ### check and collect contrast
@@ -41,12 +43,12 @@ check.pvalues =
         # n.diff = DEprot.analyses.object@analyses.result.list[[contrast]]$n.diff
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
       } else {
-        warning("The 'contrast' indicated is not available.")
-        return(invisible())
+        stop("The 'contrast' indicated is not available.")
+        #return(invisible())
       }
     } else {
-      warning("The 'contrast' must be a numeric value.")
-      return(invisible())
+      stop("The 'contrast' must be a numeric value.")
+      #return(invisible())
     }
 
 
@@ -63,7 +65,7 @@ check.pvalues =
                      color = p.value.color,
                      fill = p.value.color,
                      alpha = 0.5) +
-      geom_hline(yintercept = median(hist(data$p.value, breaks = 1/histogram.binwidth, plot = F)$counts, na.rm = T), linetype = 2, color = "gray30") +
+      geom_hline(yintercept = median(hist(data$p.value, breaks = 1/histogram.binwidth, plot = FALSE)$counts, na.rm = TRUE), linetype = 2, color = "gray30") +
       geom_vline(xintercept = padj_th, linetype = 3, color = "black") +
       scale_x_continuous(expand = c(0.01,0)) +
       scale_y_continuous(expand = c(0,0)) +
@@ -88,7 +90,7 @@ check.pvalues =
                      color = p.adjusted.color,
                      fill = p.adjusted.color,
                      alpha = 0.5) +
-      geom_hline(yintercept = median(hist(data$padj, breaks = 1/histogram.binwidth, plot = F)$counts, na.rm = T), linetype = 2, color = "gray30") +
+      geom_hline(yintercept = median(hist(data$padj, breaks = 1/histogram.binwidth, plot = FALSE)$counts, na.rm = TRUE), linetype = 2, color = "gray30") +
       geom_vline(xintercept = padj_th, linetype = 3, color = "black") +
       scale_x_continuous(expand = c(0.01,0)) +
       scale_y_continuous(expand = c(0,0)) +

@@ -336,7 +336,7 @@ data.frame(dpo@imputation[-3])
 ```
 
 ```{r load_imputation, echo=FALSE}
-dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/deprot/dpo.imputed.rds"))
+dpo = DEprot::imputed.counts
 dpo
 ```
 ```{r load_imputation2, echo=FALSE}
@@ -1216,13 +1216,15 @@ ORA.results =
 #### Enrichment output
 The output is an object of class `DEprot.enrichResult`:
 
-* *enrichment.discovery*: the direct output from `clusterProfiler::GSEA/enricher` (GSEA and ORA, respectively);
-* *protein.network*: a string plot showing protein networks (`clusterProfiler::cnetplot`);
-* *pathway.network*: a list with clusters and string plot showing pathway/set networks (`aPEAR::enrichmentNetwork`);
-* *NES.plot* (GSEA only): a bar plot showing the NES scores for each significantly enriched geneSet;
-* *dotplot_gene.ratio*: a dotplot showing the geneRatios for each significantly enriched geneSet;
-* *dotplot_fold.enrichment* (ORA only): a dotplot showing the foldEnrichment for each significantly enriched geneSet,
-* *parameters*: a list containing the parameters used to run the analyses.
+| Slot                                 | Description                                                                                     |
+| -----------------------------------: | :---------------------------------------------------------------------------------------------- |
+| *enrichment.discovery*               | the direct output from `clusterProfiler::GSEA/enricher` (GSEA and ORA, respectively)            |
+| *protein.network*                    | a string plot showing protein networks (`clusterProfiler::cnetplot`)                            |
+| *pathway.network*                    | a list with clusters and string plot showing pathway/set networks (`aPEAR::enrichmentNetwork`)  |
+| *NES.plot* (GSEA only)               | a bar plot showing the NES scores for each significantly enriched geneSet                       |
+| *dotplot_gene.ratio*                 | a dotplot showing the geneRatios for each significantly enriched geneSet                        |
+| *dotplot_fold.enrichment* (ORA only) | a dotplot showing the foldEnrichment for each significantly enriched geneSet                    |
+| *parameters*                         | a list containing the parameters used to run the analyses                                       |
 
 <br>
 

@@ -19,6 +19,8 @@
 #'
 #' @name plot.PC.scatter.123
 #'
+#' @import ggplot2
+#'
 #' @export plot.PC.scatter.123
 
 plot.PC.scatter.123 =
@@ -34,29 +36,29 @@ plot.PC.scatter.123 =
            plot.zero.line.x.23 = TRUE) {
 
 
-    ### Libraries
-    require(ggplot2)
+    # ### Libraries
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.PCA" %in% class(DEprot.PCA.object))) {
-      return(warning("The input must be an object of class 'DEprot.PCA'."))
+      stop("The input must be an object of class 'DEprot.PCA'.")
     }
 
 
     ### check feature/aes column
     if (!(color.column %in% colnames(DEprot.PCA.object@PCs))) {
-      return(warning(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
-                            "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                          collapse = ", "))))
+      stop(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
+                  "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
+                                                       collapse = ", ")))
     }
 
 
     if (!is.null(shape.column)) {
       if (!(shape.column %in% colnames(DEprot.PCA.object@PCs))) {
-        return(warning(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
-                              "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                            collapse = ", "))))
+        stop(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
+                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
+                                                         collapse = ", ")))
       } else {
         shape.scores = DEprot.PCA.object@PCs[,shape.column]
         shape.label = guide_legend(title = stringr::str_to_title(shape.column))
@@ -69,9 +71,9 @@ plot.PC.scatter.123 =
 
     if (!is.null(label.column)) {
       if (!(label.column %in% colnames(DEprot.PCA.object@PCs))) {
-        return(warning(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
-                              "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                            collapse = ", "))))
+        stop(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
+                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
+                                                         collapse = ", ")))
       }
     }
 
@@ -108,7 +110,7 @@ plot.PC.scatter.123 =
                               color.column = color.column,
                               shape.column = shape.column,
                               label.column = label.column,
-                              plot.zero.lines = F) +
+                              plot.zero.lines = FALSE) +
       scale_color_manual(values = scatter.colors) +
       theme(legend.position = "none")
 
@@ -119,18 +121,18 @@ plot.PC.scatter.123 =
                               color.column = color.column,
                               shape.column = shape.column,
                               label.column = label.column,
-                              plot.zero.lines = F) +
+                              plot.zero.lines = FALSE) +
       ylab(NULL) +
       scale_color_manual(values = scatter.colors)
 
 
 
     ## Add zero-lines
-    if (plot.zero.line.y.12 == T) {pca.1.2 = pca.1.2 + geom_hline(yintercept = 0, linetype = 2, color = "gray")}
-    if (plot.zero.line.y.23 == T) {pca.2.3 = pca.2.3 + geom_hline(yintercept = 0, linetype = 2, color = "gray")}
+    if (plot.zero.line.y.12 == TRUE) {pca.1.2 = pca.1.2 + geom_hline(yintercept = 0, linetype = 2, color = "gray")}
+    if (plot.zero.line.y.23 == TRUE) {pca.2.3 = pca.2.3 + geom_hline(yintercept = 0, linetype = 2, color = "gray")}
 
-    if (plot.zero.line.x.12 == T) {pca.1.2 = pca.1.2 + geom_vline(xintercept = 0, linetype = 2, color = "gray")}
-    if (plot.zero.line.x.23 == T) {pca.2.3 = pca.2.3 + geom_vline(xintercept = 0, linetype = 2, color = "gray")}
+    if (plot.zero.line.x.12 == TRUE) {pca.1.2 = pca.1.2 + geom_vline(xintercept = 0, linetype = 2, color = "gray")}
+    if (plot.zero.line.x.23 == TRUE) {pca.2.3 = pca.2.3 + geom_vline(xintercept = 0, linetype = 2, color = "gray")}
 
 
     ### Export combined plot
@@ -140,7 +142,7 @@ plot.PC.scatter.123 =
       return(patchwork::wrap_plots(pca.1.2, pca.2.3, nrow = 1) +
                patchwork::plot_annotation(title = title,
                                           theme = theme(plot.title = ggtext::element_markdown(hjust = 0.5)))
-             )
+      )
     }
 
   } # END FUNCTION

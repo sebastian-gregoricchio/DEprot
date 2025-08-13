@@ -117,7 +117,7 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
 # data.frame(dpo@imputation[-3])
 
 ## ----load_imputation, echo=FALSE----------------------------------------------
-dpo = readRDS(url("https://data.cyverse.org/dav-anon/iplant/home/sgregoricchio/deprot/dpo.imputed.rds"))
+dpo = DEprot::imputed.counts
 dpo
 
 ## ----load_imputation2, echo=FALSE---------------------------------------------

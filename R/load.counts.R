@@ -11,6 +11,10 @@
 #'
 #' @return A \code{DEprot} object (S4 vector).
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import methods
+#'
 #' @export load.counts
 
 load.counts =
@@ -21,10 +25,10 @@ load.counts =
            normalization.method = NA,
            column.id = "column.id") {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(methods)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # require(methods)
 
 
     ### Check counts
@@ -32,11 +36,11 @@ load.counts =
       function(x) {
         ### Check if "" (empty names) are present
         if ("" %in% rownames(x) | NA %in% rownames(x)) {
-          warning("The rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
-          return(return())
+          stop("The rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
+          #return(return())
         ### Check if rownames are duplicated
         } else if (TRUE %in% duplicated(rownames(counts))) {
-          message("One or more rownames in the counts tables are duplicated. Only unique values are allowed. The `make.unique` function is applied on counts rownames unisng a '.' as separator.")
+          warning("One or more rownames in the counts tables are duplicated. Only unique values are allowed. The `make.unique` function is applied on counts rownames unisng a '.' as separator.")
           rownames(x) = make.unique(names = rownames(x), sep = ".")
           return(x)
         } else {
@@ -49,15 +53,15 @@ load.counts =
     if ("data.frame" %in% class(counts) | "matrix" %in% class(counts)) {
       cnt = as.matrix(check.rownames(counts))
     } else{
-      warning("The 'counts' table must be either a matrix or a data.frame. Rows are the protein.IDs and columns the samples.")
-      return()
+      stop("The 'counts' table must be either a matrix or a data.frame. Rows are the protein.IDs and columns the samples.")
+      #return()
     }
 
     ### Remove rows with all NA values in the intensity matrix
     cnt[is.nan(cnt)] = NA
 
     pre.clean.nrow = nrow(cnt)
-    cnt = cnt[rowSums(abs(cnt), na.rm = T) > 0,]
+    cnt = cnt[rowSums(abs(cnt), na.rm = TRUE) > 0,]
 
     if (nrow(cnt) != pre.clean.nrow) {
       n.del.rows = pre.clean.nrow - nrow(cnt)
@@ -77,22 +81,22 @@ load.counts =
     if ("data.frame" %in% class(metadata) | "matrix" %in% class(metadata)) {
       meta = as.data.frame(metadata)
     } else if ("character" %in% class(metadata)) {
-      meta = data.table::fread(metadata, data.table = F)
+      meta = data.table::fread(metadata, data.table = FALSE)
     } else {
-      warning("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
-      return()
+      stop("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
+      #return()
     }
 
     # check that column.id is present in metadata
     if (!(column.id %in% colnames(meta))) {
-      warning("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
-      return()
+      stop("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
+      #return()
     } else if (!all(sort(colnames(cnt)) == sort(meta[,column.id]))) {
-      warning(paste0("Not all column names of the counts table correspond to the IDs indicated in the column '",
-                     column.id,"' of the metadata table:\n",
-                     "- counts IDs:\n", paste0(colnames(cnt), collapse = ", "), "\n\n",
-                     "- metadata IDs ('",column.id,"'):\n", paste0(meta[,column.id], collapse = ", ")))
-      return()
+      stop(paste0("Not all column names of the counts table correspond to the IDs indicated in the column '",
+                  column.id,"' of the metadata table:\n",
+                  "- counts IDs:\n", paste0(colnames(cnt), collapse = ", "), "\n\n",
+                  "- metadata IDs ('",column.id,"'):\n", paste0(meta[,column.id], collapse = ", ")))
+      #return()
     }
 
 
@@ -115,8 +119,8 @@ load.counts =
     cnt.stats =
       melt.cnt %>%
       dplyr::group_by(variable) %>%
-      dplyr::summarise(min = min(value, na.rm = T),
-                       max = max(value, na.rm = T))
+      dplyr::summarise(min = min(value, na.rm = TRUE),
+                       max = max(value, na.rm = TRUE))
 
     boxplot =
       ggplot() +
@@ -145,14 +149,14 @@ load.counts =
                               group = 1),
                 color = "indianred",
                 linetype = 2,
-                inherit.aes = F) +
+                inherit.aes = FALSE) +
       geom_line(data = data.frame(cnt.stats),
                 mapping = aes(x = variable,
                               y = min,
                               group = 1),
                 color = "steelblue",
                 linetype = 2,
-                inherit.aes = F) +
+                inherit.aes = FALSE) +
       ylab(ifelse(is.na(log.base),
                   yes = "Intensity",
                   no = paste0(ifelse(log.base == exp(1),
@@ -180,8 +184,8 @@ load.counts =
     raw.counts = NULL
     norm.counts = NULL
     imputed.counts = NULL
-    imputed = F
-    normalized = F
+    imputed = FALSE
+    normalized = FALSE
     normalization.method = normalization.method
 
 
@@ -206,8 +210,8 @@ load.counts =
         #raw.counts = NULL
         #norm.counts = NULL
         imputed.counts = cnt
-        imputed = T
-        normalized = T
+        imputed = TRUE
+        normalized = TRUE
         normalization.method = normalization.method
       }
 
@@ -221,7 +225,7 @@ load.counts =
         #imputed.counts = NULL
         #imputed = F
         norm.counts = cnt
-        normalized = T
+        normalized = TRUE
         normalization.method = normalization.method
       }
     }
@@ -237,7 +241,7 @@ load.counts =
           norm.counts = norm.counts,
           imputed.counts = imputed.counts,
           log.base = log.base,
-          log.transformed = ifelse(is.null(log.base), yes = F, no = T),
+          log.transformed = ifelse(is.null(log.base), yes = FALSE, no = TRUE),
           imputed = imputed,
           imputation = imputation,
           normalized = normalized,

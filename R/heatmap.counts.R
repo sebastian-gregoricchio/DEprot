@@ -29,6 +29,10 @@
 #'
 #' @return A \code{DEprot.contrast.heatmap} object, which contains the heatmap and the hclust object used to order the rows.
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import legendry
+#'
 #' @export heatmap.counts
 
 heatmap.counts =
@@ -57,10 +61,10 @@ heatmap.counts =
            title = NULL,
            use.uncorrected.pvalue = FALSE) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(legendry)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # require(legendry)
 
     ### Internal functions
     de.status =
@@ -82,10 +86,10 @@ heatmap.counts =
         warn = "Upon subsetting, no values to show are left."
         if (!is.logical(m)) {
           if (nrow(m) == 0 | ncol(m) == 0) {
-            return(return(warning(warn)))
+            stop(warn)
           }
         } else {
-          return(return(warning(warn)))
+          stop(warn)
         }
       }
 
@@ -98,7 +102,7 @@ heatmap.counts =
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.object))) {
       if (!("DEprot" %in% class(DEprot.object))) {
-        return(warning("The input must be an object of class 'DEprot' or 'DEprot.analyses'."))
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
       }
     }
 
@@ -106,8 +110,8 @@ heatmap.counts =
     ### check grouping column
     if (!is.null(group.by.metadata.column)) {
       if (!(group.by.metadata.column %in% colnames(DEprot.object@metadata))) {
-        return(warning(paste0("The 'group.by.metadata.column' is not present in the metadata of the object provided.\n",
-                              "Available column IDs: ", paste0(colnames(DEprot.object@metadata), collapse = ", "))))
+        stop(paste0("The 'group.by.metadata.column' is not present in the metadata of the object provided.\n",
+                    "Available column IDs: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
       } else {
         meta = DEprot.object@metadata
       }
@@ -121,31 +125,31 @@ heatmap.counts =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                       "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                       "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                       "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                     "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
       return(DEprot.object)
     }
 
@@ -153,7 +157,7 @@ heatmap.counts =
 
     ### Filter table of counts
     if (!is.null(sample.subset)) {
-      mat.filtered = mat[,which(colnames(mat) %in% sample.subset), drop=F]
+      mat.filtered = mat[,which(colnames(mat) %in% sample.subset), drop=FALSE]
     } else {
       mat.filtered = mat
     }
@@ -161,7 +165,7 @@ heatmap.counts =
 
 
     if (!is.null(protein.subset)) {
-      mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% protein.subset),,drop=F]
+      mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% protein.subset),,drop=FALSE]
     } else {
       mat.filtered = mat.filtered
     }
@@ -212,18 +216,18 @@ heatmap.counts =
 
 
             ## filter the matrix for these proteins
-            mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% diff.prot),,drop=F]
+            mat.filtered = mat.filtered[which(rownames(mat.filtered) %in% diff.prot),,drop=FALSE]
             check.matrix(mat.filtered)
 
 
           } else {
-            return(warning("The 'contrast' indicated is not available."))
+            stop("The 'contrast' indicated is not available.")
           }
         } else {
-          return(warning("The 'contrast' must be a numeric value."))
+          stop("The 'contrast' must be a numeric value.")
         }
       } else {
-        return(warning("The 'contrast' cannot be determined from a 'DEprot' object, provide a 'DEprot.analyses' object instead."))
+        stop("The 'contrast' cannot be determined from a 'DEprot' object, provide a 'DEprot.analyses' object instead.")
       }
     }
 
@@ -242,7 +246,7 @@ heatmap.counts =
       new.data = list()
       for (i in 1:length(groups)) {
         samples.in.group = (dplyr::filter(.data = groups.tb, group == groups[i]))$column.id
-        new.data[[i]] = rowMeans(mat.filtered[,samples.in.group, drop = F], na.rm = T)
+        new.data[[i]] = rowMeans(mat.filtered[,samples.in.group, drop = FALSE], na.rm = TRUE)
       }
 
       new.data = data.frame(new.data)
@@ -305,7 +309,7 @@ heatmap.counts =
       if ("character" %in% class(protein.names.pattern)) {
         plotting.matrix = plotting.matrix %>% dplyr::mutate(prot.id = gsub(protein.names.pattern, "", prot.id))
       } else {
-        return(warning("The 'protein.names.pattern' must be a character indicating a regular expression to remove from the protein IDs."))
+        stop("The 'protein.names.pattern' must be a character indicating a regular expression to remove from the protein IDs.")
       }
     }
 
@@ -319,7 +323,7 @@ heatmap.counts =
                  fill = score)) +
       geom_tile(color = cell.border.color,
                 linewidth = cell.border.width,
-                show.legend = T) +
+                show.legend = TRUE) +
       ggtitle(title) +
       theme_classic() +
       theme(axis.line = element_blank(),

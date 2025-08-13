@@ -22,6 +22,9 @@
 #'
 #' @name plot.MA
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export plot.MA
 
 plot.MA =
@@ -41,14 +44,14 @@ plot.MA =
            label.max.overlaps = 100,
            min.segment.length.labels = 0) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      stop("The input must be an object of class 'DEprot.analyses'.")
     }
 
     ### check and collect contrast
@@ -58,10 +61,10 @@ plot.MA =
         n.diff = DEprot.analyses.object@analyses.result.list[[contrast]]$n.diff
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
       } else {
-        return(warning("The 'contrast' indicated is not available."))
+        stop("The 'contrast' indicated is not available.")
       }
     } else {
-      return(warning("The 'contrast' must be a numeric value."))
+      stop("The 'contrast' must be a numeric value.")
     }
 
 
@@ -104,7 +107,7 @@ plot.MA =
 
       n.diff =
         data.frame(diff.tb %>%
-                     dplyr::group_by(diff.status, .drop = F) %>%
+                     dplyr::group_by(diff.status, .drop = FALSE) %>%
                      dplyr::summarise(n = n(),
                                       median.FoldChange = median(log2.Fold_group1.vs.group2)))
     }
@@ -120,13 +123,13 @@ plot.MA =
                           fill = after_stat(count)),
                       geom = "raster",
                       contour = FALSE,
-                      show.legend = T,
+                      show.legend = TRUE,
                       n = 200,
                       adjust = 5) +
       scale_fill_gradientn(colours = density.colors, name = "Count")
 
 
-    if (sum((n.diff %>% dplyr::filter(!(diff.status %in% c("unresponsive", "null"))))$n, na.rm = T) > 0) {
+    if (sum((n.diff %>% dplyr::filter(!(diff.status %in% c("unresponsive", "null"))))$n, na.rm = TRUE) > 0) {
       ma.plot =
         ma.plot +
         geom_point(data = dplyr::filter(diff.tb, diff.status %in% c(contrasts.info$var.1,contrasts.info$var.2)),
@@ -136,8 +139,8 @@ plot.MA =
                    alpha = point.alpha,
                    size = point.size,
                    stroke = NA,
-                   show.legend = T,
-                   inherit.aes = F) +
+                   show.legend = TRUE,
+                   inherit.aes = FALSE) +
         scale_color_manual(values = colors.plots, name = "Differential\nstatus", drop = FALSE)
     }
 
@@ -178,7 +181,7 @@ plot.MA =
             ggrepel::geom_label_repel(data = filt.tb,
                                       aes(label = prot.id),
                                       color = "black",
-                                      show.legend = F,
+                                      show.legend = FALSE,
                                       min.segment.length = min.segment.length.labels,
                                       max.overlaps = label.max.overlaps,
                                       size = label.font.size)
@@ -188,7 +191,7 @@ plot.MA =
             ggrepel::geom_text_repel(data = filt.tb,
                                      aes(label = prot.id),
                                      color = "black",
-                                     show.legend = F,
+                                     show.legend = FALSE,
                                      min.segment.length = min.segment.length.labels,
                                      max.overlaps = label.max.overlaps,
                                      size = label.font.size)

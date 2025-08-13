@@ -15,7 +15,7 @@ get.results =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      stop("The input must be an object of class 'DEprot.analyses'.")
     }
 
     ### check and collect contrast
@@ -23,10 +23,10 @@ get.results =
       if (contrast <= length(DEprot.analyses.object@analyses.result.list)) {
         data = DEprot.analyses.object@analyses.result.list[[contrast]]$results
       } else {
-        return(warning("The 'contrast' indicated is not available."))
+        stop("The 'contrast' indicated is not available.")
       }
     } else {
-      return(warning("The 'contrast' must be a numeric value."))
+      stop("The 'contrast' must be a numeric value.")
     }
 
     ## Add contrast to data attributes

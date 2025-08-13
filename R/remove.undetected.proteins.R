@@ -18,8 +18,8 @@ remove.undetected.proteins =
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
 
@@ -29,32 +29,32 @@ remove.undetected.proteins =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(DEprot.object)
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                  "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 

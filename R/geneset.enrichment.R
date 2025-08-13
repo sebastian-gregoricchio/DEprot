@@ -14,7 +14,10 @@
 #' @param dotplot.n Numeric value indicating the maximum number of categories to plot in the dotplot. Default: \code{10}.
 #'
 #' @return An object of class \code{DEprot.enrichResult}.
-
+#'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export geneset.enrichment
 
 geneset.enrichment =
@@ -30,11 +33,11 @@ geneset.enrichment =
            pAdjustMethod = "BH",
            dotplot.n = 10) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    #require(clusterProfiler)
-    #require(aPEAR)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # #require(clusterProfiler)
+    # #require(aPEAR)
 
     if (!requireNamespace("clusterProfiler", quietly = TRUE)) {
       warning("The 'clusterProfiler' (Bioconductor) package must be installed to use this function.")
@@ -107,7 +110,7 @@ geneset.enrichment =
       NES.colors = c(pos.NES.color, neg.NES.color)
       names(NES.colors) = c(pos.NES.label, neg.NES.label)
 
-      max_abs.NES = ceiling(max(abs(result$NES), na.rm = T))
+      max_abs.NES = ceiling(max(abs(result$NES), na.rm = TRUE))
 
       # Generating the plot
       NES.plot =
@@ -117,10 +120,10 @@ geneset.enrichment =
                    fill = factor(dataset, levels = c(pos.NES.label, neg.NES.label)))) +
         ggplot2::geom_bar(aes(alpha = -log10(p.adjust)),
                           stat = "identity",
-                          show.legend = T,
+                          show.legend = TRUE,
                           width = 0.8) +
         scale_alpha_continuous(range = alpha.range) +
-        scale_fill_manual(values = NES.colors, name = "dataset", drop = F) +
+        scale_fill_manual(values = NES.colors, name = "dataset", drop = FALSE) +
         ylab(NULL) +
         ggtitle(title) +
         theme_classic() +
@@ -178,7 +181,7 @@ geneset.enrichment =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      stop("The input must be an object of class 'DEprot.analyses'.")
     }
 
     ### check and collect contrast
@@ -187,27 +190,27 @@ geneset.enrichment =
         data = DEprot.analyses.object@analyses.result.list[[contrast]]$results
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
       } else {
-        return(warning("The 'contrast' indicated is not available."))
+        stop("The 'contrast' indicated is not available.")
       }
     } else {
-      return(warning("The 'contrast' must be a numeric value."))
+      stop("The 'contrast' must be a numeric value.")
     }
 
 
     ### Check enrichment.type
     if (!(toupper(enrichment.type) %in% c("ORA", "GSEA", "OVER"))) {
-      return(warning("The 'enrichment.type' must be one among: 'ORA', 'GSEA'."))
+      stop("The 'enrichment.type' must be one among: 'ORA', 'GSEA'.")
     }
 
 
     ### Check TERM2GENE
     if (!("data.frame" %in% class(TERM2GENE))) {
-      return(warning("The 'enrichment.type' must be one among: 'ORA', 'GSEA'."))
+      stop("The 'enrichment.type' must be one among: 'ORA', 'GSEA'.")
     } else {
       if (!("gs_name" %in% colnames(TERM2GENE))) {
-        return(warning("The 'TERM2GENE' must be a 2-column data.frame. One of this columns must be named 'gs_name' (gs: gene set)"))
+        stop("The 'TERM2GENE' must be a 2-column data.frame. One of this columns must be named 'gs_name' (gs: gene set)")
       } else if (ncol(TERM2GENE) > 2) {
-        return(warning("The 'TERM2GENE' must be a 2-column data.frame. One of this columns must be named 'gs_name' (gs: gene set)"))
+        stop("The 'TERM2GENE' must be a 2-column data.frame. One of this columns must be named 'gs_name' (gs: gene set)")
       }
     }
 
@@ -216,12 +219,12 @@ geneset.enrichment =
     if (toupper(enrichment.type) != "GSEA") {
       if (!is.null(diff.status.category)) {
         if (!(diff.status.category %in% unique(data$diff.status))) {
-          return(warning(paste0("The 'diff.status.category' must be a value of the 'diff.status' column in the results.\n\n",
-                                "For contrast #", contrast, ": ", paste(unique(data$diff.status), collapse = ", "),".")))
+          stop(paste0("The 'diff.status.category' must be a value of the 'diff.status' column in the results.\n\n",
+                      "For contrast #", contrast, ": ", paste(unique(data$diff.status), collapse = ", "),"."))
         }
       } else {
-        return(warning(paste0("The 'diff.status.category' must be a value of the 'diff.status' column in the results.\n\n",
-                              "For contrast #", contrast, ": ", paste(unique(data$diff.status), collapse = ", "),".")))
+        stop(paste0("The 'diff.status.category' must be a value of the 'diff.status' column in the results.\n\n",
+                    "For contrast #", contrast, ": ", paste(unique(data$diff.status), collapse = ", "),"."))
       }
     }
 
@@ -241,7 +244,7 @@ geneset.enrichment =
       if (tolower(gsea.rank.method) %in% c("fold","fc","foldchange", "fold change")) {
         gene_list = data[,5]
         names(gene_list) = data$prot.id
-        gene_list = sort(gene_list, decreasing = T)
+        gene_list = sort(gene_list, decreasing = TRUE)
       } else { ### correlation mode
         ### extract tables by group
         counts_var1 = DEprot.analyses.object@imputed.counts[,contrasts.info$group.1]
@@ -250,7 +253,7 @@ geneset.enrichment =
 
         corr_scores = sapply(1:nrow(counts_var1), function(x){suppressWarnings(cor.test(x = group_idx, y = c(counts_var2[x,],counts_var1[x,]), method = "spearman"))$estimate}, USE.NAMES = F)
         names(corr_scores) = rownames(counts_var1)
-        gene_list = sort(corr_scores, decreasing = T)
+        gene_list = sort(corr_scores, decreasing = TRUE)
       }
 
 
@@ -259,7 +262,7 @@ geneset.enrichment =
         data.frame(gene = names(gene_list),
                    score = gene_list) %>%
         dplyr::group_by(gene) %>%
-        dplyr::summarise(mean.score = mean(score, na.rm = T)) %>%
+        dplyr::summarise(mean.score = mean(score, na.rm = TRUE)) %>%
         dplyr::arrange(desc(mean.score))
 
       gene_list = gene_list_df$mean.score

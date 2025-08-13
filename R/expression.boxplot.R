@@ -14,6 +14,9 @@
 #'
 #' @return A boxplot of class ggplot2.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export expression.boxplot
 
 
@@ -31,9 +34,9 @@ expression.boxplot =
            x.label.angle = 30) {
 
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### Internal functions
@@ -42,12 +45,12 @@ expression.boxplot =
         warn = "Upon subsetting, no values to show are left."
         if (!is.logical(m)) {
           if (nrow(m) == 0 | ncol(m) == 0) {
-            warning(warn)
-            return(return(invisible()))
+            stop(warn)
+            #return(return(invisible()))
           }
         } else {
-          warning(warn)
-          return(return(invisible()))
+          stop(warn)
+          #return(return(invisible()))
         }
       }
 
@@ -60,8 +63,8 @@ expression.boxplot =
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.object))) {
       if (!("DEprot" %in% class(DEprot.object))) {
-        warning("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
-        return(invisible())
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
+        #return(invisible())
       }
     }
 
@@ -69,9 +72,9 @@ expression.boxplot =
     ### check grouping column
     if (!is.null(group.by.metadata.column)) {
       if (!(group.by.metadata.column %in% colnames(DEprot.object@metadata))) {
-        warning(paste0("The 'group.by.metadata.column' is not present in the metadata of the object provided.\n",
-                       "Available column IDs: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
-        return(invisible())
+        stop(paste0("The 'group.by.metadata.column' is not present in the metadata of the object provided.\n",
+                    "       Available column IDs: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
+        #return(invisible())
       } else {
         meta = DEprot.object@metadata
       }
@@ -85,32 +88,32 @@ expression.boxplot =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(invisible())
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(invisible())
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(invisible())
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(invisible())
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(invisible())
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return(invisible())
     }
 
 
@@ -127,8 +130,8 @@ expression.boxplot =
     if (protein.id %in% rownames(mat.filtered)) {
       mat.filtered = mat.filtered[rownames(mat.filtered) == protein.id,,drop=F]
     } else {
-      warning(paste0("The protein '", protein.id,"' is not present in the dataset."))
-      return(invisible())
+      stop(paste0("The protein '", protein.id,"' is not present in the dataset."))
+      #return(invisible())
     }
 
 
@@ -139,8 +142,8 @@ expression.boxplot =
     exp.tb$column.id = rownames(exp.tb)
 
     # scale/center (z.score)
-    if (scale.expression == T) {
-      exp.tb = dplyr::mutate(exp.tb, expression = (expression - mean(expression, na.rm = T)) / sd(expression, na.rm = T))
+    if (scale.expression == TRUE) {
+      exp.tb = dplyr::mutate(exp.tb, expression = (expression - mean(expression, na.rm = TRUE)) / sd(expression, na.rm = TRUE))
     }
 
 
@@ -170,8 +173,8 @@ expression.boxplot =
                            by = "column.id")
         colnames(exp.tb)[ncol(exp.tb)] = "shape"
       } else {
-        warning("The 'shape.column' provided is not present in the metadata table.")
-        return(invisible())
+        stop("The 'shape.column' provided is not present in the metadata table.")
+        #return(invisible())
       }
     }
 
@@ -182,8 +185,8 @@ expression.boxplot =
       if (all(unique(exp.tb$group) %in% unique(group.levels))) {
         exp.tb = dplyr::mutate(.data = exp.tb, group = factor(group, levels = group.levels))
       } else {
-        warning("The 'group.levels' do not include all the groups in the 'group.by.metadata.column'.")
-        return(invisible())
+        stop("The 'group.levels' do not include all the groups in the 'group.by.metadata.column'.")
+        #return(invisible())
       }
     }
 
@@ -198,7 +201,7 @@ expression.boxplot =
                  fill = group,
                  color = group))
 
-    if (scale.expression == T) {
+    if (scale.expression == TRUE) {
       boxplot = boxplot + geom_hline(yintercept = 0)
     }
 
@@ -207,7 +210,7 @@ expression.boxplot =
         boxplot +
         geom_boxplot(alpha = 0.25,
                      outliers = F,
-                     show.legend = F)
+                     show.legend = FALSE)
     }
 
 
@@ -228,7 +231,7 @@ expression.boxplot =
                    size = 3,
                    alpha = 0.5,
                    position = position_jitter(width = 0.15, height = 0),
-                   show.legend = F)
+                   show.legend = FALSE)
     }
 
 
@@ -236,10 +239,10 @@ expression.boxplot =
       boxplot +
       ggtitle(paste0("**",protein.id,"**")) +
       xlab(NULL) +
-      ylab(ifelse(test = scale.expression == T,
+      ylab(ifelse(test = scale.expression == TRUE,
                   yes = paste0("centered log~",DEprot.object@log.base,"~(expression)"),
                   no = paste0("log~",DEprot.object@log.base,"~(expression)"))) +
-      ggpubr::stat_compare_means(method = ifelse(test = length(unique(exp.tb$group)) == 2, yes = "wilcox", no = "kruskal"), show.legend = F) +
+      ggpubr::stat_compare_means(method = ifelse(test = length(unique(exp.tb$group)) == 2, yes = "wilcox", no = "kruskal"), show.legend = FALSE) +
       guides(color = "none", fill = "none") +
       theme_classic() +
       theme(axis.title = ggtext::element_markdown(color = "black"),

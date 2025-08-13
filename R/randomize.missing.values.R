@@ -11,6 +11,9 @@
 #'
 #' @return A \code{DEprot} object in which values for proteins which display a number of NAs above a user-defined threshold have been substituted in the normalized counts table with bottom-distribution random values.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export randomize.missing.values
 
 
@@ -21,25 +24,25 @@ randomize.missing.values =
            percentage.missing = 100,
            tail.percentage = 3,
            seed = floor(runif(n = 1, min = 0, max = 50000)),
-           verbose = T) {
+           verbose = TRUE) {
 
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
 
     ### Check if normalized data are available
-    if (DEprot.object@normalized == F) {
-      warning("The 'DEprot' object must contain normalized counts.")
-      return(DEprot.object)
+    if (DEprot.object@normalized == FALSE) {
+      stop("The 'DEprot' object must contain normalized counts.")
+      #return(DEprot.object)
     } else {
       counts = DEprot.object@norm.counts
     }
@@ -47,8 +50,8 @@ randomize.missing.values =
 
     ### Check that the group column is available
     if (!(group.column %in% colnames(DEprot.object@metadata))) {
-      warning("The 'group.column' provided is not available in the metadata column names.")
-      return(DEprot.object)
+      stop("The 'group.column' provided is not available in the metadata column names.")
+      #return(DEprot.object)
     } else {
       groups = unique(DEprot.object@metadata[, group.column])
     }
@@ -60,19 +63,19 @@ randomize.missing.values =
 
     ### Collect the "data pool" from which pick the random values
     if (tail.percentage > 0 & tail.percentage < 100) {
-      threshold = quantile(as.matrix(counts), na.rm = T, probs = tail.percentage/100)
+      threshold = quantile(as.matrix(counts), na.rm = TRUE, probs = tail.percentage/100)
       random.pool = as.vector(counts[counts<threshold])
       random.pool = random.pool[!is.na(random.pool)]
     } else {
-      warning("The 'tail.percentage' must be a number between 0 and 100 (excluded).")
-      return(DEprot.object)
+      stop("The 'tail.percentage' must be a number between 0 and 100 (excluded).")
+      #return(DEprot.object)
     }
 
 
     ### Check percentage of missing values
     if (percentage.missing < 0 | percentage.missing > 100) {
-      warning("The 'percentage.missinge' must be a number between 0 and 100 (included).")
-      return(DEprot.object)
+      stop("The 'percentage.missinge' must be a number between 0 and 100 (included).")
+      #return(DEprot.object)
     }
 
 
@@ -80,7 +83,7 @@ randomize.missing.values =
 
     ### Replace completely/percentage missing values in a group
     set.seed(seed)
-    if (verbose == T){message(paste0("Random Seed used: ", seed))}
+    if (verbose == TRUE){message(paste0("Random Seed used: ", seed))}
 
     list.counts = list()
 
@@ -98,7 +101,7 @@ randomize.missing.values =
       ## assign random values to this subset (if a protein has completely missing values)
       if (length(prot.missing) > 0) {
         n.missing.values = length(counts.subset[prot.missing,][is.na(counts.subset[prot.missing,])])
-        counts.subset[prot.missing,][is.na(counts.subset[prot.missing,])] = sample(x = random.pool, size = n.missing.values, replace = T)
+        counts.subset[prot.missing,][is.na(counts.subset[prot.missing,])] = sample(x = random.pool, size = n.missing.values, replace = TRUE)
       }
 
       list.counts[[i]] = counts.subset

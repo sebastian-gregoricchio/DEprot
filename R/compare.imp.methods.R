@@ -29,6 +29,9 @@
 #'
 #' @return A \code{DEprot.RMSE} object.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export compare.imp.methods
 
 compare.imp.methods =
@@ -53,41 +56,40 @@ compare.imp.methods =
            seed = NULL,
            verbose = FALSE) {
 
-    ### libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### Check that at least one imputation is running
     if (all(c(run.missForest, run.kNN, run.LLS, run.SVD) == FALSE)) {
-      warning("At leats on of the imputation methods should be applied: verify the `run.[method]` parameters, and set at least one equal to TRUE.")
-      return(DEprot.object)
+      stop("At leats on of the imputation methods should be applied: verify the `run.[method]` parameters, and set at least one equal to TRUE.")
+      #return(DEprot.object)
     }
 
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
     ### check percentage value
     if (percentage.test <= 0) {
-      warning("The `percentage.test` must be a number above 0.")
-      return(DEprot.object)
+      stop("The `percentage.test` must be a number above 0.")
+      #return(DEprot.object)
     } else if (percentage.test > 100) {
       percentage.test = 100
-      message("The `percentage.test` must be a number at maximum equal to 100.\
-              The `percentage.test` value has been set to 100.")
+      warning("The `percentage.test` must be a number at maximum equal to 100.\nThe `percentage.test` value has been set to 100.")
     }
 
 
     ### Check if normalized data are available
-    if (use.normalized.data == T) {
+    if (use.normalized.data == TRUE) {
       if (is.null(DEprot.object@norm.counts)) {
-        warning(paste0("You asked to use normalized data for the imputation, but normalized data are not available.\n",
-                       "To perform imputation on raw data, set 'use.normalized.data = FALSE'."))
-        return(DEprot.object)
+        stop(paste0("You asked to use normalized data for the imputation, but normalized data are not available.\n",
+                    "       To perform imputation on raw data, set 'use.normalized.data = FALSE'."))
+        #return(DEprot.object)
       } else {
         cnt = DEprot.object@norm.counts
       }
@@ -102,9 +104,9 @@ compare.imp.methods =
       if (sample.group.column == "column.id") {
         sample.group.column = NULL
       } else if (!(sample.group.column %in% colnames(DEprot.object@metadata))) {
-        warning(paste0("The `sample.group.column` indicated is not available in the metadata table.\n",
-                       "Columns available: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
-        return(DEprot.object)
+        stop(paste0("The `sample.group.column` indicated is not available in the metadata table.\n",
+                    "       Columns available: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
+        #return(DEprot.object)
       } else {
         sample.groups = unique(DEprot.object@metadata[,sample.group.column])
       }
@@ -133,13 +135,13 @@ compare.imp.methods =
     if (n.test.prot < nrow(cnt.known)) {
       sample.data = cnt.known[sample(x = 1:nrow(cnt.known), size = n.test.prot),]
     } else {
-      message("The number of usable proteins is lower than the number of proteins requested.")
+      warning("The number of usable proteins is lower than the number of proteins requested.")
       sample.data = cnt.known
     }
 
     if (nrow(sample.data) == 0) {
-      warning("There are not enough proteins that do not contain NAs. Test dataset cannot be created.")
-      return()
+      stop("There are not enough proteins that do not contain NAs. Test dataset cannot be created.")
+      #return()
     }
 
 
@@ -154,10 +156,10 @@ compare.imp.methods =
       n.na = floor((ncol(sample.data) * nrow(sample.data)) * fraction.missing)
 
       # Define the combination of row x column that will define the cells in which the NAs will be introduced
-      cells.na = list(rows = sample(1:nrow(sample.data), size = n.na, replace = T),
-                      cols = sample(1:ncol(sample.data), size = n.na, replace = T))
+      cells.na = list(rows = sample(1:nrow(sample.data), size = n.na, replace = TRUE),
+                      cols = sample(1:ncol(sample.data), size = n.na, replace = TRUE))
 
-    ###### use the proportions per sample group #####
+      ###### use the proportions per sample group #####
     } else {
       if (isTRUE(verbose)) {message("Simulating NAs in the known data subset (sample.group-mode)...")}
       # compute the effective percentage of rows of the sample.dataset compared to the initial table
@@ -189,9 +191,9 @@ compare.imp.methods =
         if (length(na.count.in.group.per.row) > 1) {
           for (j in 2:length(na.count.in.group.per.row)){
             n.rows = max(1, floor(na.count.in.group.per.row[j] * effective.percentage.test))
-            cells.na.rows.group.j = sample(c(1:nrow(sample.data))[!(c(1:nrow(sample.data)) %in% unique(cells.na.rows.group))], size = n.rows, replace = F)
+            cells.na.rows.group.j = sample(c(1:nrow(sample.data))[!(c(1:nrow(sample.data)) %in% unique(cells.na.rows.group))], size = n.rows, replace = FALSE)
             cells.na.rows.group = c(cells.na.rows.group, rep(cells.na.rows.group.j, each = j-1))
-            cells.na.cols.group = c(cells.na.cols.group, sapply(1:n.rows, function(x){sample(original.col.idx, size = j-1, replace = F)}, USE.NAMES = F))
+            cells.na.cols.group = c(cells.na.cols.group, sapply(1:n.rows, function(x){sample(original.col.idx, size = j-1, replace = FALSE)}, USE.NAMES = FALSE))
           }
         }
 
@@ -214,7 +216,7 @@ compare.imp.methods =
 
 
     ### missForest method is made on variation of the data, so it cannot handle any row that does not have enough variance
-      # therefore all the rows with less than 3 values available will be removed
+    # therefore all the rows with less than 3 values available will be removed
     if (run.missForest == TRUE) {
       nas.per.row.test.tb = rowSums(!is.na(sample.data.na))
       idx.rows.to.keep = rownames(sample.data.na)[as.vector(which(nas.per.row.test.tb > 2))]
@@ -222,7 +224,7 @@ compare.imp.methods =
       sample.data.na.filter.var = sample.data.na[idx.rows.to.keep, ]
 
       if (nrow(sample.data.na.filter.var) == 0) {
-        message("The `missForest` imputation cannot be run: there is not enough variability in the data. Imputation method skipped.")
+        warning("The `missForest` imputation cannot be run: there is not enough variability in the data. Imputation method skipped.")
         run.missForest = FALSE
       } else {
         sample.data.na = sample.data.na.filter.var
@@ -235,8 +237,8 @@ compare.imp.methods =
 
 
     if (nrow(sample.data) == 0) {
-      warning("There are not enough proteins that do not contain NAs. Test dataset cannot be created.")
-      return()
+      stop("There are not enough proteins that do not contain NAs. Test dataset cannot be created.")
+      #return()
     }
 
 
@@ -338,10 +340,10 @@ compare.imp.methods =
     for (i in 1:length(cells.na$rows)) {exp.values[i] = sample.data[cells.na$rows[i], cells.na$cols[i]]}
 
     exp.tb = data.frame(#row.idx = which(rownames(sample.data) %in% cells.na$rows),
-                        #col.idx = which(colnames(sample.data) %in% cells.na$cols),
-                        row.id = cells.na$rows,
-                        col.id = cells.na$cols,
-                        expected.values = exp.values)
+      #col.idx = which(colnames(sample.data) %in% cells.na$cols),
+      row.id = cells.na$rows,
+      col.id = cells.na$cols,
+      expected.values = exp.values)
 
 
     # compute RMSE scores
@@ -396,13 +398,13 @@ compare.imp.methods =
 
     ## apply the same color bar to all the plots
     if (normalize.color.bar == TRUE) {
-    correlations = lapply(correlations,
-                          function(x){x + scale_fill_gradient2(low = low.residual.color,
-                                                               mid = zero.residual.color,
-                                                               high = high.residual.color,
-                                                               midpoint = 0,
-                                                               name = "Residual\n[imp - exp]",
-                                                               limits = c(-1,1)*max(abs(max.residual)))})
+      correlations = lapply(correlations,
+                            function(x){x + scale_fill_gradient2(low = low.residual.color,
+                                                                 mid = zero.residual.color,
+                                                                 high = high.residual.color,
+                                                                 midpoint = 0,
+                                                                 name = "Residual\n[imp - exp]",
+                                                                 limits = c(-1,1)*max(abs(max.residual)))})
     } else {
       correlations = purrr::pmap(.l = list(plot = correlations,
                                            res.max = max.residual),
@@ -414,7 +416,7 @@ compare.imp.methods =
                                                                name = "Residual\n[imp - exp]",
                                                                limits = c(-1,1)*max(abs(res.max)))
                                  },
-                                 .progress = F)
+                                 .progress = FALSE)
     }
 
     names(correlations) = names(imp.tables)

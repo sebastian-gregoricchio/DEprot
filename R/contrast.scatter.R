@@ -12,6 +12,9 @@
 #'
 #' @return A scatter plot of class ggplot2.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export contrast.scatter
 
 
@@ -26,24 +29,24 @@ contrast.scatter =
            add.foldchange.threshold = TRUE,
            symmetric.axes = TRUE) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return(invisible())
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return(invisible())
     }
 
     ### check and collect contrast
     if (!(contrast.x %in% 1:length(DEprot.analyses.object@analyses.result.list))) {
-      warning("The 'contrast.x' is not available in the DEprot.analyses object.")
-      return(invisible())
+      stop("The 'contrast.x' is not available in the DEprot.analyses object.")
+      #return(invisible())
     } else if (!(contrast.y %in% 1:length(DEprot.analyses.object@analyses.result.list))) {
-      warning("The 'contrast.y' is not available in the DEprot.analyses object.")
-      return(invisible())
+      stop("The 'contrast.y' is not available in the DEprot.analyses object.")
+      #return(invisible())
     }
 
 
@@ -75,10 +78,10 @@ contrast.scatter =
       geom_point(stroke = NA,
                  size = 3,
                  alpha = 0.25,
-                 show.legend = F) +
+                 show.legend = FALSE) +
       geom_rug(alpha = 0.5)
 
-    if (add.foldchange.threshold == T) {
+    if (add.foldchange.threshold == TRUE) {
       scatter =
         scatter +
         geom_rect(data = data.frame(xmin = c(-Inf, -fc_th, -fc_th),

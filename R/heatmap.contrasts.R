@@ -21,6 +21,10 @@
 #'
 #' @return A \code{DEprot.contrast.heatmap} object, which contains the heatmap (ggplot) and the hclust object used to order the rows.
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import legendry
+#'
 #' @export heatmap.contrasts
 
 heatmap.contrasts =
@@ -41,10 +45,10 @@ heatmap.contrasts =
            protein.names.pattern = NULL,
            use.uncorrected.pvalue = FALSE) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(legendry)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # require(legendry)
 
     ### Internal functions
     de.status =
@@ -64,13 +68,13 @@ heatmap.contrasts =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      return(warning("The input must be an object of class 'DEprot.analyses'."))
+      stop("The input must be an object of class 'DEprot.analyses'.")
     }
 
     ### check and collect contrast
     if (!is.null(contrasts)) {
       if (!all(contrasts %in% 1:length(DEprot.analyses.object@analyses.result.list))) {
-        return(warning("At least one of the 'contrasts' indicated is not available in the results list."))
+        stop("At least one of the 'contrasts' indicated is not available in the results list.")
       } else {
         contr.list = contrasts
       }
@@ -137,7 +141,7 @@ heatmap.contrasts =
                      ))) %>%
       dplyr::mutate(contrast = factor(contrast, levels = names(DEprot.analyses.object@contrasts)[contr.list]))
 
-    if (nrow(combined.fc) == 0) {return(warning("No data to be shown."))}
+    if (nrow(combined.fc) == 0) {stop("No data to be shown.")}
 
 
     ### remove protein pattern if required
@@ -145,7 +149,7 @@ heatmap.contrasts =
       if ("character" %in% class(protein.names.pattern)) {
         combined.fc = combined.fc %>% dplyr::mutate(prot.id = gsub(protein.names.pattern, "", prot.id))
       } else {
-        return(warning("The 'protein.names.pattern' must be a character indicating a regular expression to remove from the protein IDs."))
+        stop("The 'protein.names.pattern' must be a character indicating a regular expression to remove from the protein IDs.")
       }
     }
 

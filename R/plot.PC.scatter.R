@@ -16,6 +16,8 @@
 #'
 #' @name plot.PC.scatter
 #'
+#' @import ggplot2
+#'
 #' @export plot.PC.scatter
 
 plot.PC.scatter =
@@ -28,29 +30,29 @@ plot.PC.scatter =
            plot.zero.lines = TRUE) {
 
 
-    ### Libraries
-    require(ggplot2)
+    # ### Libraries
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.PCA" %in% class(DEprot.PCA.object))) {
-      return(warning("The input must be an object of class 'DEprot.PCA'."))
+      stop("The input must be an object of class 'DEprot.PCA'.")
     }
 
 
     ### check feature/aes column
     if (!(color.column %in% colnames(DEprot.PCA.object@PCs))) {
-      return(warning(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
-                            "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                          collapse = ", "))))
+      stop(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
+                  "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
+                                                collapse = ", ")))
     }
 
 
     if (!is.null(shape.column)) {
       if (!(shape.column %in% colnames(DEprot.PCA.object@PCs))) {
-        return(warning(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
-                              "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                            collapse = ", "))))
+        stop(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
+                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
+                                                         collapse = ", ")))
       } else {
         shape.scores = DEprot.PCA.object@PCs[,shape.column]
         shape.label = guide_legend(title = stringr::str_to_title(shape.column))
@@ -63,15 +65,15 @@ plot.PC.scatter =
 
     if (!is.null(label.column)) {
       if (!(label.column %in% colnames(DEprot.PCA.object@PCs))) {
-        return(warning(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
-                              "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                            collapse = ", "))))
+        stop(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
+                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
+                                                         collapse = ", ")))
       } else {
-        show.labels = T
+        show.labels = TRUE
       }
     } else {
       label.column = color.column
-      show.labels = F
+      show.labels = FALSE
     }
 
 
@@ -92,7 +94,7 @@ plot.PC.scatter =
                  color = color,
                  label = label))
 
-    if (plot.zero.lines == T) {
+    if (plot.zero.lines == TRUE) {
       PCA.plot =
         PCA.plot +
         geom_vline(xintercept = 0, color = "gray", linetype = 2) +
@@ -113,7 +115,7 @@ plot.PC.scatter =
 
 
     ## Add labels
-    if (show.labels == T) {
+    if (show.labels == TRUE) {
       PCA.plot = PCA.plot + ggrepel::geom_text_repel(max.overlaps = 100,
                                                      show.legend = F)
     }

@@ -24,6 +24,9 @@
 #'
 #' @name plot.volcano
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export plot.volcano
 
 plot.volcano =
@@ -45,15 +48,15 @@ plot.volcano =
            label.max.overlaps = 100,
            min.segment.length.labels = 0) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return()
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return()
     }
 
     ### check and collect contrast
@@ -63,12 +66,12 @@ plot.volcano =
         n.diff = DEprot.analyses.object@analyses.result.list[[contrast]]$n.diff
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
       } else {
-        warning("The 'contrast' indicated is not available.")
-        return()
+        stop("The 'contrast' indicated is not available.")
+        #return()
       }
     } else {
-      warning("The 'contrast' must be a numeric value.")
-      return()
+      stop("The 'contrast' must be a numeric value.")
+      #return()
     }
 
 
@@ -110,7 +113,7 @@ plot.volcano =
 
       n.diff =
         data.frame(diff.tb %>%
-                     dplyr::group_by(diff.status, .drop = F) %>%
+                     dplyr::group_by(diff.status, .drop = FALSE) %>%
                      dplyr::summarise(n = n(),
                                       median.FoldChange = median(log2.Fold_group1.vs.group2)))
     }
@@ -130,7 +133,7 @@ plot.volcano =
                          drop = FALSE) +
       geom_hline(yintercept = -log10(DEprot.analyses.object@differential.analyses.params$padj.th), linetype = 2, color = "gray40") +
       geom_vline(xintercept = c(-1,1)*log2(DEprot.analyses.object@differential.analyses.params$linear.FC.th), linetype = 2, color = "gray40") +
-      ylab(ifelse(use.uncorrected.pvalue == F, yes = "-log~10~(*P~adj~*)", no = "-log~10~(*P*)")) +
+      ylab(ifelse(use.uncorrected.pvalue == FALSE, yes = "-log~10~(*P~adj~*)", no = "-log~10~(*P*)")) +
       xlab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
       ggtitle(ifelse(is.null(title), yes = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"),no = title)) +
       theme_classic() +
@@ -163,7 +166,7 @@ plot.volcano =
             ggrepel::geom_text_repel(data = filt.tb,
                                      aes(label = gsub(protein.names.pattern,"",prot.id)),
                                      color = "black",
-                                     show.legend = F,
+                                     show.legend = FALSE,
                                      min.segment.length = min.segment.length.labels,
                                      max.overlaps = label.max.overlaps,
                                      size = label.font.size)

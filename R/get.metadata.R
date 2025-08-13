@@ -23,7 +23,7 @@ get.metadata =
     } else if ("DEprot.correlation" %in% class(DEprot.object)) {
       return(DEprot.object@corr.metadata)
     } else {
-      return(warning("The input must be an object of class 'DEprot', 'DEprot.analyses', 'DEprot.PCA', or 'DEprot.correlation'."))
+      stop("The input must be an object of class 'DEprot', 'DEprot.analyses', 'DEprot.PCA', or 'DEprot.correlation'.")
     }
 
   } # END function

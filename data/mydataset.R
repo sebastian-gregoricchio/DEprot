@@ -1,4 +1,5 @@
 # unimputed.counts = readRDS(url("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/unimputed.counts.rds"))
+# imputed.counts = readRDS(url("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/imputed.counts.rds"))
 #
 # corum_v4.1 = data.table::fread("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/corum_v4.1.tsv", data.table = F)
 #
@@ -30,6 +31,7 @@
 # ################################################################################
 # # Generate data files
 # usethis::use_data(unimputed.counts,
+#                   unimputed.counts,
 #                   sample.config,
 #                   corum_v4.1,
 #                   corum_v5.0,

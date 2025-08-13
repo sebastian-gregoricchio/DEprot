@@ -15,6 +15,10 @@
 #'
 #' @name plot.counts
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import patchwork
+#'
 #' @export plot.counts
 
 plot.counts =
@@ -36,8 +40,8 @@ plot.counts =
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
       if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        warning("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
-        return(DEprot.object)
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
+        #return(DEprot.object)
       }
     }
 
@@ -49,32 +53,32 @@ plot.counts =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(DEprot.object)
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 
@@ -83,10 +87,10 @@ plot.counts =
     if (convert.log2 == TRUE & DEprot.object@log.base != 2) {
       ## Convert table to log2
       if (!is.numeric(DEprot.object@log.base)) {
-        message("The log.base is not numeric, linear counts are assumed. Counts matrix will be converted to log2+1 values to analyze the data.")
+        warning("The log.base is not numeric, linear counts are assumed. Counts matrix will be converted to log2+1 values to analyze the data.")
         mat.log2 = log2(mat + 1)
       } else if (as.numeric(DEprot.object@log.base) != 2) {
-        message("The log.base is not 2, counts will be converted to log2 values to analyze the data.")
+        warning("The log.base is not 2, counts will be converted to log2 values to analyze the data.")
         mat.log2 = log2(DEprot.object@log.base^mat)
       } else {
         mat.log2 = mat
@@ -109,8 +113,8 @@ plot.counts =
     cnt.stats =
       melt.cnt %>%
       dplyr::group_by(variable) %>%
-      dplyr::summarise(min = min(value, na.rm = T),
-                       max = max(value, na.rm = T))
+      dplyr::summarise(min = min(value, na.rm = TRUE),
+                       max = max(value, na.rm = TRUE))
 
     boxplot =
       ggplot() +
@@ -139,14 +143,14 @@ plot.counts =
                               group = 1),
                 color = max.line.color,
                 linetype = 2,
-                inherit.aes = F) +
+                inherit.aes = FALSE) +
       geom_line(data = data.frame(cnt.stats),
                 mapping = aes(x = variable,
                               y = min,
                               group = 1),
                 color = min.line.color,
                 linetype = 2,
-                inherit.aes = F) +
+                inherit.aes = FALSE) +
       ylab(ifelse(is.na(log.base),
                   yes = "Intensity",
                   no = paste0(ifelse(log.base == exp(1),

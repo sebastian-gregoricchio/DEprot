@@ -9,6 +9,9 @@
 #'
 #' @return A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export perform.PCA
 
 perform.PCA =
@@ -17,15 +20,15 @@ perform.PCA =
            which.data = "imputed",
            n.PCs = 10) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    # require(pcaMethods)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # # require(pcaMethods)
 
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
-      return(warning("The input must be an object of class 'DEprot'."))
+      stop("The input must be an object of class 'DEprot'.")
     }
 
     ### Check and extract table
@@ -34,32 +37,32 @@ perform.PCA =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(DEprot.object)
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 
@@ -112,7 +115,7 @@ perform.PCA =
       # ---------------------------
       # For data with NA/NaN, such as raw/normalized data
     } else {
-      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = max(c(3, round(n.PCs,0)), na.rm = T), center = T, scale. = T)
+      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = max(c(3, round(n.PCs,0)), na.rm = TRUE), center = TRUE, scale. = TRUE)
 
 
       ### Combine PCA with metadata
@@ -143,13 +146,13 @@ perform.PCA =
                fill = "steelblue") +
       geom_line(mapping = aes(y = Cumulative.Proportion,
                               group = 1),
-               color = "navyblue",
-               linetype = 1) +
+                color = "navyblue",
+                linetype = 1) +
       geom_point(mapping = aes(y = Cumulative.Proportion,
-                              group = 1),
-                stroke = NA,
-                size = 2,
-                color = "navyblue") +
+                               group = 1),
+                 stroke = NA,
+                 size = 2,
+                 color = "navyblue") +
       ylab("Proportion of variance") +
       xlab("Principal Component (PC)") +
       theme_classic() +

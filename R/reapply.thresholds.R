@@ -11,6 +11,8 @@
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
 #' @param null.color String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.
 #'
+#' @import dplyr
+#'
 #' @export reapply.thresholds
 
 
@@ -25,8 +27,8 @@ reapply.thresholds =
            unresponsive.color = "purple",
            null.color = "gray") {
 
-    ### Packages
-    require(dplyr)
+    # ### Packages
+    # require(dplyr)
 
     ## Define signif status function
     de.status =
@@ -47,8 +49,8 @@ reapply.thresholds =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return(DEprot.analyses.object)
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return(DEprot.analyses.object)
     }
 
 
@@ -56,8 +58,8 @@ reapply.thresholds =
     if (all(DEprot.analyses.object@differential.analyses.params$linear.FC.th == linear.FC,
             all(DEprot.analyses.object@differential.analyses.params$linear.FC.unresp.range == linear.FC.unresp.range),
             DEprot.analyses.object@differential.analyses.params$padj.th == p.adjusted)) {
-      warning("All the fold change and p.adjusted thresholds are the same as the original ones.\nNo modifcations have been applied to the object.")
-      return(DEprot.analyses.object)
+      stop("All the fold change and p.adjusted thresholds are the same as the original ones.\nNo modifcations have been applied to the object.")
+      #return(DEprot.analyses.object)
     }
 
 
@@ -91,7 +93,7 @@ reapply.thresholds =
 
       DEprot.analyses.object@analyses.result.list[[i]]$n.diff =
         data.frame(DEprot.analyses.object@analyses.result.list[[i]]$results %>%
-                     dplyr::group_by(diff.status, .drop = F) %>%
+                     dplyr::group_by(diff.status, .drop = FALSE) %>%
                      dplyr::summarise(n = n(),
                                       median.FoldChange = median(log2.Fold_group1.vs.group2)))
 

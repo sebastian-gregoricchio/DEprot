@@ -7,6 +7,8 @@
 #' @param contrast.subset Numeric vector indicating the contrasts to use. Default: \code{NULL} (all contrasts are exported).
 #' @param verbose Logical value to indicate whether progress messages should be printed. Default: \code{TRUE}.
 #'
+#' @import dplyr
+#'
 #' @export export.analyses
 
 
@@ -17,14 +19,14 @@ export.analyses =
            verbose = TRUE) {
 
 
-    ### libraries
-    require(dplyr)
+    # ### libraries
+    # require(dplyr)
 
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return()
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return()
     }
 
 
@@ -33,8 +35,8 @@ export.analyses =
       if (all(contrast.subset %in% 1:length(DEprot.analyses.object@analyses.result.list))) {
         contrasts = contrast.subset
       } else {
-        warning("Not all the contrasts indicated in the subset are present in the 'analyses.result.list' of the object provided.")
-        return()
+        stop("Not all the contrasts indicated in the subset are present in the 'analyses.result.list' of the object provided.")
+        #return()
       }
     } else {
       contrasts = 1:length(DEprot.analyses.object@analyses.result.list)
@@ -43,9 +45,9 @@ export.analyses =
 
     ### make output dir
     outdir = gsub("/$", "", output.folder)
-    dir.create(path = outdir, showWarnings = F, recursive = T)
+    dir.create(path = outdir, showWarnings = FALSE, recursive = TRUE)
     unlink(outdir, recursive = TRUE)
-    dir.create(path = paste0(outdir,"/differential_analyses"), showWarnings = F, recursive = T)
+    dir.create(path = paste0(outdir,"/differential_analyses"), showWarnings = FALSE, recursive = TRUE)
 
 
 
@@ -63,17 +65,17 @@ export.analyses =
     if (isTRUE(verbose)) {message("Exporting metadata...")}
     write.table(x = as.data.frame(DEprot.analyses.object@metadata),
                 file = paste0(outdir,"/metadata.tsv"),
-                sep = "\t", quote = F, col.names = T, row.names = F)
+                sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
 
     ### Export counts
     if (isTRUE(verbose)) {message("Exporting all counts...")}
-    dir.create(path = paste0(outdir,"/counts/boxplots"), showWarnings = F, recursive = T)
+    dir.create(path = paste0(outdir,"/counts/boxplots"), showWarnings = FALSE, recursive = TRUE)
 
     if (!is.null(DEprot.analyses.object@raw.counts)) {
       write.table(x = as.data.frame(DEprot.analyses.object@raw.counts) %>% dplyr::mutate(prot.id = rownames(DEprot.analyses.object@raw.counts)) %>% dplyr::relocate(prot.id),
                   file = paste0(outdir,"/counts/raw_counts.tsv"),
-                  sep = "\t", quote = F, col.names = T, row.names = F)
+                  sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
       pdf(file = paste0(outdir,"/counts/boxplots/raw_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
       print(DEprot.analyses.object@boxplot.raw)
@@ -84,7 +86,7 @@ export.analyses =
     if (!is.null(DEprot.analyses.object@norm.counts)) {
       write.table(x = as.data.frame(DEprot.analyses.object@norm.counts) %>% dplyr::mutate(prot.id = rownames(DEprot.analyses.object@norm.counts)) %>% dplyr::relocate(prot.id),
                   file = paste0(outdir,"/counts/normalized_counts.tsv"),
-                  sep = "\t", quote = F, col.names = T, row.names = F)
+                  sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
       pdf(file = paste0(outdir,"/counts/boxplots/normalized_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
       print(DEprot.analyses.object@boxplot.norm)
@@ -95,7 +97,7 @@ export.analyses =
     if (!is.null(DEprot.analyses.object@imputed.counts)) {
       write.table(x = as.data.frame(DEprot.analyses.object@imputed.counts) %>% dplyr::mutate(prot.id = rownames(DEprot.analyses.object@imputed.counts)) %>% dplyr::relocate(prot.id),
                   file = paste0(outdir,"/counts/imputed_counts.tsv"),
-                  sep = "\t", quote = F, col.names = T, row.names = F)
+                  sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
       pdf(file = paste0(outdir,"/counts/boxplots/imputed_counts_boxplot.pdf"), height = 5, width = nrow(DEprot.analyses.object@metadata)*0.375)
       print(DEprot.analyses.object@boxplot.imputed)
@@ -120,7 +122,7 @@ export.analyses =
 
     write.table(x = params.tb,
                 file = paste0(outdir,"/differential_analyses/differential_analyses_parameters.tsv"),
-                sep = "\t", quote = F, col.names = T, row.names = F)
+                sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
 
 
@@ -128,7 +130,7 @@ export.analyses =
     if (isTRUE(verbose)) {message("Exporting differential analyses summary...")}
     write.table(x = summary(DEprot.analyses.object),
                 file = paste0(outdir,"/differential_analyses/differential_analyses_summary.n.differential.proteins.tsv"),
-                sep = "\t", quote = F, col.names = T, row.names = F)
+                sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
 
     # Export upset-plot
@@ -150,7 +152,7 @@ export.analyses =
                                       complete = "\u2588",   # Completion bar character
                                       incomplete = "\u2591", # Incomplete bar character
                                       current = "\u2592",    # Current bar character
-                                      clear = T,        # If TRUE, clears the bar when finish
+                                      clear = TRUE,        # If TRUE, clears the bar when finish
                                       width = 120)       # Width of the progress bar
     }
 
@@ -162,17 +164,17 @@ export.analyses =
       contrast.id = names(DEprot.analyses.object@contrasts)[i]
 
       ## make folder
-      dir.create(path = paste0(outdir,"/differential_analyses/",contrast.id), showWarnings = F, recursive = T)
+      dir.create(path = paste0(outdir,"/differential_analyses/",contrast.id), showWarnings = FALSE, recursive = TRUE)
 
 
       ## Export diff table and n.diff
       write.table(x = DEprot.analyses.object@analyses.result.list[[i]]$results,
                   file = paste0(outdir,"/differential_analyses/",contrast.id,"/RESULTS_",contrast.id,".tsv"),
-                  sep = "\t", quote = F, col.names = T, row.names = F)
+                  sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
       write.table(x = DEprot.analyses.object@analyses.result.list[[i]]$n.diff,
                   file = paste0(outdir,"/differential_analyses/",contrast.id,"/N.DIFF.PROTEINS_",contrast.id,".tsv"),
-                  sep = "\t", quote = F, col.names = T, row.names = F)
+                  sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
 
 

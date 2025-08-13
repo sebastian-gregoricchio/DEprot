@@ -15,18 +15,18 @@ rename.samples =
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
     ### Check column provided
     if (!(metadata.column %in% colnames(DEprot.object@metadata))) {
-      warning(paste0("The column '", metadata.column, "' is not among the column names of the metadata table.\n",
-                     "Please chose one among: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
-      return(DEprot.object)
+      stop(paste0("The column '", metadata.column, "' is not among the column names of the metadata table.\n",
+                  "       Please chose one among: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
+      #return(DEprot.object)
     } else if (length(DEprot.object@metadata[,metadata.column]) != length(unique(DEprot.object@metadata[,metadata.column]))) {
-      warning(paste0("The column '", metadata.column, "' does not contain unique identifiers."))
-      return(DEprot.object)
+      stop(paste0("The column '", metadata.column, "' does not contain unique identifiers."))
+      #return(DEprot.object)
     }
 
 
@@ -46,7 +46,7 @@ rename.samples =
                             which.data = "raw",
                             violin.color = "darkorange",
                             title = DEprot.object@boxplot.raw$labels$title,
-                            convert.log2 = T)
+                            convert.log2 = TRUE)
 
     }
 
@@ -65,7 +65,7 @@ rename.samples =
                             violin.color = "purple",
                             title = DEprot.object@boxplot.norm$labels$title,
                             subtitle = DEprot.object@boxplot.norm$labels$subtitle,
-                            convert.log2 = T)
+                            convert.log2 = TRUE)
     }
 
 
@@ -82,7 +82,7 @@ rename.samples =
                             violin.color = "forestgreen",
                             title = DEprot.object@boxplot.imputed$labels$title,
                             subtitle = DEprot.object@boxplot.imputed$labels$subtitle,
-                            convert.log2 = T)
+                            convert.log2 = TRUE)
     }
 
     return(DEprot.object)

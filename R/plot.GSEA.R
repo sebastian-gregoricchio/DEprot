@@ -32,6 +32,8 @@
 #'
 #' @name plot.GSEA
 #'
+#' @import ggplot2
+#'
 #' @export plot.GSEA
 
 
@@ -60,16 +62,16 @@ plot.GSEA =
            image.height = 5,
            return.all.objects = FALSE) {
 
-    # Libraries
-    require(ggplot2)
+    # # Libraries
+    # require(ggplot2)
 
 
     # collect results
     if ("DEprot.enrichResult" %in% class(gsea.results)) {
       # Check if it is a GSEA analysis
       if (gsea.results@parameters$enrichment.type != "GSEA") {
-        warning("This function can plot only analyses performed using the 'GSEA' mode.")
-        return()
+        stop("This function can plot only analyses performed using the 'GSEA' mode.")
+        #return()
       }
       results = data.frame(gsea.results@enrichment.discovery@result)
       contrast = gsea.results@parameters$contrast
@@ -79,8 +81,8 @@ plot.GSEA =
       results = data.frame(gsea.results@result)
       mode = "clusterProfiler"
     } else {
-      warning("The input of this functions must be an object of class 'DEprot.enrichResult' - as generated using the function `geneset.enruchment` - or ''.")
-      return()
+      stop("The input of this functions must be an object of class 'DEprot.enrichResult' - as generated using the function `geneset.enruchment` - or ''.")
+      #return()
     }
 
 
@@ -88,25 +90,26 @@ plot.GSEA =
     if (is.numeric(geneset.id)) {
       if (geneset.id <= nrow(results) & geneset.id > 0) {gene.set = results$ID[geneset.id]
       } else {
-        warning("The genset.id must be a string or a numeric value among the ones above.")
         print(data.frame(gene.set.ID = results$ID))
-        return(invisible())
+        stop("The genset.id must be a string or a numeric value among the ones above.")
+        #return(invisible())
       }
     } else if (is.character(geneset.id)) {
       if (geneset.id %in% results$ID) {gene.set = geneset.id
       } else {
-        warning("The genset.id must be a string or a numeric value among the ones above.")
         print(data.frame(gene.set.ID = results$ID))
-        return(invisible())}
+        stop("The genset.id must be a string or a numeric value among the ones above.")
+        #return(invisible())
+      }
     } else {
-      warning("The genset.id must be a string or a numeric value among the ones above.")
       print(data.frame(gene.set.ID = results$ID))
+      stop("The genset.id must be a string or a numeric value among the ones above.")
       return(invisible())
     }
 
     # Check graphic parameters
     if (!(tolower(enrichment.geom) %in% c("line", "lines", "dot", "dots", "point", "points"))) {
-      return(warning("The 'enrichment.geom' must be one among: 'line', 'lines', 'dot', 'dots', 'point', 'points'."))
+      stop("The 'enrichment.geom' must be one among: 'line', 'lines', 'dot', 'dots', 'point', 'points'.")
     }
 
     if (!is.null(title)) {
@@ -372,7 +375,7 @@ plot.GSEA =
       invisible(dev.off())
     }
 
-    if (return.all.objects == T) {
+    if (return.all.objects == TRUE) {
       return(list(enrichment.panel = enrichment.panel,
                   geneset.panel = geneset.panel,
                   rank.panel = rank.panel,

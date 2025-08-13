@@ -25,6 +25,10 @@
 #'
 #' @name plot.correlation.heatmap
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import legendry
+#'
 #' @export plot.correlation.heatmap
 
 
@@ -49,11 +53,11 @@ plot.correlation.heatmap =
            plot.subtitle = NULL,
            clustering.method = "complete") {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(legendry)
-    # require(farver)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # require(legendry)
+    # # require(farver)
 
     ### Functions
     contrast =
@@ -71,8 +75,8 @@ plot.correlation.heatmap =
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return()
+      stop("The input must be an object of class 'DEprot'.")
+      #return()
     }
 
     ### Check and extract table
@@ -81,49 +85,49 @@ plot.correlation.heatmap =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return()
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return()
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return()
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return()
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return()
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return()
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return()
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return()
     }
 
 
     ## Check parameters
     if (!(tolower(dendrogram.position) %in% c("top", "bottom", "left", "right", "rigth"))) {
-      return(warning("The 'dendrogram.position' must be a value among: 'top', 'bottom', 'left', 'right'."))
+      stop("The 'dendrogram.position' must be a value among: 'top', 'bottom', 'left', 'right'.")
     } else if (tolower(dendrogram.position) == "rigth") {
       dendrogram.position = "right"
     }
 
 
     if (!(clustering.method %in% c("ward.D", "ward.D2", "single", "complete", "average", "mcquitty", "median", "centroid"))) {
-      return(warning("The 'clustering.method' should be (an unambiguous abbreviation of) one of: 'ward.D', 'ward.D2', 'single', 'complete', 'average' (= UPGMA), 'mcquitty' (= WPGMA), 'median' (= WPGMC) or 'centroid' (= UPGMC)."))
+      stop("The 'clustering.method' should be (an unambiguous abbreviation of) one of: 'ward.D', 'ward.D2', 'single', 'complete', 'average' (= UPGMA), 'mcquitty' (= WPGMA), 'median' (= WPGMC) or 'centroid' (= UPGMC).")
     }
 
     if (!(tolower(correlation.method) %in% c("pearson", "kendall", "spearman"))) {
-      return(warning("The correlation method is not supported. Choose one among: 'pearson', 'kendall', 'spearman'."))
+      stop("The correlation method is not supported. Choose one among: 'pearson', 'kendall', 'spearman'.")
     }
 
 

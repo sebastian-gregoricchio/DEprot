@@ -10,7 +10,7 @@ randomize.missing.values(
   percentage.missing = 100,
   tail.percentage = 3,
   seed = floor(runif(n = 1, min = 0, max = 50000)),
-  verbose = T
+  verbose = TRUE
 )
 }
 \arguments{

@@ -9,7 +9,10 @@
 #' @param regression.line.color String indicating any R-supported color to use for the regression line and error. Default: \code{"purple"}.
 #'
 #' @return Two ggplots combined in an object of class \code{patchwork}.
-
+#'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export compare.ranking
 
 
@@ -20,15 +23,15 @@ compare.ranking =
            color.down = "steelblue",
            regression.line.color = "purple") {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      warning("The input must be an object of class 'DEprot.analyses'.")
-      return(invisible())
+      stop("The input must be an object of class 'DEprot.analyses'.")
+      #return(invisible())
     }
 
     ### check and collect contrast
@@ -37,12 +40,12 @@ compare.ranking =
         data = DEprot.analyses.object@analyses.result.list[[contrast]]$results
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
       } else {
-        warning("The 'contrast' indicated is not available.")
-        return(invisible())
+        stop("The 'contrast' indicated is not available.")
+        #return(invisible())
       }
     } else {
-      warning("The 'contrast' must be a numeric value.")
-      return(invisible())
+      stop("The 'contrast' must be a numeric value.")
+      #return(invisible())
     }
 
 
@@ -50,7 +53,7 @@ compare.ranking =
     ### rank genes: foldchange mode
     gene_list_fc = data[,5]
     names(gene_list_fc) = data$prot.id
-    gene_list_fc = sort(gene_list_fc, decreasing = T)
+    gene_list_fc = sort(gene_list_fc, decreasing = TRUE)
 
 
 
@@ -64,7 +67,7 @@ compare.ranking =
     # run correlation
     corr_scores = sapply(1:nrow(counts_var1), function(x){suppressWarnings(cor.test(x = group_idx, y = c(counts_var2[x,],counts_var1[x,]), method = "spearman"))$estimate}, USE.NAMES = F)
     names(corr_scores) = rownames(counts_var1)
-    gene_list_cor = sort(corr_scores, decreasing = T)
+    gene_list_cor = sort(corr_scores, decreasing = TRUE)
 
 
 
@@ -100,7 +103,7 @@ compare.ranking =
                  stroke = NA,
                  size = 3,
                  alpha = 0.25,
-                 show.legend = F) +
+                 show.legend = FALSE) +
       geom_vline(xintercept = zero_fc, color = "gray", linetype = 2) +
       geom_hline(yintercept = zero_cor, color = "gray", linetype = 2) +
       scale_color_manual(values = c("up" = color.up, "down" = color.down)) +

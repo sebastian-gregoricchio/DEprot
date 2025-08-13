@@ -12,6 +12,8 @@
 #'
 #' @name plot.PC.cumulative
 #'
+#' @import ggplot2
+#'
 #' @export plot.PC.cumulative
 
 plot.PC.cumulative =
@@ -20,13 +22,13 @@ plot.PC.cumulative =
            line.color = "navyblue",
            title = NULL) {
 
-    ### Libraries
-    require(ggplot2)
+    # ### Libraries
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot.PCA" %in% class(DEprot.PCA.object))) {
-      return(warning("The input must be an object of class 'DEprot.PCA'."))
+      stop("The input must be an object of class 'DEprot.PCA'.")
     }
 
 

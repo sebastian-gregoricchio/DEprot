@@ -16,6 +16,9 @@
 #'
 #' @return A ggplot object.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export NES.plot
 
 
@@ -33,9 +36,9 @@ NES.plot =
            axes.text.size = 10,
            title = "NES enrichments") {
 
-    # libraries
-    require(dplyr)
-    require(ggplot2)
+    # # libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     # extract results and clean
@@ -43,14 +46,14 @@ NES.plot =
       enrich_data = enrichResult
     } else if ("DEprot.enrichResult" %in% class(enrichResult)) {
       if (enrichResult@parameters$enrichment.type != "GSEA") {
-        warning(paste0("The 'DEprot.enrichResult iobject does not contain GSEA annalyses. The enrichment type is: ",enrichResult@parameters$enrichment.type,"."))
-        return(invisible())
+        stop(paste0("The 'DEprot.enrichResult iobject does not contain GSEA annalyses. The enrichment type is: ",enrichResult@parameters$enrichment.type,"."))
+        #return(invisible())
       } else {
         enrich_data = enrichResult@enrichment.discovery
       }
     } else {
-      warning("The 'enrichResult' object must be of class 'DEprot.enrichResult' (DEprot) or 'gseaResult' (clusterProfiler)." )
-      return(invisible())
+      stop("The 'enrichResult' object must be of class 'DEprot.enrichResult' (DEprot) or 'gseaResult' (clusterProfiler)." )
+      #return(invisible())
     }
 
     result =
@@ -60,7 +63,7 @@ NES.plot =
                     dataset = ifelse(NES >= 0, yes = pos.NES.label, no = neg.NES.label)) %>%
       dplyr::mutate(alias = factor(alias, levels = rev(alias)))
 
-    geneSets_size = data.frame(sapply(enrich_data@geneSets, length), stringsAsFactors = F)
+    geneSets_size = data.frame(sapply(enrich_data@geneSets, length), stringsAsFactors = FALSE)
     geneSets_size$ID = rownames(geneSets_size)
     colnames(geneSets_size)[1] = "geneSet_size"
 
@@ -72,7 +75,7 @@ NES.plot =
     NES.colors = c(pos.NES.color, neg.NES.color)
     names(NES.colors) = c(pos.NES.label, neg.NES.label)
 
-    max_abs.NES = ceiling(max(abs(result$NES), na.rm = T))
+    max_abs.NES = ceiling(max(abs(result$NES), na.rm = TRUE))
 
     # Generating the plot
     NES.plot =
@@ -82,10 +85,10 @@ NES.plot =
                  fill = factor(dataset, levels = c(pos.NES.label, neg.NES.label)))) +
       ggplot2::geom_bar(aes(alpha = -log10(p.adjust)),
                         stat = "identity",
-                        show.legend = T,
+                        show.legend = TRUE,
                         width = 0.8) +
       scale_alpha_continuous(range = alpha.range) +
-      scale_fill_manual(values = NES.colors, name = "dataset", drop = F) +
+      scale_fill_manual(values = NES.colors, name = "dataset", drop = FALSE) +
       ylab(NULL) +
       ggtitle(title) +
       theme_classic() +

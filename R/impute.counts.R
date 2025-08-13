@@ -18,6 +18,9 @@
 #'
 #' @return A \code{DEprot} object. The boxplot showing the distribution of the protein intensity is remade and added to the slot (\code{boxplot.imputed}). A list with parameters and other info about the imputation is added as well in the \code{imputation} slot.
 #'
+#' @import dplyr
+#' @import ggplot2
+#'
 #' @export impute.counts
 
 
@@ -34,35 +37,35 @@ impute.counts =
            LLS.k = 2,
            verbose = FALSE) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
-      warning("The input must be an object of class 'DEprot'.")
-      return(DEprot.object)
+      stop("The input must be an object of class 'DEprot'.")
+      #return(DEprot.object)
     }
 
 
 
     ### Check if imputation already available
-    if (DEprot.object@imputed == T) {
-      if (overwrite.imputation == F) {
-        warning(paste0("The 'DEprot' object contains already an imputed table.\n",
-                       "If you wish to overwrite the imputation, set the parameter 'overwrite.imputation = TRUE'."))
-        return(DEprot.object)
+    if (DEprot.object@imputed == TRUE) {
+      if (overwrite.imputation == FALSE) {
+        stop(paste0("The 'DEprot' object contains already an imputed table.\n",
+                    "       If you wish to overwrite the imputation, set the parameter `overwrite.imputation = TRUE`."))
+        #return(DEprot.object)
       }
     }
 
 
     ### Check if normalized data are available
-    if (use.normalized.data == T) {
+    if (use.normalized.data == TRUE) {
       if (is.null(DEprot.object@norm.counts)) {
-        warning(paste0("You asked to use normalized data for the imputation, but normalized data are not available.\n",
-                       "To perform imputation on raw data, set 'use.normalized.data = FALSE'."))
-        return(DEprot.object)
+        stop(paste0("You asked to use normalized data for the imputation, but normalized data are not available.\n",
+                    "       To perform imputation on raw data, set 'use.normalized.data = FALSE'."))
+        #return(DEprot.object)
       } else {
         cnt = DEprot.object@norm.counts
       }
@@ -73,8 +76,8 @@ impute.counts =
 
     ### Check imputation method
     if (!(tolower(method) %in% tolower(c("missForest", "KNN", "SVD", "LLS")))) {
-      warning("The imputation 'method' must be one among: missForest, KNN, SVD, LLS.")
-      return(DEprot.object)
+      stop("The imputation 'method' must be one among: missForest, KNN, SVD, LLS.")
+      #return(DEprot.object)
     }
 
 
@@ -89,8 +92,8 @@ impute.counts =
       n.present.values = rowSums(!is.na(cnt))
 
       if (TRUE %in% (n.present.values < 3)) {
-        warning("The following proteins display less than 3 known values; this might break the `missForest` imputation:")
-        print(names(n.present.values[n.present.values < 3]))
+        stop(paste0("The following proteins display less than 3 known values; this might break the `missForest` imputation:\n",
+                    paste0(names(n.present.values[n.present.values < 3]), collapse = ", "),"."))
       }
 
       ### Run missForest algorithm
@@ -110,8 +113,8 @@ impute.counts =
         if (tolower(missForest.parallel.mode) %in% c("variables", "forests")) {
           imputed.cnt = missForest::missForest(xmis = t(cnt), maxiter = missForest.max.iterations, verbose = verbose, variablewise = missForest.variable.wise.OOBerror, parallelize = tolower(missForest.parallel.mode))
         } else {
-          warning(paste0("The missForest.parallel.mode must be one among: 'variables', 'forests'."))
-          return(DEprot.object)
+          stop(paste0("The missForest.parallel.mode must be one among: 'variables', 'forests'."))
+          #return(DEprot.object)
         }
       }
 
@@ -182,8 +185,8 @@ impute.counts =
                         nPCs = 2,
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
     } else {
-      warning("The imputation 'method' must be one among: missForest, KNN, SVD, LLS.")
-      return(DEprot.object)
+      stop("The imputation 'method' must be one among: missForest, KNN, SVD, LLS.")
+      #return(DEprot.object)
     }
 
     ##########################################################################################
@@ -200,8 +203,8 @@ impute.counts =
     cnt.stats =
       melt.cnt %>%
       dplyr::group_by(variable) %>%
-      dplyr::summarise(min = min(value, na.rm = T),
-                       max = max(value, na.rm = T))
+      dplyr::summarise(min = min(value, na.rm = TRUE),
+                       max = max(value, na.rm = TRUE))
 
     boxplot =
       ggplot() +

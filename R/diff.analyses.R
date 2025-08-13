@@ -18,6 +18,10 @@
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
+#' @import dplyr
+#' @import ggplot2
+#' @import patchwork
+#'
 #' @export diff.analyses
 
 diff.analyses =
@@ -37,17 +41,17 @@ diff.analyses =
            which.data = "imputed",
            overwrite.analyses = FALSE) {
 
-    ### Packages
-    require(dplyr)
-    require(ggplot2)
-    require(patchwork)
+    # ### Packages
+    # require(dplyr)
+    # require(ggplot2)
+    # require(patchwork)
 
 
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
       if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        warning("The input must be an object of class 'DEprot'.")
-        return(DEprot.object)
+        stop("The input must be an object of class 'DEprot'.")
+        #return(DEprot.object)
       }
     }
 
@@ -57,13 +61,13 @@ diff.analyses =
     ### Check 'replicate.column' presence and eventually the paired.test variable
     if (!is.null(replicate.column[[1]])) {
       if (!(replicate.column %in% colnames(meta.tb))) {
-        warning("The 'replicate.column' is not present in the metadata of the object.")
-        return(DEprot.object)
+        stop("The 'replicate.column' is not present in the metadata of the object.")
+        #return(DEprot.object)
       } else {
         meta.tb[,replicate.column[[1]]] = as.character(meta.tb[,replicate.column[[1]]])
       }
     } else if (paired.test == TRUE) {
-      message("The option 'paired-test' is TRUE, however no 'replicate.column' is provided: 'paired.test' will ignored.")
+      warning("The option 'paired-test' is TRUE, however no 'replicate.column' is provided: 'paired.test' will ignored.")
       paired.test = FALSE
     }
 
@@ -76,23 +80,23 @@ diff.analyses =
       } else if ("list" %in% class(contrast.list)) {
         contrasts = contrast.list
       } else {
-        warning("The 'contrast.list' must be a list of 3-elements vectors indicating: metadata_column, variable_1, variable_2.")
-        return(DEprot.object)
+        stop("The 'contrast.list' must be a list of 3-elements vectors indicating: metadata_column, variable_1, variable_2.")
+        #return(DEprot.object)
       }
 
     } else if (overwrite.analyses == FALSE) {
-      warning("The DEprot object contains already a contrast list.\n",
-              "To overwrite the contrast list set the parameter 'overwrite.analyses = TRUE'")
       DEprot.object@contrasts
-      return(DEprot.object)
+      stop("The DEprot object contains already a contrast list.\n",
+           "       To overwrite the contrast list set the parameter `overwrite.analyses = TRUE`")
+      #return(DEprot.object)
     } else {
       if ("character" %in% class(contrast.list)) {
         contrasts = list(contrast.list)
       } else if ("list" %in% class(contrast.list)) {
         contrasts = contrast.list
       } else {
-        warning("The 'contrast.list' must be a list of 3-elements vector indicating: metadata_column, variable_1, variable_2.")
-        return(DEprot.object)
+        stop("The 'contrast.list' must be a list of 3-elements vector indicating: metadata_column, variable_1, variable_2.")
+        #return(DEprot.object)
       }
     }
 
@@ -102,14 +106,14 @@ diff.analyses =
 
     for (i in 1:length(contrasts)) {
       if (!(contrasts[[i]][1] %in% colnames(meta.tb))) {
-        warning(paste0("The column indicated in the contrast #", i, " ('",contrasts[[i]][1],"'), it is not available in the metadata table."))
-        return(DEprot.object)
+        stop(paste0("The column indicated in the contrast #", i, " ('",contrasts[[i]][1],"'), it is not available in the metadata table."))
+        #return(DEprot.object)
       } else if (!(contrasts[[i]][2] %in% meta.tb[,contrasts[[i]][1]])) {
-        warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][2],"') is not available."))
-        return(DEprot.object)
+        stop(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][2],"') is not available."))
+        #return(DEprot.object)
       } else if (!(contrasts[[i]][3] %in% meta.tb[,contrasts[[i]][1]])) {
-        warning(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][3],"') is not available."))
-        return(DEprot.object)
+        stop(paste0("In the contrast #", i, " ('",contrasts[[i]][1],"'), the first variable ('",contrasts[[i]][3],"') is not available."))
+        #return(DEprot.object)
       } else {
         # Determine whether it can be run in paired mode
         if (paired.test == TRUE) {
@@ -124,13 +128,13 @@ diff.analyses =
 
           # check duplicated rep IDs
           if (length(reps.group.1) != length(unique(reps.group.1))) {
-            warning("At least on replicate ID in the 'replicate.column' is duplicated.")
-            return(DEprot.object)
+            stop("At least on replicate ID in the 'replicate.column' is duplicated.")
+            #return(DEprot.object)
           }
 
           if (length(reps.group.2) != length(unique(reps.group.2))) {
-            warning("At least on replicate ID in the 'replicate.column' is duplicated.")
-            return(DEprot.object)
+            stop("At least on replicate ID in the 'replicate.column' is duplicated.")
+            #return(DEprot.object)
           }
 
           # check whether the reps are the same among the two groups
@@ -169,32 +173,32 @@ diff.analyses =
         mat = DEprot.object@raw.counts
         data.used = "raw"
       } else {
-        warning(paste0("Use of RAW counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of RAW counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
       } else {
-        warning(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
         mat = DEprot.object@imputed.counts
         data.used = "imputed"
       } else {
-        warning(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        return(DEprot.object)
+        stop(paste0("Use of IMPUTED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
-      warning(paste0("The 'which.data' value is not recognized.\n",
-                     "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(DEprot.object)
+      stop(paste0("The 'which.data' value is not recognized.\n",
+                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 
@@ -220,9 +224,9 @@ diff.analyses =
       # means and FoldChange
       diff.tb =
         data.frame(prot.id = rownames(mat.log2),
-                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], na.rm = T),
-                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1], na.rm = T),
-                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2], na.rm = T)) %>%
+                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], na.rm = TRUE),
+                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1], na.rm = TRUE),
+                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2], na.rm = TRUE)) %>%
         dplyr::mutate(log2.Fold_group1.vs.group2 = log2.mean.group1 - log2.mean.group2)
 
       ## Wilcoxon/t.test pval
@@ -233,14 +237,14 @@ diff.analyses =
           pval.list[k] = suppressWarnings(t.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
                                                  y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
                                                  paired = contrasts.info[[i]]$paired.test,
-                                                 exact = T))$p.value
+                                                 exact = TRUE))$p.value
         }
       } else {
         for (k in 1:nrow(mat.log2)){
           pval.list[k] = suppressWarnings(wilcox.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
                                                       y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
                                                       paired = contrasts.info[[i]]$paired.test,
-                                                      exact = T))$p.value
+                                                      exact = TRUE))$p.value
         }
       }
 
@@ -282,7 +286,7 @@ diff.analyses =
                                      sample.subset = c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2),
                                      which.data = which.data)
 
-      scatter.PC1.2 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(paired.test)+1, NULL, replicate.column), plot.zero.lines = F) + geom_hline(yintercept = 0, colour = "gray", linetype = 2) + theme(legend.position = "none")
+      scatter.PC1.2 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(paired.test)+1, NULL, replicate.column), plot.zero.lines = FALSE) + geom_hline(yintercept = 0, colour = "gray", linetype = 2) + theme(legend.position = "none")
       if (length(unique(sign(PCA.data@PCs$PC1))) > 1){scatter.PC1.2 + geom_vline(xintercept = 0, colour = "gray", linetype = 2)}
       scatter.PC2.3 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 3, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(paired.test)+1, NULL, replicate.column))
 
@@ -368,7 +372,7 @@ diff.analyses =
                             fill = after_stat(count)),
                         geom = "raster",
                         contour = FALSE,
-                        show.legend = T,
+                        show.legend = TRUE,
                         n = 200,
                         adjust = 5) +
         scale_fill_gradientn(colours = colorRampPalette(colors = RColorBrewer::brewer.pal(9, "Blues"))(101),
@@ -385,8 +389,8 @@ diff.analyses =
                      alpha = 0.5,
                      size = 2,
                      stroke = NA,
-                     show.legend = T,
-                     inherit.aes = F) +
+                     show.legend = TRUE,
+                     inherit.aes = FALSE) +
           scale_color_manual(values = colors.plots, name = "Differential\nstatus", drop = FALSE)
       }
 
