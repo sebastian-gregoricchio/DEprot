@@ -1,8 +1,19 @@
 ## ----setup, include = FALSE---------------------------------------------------
-knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
-                      warning = F, message = F, fig.align = "center",
-                      rows.print=12)
-#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
+# knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
+#                       warning = F, message = F, fig.align = "center",
+#                       rows.print=12)
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_
+
+if (Sys.info()[["sysname"]] == "Darwin") {
+  knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
+                        warning = F, message = F, fig.align = "center",
+                        rows.print = 12, dev = "pdf")
+} else {
+  knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
+                        warning = F, message = F, fig.align = "center",
+                        rows.print = 12)
+}
+
 #options(tibble.print_min = 4L, tibble.print_max = 4L)
 
 
