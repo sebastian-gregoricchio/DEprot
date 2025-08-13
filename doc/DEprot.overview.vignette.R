@@ -118,7 +118,8 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
 # data.frame(dpo@imputation[-3])
 
 ## ----load_imputation, echo=FALSE----------------------------------------------
-dpo = DEprot::dpo.imputed.counts
+data("dpo.imputed.counts", package = "DEprot")
+dpo = dpo.imputed.counts
 dpo
 
 ## ----load_imputation2, echo=FALSE---------------------------------------------

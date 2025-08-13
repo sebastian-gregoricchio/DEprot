@@ -337,7 +337,8 @@ data.frame(dpo@imputation[-3])
 ```
 
 ```{r load_imputation, echo=FALSE}
-dpo = DEprot::dpo.imputed.counts
+data("dpo.imputed.counts", package = "DEprot")
+dpo = dpo.imputed.counts
 dpo
 ```
 ```{r load_imputation2, echo=FALSE}
