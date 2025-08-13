@@ -64,7 +64,7 @@ heatmap.counts =
     # ### Libraries
     # require(dplyr)
     # require(ggplot2)
-    # require(legendry)
+    require(legendry)
 
     ### Internal functions
     de.status =

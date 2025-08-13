@@ -9,6 +9,7 @@ knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
 # Load libraries required
 require(DEprot)
 require(dplyr)
+require(legendry)
 
 ## ----citation, message=FALSE, warning=FALSE-----------------------------------
 citation("DEprot")

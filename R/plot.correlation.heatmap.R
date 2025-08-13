@@ -56,7 +56,7 @@ plot.correlation.heatmap =
     # ### Libraries
     # require(dplyr)
     # require(ggplot2)
-    # require(legendry)
+    require(legendry)
     # # require(farver)
 
     ### Functions
