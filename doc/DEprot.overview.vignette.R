@@ -5,9 +5,10 @@
 #knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_
 
 if (Sys.info()[["sysname"]] == "Darwin") {
+  options(encoding = "UTF-8")
   knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
                         warning = F, message = F, fig.align = "center",
-                        rows.print = 12, dev = "pdf")
+                        rows.print = 12, dev = "cairo_pdf", )
 } else {
   knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
                         warning = F, message = F, fig.align = "center",
