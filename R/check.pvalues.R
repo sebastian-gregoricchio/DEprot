@@ -11,6 +11,7 @@
 #' @return A DEprot.pvalues object containing 3 slots: distribution histogram of p-values and p-values adjusted and, line plot of ranked p-values.
 #'
 #' @import ggplot2
+#' @import dplyr
 #'
 #' @export check.pvalues
 
@@ -22,9 +23,9 @@ check.pvalues =
            p.value.color = "steelblue",
            p.adjusted.color = "indianred") {
 
-    ## Libraries
-    require(dplyr)
-    require(ggplot2)
+    # ## Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
