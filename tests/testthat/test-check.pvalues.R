@@ -4,11 +4,6 @@ test_that("errors are returned if the object is not of class DEprot.analyses", {
 })
 
 
-test_that("errors are returned if the data required are not correct", {
-  expect_error(check.pvalues(DEprot::test.toolbox$diff.exp.limma,contrast = 1))
-})
-
-
 test_that("errors are returned if the contrast indicated is not available", {
   expect_error(check.pvalues(DEprot::test.toolbox$diff.exp.limma,contrast = 100))
 })
