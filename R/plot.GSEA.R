@@ -69,7 +69,7 @@ plot.GSEA =
     # collect results
     if ("DEprot.enrichResult" %in% class(gsea.results)) {
       # Check if it is a GSEA analysis
-      if (gsea.results@parameters$enrichment.type != "GSEA") {
+      if (toupper(gsea.results@parameters$enrichment.type) != "GSEA") {
         stop("This function can plot only analyses performed using the 'GSEA' mode.")
         #return()
       }

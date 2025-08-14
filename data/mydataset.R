@@ -28,6 +28,62 @@
 # #dpo.imputed = readRDS(url("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/dpo.imputed.rds"))
 # #dpo.DE.results = readRDS(url("https://sebastian-gregoricchio.github.io/DEprot/inst/extdata/dpo.DE.results.rds"))
 #
+#
+#
+# ###################
+# ## TEST TOOLBOX
+# test.unimputed.lfq = DEprot::unimputed.counts[1:51,]
+# test.dpo.raw = DEprot::load.counts2(counts = test.unimputed.lfq, metadata = DEprot::sample.config, data.type = "raw", log.base = 2)
+# test.dpo.raw = DEprot::remove.undetected.proteins(test.dpo.raw, which.data = "raw")
+# test.dpo.norm = DEprot::normalize.counts(test.dpo.raw)
+# test.dpo.imp.miss = DEprot::impute.counts(test.dpo.norm)
+# test.diff.exp.limma = DEprot::diff.analyses.limma(DEprot.object = test.dpo.imp.miss,
+#                                                   contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+#                                                                        c("condition", "6h.10nM.E2", "6h.DMSO")),
+#                                                   include.rep.model = TRUE,
+#                                                   replicate.column = "replicate")
+#
+# set.seed(1234)
+# test.geneset = do.call(rbind,
+#                        list(data.frame(gs_name = "set1",
+#                                        gene_symbol = unique(sample(rownames(test.unimputed.lfq),size = 23))),
+#                             data.frame(gs_name = "set2",
+#                                        gene_symbol = unique(sample(rownames(test.unimputed.lfq),size = 15))),
+#                             data.frame(gs_name = "set3",
+#                                        gene_symbol = unique(sample(rownames(test.unimputed.lfq),size = 10)))
+#                        ))
+#
+#
+#
+# test.gsea.results = DEprot::geneset.enrichment(DEprot.analyses.object = test.diff.exp.limma,
+#                                                contrast = 1,
+#                                                TERM2GENE = test.geneset, enrichment.type = "gsea",
+#                                                pvalueCutoff = 1,
+#                                                qvalueCutoff = 1)
+#
+# test.ora.results = DEprot::geneset.enrichment(DEprot.analyses.object = test.diff.exp.limma,
+#                                               contrast = 1,
+#                                               TERM2GENE = test.geneset,
+#                                               enrichment.type = "ORA",
+#                                               pvalueCutoff = 1,
+#                                               qvalueCutoff = 1,
+#                                               diff.status.category = "6h.DMSO")
+#
+#
+#
+# test.toolbox = list(unimputed.lfq = test.unimputed.lfq,
+#                     dpo.raw = test.dpo.raw,
+#                     dpo.norm = test.dpo.norm,
+#                     dpo.imp = test.dpo.imp.miss,
+#                     diff.exp.limma = test.diff.exp.limma,
+#                     geneset = test.geneset,
+#                     gsea.results = test.gsea.results,
+#                     ora.results = test.ora.results)
+#
+#
+
+
+
 # ################################################################################
 # # Generate data files
 # usethis::use_data(unimputed.counts,
@@ -38,4 +94,5 @@
 #                   #dpo.QN,
 #                   #dpo.imputed,
 #                   #dpo.DE.results,
-#                   overwrite = T)
+#                   test.toolbox
+#                   overwrite = TRUE)

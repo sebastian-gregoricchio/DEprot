@@ -45,8 +45,8 @@ NES.plot =
     if ("gseaResult" %in% class(enrichResult)) {
       enrich_data = enrichResult
     } else if ("DEprot.enrichResult" %in% class(enrichResult)) {
-      if (enrichResult@parameters$enrichment.type != "GSEA") {
-        stop(paste0("The 'DEprot.enrichResult iobject does not contain GSEA annalyses. The enrichment type is: ",enrichResult@parameters$enrichment.type,"."))
+      if (toupper(enrichResult@parameters$enrichment.type) != "GSEA") {
+        stop(paste0("The 'DEprot.enrichResult' object does not contain GSEA analyses. The enrichment type is: ",enrichResult@parameters$enrichment.type,"."))
         #return(invisible())
       } else {
         enrich_data = enrichResult@enrichment.discovery

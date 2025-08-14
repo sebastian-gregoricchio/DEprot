@@ -24,29 +24,29 @@ simplify.enrichment =
       #return(invisible())
     }
 
-    if (!("DEprot.analyses" %in% class(dpo.analyses.object))) {
-      stop("The 'dpo.analyses.object' must be an object of calss 'DEprot.analyses'.")
-      #return(invisible())
-    }
+    # if (!("DEprot.analyses" %in% class(dpo.analyses.object))) {
+    #   stop("The 'dpo.analyses.object' must be an object of calss 'DEprot.analyses'.")
+    #   #return(invisible())
+    # }
 
 
-    ### get contrast index and idirectly check the dpo.analyses object
-    i=0
-    contrast.idx = 0
-    stop = FALSE
-    while (stop == FALSE & i < (length(dpo.analyses.object@contrasts)+1)) {
-      i = i+1
-      if (i > length(dpo.analyses.object@contrasts)) {
-        stop = TRUE
-        stop("The contrast cannot be found in the dpo.analyses.object. Verify that the latter was the one used for the original enrichment.genset analyses.")
-        #return(invisible())
-      }  else if (dpo.analyses.object@contrasts[[i]]$metadata.column == enrichment.results@parameters$contrast$metadata.column &
-          all(dpo.analyses.object@contrasts[[i]]$group.1 %in% enrichment.results@parameters$contrast$group.1) &
-          all(dpo.analyses.object@contrasts[[i]]$group.2 %in% enrichment.results@parameters$contrast$group.2)) {
-        contrast.idx = i
-        stop = TRUE
-      }
-    }
+    # ### get contrast index and indirectly check the dpo.analyses object
+    # i=0
+    # contrast.idx = 0
+    # stop = FALSE
+    # while (stop == FALSE & i < (length(dpo.analyses.object@contrasts)+1)) {
+    #   i = i+1
+    #   if (i > length(dpo.analyses.object@contrasts)) {
+    #     stop = TRUE
+    #     stop("The contrast cannot be found in the dpo.analyses.object. Verify that the latter was the one used for the original enrichment.genset analyses.")
+    #     #return(invisible())
+    #   }  else if (dpo.analyses.object@contrasts[[i]]$metadata.column == enrichment.results@parameters$contrast$metadata.column &
+    #       all(dpo.analyses.object@contrasts[[i]]$group.1 %in% enrichment.results@parameters$contrast$group.1) &
+    #       all(dpo.analyses.object@contrasts[[i]]$group.2 %in% enrichment.results@parameters$contrast$group.2)) {
+    #     contrast.idx = i
+    #     stop = TRUE
+    #   }
+    # }
 
     ######################################################################################
 

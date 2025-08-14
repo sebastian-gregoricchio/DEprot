@@ -346,7 +346,7 @@ geneset.enrichment =
           NES.plot = NES.plot,
           dotplot_gene.ratio = dotplot_gene.ratio,
           dotplot_fold.enrichment = dotplot_fold.enrichment,
-          parameters = list(enrichment.type = enrichment.type,
+          parameters = list(enrichment.type = toupper(enrichment.type),
                             contrast = contrasts.info,
                             diff.status.category = diff.status.category,
                             gsub.pattern.prot.id = gsub.pattern.prot.id,
