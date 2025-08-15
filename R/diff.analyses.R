@@ -74,7 +74,7 @@ diff.analyses =
 
 
     ### Check contrasts
-    if (is.na(DEprot.object@contrasts)) {
+    if (all(is.na(DEprot.object@contrasts))) {
       if ("character" %in% class(contrast.list)) {
         contrasts = list(contrast.list)
       } else if ("list" %in% class(contrast.list)) {
