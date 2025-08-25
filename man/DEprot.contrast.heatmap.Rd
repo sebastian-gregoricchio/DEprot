@@ -9,9 +9,9 @@ DEprot.contrast.heatmap class
 }
 \section{Slots}{
 
- \describe{
-   \item{\code{heatmap}:}{Ggplot object corresponding to any heatmap generate by either \link{heatmap.contrasts}. Class: \code{"ANY"}.}
-   \item{\code{cluster}:}{The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.}
- }
-}
+\describe{
+\item{\code{heatmap}}{Ggplot object corresponding to any heatmap generate by either \link{heatmap.contrasts}. Class: \code{"ANY"}.}
+
+\item{\code{cluster}}{The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.}
+}}
 

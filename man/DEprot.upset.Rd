@@ -9,9 +9,9 @@ DEprot.upset class
 }
 \section{Slots}{
 
- \describe{
-   \item{\code{upset}:}{Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between cointrasts. Class: \code{"ANY"}.}
-   \item{\code{obs.matrix}:}{Logical matrix indicating all the proteins that are differentially expressed at least in a contrast (rows). Columns indicate a specific contrast. The logical values indicate whether a protein is found differential in a specific contrast (column). Therefore, this table can be used to extract the proteins included in a specific overlap. Class: \code{"ANY"}.}
- }
-}
+\describe{
+\item{\code{upset}}{Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between cointrasts. Class: \code{"ANY"}.}
+
+\item{\code{obs.matrix}}{Logical matrix indicating all the proteins that are differentially expressed at least in a contrast (rows). Columns indicate a specific contrast. The logical values indicate whether a protein is found differential in a specific contrast (column). Therefore, this table can be used to extract the proteins included in a specific overlap. Class: \code{"ANY"}.}
+}}
 

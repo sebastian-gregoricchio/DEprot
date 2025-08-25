@@ -9,14 +9,19 @@ DEprot.enrichResult class
 }
 \section{Slots}{
 
- \describe{
-   \item{\code{enrichment.discovery}:}{the direct output from \code{clusterProfiler::GSEA} or \code{clusterProfiler::enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.}
-   \item{\code{protein.network}:}{a string plot showing protein networks (\code{clusterProfiler::cnetplot}). Class: \code{"ANY"}.}
-   \item{\code{pathway.network}:}{a list with clusters and string plot showing pathway/set networks (\code{aPEAR::enrichmentNetwork}). Class: \code{"ANY"}.}
-   \item{\code{NES.plot}:}{(GSEA only) a bar plot showing the NES scores for each significantly enriched geneSet. Class: \code{"ANY"}.}
-   \item{\code{dotplot_gene.ratio}:}{a dotplot showing the geneRatios for each significantly enriched geneSet. Class: \code{"ANY"}.}
-   \item{\code{dotplot_fold.enrichment}:}{(ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: \code{"ANY"}.}
-   \item{\code{parameters}:}{a list containing the parameters used to run the analyses. Class: \code{"ANY"}.}
- }
-}
+\describe{
+\item{\code{enrichment.discovery}}{the direct output from \code{clusterProfiler::GSEA} or \code{clusterProfiler::enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.}
+
+\item{\code{protein.network}}{a string plot showing protein networks (\code{clusterProfiler::cnetplot}). Class: \code{"ANY"}.}
+
+\item{\code{pathway.network}}{a list with clusters and string plot showing pathway/set networks (\code{aPEAR::enrichmentNetwork}). Class: \code{"ANY"}.}
+
+\item{\code{NES.plot}}{(GSEA only) a bar plot showing the NES scores for each significantly enriched geneSet. Class: \code{"ANY"}.}
+
+\item{\code{dotplot_gene.ratio}}{a dotplot showing the geneRatios for each significantly enriched geneSet. Class: \code{"ANY"}.}
+
+\item{\code{dotplot_fold.enrichment}}{(ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: \code{"ANY"}.}
+
+\item{\code{parameters}}{a list containing the parameters used to run the analyses. Class: \code{"ANY"}.}
+}}
 

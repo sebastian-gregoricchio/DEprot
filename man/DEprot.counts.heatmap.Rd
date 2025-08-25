@@ -9,10 +9,11 @@ DEprot.counts.heatmap class
 }
 \section{Slots}{
 
- \describe{
-   \item{\code{heatmap}:}{Ggplot object corresponding to any heatmap generate by either \link{heatmap.counts}. Class: \code{"ANY"}.}
-   \item{\code{row.cluster}:}{The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.}
-   \item{\code{column.cluster}:}{The \code{hclust} object of the columns (samples). Class: \code{"ANY"}.}
- }
-}
+\describe{
+\item{\code{heatmap}}{Ggplot object corresponding to any heatmap generate by either \link{heatmap.counts}. Class: \code{"ANY"}.}
+
+\item{\code{row.cluster}}{The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.}
+
+\item{\code{column.cluster}}{The \code{hclust} object of the columns (samples). Class: \code{"ANY"}.}
+}}
 

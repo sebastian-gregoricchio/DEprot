@@ -1,25 +1,22 @@
 #' @title DEprot class
 #' @name DEprot
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{metadata}:}{The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.}
-#'    \item{\code{raw.counts}:}{Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.}
-#'    \item{\code{norm.counts}:}{Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.}
-#'    \item{\code{imputed.counts}:}{Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.}
-#'    \item{\code{log.base}:}{Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.}
-#'    \item{\code{log.transformed}:}{Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.}
-#'    \item{\code{imputed}:}{Logical value indicating whether the data are imputed. Class: \code{"logical"}.}
-#'    \item{\code{imputation}:}{String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.}
-#'    \item{\code{normalized}:}{Logical value indicating whether the data are normalized. Class: \code{"logical"}.}
-#'    \item{\code{normalization.method}:}{String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.}
-#'    \item{\code{boxplot.raw}:}{Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.}
-#'    \item{\code{boxplot.norm}:}{Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.}
-#'    \item{\code{boxplot.imputed}:}{Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.}
-#'    \item{\code{analyses.result.list}:}{For this type of object the value is \code{NULL}. Class: \code{"ANY"}.}
-#'    \item{\code{contrasts}:}{For this type of object the value is \code{NULL}. Class: \code{"ANY"}.}
-#'    \item{\code{differential.analyses.params}:}{For this type of object the value is \code{NULL}. Class: \code{"ANY"}.}
-#'  }
+#' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
+#' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
+#' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
+#' @slot imputed.counts Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.
+#' @slot log.base Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.
+#' @slot log.transformed Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.
+#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
+#' @slot imputation String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
+#' @slot normalized Logical value indicating whether the data are normalized. Class: \code{"logical"}.
+#' @slot normalization.method String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.
+#' @slot boxplot.raw Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.
+#' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
+#' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
+#' @slot analyses.result.list For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
+#' @slot contrasts For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
+#' @slot differential.analyses.params For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot
 
@@ -49,22 +46,20 @@ setClass(Class = "DEprot",
 #' @title DEprot.analyses class
 #' @name DEprot.analyses
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{metadata}:}{The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.}
-#'    \item{\code{raw.counts}:}{Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.}
-#'    \item{\code{norm.counts}:}{Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.}
-#'    \item{\code{imputed.counts}:}{Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.}
-#'    \item{\code{log.base}:}{Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.}
-#'    \item{\code{log.transformed}:}{Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.}
-#'    \item{\code{imputed}:}{Logical value indicating whether the data are imputed. Class: \code{"logical"}.}
-#'    \item{\code{imputation}:}{String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.}
-#'    \item{\code{normalized}:}{Logical value indicating whether the data are normalized. Class: \code{"logical"}.}
-#'    \item{\code{normalization.method}:}{String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.}
-#'    \item{\code{boxplot.raw}:}{Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.}
-#'    \item{\code{boxplot.norm}:}{Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.}
-#'    \item{\code{boxplot.imputed}:}{Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.}
-#'    \item{\code{analyses.result.list}:}{List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
+#' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
+#' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
+#' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
+#' @slot imputed.counts Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.
+#' @slot log.base Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.
+#' @slot log.transformed Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.
+#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
+#' @slot imputation String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
+#' @slot normalized Logical value indicating whether the data are normalized. Class: \code{"logical"}.
+#' @slot normalization.method String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.
+#' @slot boxplot.raw Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.
+#' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
+#' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
+#' @slot analyses.result.list List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
 #'      \itemize{
 #'        \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status}
 #'        \item{\code{n.diff}: }{a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)}
@@ -72,10 +67,9 @@ setClass(Class = "DEprot",
 #'        \item{\code{PCA.plots}: }{combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot}
 #'        \item{\code{correlations}: }{combination of Pearson and Spearman correlation heatmaps (obtained by \link{plot.correlation.heatmap}) for the subset of samples analyzed in a specific contrast}
 #'        \item{\code{volcano}: }{volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using \link{plot.volcano}}
-#'        \item{\code{MA.plot}: }{MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using \link{plot.MA}}}}
-#'    \item{\code{contrasts}:}{List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.}
-#'    \item{\code{differential.analyses.params}:}{List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustement method, etc.). Class: \code{"ANY"}.}
-#'  }
+#'        \item{\code{MA.plot}: }{MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using \link{plot.MA}}}
+#' @slot List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.
+#' @slot differential.analyses.params List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustement method, etc.). Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.analyses
 
@@ -106,16 +100,13 @@ setClass(Class = "DEprot.analyses",
 #' @title DEprot.PCA class
 #' @name DEprot.PCA
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{PCA.metadata}:}{metadata of the samples used in the PCA (subset of the original \code{DEprot@@metadata}. Class: \code{"ANY"}.}
-#'    \item{\code{sample.subset}:}{vector containing the list of samples analyzed. Class: \code{"ANY"}.}
-#'    \item{\code{data.used}:}{vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.}
-#'    \item{\code{prcomp}:}{object of class \code{prcomp} (or output from \code{pcaMethods::pca}, method = "nipals") corresponding to the full PCA output. Class: \code{"ANY"}.}
-#'    \item{\code{PCs}:}{data.frame combining the PC scores and the metadata table, useful for replotting. Class: \code{"ANY"}.}
-#'    \item{\code{importance}:}{statistical summary table for the PCA analyses per each PC. Class: \code{"ANY"}.}
-#'    \item{\code{cumulative.PC.plot}:}{ggplot object corresponding to out put of \code{plot.PC.cumulative} for this object. Class: \code{"ANY"}.}
-#'  }
+#' @slot PCA.metadata metadata of the samples used in the PCA (subset of the original \code{DEprot@@metadata}. Class: \code{"ANY"}.
+#' @slot sample.subset vector containing the list of samples analyzed. Class: \code{"ANY"}.
+#' @slot data.used vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.
+#' @slot prcomp object of class \code{prcomp} (or output from \code{pcaMethods::pca}, method = "nipals") corresponding to the full PCA output. Class: \code{"ANY"}.
+#' @slot PCs data.frame combining the PC scores and the metadata table, useful for replotting. Class: \code{"ANY"}.
+#' @slot importance statistical summary table for the PCA analyses per each PC. Class: \code{"ANY"}.
+#' @slot cumulative.PC.plot ggplot object corresponding to out put of \code{plot.PC.cumulative} for this object. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.PCA
 
@@ -136,16 +127,13 @@ setClass(Class = "DEprot.PCA",
 #' @title DEprot.correlation class
 #' @name DEprot.correlation
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{heatmap}:}{ggplot object corresponding to the correlation heatmap. Class: \code{"ANY"}.}
-#'    \item{\code{corr.metadata}:}{metadata of the samples used in the correlation (subset of the original \code{DEprot@@metadata}. Class: \code{"ANY"}.}
-#'    \item{\code{sample.subset}:}{vector containing the list of samples analyzed. Class: \code{"ANY"}.}
-#'    \item{\code{data.used}:}{vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.}
-#'    \item{\code{corr.matrix}:}{the correlation matrix on which the heatmap is base on. Class: \code{"ANY"}.}
-#'    \item{\code{distance}:}{object of class \code{dist} corresponding to the output of \code{as.dist(1 - correlation.matrix)}. Class: \code{"ANY"}.}
-#'    \item{\code{cluster}:}{\code{hclust} object generated by \code{hclust(d = as.dist(1 - correlation.matrix), method = clustering.method)}. Class: \code{"ANY"}.}
-#'  }
+#' @slot heatmap ggplot object corresponding to the correlation heatmap. Class: \code{"ANY"}.
+#' @slot corr.metadata metadata of the samples used in the correlation (subset of the original \code{DEprot@@metadata}. Class: \code{"ANY"}.
+#' @slot sample.subset vector containing the list of samples analyzed. Class: \code{"ANY"}.
+#' @slot data.used vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.
+#' @slot corr.matrix the correlation matrix on which the heatmap is base on. Class: \code{"ANY"}.
+#' @slot distance object of class \code{dist} corresponding to the output of \code{as.dist(1 - correlation.matrix)}. Class: \code{"ANY"}.
+#' @slot cluster \code{hclust} object generated by \code{hclust(d = as.dist(1 - correlation.matrix), method = clustering.method)}. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.correlation
 
@@ -163,11 +151,8 @@ setClass(Class = "DEprot.correlation",
 #' @title DEprot.upset class
 #' @name DEprot.upset
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{upset}:}{Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between cointrasts. Class: \code{"ANY"}.}
-#'    \item{\code{obs.matrix}:}{Logical matrix indicating all the proteins that are differentially expressed at least in a contrast (rows). Columns indicate a specific contrast. The logical values indicate whether a protein is found differential in a specific contrast (column). Therefore, this table can be used to extract the proteins included in a specific overlap. Class: \code{"ANY"}.}
-#'  }
+#' @slot upset Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between cointrasts. Class: \code{"ANY"}.
+#' @slot obs.matrix Logical matrix indicating all the proteins that are differentially expressed at least in a contrast (rows). Columns indicate a specific contrast. The logical values indicate whether a protein is found differential in a specific contrast (column). Therefore, this table can be used to extract the proteins included in a specific overlap. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.upset
 
@@ -180,11 +165,8 @@ setClass(Class = "DEprot.upset",
 #' @title DEprot.contrast.heatmap class
 #' @name DEprot.contrast.heatmap
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{heatmap}:}{Ggplot object corresponding to any heatmap generate by either \link{heatmap.contrasts}. Class: \code{"ANY"}.}
-#'    \item{\code{cluster}:}{The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.}
-#'  }
+#' @slot heatmap Ggplot object corresponding to any heatmap generate by either \link{heatmap.contrasts}. Class: \code{"ANY"}.
+#' @slot cluster The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.contrast.heatmap
 
@@ -196,12 +178,9 @@ setClass(Class = "DEprot.contrast.heatmap",
 #' @title DEprot.counts.heatmap class
 #' @name DEprot.counts.heatmap
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{heatmap}:}{Ggplot object corresponding to any heatmap generate by either \link{heatmap.counts}. Class: \code{"ANY"}.}
-#'    \item{\code{row.cluster}:}{The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.}
-#'    \item{\code{column.cluster}:}{The \code{hclust} object of the columns (samples). Class: \code{"ANY"}.}
-#'  }
+#' @slot heatmap Ggplot object corresponding to any heatmap generate by either \link{heatmap.counts}. Class: \code{"ANY"}.
+#' @slot row.cluster The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.
+#' @slot column.cluster The \code{hclust} object of the columns (samples). Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.counts.heatmap
 
@@ -215,16 +194,13 @@ setClass(Class = "DEprot.counts.heatmap",
 #' @title DEprot.enrichResult class
 #' @name DEprot.enrichResult
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{enrichment.discovery}:}{the direct output from \code{clusterProfiler::GSEA} or \code{clusterProfiler::enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.}
-#'    \item{\code{protein.network}:}{a string plot showing protein networks (\code{clusterProfiler::cnetplot}). Class: \code{"ANY"}.}
-#'    \item{\code{pathway.network}:}{a list with clusters and string plot showing pathway/set networks (\code{aPEAR::enrichmentNetwork}). Class: \code{"ANY"}.}
-#'    \item{\code{NES.plot}:}{(GSEA only) a bar plot showing the NES scores for each significantly enriched geneSet. Class: \code{"ANY"}.}
-#'    \item{\code{dotplot_gene.ratio}:}{a dotplot showing the geneRatios for each significantly enriched geneSet. Class: \code{"ANY"}.}
-#'    \item{\code{dotplot_fold.enrichment}:}{(ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: \code{"ANY"}.}
-#'    \item{\code{parameters}:}{a list containing the parameters used to run the analyses. Class: \code{"ANY"}.}
-#'  }
+#' @slot enrichment.discovery the direct output from \code{clusterProfiler::GSEA} or \code{clusterProfiler::enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.
+#' @slot protein.network a string plot showing protein networks (\code{clusterProfiler::cnetplot}). Class: \code{"ANY"}.
+#' @slot pathway.network a list with clusters and string plot showing pathway/set networks (\code{aPEAR::enrichmentNetwork}). Class: \code{"ANY"}.
+#' @slot NES.plot (GSEA only) a bar plot showing the NES scores for each significantly enriched geneSet. Class: \code{"ANY"}.
+#' @slot dotplot_gene.ratio a dotplot showing the geneRatios for each significantly enriched geneSet. Class: \code{"ANY"}.
+#' @slot dotplot_fold.enrichment (ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: \code{"ANY"}.
+#' @slot parameters a list containing the parameters used to run the analyses. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.enrichResult
 
@@ -244,12 +220,9 @@ setClass(Class = "DEprot.enrichResult",
 #' @title DEprot.pvalues class
 #' @name DEprot.pvalues
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{pvalue.distribution}:}{ggplot object depicting the histogram of the distribution of the p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.}
-#'    \item{\code{padjusted.distribution}:}{ggplot object depicting the histogram of the distribution of the adjusted p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.}
-#'    \item{\code{pvalue.rank}:}{ggplot object depicting the curve of the ranked p-values. Class: \code{"ANY"}.}
-#'  }
+#' @slot pvalue.distribution ggplot object depicting the histogram of the distribution of the p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.
+#' @slot padjusted.distribution ggplot object depicting the histogram of the distribution of the adjusted p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.
+#' @slot pvalue.rank ggplot object depicting the curve of the ranked p-values. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.pvalues
 
@@ -264,13 +237,10 @@ setClass(Class = "DEprot.pvalues",
 #' @title DEprot.normality class
 #' @name DEprot.normality
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{norm.statement}:}{Logical value indicating whether the samples are normally distributed (\code{TRUE}). Class: \code{"ANY"}.}
-#'    \item{\code{norm.AD.tests}:}{List of Anderson-Darling normality test results for each sample. Class: \code{"ANY"}.}
-#'    \item{\code{qqplots}:}{List of ggplots objects depicting the Q-Q plots for the Anderson-Darling normality test. Class: \code{"ANY"}.}
-#'    \item{\code{densities}:}{List of ggplots objects depicting the destiny distribution of the intensities overlapped to a theoretical normal distribution. Class: \code{"ANY"}.}
-#'  }
+#' @slot norm.statement Logical value indicating whether the samples are normally distributed (\code{TRUE}). Class: \code{"ANY"}.
+#' @slot norm.AD.tests List of Anderson-Darling normality test results for each sample. Class: \code{"ANY"}.
+#' @slot qqplots List of ggplots objects depicting the Q-Q plots for the Anderson-Darling normality test. Class: \code{"ANY"}.
+#' @slot densities List of ggplots objects depicting the destiny distribution of the intensities overlapped to a theoretical normal distribution. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.normality
 
@@ -287,15 +257,13 @@ setClass(Class = "DEprot.normality",
 #' @title DEprot.RMSE class
 #' @name DEprot.RMSE
 #'
-#' @section Slots:
-#'  \describe{
-#'    \item{\code{original.DEprot.object}:}{Object of class \code{DEprot} used to compute the RMSE. Class: \code{"ANY"}.}
-#'    \item{\code{percentage.test}:}{Percentage of the total proteins that should be used to perform the comparisons. Class: \code{"ANY"}.}
-#'    \item{\code{seed}:}{Seed used for the randomization. Class: \code{"ANY"}.}
-#'    \item{\code{fraction.missing.values}:}{Fraction of missing values in the original table. Class: \code{"ANY"}.}
-#'    \item{\code{test.dataset}:}{Subset of the original table used for the comparisons. Class: \code{"ANY"}.}
-#'    \item{\code{imputed.objects}:}{List of the output of \link{impute.counts} (class \code{DEprot}) using the different imputation methods. Class: \code{"ANY"}.}
-#'    \item{\code{RMSE.tables}:}{List of data.frames, one per tested imputation method, containing the coordinates of the imputed values and including the following columns (Class: \code{"ANY"}.):
+#' @slot original.DEprot.object Object of class \code{DEprot} used to compute the RMSE. Class: \code{"ANY"}.
+#' @slot percentage.test Percentage of the total proteins that should be used to perform the comparisons. Class: \code{"ANY"}.
+#' @slot seed Seed used for the randomization. Class: \code{"ANY"}.
+#' @slot fraction.missing.values Fraction of missing values in the original table. Class: \code{"ANY"}.
+#' @slot test.dataset Subset of the original table used for the comparisons. Class: \code{"ANY"}.
+#' @slot imputed.objects List of the output of \link{impute.counts} (class \code{DEprot}) using the different imputation methods. Class: \code{"ANY"}.
+#' @slot RMSE.tables List of data.frames, one per tested imputation method, containing the coordinates of the imputed values and including the following columns (Class: \code{"ANY"}.):
 #'      \itemize{
 #'        \item{\code{row.id}: }{id of the row (protein)}
 #'        \item{\code{col.id}: }{id of the column (sample)}
@@ -303,12 +271,11 @@ setClass(Class = "DEprot.normality",
 #'        \item{\code{imputation.method}: }{id of the method used for the imputation}
 #'        \item{\code{imputed.values}: }{value imputed by \code{DEprot}}
 #'        \item{\code{residuals}: }{difference of the the values, \code{imputed - expected}}
-#'        \item{\code{sq.residuals}: }{the squared value of the residuals}}}
-#'    \item{\code{contrasts}:}{List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.}
-#'    \item{\code{RMSE.scores}:}{. Class: \code{"ANY"}.}
-#'    \item{\code{correlation.plots}:}{. Class: \code{"ANY"}.}
-#'    \item{\code{density.residuals}:}{. Class: \code{"ANY"}.}
-#'  }
+#'        \item{\code{sq.residuals}: }{the squared value of the residuals}}
+#' @slot contrasts List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.
+#' @slot RMSE.scores A table indicating the methods and the corresponding RMSE score. Class: \code{"ANY"}.
+#' @slot correlation.plots A list of ggplot objects with the correlation between observed/expected and imputed values. Class: \code{"ANY"}.
+#' @slot density.residuals A list of ggplot objects depicting the distribution of the residuals. Class: \code{"ANY"}.
 #'
 #' @exportClass DEprot.RMSE
 
