@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.counts.heatmap}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.counts.heatmap}}
+}
 \description{
 DEprot.counts.heatmap show-method
 }

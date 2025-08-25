@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.RMSE}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.RMSE}}
+}
 \description{
 DEprot.RMSE show-method
 }

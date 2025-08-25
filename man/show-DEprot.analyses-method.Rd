@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.analyses}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.analyses}}
+}
 \description{
 DEprot.analyses show-method
 }

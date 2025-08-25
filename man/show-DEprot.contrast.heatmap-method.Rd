@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.contrast.heatmap}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.contrast.heatmap}}
+}
 \description{
 DEprot.cluster.heatmap show-method
 }

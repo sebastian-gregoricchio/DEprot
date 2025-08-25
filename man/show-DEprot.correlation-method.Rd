@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.correlation}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.correlation}}
+}
 \description{
 DEprot.correlation show-method
 }

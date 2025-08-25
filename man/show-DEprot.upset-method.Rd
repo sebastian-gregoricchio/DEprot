@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.upset}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.upset}}
+}
 \description{
 DEprot.upset show-method
 }

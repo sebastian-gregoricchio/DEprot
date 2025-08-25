@@ -4,6 +4,7 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
+#' @param include.rep.model Logical value indicating whether the model should include the replicate information. Requires a 'replicate.column'. Default: \code{FALSE}.
 #' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.

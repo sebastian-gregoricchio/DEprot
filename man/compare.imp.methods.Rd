@@ -67,8 +67,6 @@
 \item{seed}{Numeric value indicating the seed to use for the randomization. Default: \code{NULL}, automatically generated (saved in the \code{seed} slot in the final object).}
 
 \item{verbose}{Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.}
-
-\item{overwrite.imputation}{Logical value to indicate whether, in the case already available, the table of imputed counts should be overwritten. Default: \code{FALSE}.}
 }
 \value{
 A \code{DEprot.RMSE} object.

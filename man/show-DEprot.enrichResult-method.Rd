@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.enrichResult}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.enrichResult}}
+}
 \description{
 DEprot.enrichResult show-method
 }

@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.PCA}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.PCA}}
+}
 \description{
 DEprot.PCA show-method
 }

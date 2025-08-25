@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.normality}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.normality}}
+}
 \description{
 DEprot.normality show-method
 }

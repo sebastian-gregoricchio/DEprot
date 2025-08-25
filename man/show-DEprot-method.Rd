@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot}}
+}
 \description{
 DEprot show-method
 }

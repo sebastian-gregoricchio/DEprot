@@ -295,6 +295,7 @@ setClass(Class = "DEprot.RMSE",
 ################# METHODS #################
 
 #' @title DEprot show-method
+#' @param object Object of class \code{DEprot}
 #' @export
 setMethod(f = "show",
           signature = "DEprot",
@@ -331,6 +332,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.analyses show-method
+#' @param object Object of class \code{DEprot.analyses}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.analyses",
@@ -368,6 +370,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.analyses summary-method
+#' @param object Object of class \code{DEprot.analyses}
 #' @export
 setMethod(f = "summary",
           signature = "DEprot.analyses",
@@ -394,6 +397,7 @@ setMethod(f = "summary",
 
 
 #' @title DEprot.PCA show-method
+#' @param object Object of class \code{DEprot.PCA}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.PCA",
@@ -410,6 +414,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.correlation show-method
+#' @param object Object of class \code{DEprot.correlation}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.correlation",
@@ -418,6 +423,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.upset show-method
+#' @param object Object of class \code{DEprot.upset}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.upset",
@@ -425,6 +431,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.cluster.heatmap show-method
+#' @param object Object of class \code{DEprot.contrast.heatmap}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.contrast.heatmap",
@@ -432,6 +439,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.counts.heatmap show-method
+#' @param object Object of class \code{DEprot.counts.heatmap}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.counts.heatmap",
@@ -440,6 +448,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.enrichResult show-method
+#' @param object Object of class \code{DEprot.enrichResult}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.enrichResult",
@@ -447,6 +456,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.pvalues show-method
+#' @param object Object of class \code{DEprot.pvalues}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.pvalues",
@@ -459,6 +469,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.normality show-method
+#' @param object Object of class \code{DEprot.normality}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.normality",
@@ -477,6 +488,7 @@ setMethod(f = "show",
 
 
 #' @title DEprot.RMSE show-method
+#' @param object Object of class \code{DEprot.RMSE}
 #' @export
 setMethod(f = "show",
           signature = "DEprot.RMSE",

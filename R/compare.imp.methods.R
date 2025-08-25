@@ -11,7 +11,6 @@
 #' @param run.kNN Logical values indicating whether the test for the \code{kNN} imputation should be performed. Default: \code{TRUE}.
 #' @param run.LLS Logical values indicating whether the test for the \code{LLS} imputation should be performed. Default: \code{TRUE}.
 #' @param run.SVD Logical values indicating whether the test for the \code{SVD} imputation should be performed. Default: \code{TRUE}.
-#' @param overwrite.imputation Logical value to indicate whether, in the case already available, the table of imputed counts should be overwritten. Default: \code{FALSE}.
 #' @param missForest.max.iterations Max number of iterations for the \code{missForest} algorithm. Default: \code{100}.
 #' @param missForest.variable.wise.OOBerror Logical value to define whether the OOB error is returned for each variable separately. Default: \code{TRUE}.
 #' @param missForest.cores Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.

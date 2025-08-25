@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{DEprot.pvalues}(object)
 }
+\arguments{
+\item{object}{Object of class \code{DEprot.pvalues}}
+}
 \description{
 DEprot.pvalues show-method
 }

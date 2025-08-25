@@ -27,6 +27,8 @@
 
 \item{contrast.list}{List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.}
 
+\item{include.rep.model}{Logical value indicating whether the model should include the replicate information. Requires a 'replicate.column'. Default: \code{FALSE}.}
+
 \item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.}
 
 \item{linear.FC.th}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}

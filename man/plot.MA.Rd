@@ -41,6 +41,8 @@
 
 \item{use.uncorrected.pvalue}{Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.}
 
+\item{symmetric.y}{Logical values indicating whether the y-axis scale should be symmetric or not. Default: \code{TRUE}.}
+
 \item{dot.labels}{String vector indicating labels to show on the plot that should correspond to \code{prot.id} column values. Default: \code{NULL} (no labels shown).}
 
 \item{labels.in.boxes}{Logical value indicating whether the labels should be visualized as boxes. Default: \code{FALSE}.}
@@ -50,8 +52,6 @@
 \item{label.max.overlaps}{Numeric value indicating the maximum number of overlaps allowed between labels. Default: \code{100}.}
 
 \item{min.segment.length.labels}{Numeric value indicating the minimal length of the segments that connect the labels to the points. Default: \code{0} (segment always shown).}
-
-\item{symmetric.x}{Logical values indicating whether the x-axis scale should be symmetric or not. Default: \code{TRUE}.}
 }
 \value{
 A ggplot object.
