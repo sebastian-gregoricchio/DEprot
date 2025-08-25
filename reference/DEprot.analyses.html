@@ -67,46 +67,59 @@
     <h2>Slots</h2>
 
 
-<p></p><dl><dt><code>metadata</code>:</dt>
+<dl><dt><code>metadata</code></dt>
 <dd><p>The data.frame corresponding to the metadata table describing the samples. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>raw.counts</code>:</dt>
+
+<dt><code>raw.counts</code></dt>
 <dd><p>Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>norm.counts</code>:</dt>
+
+<dt><code>norm.counts</code></dt>
 <dd><p>Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>imputed.counts</code>:</dt>
+
+<dt><code>imputed.counts</code></dt>
 <dd><p>Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>log.base</code>:</dt>
+
+<dt><code>log.base</code></dt>
 <dd><p>Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>log.transformed</code>:</dt>
+
+<dt><code>log.transformed</code></dt>
 <dd><p>Logical value indicating whether the data are log-transformed or not. Class: <code>"logical"</code>.</p></dd>
 
-   <dt><code>imputed</code>:</dt>
+
+<dt><code>imputed</code></dt>
 <dd><p>Logical value indicating whether the data are imputed. Class: <code>"logical"</code>.</p></dd>
 
-   <dt><code>imputation</code>:</dt>
+
+<dt><code>imputation</code></dt>
 <dd><p>String (or any other class) value indicating the imputation method. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>normalized</code>:</dt>
+
+<dt><code>normalized</code></dt>
 <dd><p>Logical value indicating whether the data are normalized. Class: <code>"logical"</code>.</p></dd>
 
-   <dt><code>normalization.method</code>:</dt>
+
+<dt><code>normalization.method</code></dt>
 <dd><p>String (or any other class) value indicating the normalization method. Class: <code>"ANY"</code>. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>boxplot.raw</code>:</dt>
+
+<dt><code>boxplot.raw</code></dt>
 <dd><p>Ggplot object showing the distribution of the raw values per sample. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>boxplot.norm</code>:</dt>
+
+<dt><code>boxplot.norm</code></dt>
 <dd><p>Ggplot object showing the distribution of the normalized values per sample. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>boxplot.imputed</code>:</dt>
+
+<dt><code>boxplot.imputed</code></dt>
 <dd><p>Ggplot object showing the distribution of the imputed values per sample. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>analyses.result.list</code>:</dt>
+
+<dt><code>analyses.result.list</code></dt>
 <dd><p>List containing the differential results for each contrast. Class: <code>"ANY"</code>. The list contains the following elements:</p><ul><li><p><code>results</code>: a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status</p></li>
 <li><p><code>n.diff</code>: a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)</p></li>
 <li><p><code>PCA.data</code>: output of <a href="perform.PCA.html">perform.PCA</a> for the subset of samples analyzed in a specific contrast</p></li>
@@ -116,10 +129,12 @@
 <li><p><code>MA.plot</code>: MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using <a href="plot.MA.html">plot.MA</a></p></li>
 </ul></dd>
 
-   <dt><code>contrasts</code>:</dt>
-<dd><p>List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>differential.analyses.params</code>:</dt>
+<dt><code>List</code></dt>
+<dd><p>of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: <code>"ANY"</code>.</p></dd>
+
+
+<dt><code>differential.analyses.params</code></dt>
 <dd><p>List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustement method, etc.). Class: <code>"ANY"</code>.</p></dd>
 
 

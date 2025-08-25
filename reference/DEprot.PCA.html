@@ -67,25 +67,31 @@
     <h2>Slots</h2>
 
 
-<p></p><dl><dt><code>PCA.metadata</code>:</dt>
+<dl><dt><code>PCA.metadata</code></dt>
 <dd><p>metadata of the samples used in the PCA (subset of the original <code>DEprot@metadata</code>. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>sample.subset</code>:</dt>
+
+<dt><code>sample.subset</code></dt>
 <dd><p>vector containing the list of samples analyzed. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>data.used</code>:</dt>
+
+<dt><code>data.used</code></dt>
 <dd><p>vector indicating the type of counts used (imputed, normalized, raw). Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>prcomp</code>:</dt>
+
+<dt><code>prcomp</code></dt>
 <dd><p>object of class <code>prcomp</code> (or output from <code><a href="https://rdrr.io/pkg/pcaMethods/man/pca.html" class="external-link">pcaMethods::pca</a></code>, method = "nipals") corresponding to the full PCA output. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>PCs</code>:</dt>
+
+<dt><code>PCs</code></dt>
 <dd><p>data.frame combining the PC scores and the metadata table, useful for replotting. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>importance</code>:</dt>
+
+<dt><code>importance</code></dt>
 <dd><p>statistical summary table for the PCA analyses per each PC. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>cumulative.PC.plot</code>:</dt>
+
+<dt><code>cumulative.PC.plot</code></dt>
 <dd><p>ggplot object corresponding to out put of <code>plot.PC.cumulative</code> for this object. Class: <code>"ANY"</code>.</p></dd>
 
 

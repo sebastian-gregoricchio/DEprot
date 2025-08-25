@@ -67,25 +67,31 @@
     <h2>Slots</h2>
 
 
-<p></p><dl><dt><code>original.DEprot.object</code>:</dt>
+<dl><dt><code>original.DEprot.object</code></dt>
 <dd><p>Object of class <code>DEprot</code> used to compute the RMSE. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>percentage.test</code>:</dt>
+
+<dt><code>percentage.test</code></dt>
 <dd><p>Percentage of the total proteins that should be used to perform the comparisons. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>seed</code>:</dt>
+
+<dt><code>seed</code></dt>
 <dd><p>Seed used for the randomization. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>fraction.missing.values</code>:</dt>
+
+<dt><code>fraction.missing.values</code></dt>
 <dd><p>Fraction of missing values in the original table. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>test.dataset</code>:</dt>
+
+<dt><code>test.dataset</code></dt>
 <dd><p>Subset of the original table used for the comparisons. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>imputed.objects</code>:</dt>
+
+<dt><code>imputed.objects</code></dt>
 <dd><p>List of the output of <a href="impute.counts.html">impute.counts</a> (class <code>DEprot</code>) using the different imputation methods. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>RMSE.tables</code>:</dt>
+
+<dt><code>RMSE.tables</code></dt>
 <dd><p>List of data.frames, one per tested imputation method, containing the coordinates of the imputed values and including the following columns (Class: <code>"ANY"</code>.):</p><ul><li><p><code>row.id</code>: id of the row (protein)</p></li>
 <li><p><code>col.id</code>: id of the column (sample)</p></li>
 <li><p><code>expected.values</code>: value measured in the experiment</p></li>
@@ -95,17 +101,21 @@
 <li><p><code>sq.residuals</code>: the squared value of the residuals</p></li>
 </ul></dd>
 
-   <dt><code>contrasts</code>:</dt>
+
+<dt><code>contrasts</code></dt>
 <dd><p>List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>RMSE.scores</code>:</dt>
-<dd><p>. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>correlation.plots</code>:</dt>
-<dd><p>. Class: <code>"ANY"</code>.</p></dd>
+<dt><code>RMSE.scores</code></dt>
+<dd><p>A table indicating the methods and the corresponding RMSE score. Class: <code>"ANY"</code>.</p></dd>
 
-   <dt><code>density.residuals</code>:</dt>
-<dd><p>. Class: <code>"ANY"</code>.</p></dd>
+
+<dt><code>correlation.plots</code></dt>
+<dd><p>A list of ggplot objects with the correlation between observed/expected and imputed values. Class: <code>"ANY"</code>.</p></dd>
+
+
+<dt><code>density.residuals</code></dt>
+<dd><p>A list of ggplot objects depicting the distribution of the residuals. Class: <code>"ANY"</code>.</p></dd>
 
 
 </dl></div>
