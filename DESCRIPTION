@@ -55,7 +55,6 @@ Imports:
 	VIM,
 	viridis
 Suggests:
-	aPEAR,
 	HarmonizR,
 	rmarkdown,
 	knitr,
