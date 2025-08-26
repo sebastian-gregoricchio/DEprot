@@ -37,7 +37,7 @@ DEprot.analyses class
 \item{\code{boxplot.imputed}}{Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.}
 
 \item{\code{analyses.result.list}}{List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
-\itemize{
+\describe{
   \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status}
   \item{\code{n.diff}: }{a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)}
   \item{\code{PCA.data}: }{output of \link{perform.PCA} for the subset of samples analyzed in a specific contrast}

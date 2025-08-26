@@ -23,7 +23,7 @@ DEprot.RMSE class
 \item{\code{imputed.objects}}{List of the output of \link{impute.counts} (class \code{DEprot}) using the different imputation methods. Class: \code{"ANY"}.}
 
 \item{\code{RMSE.tables}}{List of data.frames, one per tested imputation method, containing the coordinates of the imputed values and including the following columns (Class: \code{"ANY"}.):
-\itemize{
+\describe{
   \item{\code{row.id}: }{id of the row (protein)}
   \item{\code{col.id}: }{id of the column (sample)}
   \item{\code{expected.values}: }{value measured in the experiment}

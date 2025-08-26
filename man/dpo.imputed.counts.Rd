@@ -11,7 +11,7 @@ Object of class \code{DEprot}
 Simulated data
 }
 \usage{
-dpo.imputed.counts
+data("dpo.imputed.counts")
 }
 \description{
 Dummy example of full proteomics data (LFQ values in log2). Imputed using missForest algorithm.

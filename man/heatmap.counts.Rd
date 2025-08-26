@@ -54,13 +54,13 @@ heatmap.counts(
 
 \item{distance.method}{The distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Default: \code{"euclidean"}.}
 
-\item{clustering.method}{The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: \code{complete"}.}
+\item{clustering.method}{The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: \code{"complete"}.}
 
-\item{palette}{List of colors to use for the color gradient of the heatmap. This parameters is used when raw-counts are plotted. For scaled data see the high, low and mid parameters. Default: \code{RColorBrewer::brewer.pal(n = 9, name = "Blues")}.}
+\item{palette}{List of colors to use for the color gradient of the heatmap. This parameters is used when raw-counts are plotted. For scaled data see the high, low and mid parameters. Default: \code{RColorBrewer\:\:brewer.pal(n = 9, name = "Blues")}.}
 
 \item{high.color}{String indicating the color to use for positive Z-score for scaled data. Default: \code{"indianred"}.}
 
-\item{low.color}{String indicating the color to use for negative Z-score for scaled data. Default: \code{"#2166AC"} (blue).}
+\item{low.color}{String indicating the color to use for negative Z-score for scaled data. Default: \code{"\#2166AC"} (blue).}
 
 \item{mid.color}{String indicating the color to use for the 0 Z-score value for scaled data. Default: \code{"white"}.}
 

@@ -21,7 +21,7 @@ A list of objects:
 Simulated data
 }
 \usage{
-test.toolbox
+data("test.toolbox")
 }
 \description{
 Set of objects and datasets used for the package tests.

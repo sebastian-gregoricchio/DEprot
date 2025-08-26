@@ -12,6 +12,7 @@
 #' @param null.color String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.
 #'
 #' @import dplyr
+#' @importFrom purrr pmap
 #'
 #' @export reapply.thresholds
 

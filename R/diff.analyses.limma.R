@@ -22,6 +22,10 @@
 #' @import ggplot2
 #' @import limma
 #' @import patchwork
+#' @import ggtext
+#' @importFrom purrr pmap
+#' @import progress
+#' @importFrom RColorBrewer brewer.pal
 #'
 #' @export diff.analyses.limma
 

@@ -11,6 +11,7 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom pcaMethods pca
 #'
 #' @export perform.PCA
 

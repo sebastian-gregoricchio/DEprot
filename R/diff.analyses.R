@@ -21,6 +21,9 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import patchwork
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom purrr pmap
+#' @import ggtext
 #'
 #' @export diff.analyses
 

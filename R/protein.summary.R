@@ -17,6 +17,8 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom viridis viridis
+#' @import ggtext
 #'
 #' @export protein.summary
 

@@ -18,6 +18,10 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom devtools install_github
+#' @import clusterProfiler
+#' @import ggtext
+#' @import viridis
 #'
 #' @export geneset.enrichment
 
@@ -40,30 +44,32 @@ geneset.enrichment =
     # #require(clusterProfiler)
     # #require(aPEAR)
 
-    if (!requireNamespace("clusterProfiler", quietly = TRUE)) {
-      warning("The 'clusterProfiler' (Bioconductor) package must be installed to use this function.")
-
-      ### Ask for installing
-      install = readline("Do you want to install `clusterProfiler`? [yes/no] ")
-      if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
-        BiocManager::install("clusterProfiler")
-        library(clusterProfiler)
-      } else {
-        return(DEprot.object)
-      }
-    } else {
-      require(clusterProfiler)
-    }
+    # if (!requireNamespace("clusterProfiler", quietly = TRUE)) {
+    #   warning("The 'clusterProfiler' (Bioconductor) package must be installed to use this function.")
+    #
+    #   ### Ask for installing
+    #   install = readline("Do you want to install `clusterProfiler`? [yes/no] ")
+    #   if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
+    #     BiocManager::install("clusterProfiler")
+    #     library(clusterProfiler)
+    #   } else {
+    #     return(DEprot.object)
+    #   }
+    # } else {
+    #   require(clusterProfiler)
+    # }
 
 
 
     if (!requireNamespace("aPEAR", quietly = TRUE)) {
-      warning("The 'aPEAR' (CRAN) package must be installed to use this function.")
+      warning("The 'aPEAR' (GitHub, previously on CRAN) package must be installed to use this function.")
 
       ### Ask for installing
       install = readline("Do you want to install `aPEAR`? [yes/no] ")
       if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
-        install.packages("aPEAR")
+        devtools::install_github("kerseviciute/aPEAR",
+                                 build_manual = FALSE,
+                                 build_vignettes = FALSE)
         library(aPEAR)
       } else {
         return(DEprot.object)

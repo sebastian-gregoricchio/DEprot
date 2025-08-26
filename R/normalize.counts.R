@@ -13,6 +13,9 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom MBQN mbqnNRI
+#' @importFrom reshape2 melt
+#' @import ggtext
 #'
 #' @export normalize.counts
 

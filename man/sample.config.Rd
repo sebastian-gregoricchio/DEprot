@@ -19,7 +19,7 @@ A data frame with 12 rows and 6 columns:
 Simulated data
 }
 \usage{
-sample.config
+data("sample.config")
 }
 \description{
 Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.

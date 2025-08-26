@@ -10,6 +10,10 @@
 #' @return A \code{DEprot.normality} object containing: the \code{norm.statement} indicating whether all the samples are normally distributed or not, the \code{norm.AD.tests} list of Anderson-Darling normality test outputs, a list of \code{qqplots} and \code{densities} profiles for each sample.
 #'
 #' @import ggplot2
+#' @importFrom nortest ad.test
+#' @import ggtext
+#' @import ggpubr
+#'
 #' @export check.normality
 
 

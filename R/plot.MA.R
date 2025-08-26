@@ -24,6 +24,10 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom purrr pmap
+#' @importFrom RColorBrewer brewer.pal
+#' @import ggtext
+#' @import ggrepel
 #'
 #' @export plot.MA
 

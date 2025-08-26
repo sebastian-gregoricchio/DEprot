@@ -478,6 +478,7 @@ setMethod(f = "show",
 
 #' @title DEprot.RMSE show-method
 #' @param object Object of class \code{DEprot.RMSE}
+#' @importFrom patchwork wrap_plots
 #' @export
 setMethod(f = "show",
           signature = "DEprot.RMSE",

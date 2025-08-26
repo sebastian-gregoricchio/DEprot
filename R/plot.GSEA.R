@@ -28,11 +28,15 @@
 #'
 #' @return Either a ggplot-object with the final combined plot, or a list with the three panels separated and the combined plot: \code{list(enrichment.panel, geneset.panel, rank.panel, combined.plot)}.
 #'
+#' @seealso The internal function \code{gsInfo} is derived from the package \href{https://github.com/YuLab-SMU/enrichplot/blob/bf86dcdc74316c7ee8d9e7f5fcac7e88392204e6/R/gseaplot.R#L86}{enrichplot::gsInfo}.
+#'
 #' @aliases plot.GSEA
 #'
 #' @name plot.GSEA
 #'
 #' @import ggplot2
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom patchwork wrap_plots
 #'
 #' @export plot.GSEA
 
@@ -64,6 +68,40 @@ plot.GSEA =
 
     # # Libraries
     # require(ggplot2)
+
+
+
+    #####################################
+    # gsInfo from enrichplot
+    gsInfo <- function(object, geneSetID) {
+      geneList <- object@geneList
+
+      if (is.numeric(geneSetID))
+        geneSetID <- object@result[geneSetID, "ID"]
+
+      geneSet <- object@geneSets[[geneSetID]]
+      exponent <- object@params[["exponent"]]
+      gseaScores <- getFromNamespace("gseaScores", "DOSE")
+      df <- gseaScores(geneList, geneSet, exponent, fortify=TRUE)
+      df$ymin <- 0
+      df$ymax <- 0
+      pos <- df$position == 1
+      h <- diff(range(df$runningScore))/20
+      df$ymin[pos] <- -h
+      df$ymax[pos] <- h
+      df$geneList <- geneList
+      if (length(object@gene2Symbol) == 0) {
+        df$gene <- names(geneList)
+      } else {
+        df$gene <- object@gene2Symbol[names(geneList)]
+      }
+
+      df$Description <- object@result[geneSetID, "Description"]
+      return(df)
+    }
+
+
+    #####################################
 
 
     # collect results
@@ -127,7 +165,7 @@ plot.GSEA =
     }
 
     # Get plotting info
-    info = enrichplot:::gsInfo(object = gsea.results, geneSetID = gene.set)
+    info = gsInfo(object = gsea.results, geneSetID = gene.set)
 
     # Enrichment panel
     if (enrichment.geom %in% c("line", "lines")) {

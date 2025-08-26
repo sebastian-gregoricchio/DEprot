@@ -14,6 +14,9 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @import ggtext
+#' @importFrom stringr str_to_title
+#' @importFrom ggpubr stat_cor
 #'
 #' @export contrast.scatter
 

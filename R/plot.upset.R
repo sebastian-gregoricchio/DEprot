@@ -23,6 +23,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import ComplexUpset
+#' @import ggtext
 #'
 #' @export plot.upset
 

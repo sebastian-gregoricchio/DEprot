@@ -17,6 +17,8 @@
 #' @name plot.PC.scatter
 #'
 #' @import ggplot2
+#' @importFrom stringr str_to_title
+#' @import ggrepel
 #'
 #' @export plot.PC.scatter
 

@@ -15,7 +15,7 @@ A data frame with 13,239 rows and 12 columns:
 Simulated data
 }
 \usage{
-unimputed.counts
+data("unimputed.counts")
 }
 \description{
 Dummy example of full proteomics data (LFQ values in log2). Not imputed.

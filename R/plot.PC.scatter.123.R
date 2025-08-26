@@ -20,6 +20,8 @@
 #' @name plot.PC.scatter.123
 #'
 #' @import ggplot2
+#' @importFrom stringr str_to_title
+#' @import patchwork
 #'
 #' @export plot.PC.scatter.123
 

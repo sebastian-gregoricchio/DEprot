@@ -13,6 +13,7 @@
 #' @name plot.PC.cumulative
 #'
 #' @import ggplot2
+#' @import ggtext
 #'
 #' @export plot.PC.cumulative
 

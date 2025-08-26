@@ -15,6 +15,8 @@
 #' @import dplyr
 #' @import ggplot2
 #' @import methods
+#' @importFrom data.table fread
+#' @importFrom reshape2 melt
 #'
 #' @export load.counts2
 

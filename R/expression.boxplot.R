@@ -16,6 +16,8 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom ggpubr stat_compare_means
+#' @import ggtext
 #'
 #' @export expression.boxplot
 

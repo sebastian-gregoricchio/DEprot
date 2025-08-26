@@ -8,6 +8,12 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom plyr ldply
+#' @import ggtext
+#' @import clusterProfiler
+#' @import viridis
+#' @importFrom BiocManager install
+#' @importFrom devtools install_github
 #'
 #' @export simplify.enrichment
 
@@ -17,6 +23,44 @@ simplify.enrichment =
     # ## Libraries
     # require(dplyr)
     # require(ggplot2)
+
+
+    # if (!requireNamespace("clusterProfiler", quietly = TRUE)) {
+    #   warning("The 'clusterProfiler' (Bioconductor) package must be installed to use this function.")
+    #
+    #   ### Ask for installing
+    #   install = readline("Do you want to install `clusterProfiler`? [yes/no] ")
+    #   if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
+    #     BiocManager::install("clusterProfiler")
+    #     library(clusterProfiler)
+    #   } else {
+    #     return(DEprot.object)
+    #   }
+    # } else {
+    #   require(clusterProfiler)
+    # }
+
+
+
+    if (!requireNamespace("aPEAR", quietly = TRUE)) {
+      warning("The 'aPEAR' (GitHub, previously on CRAN) package must be installed to use this function.")
+
+      ### Ask for installing
+      install = readline("Do you want to install `aPEAR`? [yes/no] ")
+      if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
+        devtools::install_github("kerseviciute/aPEAR",
+                                 build_manual = FALSE,
+                                 build_vignettes = FALSE)
+        library(aPEAR)
+      } else {
+        return(DEprot.object)
+      }
+    } else {
+      require(aPEAR)
+    }
+
+
+    ######################################################################################
 
     ## check the objects
     if (!("DEprot.enrichResult" %in% class(enrichment.results))) {

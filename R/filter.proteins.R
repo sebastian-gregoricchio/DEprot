@@ -8,6 +8,10 @@
 #'
 #' @return An object of class \code{DEprot} (S4 vector).
 #'
+#' @importFrom patchwork wrap_plots
+#' @importFrom purrr pmap
+#' @import dplyr
+#'
 #' @export filter.proteins
 
 filter.proteins =

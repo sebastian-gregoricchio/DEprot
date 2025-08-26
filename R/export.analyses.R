@@ -8,6 +8,7 @@
 #' @param verbose Logical value to indicate whether progress messages should be printed. Default: \code{TRUE}.
 #'
 #' @import dplyr
+#' @import progress
 #'
 #' @export export.analyses
 

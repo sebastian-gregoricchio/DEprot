@@ -30,6 +30,9 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom purrr pmap
+#' @importFrom ggpubr stat_cor theme_pubr
+#' @importFrom ggridges geom_density_ridges
 #'
 #' @export compare.imp.methods
 

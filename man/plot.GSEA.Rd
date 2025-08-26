@@ -83,3 +83,6 @@ Either a ggplot-object with the final combined plot, or a list with the three pa
 \description{
 Function to plot GSEA results (see \href{https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html}{clusterprofiler}).
 }
+\seealso{
+The internal function \code{gsInfo} is derived from the package \href{https://github.com/YuLab-SMU/enrichplot/blob/bf86dcdc74316c7ee8d9e7f5fcac7e88392204e6/R/gseaplot.R#L86}{enrichplot::gsInfo}.
+}

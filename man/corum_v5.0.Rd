@@ -17,7 +17,7 @@ A data frame with 24705 rows and 4 columns:
 https://mips.helmholtz-muenchen.de/corum/download
 }
 \usage{
-corum_v5.0
+data("corum_v5.0")
 }
 \description{
 Collection of CORUM complexes for all organisms available.

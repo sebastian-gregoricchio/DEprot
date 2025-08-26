@@ -17,7 +17,9 @@
 #'
 #' @import dplyr
 #' @import ggplot2
-#' @import patchwork
+#' @importFrom reshape2 melt
+#' @importFrom colorspace darken
+#' @import ggtext
 #'
 #' @export plot.counts
 
@@ -31,10 +33,9 @@ plot.counts =
            subtitle = NULL,
            convert.log2 = TRUE) {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(patchwork)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
 
 
     ### check object and extract metadata table

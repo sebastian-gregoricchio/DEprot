@@ -12,6 +12,7 @@
 #'
 #' @import ggplot2
 #' @import dplyr
+#' @import ggtext
 #'
 #' @export check.pvalues
 

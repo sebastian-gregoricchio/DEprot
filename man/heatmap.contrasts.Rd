@@ -32,11 +32,11 @@ heatmap.contrasts(
 
 \item{distance.method}{The distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Default: \code{"euclidean"}.}
 
-\item{clustering.method}{The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: \code{complete"}.}
+\item{clustering.method}{The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: \code{"complete"}.}
 
-\item{high.color}{String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: \code{"indianred"}.}
+\item{high.color}{String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: \code{"firebrick"}.}
 
-\item{low.color}{String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: \code{"#2166AC"} (blue).}
+\item{low.color}{String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: \code{"\#2166AC"} (blue).}
 
 \item{mid.color}{String indicating the color to use for the 0 in the plots. Default: \code{"white"}.}
 

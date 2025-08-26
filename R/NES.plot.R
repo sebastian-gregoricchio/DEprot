@@ -18,6 +18,7 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @import ggtext
 #'
 #' @export NES.plot
 

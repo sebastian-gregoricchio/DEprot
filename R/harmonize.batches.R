@@ -8,6 +8,7 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom BiocManager install
 #'
 #' @export harmonize.batches
 
@@ -16,10 +17,10 @@ harmonize.batches =
            batch.column = "batch",
            cores = 1) {
 
-    ### Packages
-    require(dplyr)
-    require(ggplot2)
-
+    # ### Packages
+    # require(dplyr)
+    # require(ggplot2)
+    #
     if (!requireNamespace("HarmonizR", quietly = TRUE)) {
       warning("The 'HarmonizR' (Bioconductor) package must be installed to use this function.")
 

@@ -26,8 +26,9 @@
 #' @import pcaMethods
 #' @importFrom reshape2 melt
 #' @import ggtext
-#' @import doParallel
 #' @import doRNG
+#' @importFrom doParallel registerDoParallel
+#' @importFrom reshape2 melt
 #'
 #' @export impute.counts
 
@@ -48,6 +49,7 @@ impute.counts =
     # ### Libraries
     # require(dplyr)
     # require(ggplot2)
+    `%dorng%` <- doRNG::`%dorng%`
 
 
     ### check object
@@ -93,8 +95,8 @@ impute.counts =
     ######################################################################################
 
     if (tolower(method) == "missforest") {
-      require(doParallel)
-      require(doRNG)
+      # require(doParallel)
+      # require(doRNG)
 
       ### Check whether there are at least 3 known values per each protein in the counts table (otherwise miss Forest cannot compute)
       n.present.values = rowSums(!is.na(cnt))
@@ -109,9 +111,9 @@ impute.counts =
       start.time = Sys.time()
 
       cores = ifelse(test = missForest.cores > 1, yes = min(c(missForest.cores, nrow(cnt))), no = 1)
-      registerDoParallel(cores = cores)
+      doParallel::registerDoParallel(cores = cores)
       #getDoParWorkers()
-      registerDoRNG(seed = 1.618)
+      doRNG::registerDoRNG(seed = 1.618)
       DoRNG.check = try(invisible(foreach(i=1:3) %dorng% sqrt(i)))
 
 

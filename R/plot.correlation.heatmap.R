@@ -29,6 +29,11 @@
 #' @import ggplot2
 #' @import legendry
 #' @import ggdendro
+#' @import viridis
+#' @importFrom farver get_channel
+#' @importFrom stats as.dist
+#' @importFrom reshape2 melt
+#' @import ggtext
 #'
 #' @export plot.correlation.heatmap
 
@@ -61,7 +66,7 @@ plot.correlation.heatmap =
     # # require(farver)
 
     ### Functions
-    contrast =
+    contrast = # to define the contrast to decide whether the numbers should be in white or black depending on the background
       function(colour) {
         out = rep("black", length(colour))
         light = farver::get_channel(colour, "l", space = "hcl")

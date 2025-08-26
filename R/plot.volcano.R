@@ -26,6 +26,9 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @import ggrepel
+#' @import ggtext
+#' @importFrom purrr pmap
 #'
 #' @export plot.volcano
 
