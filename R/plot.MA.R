@@ -29,6 +29,8 @@
 #' @import ggtext
 #' @import ggrepel
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.MA
 
 plot.MA =

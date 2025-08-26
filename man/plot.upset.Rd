@@ -53,3 +53,6 @@ A \code{DEprot.upset} with the upset plot and the matrix of the observed enriche
 \description{
 Plots an upset-plot for differential expression results
 }
+\author{
+Sebastian Gregoricchio
+}

@@ -41,3 +41,6 @@ A boxplot of class ggplot2.
 \description{
 Plots a boxplot of the expression of a specific protein. Samples can be groups depending on a metadata column.
 }
+\author{
+Sebastian Gregoricchio
+}

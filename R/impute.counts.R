@@ -29,6 +29,9 @@
 #' @import doRNG
 #' @importFrom doParallel registerDoParallel
 #' @importFrom reshape2 melt
+#' @importFrom foreach foreach
+#'
+#' @author Sebastian Gregoricchio
 #'
 #' @export impute.counts
 
@@ -114,7 +117,7 @@ impute.counts =
       doParallel::registerDoParallel(cores = cores)
       #getDoParWorkers()
       doRNG::registerDoRNG(seed = 1.618)
-      DoRNG.check = try(invisible(foreach(i=1:3) %dorng% sqrt(i)))
+      DoRNG.check = try(invisible(foreach::foreach(i=1:3) %dorng% sqrt(i)))
 
 
       if (!("list" %in% class(DoRNG.check)) | cores <= 1) {

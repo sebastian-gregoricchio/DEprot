@@ -16,4 +16,7 @@ data("dpo.imputed.counts")
 \description{
 Dummy example of full proteomics data (LFQ values in log2). Imputed using missForest algorithm.
 }
+\author{
+Sebastian Gregoricchio
+}
 \keyword{datasets}

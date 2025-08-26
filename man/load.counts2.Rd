@@ -35,3 +35,6 @@ A \code{DEprot} object (S4 vector).
 \description{
 Function used to generate a \code{DEprot} object starting from counts and metadata.
 }
+\author{
+Sebastian Gregoricchio
+}

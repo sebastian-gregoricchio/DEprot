@@ -19,3 +19,6 @@ An object of class \code{DEprot} (S4 vector).
 \description{
 Function that allows for removing or keeping specific proteins from any \code{DEprot} object class.
 }
+\author{
+Sebastian Gregoricchio
+}

@@ -17,3 +17,6 @@ An object of class \code{DEprot} (S4 vector). A column called \code{old.column.i
 \description{
 Function that allows for the renaming of the columns of the counts table in a \code{DEprot} object.
 }
+\author{
+Sebastian Gregoricchio
+}

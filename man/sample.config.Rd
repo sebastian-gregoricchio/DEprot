@@ -24,4 +24,7 @@ data("sample.config")
 \description{
 Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.
 }
+\author{
+Sebastian Gregoricchio
+}
 \keyword{datasets}

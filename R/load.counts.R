@@ -17,6 +17,8 @@
 #' @importFrom data.table fread
 #' @importFrom reshape2 melt
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export load.counts
 
 load.counts =

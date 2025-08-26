@@ -35,3 +35,6 @@ reapply.thresholds(
 \description{
 Allows for the re-computation of the differential status and re-plotting volcano and MA plot for each contrast.
 }
+\author{
+Sebastian Gregoricchio
+}

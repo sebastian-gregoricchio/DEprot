@@ -15,6 +15,8 @@
 #' @importFrom BiocManager install
 #' @importFrom devtools install_github
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export simplify.enrichment
 
 simplify.enrichment =

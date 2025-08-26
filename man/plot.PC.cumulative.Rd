@@ -26,3 +26,6 @@ A barplot in ggplot format.
 \description{
 Function to plot the cumulative variance of all the principal components of a PCA.
 }
+\author{
+Sebastian Gregoricchio
+}

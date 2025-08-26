@@ -23,6 +23,8 @@
 #' @import ggtext
 #' @import viridis
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export geneset.enrichment
 
 geneset.enrichment =

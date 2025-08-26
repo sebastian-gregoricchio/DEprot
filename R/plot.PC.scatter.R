@@ -20,6 +20,8 @@
 #' @importFrom stringr str_to_title
 #' @import ggrepel
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.PC.scatter
 
 plot.PC.scatter =

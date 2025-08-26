@@ -23,3 +23,6 @@ A \code{DEprot} object.
 \description{
 This function allows for the removal of all the proteins that occur below a certain threshold (detected in at least n samples).
 }
+\author{
+Sebastian Gregoricchio
+}

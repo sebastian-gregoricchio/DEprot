@@ -47,3 +47,6 @@ An object of class \code{DEprot.enrichResult}.
 \description{
 Perform Gene Set Enrichment Analyses (GSEA) or OverRepresentation Analyses (ORA) on a proteomics differential analyses.
 }
+\author{
+Sebastian Gregoricchio
+}

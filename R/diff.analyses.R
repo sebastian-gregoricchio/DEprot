@@ -25,6 +25,8 @@
 #' @importFrom purrr pmap
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export diff.analyses
 
 diff.analyses =

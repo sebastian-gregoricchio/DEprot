@@ -50,3 +50,6 @@ Function that allows for the imputation of missing values using 4 possible algor
 \seealso{
 \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages.
 }
+\author{
+Sebastian Gregoricchio
+}

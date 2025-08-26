@@ -20,6 +20,8 @@
 #' @importFrom viridis viridis
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export protein.summary
 
 protein.summary =

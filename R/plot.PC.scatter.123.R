@@ -23,6 +23,8 @@
 #' @importFrom stringr str_to_title
 #' @import patchwork
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.PC.scatter.123
 
 plot.PC.scatter.123 =

@@ -59,3 +59,6 @@ A ggplot object.
 \description{
 Plots a MA plot log2(basemean) x log2(FoldChange) of differential expression results
 }
+\author{
+Sebastian Gregoricchio
+}

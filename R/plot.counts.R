@@ -21,6 +21,8 @@
 #' @importFrom colorspace darken
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.counts
 
 plot.counts =

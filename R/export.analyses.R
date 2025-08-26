@@ -10,6 +10,8 @@
 #' @import dplyr
 #' @import progress
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export export.analyses
 
 

@@ -86,3 +86,6 @@ A \code{DEprot.contrast.heatmap} object, which contains the heatmap and the hclu
 \description{
 Plots an heatmap of the counts (raw, normalized, or imputed). It is possible to perform a scaling (z-score) by row or by column.
 }
+\author{
+Sebastian Gregoricchio
+}

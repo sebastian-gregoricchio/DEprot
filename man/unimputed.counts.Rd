@@ -20,4 +20,7 @@ data("unimputed.counts")
 \description{
 Dummy example of full proteomics data (LFQ values in log2). Not imputed.
 }
+\author{
+Sebastian Gregoricchio
+}
 \keyword{datasets}

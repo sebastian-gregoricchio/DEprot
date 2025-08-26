@@ -6,6 +6,8 @@
 #'
 #' @return Data.frame corresponding to the metadata of the provided object.
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export get.metadata
 #'
 #'

@@ -7,6 +7,7 @@
 #'   \item{\code{columns}}{samples}
 #'}
 #' @source Simulated data
+#' @author Sebastian Gregoricchio
 #' @usage data("unimputed.counts")
 "unimputed.counts"
 
@@ -16,6 +17,7 @@
 #' @description Dummy example of full proteomics data (LFQ values in log2). Imputed using missForest algorithm.
 #' @format Object of class \code{DEprot}
 #' @source Simulated data
+#' @author Sebastian Gregoricchio
 #' @usage data("dpo.imputed.counts")
 "dpo.imputed.counts"
 
@@ -33,6 +35,7 @@
 #'   \item{\code{replicate}}{biological replicate ID}
 #'}
 #' @source Simulated data
+#' @author Sebastian Gregoricchio
 #' @usage data("sample.config")
 "sample.config"
 
@@ -88,6 +91,7 @@
 #'   \item{\code{ora.results}}{Object of class \code{DEprot.enrichResult} result of ORA analyses on contrast 1 and differential category '6h.DMSO'}
 #'}
 #' @source Simulated data
+#' @author Sebastian Gregoricchio
 #' @usage data("test.toolbox")
 "test.toolbox"
 

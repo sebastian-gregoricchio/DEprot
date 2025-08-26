@@ -17,3 +17,6 @@ A data.frame.
 \description{
 Simplifies the access to the differential expression results table
 }
+\author{
+Sebastian Gregoricchio
+}

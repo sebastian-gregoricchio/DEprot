@@ -23,6 +23,7 @@ Imports:
 	doRNG,
 	enrichplot,
 	farver,
+	foreach,
 	ggplot2 (>= 3.3.3),
 	ggdendro,
 	ggtext,

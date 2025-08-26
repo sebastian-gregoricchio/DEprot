@@ -25,6 +25,8 @@
 #' @import ComplexUpset
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.upset
 
 plot.upset =

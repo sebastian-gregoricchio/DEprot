@@ -38,6 +38,8 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom patchwork wrap_plots
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.GSEA
 
 

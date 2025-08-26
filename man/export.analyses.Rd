@@ -23,3 +23,6 @@ export.analyses(
 \description{
 Export all the results from a DEprot.analyses object into a user-defined folder.
 }
+\author{
+Sebastian Gregoricchio
+}

@@ -13,6 +13,8 @@
 #' @import ggplot2
 #' @importFrom pcaMethods pca
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export perform.PCA
 
 perform.PCA =

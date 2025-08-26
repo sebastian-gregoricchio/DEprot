@@ -29,3 +29,6 @@ Function that allows for the tail-robust quantile normalization of the counts us
 \seealso{
 \link{load.counts}, \href{https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.202000068}{MBQN package}.
 }
+\author{
+Sebastian Gregoricchio
+}

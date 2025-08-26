@@ -14,6 +14,8 @@
 #' @import dplyr
 #' @importFrom purrr pmap
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export reapply.thresholds
 
 

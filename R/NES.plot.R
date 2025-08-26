@@ -20,6 +20,8 @@
 #' @import ggplot2
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export NES.plot
 
 

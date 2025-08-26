@@ -7,6 +7,8 @@
 #'
 #' @return An object of class \code{DEprot} (S4 vector). A column called \code{old.column.id} will be added to the \code{metadata} in order to keep track of the original names.
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export rename.samples
 
 rename.samples =

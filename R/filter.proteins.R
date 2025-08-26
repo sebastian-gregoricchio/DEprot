@@ -12,6 +12,8 @@
 #' @importFrom purrr pmap
 #' @import dplyr
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export filter.proteins
 
 filter.proteins =

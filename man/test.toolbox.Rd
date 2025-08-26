@@ -26,4 +26,7 @@ data("test.toolbox")
 \description{
 Set of objects and datasets used for the package tests.
 }
+\author{
+Sebastian Gregoricchio
+}
 \keyword{datasets}

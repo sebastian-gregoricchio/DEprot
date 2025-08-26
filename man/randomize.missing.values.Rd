@@ -32,3 +32,6 @@ A \code{DEprot} object in which values for proteins which display a number of NA
 \description{
 Function that allows to assign random values (from the bottom-X percent of the LFQ values distribution) to proteins that show missing values for all the replicates of a specific condition.
 }
+\author{
+Sebastian Gregoricchio
+}

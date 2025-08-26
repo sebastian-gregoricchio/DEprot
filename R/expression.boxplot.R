@@ -19,6 +19,8 @@
 #' @importFrom ggpubr stat_compare_means
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export expression.boxplot
 
 

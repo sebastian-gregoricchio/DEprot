@@ -56,3 +56,6 @@
 \description{
 Allows for the computation of differential analyses using multiple t/Wilcox tests. Includes means, Fold Changes, and p-values.
 }
+\author{
+Sebastian Gregoricchio
+}

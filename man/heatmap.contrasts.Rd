@@ -62,3 +62,6 @@ A \code{DEprot.contrast.heatmap} object, which contains the heatmap (ggplot) and
 \description{
 Plots an heatmap of the log2(FoldChange) for differentially expressed proteins
 }
+\author{
+Sebastian Gregoricchio
+}

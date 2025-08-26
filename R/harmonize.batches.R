@@ -10,6 +10,8 @@
 #' @import ggplot2
 #' @importFrom BiocManager install
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export harmonize.batches
 
 harmonize.batches =

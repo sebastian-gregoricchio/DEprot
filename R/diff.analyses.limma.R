@@ -27,6 +27,8 @@
 #' @import progress
 #' @importFrom RColorBrewer brewer.pal
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export diff.analyses.limma
 
 diff.analyses.limma =

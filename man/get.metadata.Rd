@@ -15,3 +15,6 @@ Data.frame corresponding to the metadata of the provided object.
 \description{
 Function to extract the metadata from a \code{DEprot} object.
 }
+\author{
+Sebastian Gregoricchio
+}

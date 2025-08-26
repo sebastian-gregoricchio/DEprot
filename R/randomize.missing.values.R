@@ -14,6 +14,8 @@
 #' @import dplyr
 #' @import ggplot2
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export randomize.missing.values
 
 

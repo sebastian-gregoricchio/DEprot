@@ -9,6 +9,8 @@
 #'
 #' @import dplyr
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export rescale.bait
 
 

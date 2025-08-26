@@ -68,3 +68,6 @@ A \code{DEprot.correlation} with the correlation heatmap in ggplot format.
 \description{
 Function to generate a correlation heatmap. Includes dendrogram and clustering of the data.
 }
+\author{
+Sebastian Gregoricchio
+}

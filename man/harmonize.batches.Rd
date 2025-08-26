@@ -16,3 +16,6 @@ harmonize.batches(DEprot.object, batch.column = "batch", cores = 1)
 \description{
 The function uses the package \href{https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html}{\code{HarmonizR}} to correct batch effects in a combined table of multiple experiments.
 }
+\author{
+Sebastian Gregoricchio
+}

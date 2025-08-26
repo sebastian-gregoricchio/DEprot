@@ -30,6 +30,8 @@
 #' @import ggtext
 #' @importFrom purrr pmap
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.volcano
 
 plot.volcano =

@@ -44,3 +44,6 @@ A ggplot object.
 \description{
 Plots stacked-barplot recapitulating
 }
+\author{
+Sebastian Gregoricchio
+}

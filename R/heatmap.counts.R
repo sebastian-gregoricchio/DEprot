@@ -39,6 +39,8 @@
 #' @import ggtext
 #' @importFrom stats dist
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export heatmap.counts
 
 heatmap.counts =

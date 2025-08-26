@@ -15,6 +15,8 @@
 #' @import ggplot2
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export plot.PC.cumulative
 
 plot.PC.cumulative =

@@ -7,6 +7,8 @@
 #'
 #' @return A data.frame.
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export get.results
 
 get.results =

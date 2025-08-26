@@ -17,6 +17,8 @@
 #' @importFrom reshape2 melt
 #' @import ggtext
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export normalize.counts
 
 

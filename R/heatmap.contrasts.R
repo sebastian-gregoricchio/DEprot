@@ -30,6 +30,8 @@
 #' @importFrom stats dist
 #' @importFrom reshape2 dcast
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export heatmap.contrasts
 
 heatmap.contrasts =

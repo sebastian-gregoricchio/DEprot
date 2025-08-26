@@ -56,3 +56,6 @@
 \description{
 Allows for the computation of differential analyses using \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}. Includes means, Fold Changes, and p-values.
 }
+\author{
+Sebastian Gregoricchio
+}

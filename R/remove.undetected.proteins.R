@@ -8,6 +8,8 @@
 #'
 #' @return A \code{DEprot} object.
 #'
+#' @author Sebastian Gregoricchio
+#'
 #' @export remove.undetected.proteins
 
 
