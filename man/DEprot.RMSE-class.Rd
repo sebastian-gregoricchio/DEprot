@@ -32,8 +32,6 @@ DEprot.RMSE class
   \item{\code{residuals}: }{difference of the the values, \code{imputed - expected}}
   \item{\code{sq.residuals}: }{the squared value of the residuals}}}
 
-\item{\code{contrasts}}{List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.}
-
 \item{\code{RMSE.scores}}{A table indicating the methods and the corresponding RMSE score. Class: \code{"ANY"}.}
 
 \item{\code{correlation.plots}}{A list of ggplot objects with the correlation between observed/expected and imputed values. Class: \code{"ANY"}.}

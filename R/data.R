@@ -1,4 +1,5 @@
 #' @title Unimputed proteomics (LFQ) data
+#' @docType data
 #' @description Dummy example of full proteomics data (LFQ values in log2). Not imputed.
 #' @format A data frame with 13,239 rows and 12 columns:
 #' \describe{
@@ -6,17 +7,21 @@
 #'   \item{\code{columns}}{samples}
 #'}
 #' @source Simulated data
+#' @usage data("unimputed.counts")
 "unimputed.counts"
 
 
 #' @title Imputed proteomics (LFQ) data
+#' @docType data
 #' @description Dummy example of full proteomics data (LFQ values in log2). Imputed using missForest algorithm.
 #' @format Object of class \code{DEprot}
 #' @source Simulated data
+#' @usage data("dpo.imputed.counts")
 "dpo.imputed.counts"
 
 
 #' @title Example of metadata table
+#' @docType data
 #' @description Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.
 #' @format A data frame with 12 rows and 6 columns:
 #' \describe{
@@ -28,12 +33,14 @@
 #'   \item{\code{replicate}}{biological replicate ID}
 #'}
 #' @source Simulated data
+#' @usage data("sample.config")
 "sample.config"
 
 
 
 
 #' @title CORUM version 4.1
+#' @docType data
 #' @description Collection of CORUM complexes for all organisms available.
 #' @format A data frame with 20475 rows and 4 columns:
 #' \describe{
@@ -43,12 +50,14 @@
 #'   \item{\code{protein.members}}{List of the proteins}
 #'}
 #' @source https://mips.helmholtz-muenchen.de/corum/download
+#' @usage data("corum_v4.1")
 "corum_v4.1"
 
 
 
 
 #' @title CORUM version 5.0
+#' @docType data
 #' @description Collection of CORUM complexes for all organisms available.
 #' @format A data frame with 24705 rows and 4 columns:
 #' \describe{
@@ -58,12 +67,14 @@
 #'   \item{\code{protein.members}}{List of the proteins}
 #'}
 #' @source https://mips.helmholtz-muenchen.de/corum/download
+#' @usage data("corum_v5.0")
 "corum_v5.0"
 
 
 
 
 #' @title Test toolbox
+#' @docType data
 #' @description Set of objects and datasets used for the package tests.
 #' @format A list of objects:
 #' \describe{
@@ -77,6 +88,7 @@
 #'   \item{\code{ora.results}}{Object of class \code{DEprot.enrichResult} result of ORA analyses on contrast 1 and differential category '6h.DMSO'}
 #'}
 #' @source Simulated data
+#' @usage data("test.toolbox")
 "test.toolbox"
 
 

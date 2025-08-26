@@ -58,7 +58,7 @@ setClass(Class = "DEprot",
 #' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
 #' @slot analyses.result.list List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
-#'      \itemize{
+#'      \describe{
 #'        \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status}
 #'        \item{\code{n.diff}: }{a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)}
 #'        \item{\code{PCA.data}: }{output of \link{perform.PCA} for the subset of samples analyzed in a specific contrast}
@@ -66,7 +66,7 @@ setClass(Class = "DEprot",
 #'        \item{\code{correlations}: }{combination of Pearson and Spearman correlation heatmaps (obtained by \link{plot.correlation.heatmap}) for the subset of samples analyzed in a specific contrast}
 #'        \item{\code{volcano}: }{volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using \link{plot.volcano}}
 #'        \item{\code{MA.plot}: }{MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using \link{plot.MA}}}
-#' @slot List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.
+#' @slot contrasts List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.
 #' @slot differential.analyses.params List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustement method, etc.). Class: \code{"ANY"}.
 #'
 #' @export
@@ -193,6 +193,7 @@ setClass(Class = "DEprot.counts.heatmap",
 #' @slot dotplot_gene.ratio a dotplot showing the geneRatios for each significantly enriched geneSet. Class: \code{"ANY"}.
 #' @slot dotplot_fold.enrichment (ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: \code{"ANY"}.
 #' @slot parameters a list containing the parameters used to run the analyses. Class: \code{"ANY"}.
+#' @slot affinity.propagation results of representative elements for each geneset.
 #'
 #' @export
 
@@ -253,7 +254,7 @@ setClass(Class = "DEprot.normality",
 #' @slot test.dataset Subset of the original table used for the comparisons. Class: \code{"ANY"}.
 #' @slot imputed.objects List of the output of \link{impute.counts} (class \code{DEprot}) using the different imputation methods. Class: \code{"ANY"}.
 #' @slot RMSE.tables List of data.frames, one per tested imputation method, containing the coordinates of the imputed values and including the following columns (Class: \code{"ANY"}.):
-#'      \itemize{
+#'      \describe{
 #'        \item{\code{row.id}: }{id of the row (protein)}
 #'        \item{\code{col.id}: }{id of the column (sample)}
 #'        \item{\code{expected.values}: }{value measured in the experiment}
@@ -261,7 +262,6 @@ setClass(Class = "DEprot.normality",
 #'        \item{\code{imputed.values}: }{value imputed by \code{DEprot}}
 #'        \item{\code{residuals}: }{difference of the the values, \code{imputed - expected}}
 #'        \item{\code{sq.residuals}: }{the squared value of the residuals}}
-#' @slot contrasts List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.
 #' @slot RMSE.scores A table indicating the methods and the corresponding RMSE score. Class: \code{"ANY"}.
 #' @slot correlation.plots A list of ggplot objects with the correlation between observed/expected and imputed values. Class: \code{"ANY"}.
 #' @slot density.residuals A list of ggplot objects depicting the distribution of the residuals. Class: \code{"ANY"}.

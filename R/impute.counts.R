@@ -20,6 +20,14 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @import missForest
+#' @importFrom VIM kNN
+#' @import laeken
+#' @import pcaMethods
+#' @importFrom reshape2 melt
+#' @import ggtext
+#' @import doParallel
+#' @import doRNG
 #'
 #' @export impute.counts
 

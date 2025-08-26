@@ -23,5 +23,7 @@ DEprot.enrichResult class
 \item{\code{dotplot_fold.enrichment}}{(ORA only) a dotplot showing the foldEnrichment for each significantly enriched geneSet. Class: \code{"ANY"}.}
 
 \item{\code{parameters}}{a list containing the parameters used to run the analyses. Class: \code{"ANY"}.}
+
+\item{\code{affinity.propagation}}{results of representative elements for each geneset.}
 }}
 

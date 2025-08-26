@@ -21,12 +21,12 @@
                       " available.", sep="")
       command = '| To update DEprot type: devtools::install_github("sebastian-gregoricchio/DEprot", build_manual = T, build_vignettes = T)'
 
-      message(paste("\033[0;37;44m",
-                    paste(rep("-", nchar(command)+2), collapse = ""),
-                    "\n", paste0(message, paste(rep(" ", nchar(command) - nchar(message)),  collapse = "")), " |\n",
-                    command, " |",
-                    "\n", paste(rep("-", max(c(nchar(message),nchar(command)))+2), collapse = ""),
-                    "\033[0m",
-                    sep = ""))
+      packageStartupMessage(paste("\033[0;37;44m",
+                                  paste(rep("-", nchar(command)+2), collapse = ""),
+                                  "\n", paste0(message, paste(rep(" ", nchar(command) - nchar(message)),  collapse = "")), " |\n",
+                                  command, " |",
+                                  "\n", paste(rep("-", max(c(nchar(message),nchar(command)))+2), collapse = ""),
+                                  "\033[0m",
+                                  sep = ""))
     }
   }

@@ -7,7 +7,7 @@
 #' @param top.n Numeric value indicated the top differentially expressed proteins to consider for each contrast selected. The rank is based on the product of log2Fc and -log10Padj. Default: \code{NULL} (all differential proteins).
 #' @param distance.method The distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Default: \code{"euclidean"}.
 #' @param clustering.method The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: \code{complete"}.
-#' @param high.color String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: \code{"indianred"}.
+#' @param high.color String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: \code{"firebrick"}.
 #' @param low.color String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: \code{"#2166AC"} (blue).
 #' @param mid.color String indicating the color to use for the 0 in the plots. Default: \code{"white"}.
 #' @param na.color String indicating the color to use for the NA values in the heatmap. Default: \code{"gray"}.

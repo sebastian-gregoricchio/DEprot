@@ -33,6 +33,11 @@
 #' @import ggplot2
 #' @import legendry
 #' @import ggdendro
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom purrr pmap
+#' @importFrom reshape2 melt
+#' @import ggtext
+#' @importFrom stats dist
 #'
 #' @export heatmap.counts
 
@@ -97,6 +102,24 @@ heatmap.counts =
 
 
     is.nan_df = function(data.frame) {do.call(cbind, lapply(data.frame, is.nan))}
+
+
+
+    scale_matrix =
+      function(mat, scale){
+        if(!(scale %in% c("none", "row", "column"))){
+          stop("scale argument shoud take values: 'none', 'row' or 'column'")
+        }
+
+        scale_rows = function(x){
+          m = apply(x, 1, mean, na.rm = T)
+          s = apply(x, 1, sd, na.rm = T)
+          return((x - m) / s)
+        }
+
+        mat = switch(scale, none = mat, row = scale_rows(mat), column = t(scale_rows(t(mat))))
+        return(mat)
+      }
 
     ######################################################################################
 
@@ -263,7 +286,7 @@ heatmap.counts =
     if (!is.null(scale)) {
       if (tolower(scale) %in% c("col", "columns", "col", "column", "c", "cols")) {
         if (nrow(mat.filtered) > 1) {
-          final.mat = pheatmap:::scale_mat(mat = (DEprot.object@log.base^mat.filtered)-1, scale = "column")
+          final.mat = scale_matrix(mat = (DEprot.object@log.base^mat.filtered)-1, scale = "column")
           final.mat[is.nan_df(final.mat)] = 0
           scale.legend.title = "**Z-score**<br>(by column)"
         } else {
@@ -273,7 +296,7 @@ heatmap.counts =
         }
       } else if (tolower(scale) %in% c("row", "rows", "r")) {
         if (ncol(mat.filtered) > 1) {
-          final.mat = pheatmap:::scale_mat(mat = (DEprot.object@log.base^mat.filtered)-1, scale = "row")
+          final.mat = scale_matrix(mat = (DEprot.object@log.base^mat.filtered)-1, scale = "row")
           final.mat[is.nan_df(final.mat)] = 0
           scale.legend.title = paste0("**Z-score**<br>", which.data, " counts<br>(by row)")
         } else {
