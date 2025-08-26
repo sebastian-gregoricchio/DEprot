@@ -13,7 +13,7 @@
 #' @param clust.rows Logical value indicating whether heatmap rows (proteins) should be clustered. Default: \code{TRUE}.
 #' @param clust.columns Logical value indicating whether heatmap columns (samples or groups) should be clustered. Default: \code{TRUE}.
 #' @param distance.method The distance measure to be used. This must be one of "euclidean", "maximum", "manhattan", "canberra", "binary" or "minkowski". Any unambiguous substring can be given. Default: \code{"euclidean"}.
-#' @param clustering.method The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). Default: \code{complete"}.
+#' @param clustering.method The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: \code{complete"}.
 #' @param palette List of colors to use for the color gradient of the heatmap. This parameters is used when raw-counts are plotted. For scaled data see the high, low and mid parameters. Default: \code{RColorBrewer::brewer.pal(n = 9, name = "Blues")}.
 #' @param high.color String indicating the color to use for positive Z-score for scaled data. Default: \code{"indianred"}.
 #' @param low.color String indicating the color to use for negative Z-score for scaled data. Default: \code{"#2166AC"} (blue).

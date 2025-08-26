@@ -1,5 +1,7 @@
 #' @title DEprot class
 #' @name DEprot
+#' @rdname DEprot-class
+#' @docType class
 #'
 #' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
 #' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
@@ -45,6 +47,8 @@ setClass(Class = "DEprot",
 
 #' @title DEprot.analyses class
 #' @name DEprot.analyses
+#' @rdname DEprot.analyses-class
+#' @docType class
 #'
 #' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
 #' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
@@ -99,6 +103,8 @@ setClass(Class = "DEprot.analyses",
 
 #' @title DEprot.PCA class
 #' @name DEprot.PCA
+#' @rdname DEprot.PCA-class
+#' @docType class
 #'
 #' @slot PCA.metadata metadata of the samples used in the PCA (subset of the original \code{DEprot@@metadata}. Class: \code{"ANY"}.
 #' @slot sample.subset vector containing the list of samples analyzed. Class: \code{"ANY"}.
@@ -126,6 +132,8 @@ setClass(Class = "DEprot.PCA",
 
 #' @title DEprot.correlation class
 #' @name DEprot.correlation
+#' @rdname DEprot.correlation-class
+#' @docType class
 #'
 #' @slot heatmap ggplot object corresponding to the correlation heatmap. Class: \code{"ANY"}.
 #' @slot corr.metadata metadata of the samples used in the correlation (subset of the original \code{DEprot@@metadata}. Class: \code{"ANY"}.
@@ -150,6 +158,8 @@ setClass(Class = "DEprot.correlation",
 
 #' @title DEprot.upset class
 #' @name DEprot.upset
+#' @rdname DEprot.upset-class
+#' @docType class
 #'
 #' @slot upset Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between cointrasts. Class: \code{"ANY"}.
 #' @slot obs.matrix Logical matrix indicating all the proteins that are differentially expressed at least in a contrast (rows). Columns indicate a specific contrast. The logical values indicate whether a protein is found differential in a specific contrast (column). Therefore, this table can be used to extract the proteins included in a specific overlap. Class: \code{"ANY"}.
@@ -164,6 +174,8 @@ setClass(Class = "DEprot.upset",
 
 #' @title DEprot.contrast.heatmap class
 #' @name DEprot.contrast.heatmap
+#' @rdname DEprot.contrast-class
+#' @docType class
 #'
 #' @slot heatmap Ggplot object corresponding to any heatmap generate by either \link{heatmap.contrasts}. Class: \code{"ANY"}.
 #' @slot cluster The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.
@@ -177,6 +189,8 @@ setClass(Class = "DEprot.contrast.heatmap",
 
 #' @title DEprot.counts.heatmap class
 #' @name DEprot.counts.heatmap
+#' @rdname DEprot.counts-class
+#' @docType class
 #'
 #' @slot heatmap Ggplot object corresponding to any heatmap generate by either \link{heatmap.counts}. Class: \code{"ANY"}.
 #' @slot row.cluster The \code{hclust} object of the rows (proteins). Class: \code{"ANY"}.
@@ -193,6 +207,8 @@ setClass(Class = "DEprot.counts.heatmap",
 
 #' @title DEprot.enrichResult class
 #' @name DEprot.enrichResult
+#' @rdname DEprot.enrichResults-class
+#' @docType class
 #'
 #' @slot enrichment.discovery the direct output from \code{clusterProfiler::GSEA} or \code{clusterProfiler::enricher} (GSEA and ORA, respectively). Class: \code{"ANY"}.
 #' @slot protein.network a string plot showing protein networks (\code{clusterProfiler::cnetplot}). Class: \code{"ANY"}.
@@ -219,6 +235,8 @@ setClass(Class = "DEprot.enrichResult",
 
 #' @title DEprot.pvalues class
 #' @name DEprot.pvalues
+#' @rdname DEprot.pvalues-class
+#' @docType class
 #'
 #' @slot pvalue.distribution ggplot object depicting the histogram of the distribution of the p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.
 #' @slot padjusted.distribution ggplot object depicting the histogram of the distribution of the adjusted p-values of the differential expression test of a specific contrast. Class: \code{"ANY"}.
@@ -236,6 +254,8 @@ setClass(Class = "DEprot.pvalues",
 
 #' @title DEprot.normality class
 #' @name DEprot.normality
+#' @rdname DEprot.normality-class
+#' @docType class
 #'
 #' @slot norm.statement Logical value indicating whether the samples are normally distributed (\code{TRUE}). Class: \code{"ANY"}.
 #' @slot norm.AD.tests List of Anderson-Darling normality test results for each sample. Class: \code{"ANY"}.
@@ -256,6 +276,8 @@ setClass(Class = "DEprot.normality",
 
 #' @title DEprot.RMSE class
 #' @name DEprot.RMSE
+#' @rdname DEprot.RMSE-class
+#' @docType class
 #'
 #' @slot original.DEprot.object Object of class \code{DEprot} used to compute the RMSE. Class: \code{"ANY"}.
 #' @slot percentage.test Percentage of the total proteins that should be used to perform the comparisons. Class: \code{"ANY"}.
