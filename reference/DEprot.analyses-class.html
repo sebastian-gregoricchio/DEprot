@@ -120,14 +120,28 @@
 
 
 <dt><code>analyses.result.list</code></dt>
-<dd><p>List containing the differential results for each contrast. Class: <code>"ANY"</code>. The list contains the following elements:</p><ul><li><p><code>results</code>: a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status</p></li>
-<li><p><code>n.diff</code>: a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)</p></li>
-<li><p><code>PCA.data</code>: output of <a href="perform.PCA.html">perform.PCA</a> for the subset of samples analyzed in a specific contrast</p></li>
-<li><p><code>PCA.plots</code>: combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot</p></li>
-<li><p><code>correlations</code>: combination of Pearson and Spearman correlation heatmaps (obtained by <a href="plot.correlation.heatmap.html">plot.correlation.heatmap</a>) for the subset of samples analyzed in a specific contrast</p></li>
-<li><p><code>volcano</code>: volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using <a href="plot.volcano.html">plot.volcano</a></p></li>
-<li><p><code>MA.plot</code>: MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using <a href="plot.MA.html">plot.MA</a></p></li>
-</ul></dd>
+<dd><p>List containing the differential results for each contrast. Class: <code>"ANY"</code>. The list contains the following elements:</p><dl><dt><code>results</code>: </dt>
+<dd><p>a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status</p></dd>
+
+  <dt><code>n.diff</code>: </dt>
+<dd><p>a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)</p></dd>
+
+  <dt><code>PCA.data</code>: </dt>
+<dd><p>output of <a href="perform.PCA.html">perform.PCA</a> for the subset of samples analyzed in a specific contrast</p></dd>
+
+  <dt><code>PCA.plots</code>: </dt>
+<dd><p>combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot</p></dd>
+
+  <dt><code>correlations</code>: </dt>
+<dd><p>combination of Pearson and Spearman correlation heatmaps (obtained by <a href="plot.correlation.heatmap.html">plot.correlation.heatmap</a>) for the subset of samples analyzed in a specific contrast</p></dd>
+
+  <dt><code>volcano</code>: </dt>
+<dd><p>volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using <a href="plot.volcano.html">plot.volcano</a></p></dd>
+
+  <dt><code>MA.plot</code>: </dt>
+<dd><p>MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using <a href="plot.MA.html">plot.MA</a></p></dd>
+
+</dl></dd>
 
 
 <dt><code>contrasts</code></dt>
