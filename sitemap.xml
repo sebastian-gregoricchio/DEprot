@@ -11,10 +11,10 @@
 <url><loc>/reference/DEprot.PCA-class.html</loc></url>
 <url><loc>/reference/DEprot.RMSE-class.html</loc></url>
 <url><loc>/reference/DEprot.analyses-class.html</loc></url>
-<url><loc>/reference/DEprot.contrast-class.html</loc></url>
+<url><loc>/reference/DEprot.contrast.heatmap-class.html</loc></url>
 <url><loc>/reference/DEprot.correlation-class.html</loc></url>
-<url><loc>/reference/DEprot.counts-class.html</loc></url>
-<url><loc>/reference/DEprot.enrichResults-class.html</loc></url>
+<url><loc>/reference/DEprot.counts.heatmap-class.html</loc></url>
+<url><loc>/reference/DEprot.enrichResult-class.html</loc></url>
 <url><loc>/reference/DEprot.normality-class.html</loc></url>
 <url><loc>/reference/DEprot.pvalues-class.html</loc></url>
 <url><loc>/reference/DEprot.upset-class.html</loc></url>
