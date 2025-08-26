@@ -74,7 +74,7 @@ heatmap.counts(
 
 \item{show.protein.names}{Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.}
 
-\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default" \code{NULL}, no alterations in the protein IDs.}
+\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default: \code{NULL}, no alterations in the protein IDs.}
 
 \item{title}{String indicating the title to use, markdown formatting supported. Default: \code{NULL} (automatic title).}
 

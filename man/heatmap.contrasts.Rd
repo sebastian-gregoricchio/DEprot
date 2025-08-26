@@ -52,7 +52,7 @@ heatmap.contrasts(
 
 \item{show.protein.names}{Logical value to indicate whether the protein names should be displayed. Default: \code{FALSE}.}
 
-\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default" \code{NULL}, no alterations in the protein IDs.}
+\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default: \code{NULL}, no alterations in the protein IDs.}
 
 \item{use.uncorrected.pvalue}{Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.}
 }
