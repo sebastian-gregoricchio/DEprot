@@ -12,7 +12,6 @@
 #' @import ggtext
 #' @import clusterProfiler
 #' @import viridis
-#' @importFrom BiocManager install
 #' @import aPEAR
 #'
 #' @author Sebastian Gregoricchio

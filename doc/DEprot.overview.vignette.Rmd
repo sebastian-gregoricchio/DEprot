@@ -296,12 +296,17 @@ dpo <- harmonize.batches(DEprot.object = dpo,
 # **Data imputation** {#imputation}
 Often many `NA`/`NaN` values are present in the LFQ tables due to the technical limitations of the protein detection by Mass Spectrometry (MS) experiments.
 
-Here we provide the possibility to use 4 different methods for the imputation the data:
+Here we provide the possibility to use 9 different methods for the imputation the data:
 
 * [`missForest`](https://www.rdocumentation.org/packages/missForest/): developed by [DJ.Stekhoven & P.Buehlmann (*Bioinformatics*, 2012)](https://doi.org/10.1093/bioinformatics/btr597), this tool will impute the NaN and assign and estimated value. It also yields an out-of-bag (OOB) imputation error estimate (general, or per each sample). Moreover, it can be run parallel to save computation time (both examples reported here after).
 * k-Nearest Neighbors (kNN) algorithm
+* correlation-Nearest Neighbors (corkNN) algorithm
+* truncated-Nearest Neighbors (tkNN) algorithm
 * Local Least Squares (LLS) imputation, using the pearson correlation coefficient
 * Singular Value Decomposition (SVD)
+* Glmnet ridge regression (RegImpute, from DreamAI)
+* Probabilistic Principal Component Analysis (PPCA)
+* Bayesian Principal Component Analysis (BPCA)
 
 <br>
 

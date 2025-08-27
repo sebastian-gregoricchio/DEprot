@@ -11,7 +11,6 @@ Depends:
 Imports:
 	aPEAR,
 	apcluster,
-	BiocManager,
 	clusterProfiler,
 	colorspace,
 	ComplexUpset,
@@ -27,6 +26,7 @@ Imports:
 	foreach,
 	ggplot2 (>= 3.3.3),
 	ggdendro,
+	glmnet,
 	ggtext,
 	ggrepel,
 	ggridges,
@@ -58,12 +58,13 @@ Imports:
 	VIM,
 	viridis
 Suggests:
+  BiocManager,
   devtools,
-	rmarkdown,
-	knitr,
-	prettydoc,
-	testthat (>= 3.0.0),
-	covr
+  rmarkdown,
+  knitr,
+  prettydoc,
+  testthat (>= 3.0.0),
+  covr
 biocViews:
 Remotes:
   kerseviciute/aPEAR,
