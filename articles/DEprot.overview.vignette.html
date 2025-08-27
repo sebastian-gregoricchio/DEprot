@@ -736,7 +736,7 @@ table with “dummy” batches.</p>
 <p>Often many <code>NA</code>/<code>NaN</code> values are present in the
 LFQ tables due to the technical limitations of the protein detection by
 Mass Spectrometry (MS) experiments.</p>
-<p>Here we provide the possibility to use 4 different methods for the
+<p>Here we provide the possibility to use 9 different methods for the
 imputation the data:</p>
 <ul>
 <li>
@@ -748,9 +748,14 @@ the NaN and assign and estimated value. It also yields an out-of-bag
 it can be run parallel to save computation time (both examples reported
 here after).</li>
 <li>k-Nearest Neighbors (kNN) algorithm</li>
+<li>correlation-Nearest Neighbors (corkNN) algorithm</li>
+<li>truncated-Nearest Neighbors (tkNN) algorithm</li>
 <li>Local Least Squares (LLS) imputation, using the pearson correlation
 coefficient</li>
 <li>Singular Value Decomposition (SVD)</li>
+<li>Glmnet ridge regression (RegImpute, from DreamAI)</li>
+<li>Probabilistic Principal Component Analysis (PPCA)</li>
+<li>Bayesian Principal Component Analysis (BPCA)</li>
 </ul>
 <p><br></p>
 <p>Of note, there are cases in which the missing data are not due to the
