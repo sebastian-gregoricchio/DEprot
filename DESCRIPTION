@@ -67,7 +67,7 @@ Suggests:
 biocViews:
 Remotes:
   kerseviciute/aPEAR,
-  WangLab-MSSM/DreamAI
+  WangLab-MSSM/DreamAI/Code
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
