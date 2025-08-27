@@ -359,6 +359,12 @@ impute.counts =
     }
 
 
+    returnPresentIndices<-function(col,data,filled){
+      #Indices @ current column, only where values aren't missing
+      present_indices = which(!is.na(data[,col]), arr.ind=TRUE)
+      return(present_indices)
+    }
+
 
     returnTrainingSet<-function(col,filled,present_indices){
       #Only rows where value is present at current column.  All columns except for current.
