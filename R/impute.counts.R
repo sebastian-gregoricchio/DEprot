@@ -33,7 +33,6 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom reshape2 melt
 #' @importFrom foreach foreach
-#' @import MetabImpute
 #' @importFrom ggpubr theme_pubr
 #'
 #' @author Sebastian Gregoricchio
