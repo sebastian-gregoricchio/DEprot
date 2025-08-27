@@ -67,8 +67,7 @@ Suggests:
   covr
 biocViews:
 Remotes:
-  kerseviciute/aPEAR,
-  WangLab-MSSM/DreamAI/Code
+  kerseviciute/aPEAR
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz

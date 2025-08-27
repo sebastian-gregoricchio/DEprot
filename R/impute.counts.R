@@ -17,7 +17,7 @@
 #' @param RegImpute.fillmethod String identifying the fill method to be used in the \code{RegImpute} method (from\code{DreamAI}). One among \code{"row_mean"} and \code{"zeros"}. Default: \code{"row_mean"}. It throws an warning if \code{"row_median"} is used.
 #' @param verbose Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.
 #'
-#' @seealso \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages.
+#' @seealso \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages, \href{https://github.com/sebastian-gregoricchio/DreamAI/}{DreamAI}, \href{https://github.com/BioGenies/imputomics}{imputomics}.
 #'
 #' @return A \code{DEprot} object. The boxplot showing the distribution of the protein intensity is remade and added to the slot (\code{boxplot.imputed}). A list with parameters and other info about the imputation is added as well in the \code{imputation} slot.
 #'
@@ -334,6 +334,111 @@ impute.counts =
         return(imp.knn)
       }
 
+    # ------------------------------------------------------------------------------------
+    # from DreamAI
+    # see https://github.com/sebastian-gregoricchio/DreamAI/blob/master/Code/R/RegImpute.R
+
+    backfill <- function(data,fillmethod=fillmethod){
+
+      if ((fillmethod!="zeros") & (fillmethod!="row_mean")) {
+        stop("Accepted Fill Methods Include \"zeros\",\"row_mean\"", call.=FALSE)
+      }
+
+      print(paste("Back Filling With Method: ",fillmethod))
+
+      if(fillmethod == "zeros"){
+        missing_indices = which(is.na(data), arr.ind=TRUE)
+        data[missing_indices] = 0
+      }
+      if(fillmethod == "row_mean"){
+        ind <- which(is.na(data), arr.ind=TRUE)
+        data[ind] <- rowMeans(data,  na.rm = TRUE)[ind[,1]]
+      }
+
+      return(data)
+    }
+
+
+
+    returnTrainingSet<-function(col,filled,present_indices){
+      #Only rows where value is present at current column.  All columns except for current.
+      train = filled[,-col][present_indices,]
+      return(train)
+    }
+
+
+    returnTargets<-function(col,data,present_indices){
+      #Current column, only indices where values were present in original data
+      target = data[present_indices,col]
+      return(target)
+    }
+
+
+    returnTestIndices<-function(col,data){
+      #Indices @ current column, only where values are missing
+      test_indices = which(is.na(data[,col]), arr.ind=TRUE)
+      return(test_indices)
+    }
+
+
+    returnTestSet<-function(col,filled,test_indices){
+      test = filled[,-col][test_indices,]
+      return(test)
+    }
+
+    impute.RegImpute <- function(data,fillmethod,maxiter_RegImpute,conv_nrmse){
+      filled = backfill(data,fillmethod)
+      print(paste("Starting Imputation With ",toString(maxiter_RegImpute)," Max. Iterations"))
+      missing_indices = which(is.na(data), arr.ind=TRUE)
+
+
+      #Begin iterative imputation.  Missing value slots in data are updated on each iteration
+      for(i in 1:maxiter_RegImpute){
+        print(paste("Working on Iteration: ",toString(i),"/",toString(maxiter_RegImpute)))
+
+
+        #Iterate over columns
+        for(col in 1:dim(data)[2]){
+
+          if(sum(is.na(data[,col]))==0){next} #continue if there aren't any missing values in the current column
+
+          #otherwise, begin imputation
+          present_indices = returnPresentIndices(col,data,filled)
+          train = returnTrainingSet(col,filled,present_indices)
+          target = returnTargets(col,data,present_indices)
+          test_indices = returnTestIndices(col,data)
+          test = returnTestSet(col,filled,test_indices)
+
+          #used http://ricardoscr.github.io/how-to-use-ridge-and-lasso-in-r.html as tutorial on ridge regression in R
+          cv_fit <- glmnet::cv.glmnet(train, target, alpha=0, standardize=TRUE)
+          opt_lambda = cv_fit$lambda.min
+          fit = cv_fit$glmnet.fit
+
+          test<-as.matrix(test)
+          if(dim(test)[2]==1)
+          {
+            predicted = predict(fit, s = opt_lambda, newx=t(test))
+          }else{
+            predicted = predict(fit, s = opt_lambda, newx=test)
+          }
+          filled[test_indices,col] = predicted
+        }
+
+        #test for convergence at each iteration
+        if(i==1){
+          impvals = filled[missing_indices]
+        }
+        else{
+          NRMSE = sqrt(mean((impvals - filled[missing_indices])^2))
+          print(paste("NRMSE = ",NRMSE))
+          impvals = filled[missing_indices]
+          if (NRMSE<conv_nrmse){
+            return(filled)
+          }
+        }
+      }
+      return(filled)
+    }
 
     ######################################################################################
     ## INTERNAL FUNCTIONS
@@ -528,7 +633,7 @@ impute.counts =
 
         start.time = Sys.time()
 
-        imputed.cnt = t(DreamAI::impute.RegImpute(data = cnt, fillmethod = RegImpute.fillmethod, maxiter_RegImpute = RegImpute.max.iterations, conv_nrmse = 1e-6))
+        imputed.cnt = t(impute.RegImpute(data = cnt, fillmethod = RegImpute.fillmethod, maxiter_RegImpute = RegImpute.max.iterations, conv_nrmse = 1e-6))
 
         end.time = Sys.time()
         time.taken = round(end.time - start.time,2)
