@@ -17,5 +17,7 @@ DEprot.normality class
 \item{\code{qqplots}}{List of ggplots objects depicting the Q-Q plots for the Anderson-Darling normality test. Class: \code{"ANY"}.}
 
 \item{\code{densities}}{List of ggplots objects depicting the destiny distribution of the intensities overlapped to a theoretical normal distribution. Class: \code{"ANY"}.}
+
+\item{\code{p.threshold}}{Numeric value indicating the P-value threshold to define whether a sample passed the normality test. Class: \code{"ANY"}.}
 }}
 

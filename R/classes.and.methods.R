@@ -232,6 +232,7 @@ setClass(Class = "DEprot.pvalues",
 #' @slot norm.AD.tests List of Anderson-Darling normality test results for each sample. Class: \code{"ANY"}.
 #' @slot qqplots List of ggplots objects depicting the Q-Q plots for the Anderson-Darling normality test. Class: \code{"ANY"}.
 #' @slot densities List of ggplots objects depicting the destiny distribution of the intensities overlapped to a theoretical normal distribution. Class: \code{"ANY"}.
+#' @slot p.threshold Numeric value indicating the P-value threshold to define whether a sample passed the normality test. Class: \code{"ANY"}.
 #'
 #' @export
 
@@ -239,7 +240,8 @@ setClass(Class = "DEprot.normality",
          slots = list(norm.statement = "ANY",
                       norm.AD.tests = "ANY",
                       qqplots = "ANY",
-                      densities = "ANY"))
+                      densities = "ANY",
+                      p.threshold = "ANY"))
 
 
 
@@ -468,7 +470,7 @@ setMethod(f = "show",
                 message("All samples display a normal distribution.")
 
               } else {
-                normality = sapply(X = object@norm.AD.tests, FUN = function(x){x$p.value < p.threshold}, USE.NAMES = TRUE)
+                normality = sapply(X = object@norm.AD.tests, FUN = function(x){x$p.value < object@p.threshold}, USE.NAMES = TRUE)
                 message(paste0("The following samples do not display a normal distribution: ",
                                paste0(names(normality)[isFALSE(normality)], collapse = ", "), "."))
               }

@@ -164,7 +164,8 @@ check.normality =
           norm.statement = all(normality),
           norm.AD.tests = AD.test,
           qqplots = qqplot,
-          densities = density)
+          densities = density,
+          p.threshold = p.threshold)
 
 
     return(DEprot.normality)
