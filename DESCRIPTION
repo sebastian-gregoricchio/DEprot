@@ -17,7 +17,6 @@ Imports:
 	cowplot,
 	curl,
 	data.table,
-	devtools,
 	doParallel,
 	dplyr,
 	doRNG,
@@ -30,6 +29,7 @@ Imports:
 	ggrepel,
 	ggridges,
 	ggpubr,
+	HarmonizR,
 	laeken,
 	legendry,
 	limma,
@@ -56,7 +56,7 @@ Imports:
 	VIM,
 	viridis
 Suggests:
-	HarmonizR,
+  devtools,
 	rmarkdown,
 	knitr,
 	prettydoc,
@@ -64,7 +64,8 @@ Suggests:
 	covr
 biocViews:
 Remotes:
-  kerseviciute/aPEAR
+  kerseviciute/aPEAR,
+  WangLab-MSSM/DreamAI
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz

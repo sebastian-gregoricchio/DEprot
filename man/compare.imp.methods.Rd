@@ -7,18 +7,27 @@
 \method{compare}{imp.methods}(
   DEprot.object,
   percentage.test = 30,
+  correlation.method = "pearson",
   sample.group.column = NULL,
   use.normalized.data = TRUE,
   run.missForest = TRUE,
   run.kNN = TRUE,
+  run.tkNN = TRUE,
+  run.corkNN = TRUE,
   run.LLS = TRUE,
   run.SVD = TRUE,
+  run.BPCA = TRUE,
+  run.PPCA = TRUE,
+  run.RegImpute = TRUE,
   missForest.max.iterations = 100,
   missForest.variable.wise.OOBerror = TRUE,
   missForest.cores = 1,
   missForest.parallel.mode = "variables",
   kNN.n.nearest.neighbours = 10,
   LLS.k = 2,
+  pcaMethods.nPCs.to.test = 5,
+  RegImpute.max.iterations = 10,
+  RegImpute.fillmethod = "row_mean",
   normalize.color.bar = TRUE,
   low.residual.color = "firebrick",
   zero.residual.color = "white",
@@ -32,17 +41,29 @@
 
 \item{percentage.test}{Numeric value between 0 (excluded) and 100 indicating the percentage of proteins to use for the test dataset. Default: \code{30}.}
 
+\item{correlation.method}{String indicating the method to use for the correlations. One among: 'pearson', 'spearman'. Default: \code{"pearson"}.}
+
 \item{sample.group.column}{String indicating the ID of any column of the metadata table. This will be used to introduce the same frequencies of n-missing values for a protein and therefore not introducing the NAs completely at random in the dataset. Default: \code{NULL}, NAs are assigned randomly (same percentage of NAs present in the original table).}
 
 \item{use.normalized.data}{Logical value indicating whether the imputation should be performed based on the rationalized data. Default: \code{TRUE}.}
 
 \item{run.missForest}{Logical values indicating whether the test for the \code{missForest} imputation should be performed. Default: \code{TRUE}.}
 
-\item{run.kNN}{Logical values indicating whether the test for the \code{kNN} imputation should be performed. Default: \code{TRUE}.}
+\item{run.kNN}{Logical values indicating whether the test for the \code{kNN} imputation method should be performed. Default: \code{TRUE}.}
 
-\item{run.LLS}{Logical values indicating whether the test for the \code{LLS} imputation should be performed. Default: \code{TRUE}.}
+\item{run.tkNN}{Logical values indicating whether the test for the \code{tkNN} imputation method should be performed. Default: \code{TRUE}.}
 
-\item{run.SVD}{Logical values indicating whether the test for the \code{SVD} imputation should be performed. Default: \code{TRUE}.}
+\item{run.corkNN}{Logical values indicating whether the test for the \code{corkNN} imputation method should be performed. Default: \code{TRUE}.}
+
+\item{run.LLS}{Logical values indicating whether the test for the \code{LLS} imputation method should be performed. Default: \code{TRUE}.}
+
+\item{run.SVD}{Logical values indicating whether the test for the \code{SVD} imputation method should be performed. Default: \code{TRUE}.}
+
+\item{run.BPCA}{Logical values indicating whether the test for the \code{BPCA} imputation method should be performed. Default: \code{TRUE}.}
+
+\item{run.PPCA}{Logical values indicating whether the test for the \code{PPCA} imputation method should be performed. Default: \code{TRUE}.}
+
+\item{run.RegImpute}{Logical values indicating whether the test for the \code{RegImpute} imputation method should be performed. Default: \code{TRUE}.}
 
 \item{missForest.max.iterations}{Max number of iterations for the \code{missForest} algorithm. Default: \code{100}.}
 
@@ -55,6 +76,12 @@
 \item{kNN.n.nearest.neighbours}{Numeric value indicating the number of nearest neighbors to use to perform the \code{kNN} imputation. Default: \code{10}.}
 
 \item{LLS.k}{Cluster size, this is the number of similar genes used for regression. Default: \code{2}.}
+
+\item{pcaMethods.nPCs.to.test}{Numeric value indicating the number of Principal Components to test in order to find the optimal number of PCs to used in the imputation methods from the \code{pcaMethods} package. This includes: 'LLS', 'SVD' (a.k.a 'svdImpute'), 'BPCA-pcaMethods', and 'PPCA'. Default: \code{5}.}
+
+\item{RegImpute.max.iterations}{Numeric value indicating the number of maximum iteration for the imputation with \code{RegImpute} (from \code{DreamAI}). Default: \code{10}.}
+
+\item{RegImpute.fillmethod}{String identifying the fill method to be used in the \code{RegImpute} method (from\code{DreamAI}). One among \code{"row_mean"} and \code{"zeros"}. Default: \code{"row_mean"}. It throws an warning if \code{"row_median"} is used.}
 
 \item{normalize.color.bar}{Logical value indicating whether the color bar limits for the residuals in the correlation plots should be normalized among the methods. Default: \code{TRUE}, the residual color bar absolute maximum is set to the max of all the residuals identified in all the methods,}
 

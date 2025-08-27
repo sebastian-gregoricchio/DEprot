@@ -137,7 +137,19 @@
 
 
 <dt id="arg-clustering-method">clustering.method<a class="anchor" aria-label="anchor" href="#arg-clustering-method"></a></dt>
-<dd><p>The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). Default: <code>complete"}.}\item{palette}{List of colors to use for the color gradient of the heatmap. This parameters is used when raw-counts are plotted. For scaled data see the high, low and mid parameters. Default: \code{RColorBrewer::brewer.pal(n = 9, name = "Blues")}.}\item{high.color}{String indicating the color to use for positive Z-score for scaled data. Default: \code{"indianred"}.}\item{low.color}{String indicating the color to use for negative Z-score for scaled data. Default: \code{"#2166AC"</code> (blue).</p></dd>
+<dd><p>The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: <code>"complete"</code>.</p></dd>
+
+
+<dt id="arg-palette">palette<a class="anchor" aria-label="anchor" href="#arg-palette"></a></dt>
+<dd><p>List of colors to use for the color gradient of the heatmap. This parameters is used when raw-counts are plotted. For scaled data see the high, low and mid parameters. Default: <code>RColorBrewer\:\:brewer.pal(n = 9, name = "Blues")</code>.</p></dd>
+
+
+<dt id="arg-high-color">high.color<a class="anchor" aria-label="anchor" href="#arg-high-color"></a></dt>
+<dd><p>String indicating the color to use for positive Z-score for scaled data. Default: <code>"indianred"</code>.</p></dd>
+
+
+<dt id="arg-low-color">low.color<a class="anchor" aria-label="anchor" href="#arg-low-color"></a></dt>
+<dd><p>String indicating the color to use for negative Z-score for scaled data. Default: <code>"\#2166AC"</code> (blue).</p></dd>
 
 
 <dt id="arg-mid-color">mid.color<a class="anchor" aria-label="anchor" href="#arg-mid-color"></a></dt>
@@ -165,7 +177,7 @@
 
 
 <dt id="arg-protein-names-pattern">protein.names.pattern<a class="anchor" aria-label="anchor" href="#arg-protein-names-pattern"></a></dt>
-<dd><p>Character indicating a regular expression to remove from the protein IDs. Default" <code>NULL</code>, no alterations in the protein IDs.</p></dd>
+<dd><p>Character indicating a regular expression to remove from the protein IDs. Default: <code>NULL</code>, no alterations in the protein IDs.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
@@ -180,6 +192,10 @@
     <h2>Value</h2>
     <p>A <code>DEprot.contrast.heatmap</code> object, which contains the heatmap and the hclust object used to order the rows.</p>
     </div>
+    <div id="author">
+    <h2>Author</h2>
+    <p>Sebastian Gregoricchio</p>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -193,7 +209,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>

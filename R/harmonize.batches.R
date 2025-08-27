@@ -8,7 +8,7 @@
 #'
 #' @import dplyr
 #' @import ggplot2
-#' @importFrom BiocManager install
+#' @importFrom HarmonizR harmonizR
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -23,20 +23,20 @@ harmonize.batches =
     # require(dplyr)
     # require(ggplot2)
     #
-    if (!requireNamespace("HarmonizR", quietly = TRUE)) {
-      warning("The 'HarmonizR' (Bioconductor) package must be installed to use this function.")
-
-      ### Ask for installing
-      install = readline("Do you want to install `HarmonizR`? [yes/no] ")
-      if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
-        BiocManager::install("HarmonizR")
-        library(HarmonizR)
-      } else {
-        return(DEprot.object)
-      }
-    } else {
-      require(HarmonizR)
-    }
+    # if (!requireNamespace("HarmonizR", quietly = TRUE)) {
+    #   warning("The 'HarmonizR' (Bioconductor) package must be installed to use this function.")
+    #
+    #   ### Ask for installing
+    #   install = readline("Do you want to install `HarmonizR`? [yes/no] ")
+    #   if (tolower(install) %in% c("yes","y","yeah","yep","yo")) {
+    #     BiocManager::install("HarmonizR")
+    #     library(HarmonizR)
+    #   } else {
+    #     return(DEprot.object)
+    #   }
+    # } else {
+    #   require(HarmonizR)
+    # }
 
     #------------------------------------------------------------------
 

@@ -101,7 +101,15 @@
 
 
 <dt id="arg-clustering-method">clustering.method<a class="anchor" aria-label="anchor" href="#arg-clustering-method"></a></dt>
-<dd><p>The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (= UPGMA), "mcquitty" (= WPGMA), "median" (= WPGMC) or "centroid" (= UPGMC). Default: <code>complete"}.}\item{high.color}{String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: \code{"indianred"}.}\item{low.color}{String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: \code{"#2166AC"</code> (blue).</p></dd>
+<dd><p>The agglomeration method to be used. This should be (an unambiguous abbreviation of) one of "ward.D", "ward.D2", "single", "complete", "average" (UPGMA), "mcquitty" (WPGMA), "median" (WPGMC) or "centroid" (UPGMC). Default: <code>"complete"</code>.</p></dd>
+
+
+<dt id="arg-high-color">high.color<a class="anchor" aria-label="anchor" href="#arg-high-color"></a></dt>
+<dd><p>String indicating the color to use for up-regulated protein FoldChanges in the plot. Default: <code>"firebrick"</code>.</p></dd>
+
+
+<dt id="arg-low-color">low.color<a class="anchor" aria-label="anchor" href="#arg-low-color"></a></dt>
+<dd><p>String indicating the color to use for down-regulated protein FoldChanges in the plot. Default: <code>"\#2166AC"</code> (blue).</p></dd>
 
 
 <dt id="arg-mid-color">mid.color<a class="anchor" aria-label="anchor" href="#arg-mid-color"></a></dt>
@@ -133,7 +141,7 @@
 
 
 <dt id="arg-protein-names-pattern">protein.names.pattern<a class="anchor" aria-label="anchor" href="#arg-protein-names-pattern"></a></dt>
-<dd><p>Character indicating a regular expression to remove from the protein IDs. Default" <code>NULL</code>, no alterations in the protein IDs.</p></dd>
+<dd><p>Character indicating a regular expression to remove from the protein IDs. Default: <code>NULL</code>, no alterations in the protein IDs.</p></dd>
 
 
 <dt id="arg-use-uncorrected-pvalue">use.uncorrected.pvalue<a class="anchor" aria-label="anchor" href="#arg-use-uncorrected-pvalue"></a></dt>
@@ -143,6 +151,10 @@
     <div id="value">
     <h2>Value</h2>
     <p>A <code>DEprot.contrast.heatmap</code> object, which contains the heatmap (ggplot) and the hclust object used to order the rows.</p>
+    </div>
+    <div id="author">
+    <h2>Author</h2>
+    <p>Sebastian Gregoricchio</p>
     </div>
 
   </div>
@@ -157,7 +169,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer></div>
