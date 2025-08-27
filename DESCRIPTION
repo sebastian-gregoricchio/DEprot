@@ -9,7 +9,7 @@ License: GPL-3
 Depends:
 	R (>= 4.0.3)
 Imports:
-	BiocManager,
+	aPEAR,
 	apcluster,
 	clusterProfiler,
 	colorspace,
@@ -20,6 +20,7 @@ Imports:
 	doParallel,
 	dplyr,
 	doRNG,
+	DreamAI,
 	enrichplot,
 	farver,
 	foreach,
@@ -56,6 +57,7 @@ Imports:
 	VIM,
 	viridis
 Suggests:
+  BiocManager,
   devtools,
 	rmarkdown,
 	knitr,
