@@ -74,6 +74,9 @@
 <span>  missForest.parallel.mode <span class="op">=</span> <span class="st">"variables"</span>,</span>
 <span>  kNN.n.nearest.neighbours <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  LLS.k <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  pcaMethods.nPCs.to.test <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  RegImpute.max.iterations <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  RegImpute.fillmethod <span class="op">=</span> <span class="st">"row_mean"</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -87,7 +90,7 @@
 
 
 <dt id="arg-method">method<a class="anchor" aria-label="anchor" href="#arg-method"></a></dt>
-<dd><p>String indicating the imputation method to use. One among: 'missForest', 'kNN', 'LLS', 'SVD'. Default: <code>"missForest"</code>.</p></dd>
+<dd><p>String indicating the imputation method to use. One among: 'missForest', 'kNN' (VIM), 'tkNN' (imputomics), 'corkNN' (imputomics), 'LLS' (pcaMethods), 'SVD' (a.k.a svdImpute, pcaMethods), 'BPCA' (pcaMethods), 'PPCA' (pcaMethods), 'RegImpute' (DreamAI). Default: <code>"missForest"</code>.</p></dd>
 
 
 <dt id="arg-use-normalized-data">use.normalized.data<a class="anchor" aria-label="anchor" href="#arg-use-normalized-data"></a></dt>
@@ -120,6 +123,18 @@
 
 <dt id="arg-lls-k">LLS.k<a class="anchor" aria-label="anchor" href="#arg-lls-k"></a></dt>
 <dd><p>Cluster size, this is the number of similar genes used for regression. Default: <code>2</code>.</p></dd>
+
+
+<dt id="arg-pcamethods-npcs-to-test">pcaMethods.nPCs.to.test<a class="anchor" aria-label="anchor" href="#arg-pcamethods-npcs-to-test"></a></dt>
+<dd><p>Numeric value indicating the number of Principal Components to test in order to find the optimal number of PCs to used in the imputation methods from the <code>pcaMethods</code> package. This includes: 'LLS', 'SVD' (a.k.a 'svdImpute'), 'BPCA-pcaMethods', and 'PPCA'. Default: <code>5</code>.</p></dd>
+
+
+<dt id="arg-regimpute-max-iterations">RegImpute.max.iterations<a class="anchor" aria-label="anchor" href="#arg-regimpute-max-iterations"></a></dt>
+<dd><p>Numeric value indicating the number of maximum iteration for the imputation with <code>RegImpute</code> (from <code>DreamAI</code>). Default: <code>10</code>.</p></dd>
+
+
+<dt id="arg-regimpute-fillmethod">RegImpute.fillmethod<a class="anchor" aria-label="anchor" href="#arg-regimpute-fillmethod"></a></dt>
+<dd><p>String identifying the fill method to be used in the <code>RegImpute</code> method (from<code>DreamAI</code>). One among <code>"row_mean"</code> and <code>"zeros"</code>. Default: <code>"row_mean"</code>. It throws an warning if <code>"row_median"</code> is used.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
