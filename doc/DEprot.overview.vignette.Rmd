@@ -40,13 +40,13 @@ text-align: justify}
 #knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_
 
 if (Sys.info()[["sysname"]] == "Darwin") {
-  knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
+  knitr::opts_chunk$set(collapse = TRUE, comment = ">",
                         warning = F, message = F, fig.align = "center",
-                        rows.print = 12, dev = "png")
+                        rows.print = 12, dev = "png", dpi = 96)
 } else {
-  knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
+  knitr::opts_chunk$set(collapse = TRUE, comment = ">",
                         warning = F, message = F, fig.align = "center",
-                        rows.print = 12)
+                        rows.print = 12, dev = "png", dpi = 96)
 }
 
 #options(tibble.print_min = 4L, tibble.print_max = 4L)
