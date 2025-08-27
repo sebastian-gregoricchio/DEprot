@@ -34,6 +34,7 @@
 #' @importFrom reshape2 melt
 #' @importFrom foreach foreach
 #' @importFrom ggpubr theme_pubr
+#' @importFrom glmnet cv.glmnet
 #'
 #' @author Sebastian Gregoricchio
 #'
