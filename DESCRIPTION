@@ -11,6 +11,7 @@ Depends:
 Imports:
 	aPEAR,
 	apcluster,
+	BiocManager,
 	clusterProfiler,
 	colorspace,
 	ComplexUpset,
@@ -57,7 +58,6 @@ Imports:
 	VIM,
 	viridis
 Suggests:
-  BiocManager,
   devtools,
 	rmarkdown,
 	knitr,
