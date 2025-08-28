@@ -12,3 +12,16 @@
 ^CRAN-RELEASE$
 ^CRAN-SUBMISSION$
 ^revdep$
+^renv$
+^renv\.lock$
+^.*\.Rproj$
+^\.Rhistory$
+^\.gitignore$
+^\.RData$
+^doc$
+^Meta$
+^resources$
+^export$
+^_config.yaml$
+^.*.png$
+^google.*.html$

@@ -95,9 +95,9 @@ geneset.enrichment =
                         axes.text.size = 10,
                         title = "NES enrichments") {
 
-      # libraries
-      require(dplyr)
-      require(ggplot2)
+      # # libraries
+      # require(dplyr)
+      # require(ggplot2)
 
 
       # extract results and clean
