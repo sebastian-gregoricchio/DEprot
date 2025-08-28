@@ -1,13 +1,13 @@
 ##########################################################################################
 
 test_that("the function geneset.enrichment is working for GSEA analyses with rank based on corrlation", {
-  expect_no_error(geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
-                                     contrast = 1,
-                                     TERM2GENE = DEprot::test.toolbox$geneset,
-                                     enrichment.type = "GSEA",
-                                     gsea.rank.method = "corrlation",
-                                     pvalueCutoff = 1,
-                                     qvalueCutoff = 1))
+  expect_no_error(suppressMessages(suppressWarnings(geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+                                                                       contrast = 1,
+                                                                       TERM2GENE = DEprot::test.toolbox$geneset,
+                                                                       enrichment.type = "GSEA",
+                                                                       gsea.rank.method = "corrlation",
+                                                                       pvalueCutoff = 1,
+                                                                       qvalueCutoff = 1))))
 
 })
 
