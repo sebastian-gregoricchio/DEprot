@@ -31,10 +31,10 @@ load.counts2 =
            imputation.method = NA,
            column.id = "column.id") {
 
-    ### Libraries
-    require(dplyr)
-    require(ggplot2)
-    require(methods)
+    # ### Libraries
+    # require(dplyr)
+    # require(ggplot2)
+    # require(methods)
 
 
     ### Check counts

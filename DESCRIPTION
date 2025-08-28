@@ -14,13 +14,11 @@ Imports:
 	clusterProfiler,
 	colorspace,
 	ComplexUpset,
-	cowplot,
 	curl,
 	data.table,
 	doParallel,
 	dplyr,
 	doRNG,
-	enrichplot,
 	farver,
 	foreach,
 	ggplot2 (>= 3.3.3),
@@ -34,7 +32,6 @@ Imports:
 	laeken,
 	legendry,
 	limma,
-	matrixStats,
 	MBQN,
 	methods,
 	missForest,
@@ -43,31 +40,34 @@ Imports:
 	pcaMethods,
 	plyr,
 	progress,
-	pryr,
 	purrr,
-	randomForest,
 	RColorBrewer,
 	reshape2,
-	R.utils,
 	rvcheck,
-	S4Vectors,
-	statmod,
 	stringr,
-	tidyr,
 	VIM,
 	viridis
 Suggests:
   BiocManager,
+  covr,
+  cowplot,
   devtools,
+  enrichplot,
   ggraph,
-  rmarkdown,
   knitr,
+  matrixStats,
   prettydoc,
+  pryr,
+  rmarkdown,
+  randomForest,
+  R.utils,
+  S4Vectors,
+  statmod,
   testthat (>= 3.0.0),
-  covr
+  tidyr
 biocViews:
 Remotes:
-  kerseviciute/aPEAR
+  sebastian-gregoricchio/aPEAR
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz

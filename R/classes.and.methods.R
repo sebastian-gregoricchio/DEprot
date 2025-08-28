@@ -448,12 +448,13 @@ setMethod(f = "show",
 
 #' @title DEprot.pvalues show-method
 #' @param object Object of class \code{DEprot.pvalues}
+#' @import patchwork
 #' @export
 setMethod(f = "show",
           signature = "DEprot.pvalues",
           definition =
             function(object) {
-              require(patchwork, quietly = TRUE)
+              #require(patchwork, quietly = TRUE)
               plot = (object@pvalue.distribution / object@padjusted.distribution) | object@pvalue.rank
               print(plot)
             })
