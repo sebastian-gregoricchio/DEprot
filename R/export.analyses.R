@@ -26,6 +26,8 @@ export.analyses =
 
     # ### libraries
     # require(dplyr)
+    # require(ggdendro)
+    # require(legendry)
 
 
     ### check object
@@ -133,7 +135,7 @@ export.analyses =
 
     # Export diff analyses summary
     if (isTRUE(verbose)) {message("Exporting differential analyses summary...")}
-    write.table(x = summary(DEprot.analyses.object),
+    write.table(x = as.data.frame(summary(DEprot.analyses.object)),
                 file = paste0(outdir,"/differential_analyses/differential_analyses_summary.n.differential.proteins.tsv"),
                 sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 

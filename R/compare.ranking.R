@@ -126,7 +126,7 @@ compare.ranking =
             plot.subtitle = ggtext::element_markdown(color = "black", hjust = 0.5),
             axis.ticks = element_line(color = "black"),
             axis.line = element_blank(),
-            panel.background = element_rect(fill = NA, color = "black", size = 1))
+            panel.background = element_rect(fill = NA, color = "black", linewidth = 1))
 
 
 
@@ -158,7 +158,7 @@ compare.ranking =
             plot.subtitle = ggtext::element_markdown(color = "black", hjust = 0.5),
             axis.ticks = element_line(color = "black"),
             axis.line = element_blank(),
-            panel.background = element_rect(fill = NA, color = "black", size = 1))
+            panel.background = element_rect(fill = NA, color = "black", linewidth = 1))
 
 
     ## return combined plot
