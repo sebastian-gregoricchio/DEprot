@@ -21,7 +21,7 @@ test_that("get.metadata works from correlation", {
 })
 
 test_that("get.metadata does not work for not DEprot objects", {
-  expect_error(get.metadata(plot.correlation.heatmap(DEprot.object = DEprot::test.toolbox$geneset)))
+  expect_error(get.metadata(DEprot.object = DEprot::test.toolbox$geneset))
 })
 
 
@@ -51,6 +51,25 @@ test_that("remove.undetected.proteins works (on normalized data)", {
 
 test_that("remove.undetected.proteins works (on imputed data)", {
   expect_no_error(remove.undetected.proteins(DEprot.object = DEprot::test.toolbox$dpo.imp, min.n.samples = 1, which.data = "imputed"))
+})
+
+test_that("remove.undetected.proteins returns an error if raw data are required but not available", {
+  dpo = DEprot::test.toolbox$dpo.imp
+  dpo@raw.counts = NULL
+  expect_error(remove.undetected.proteins(DEprot.object = dpo, min.n.samples = 1, which.data = "raw"))
+})
+
+test_that("remove.undetected.proteins returns an error if normalized data are required but not available", {
+  expect_error(remove.undetected.proteins(DEprot.object = DEprot::test.toolbox$dpo.raw, min.n.samples = 1, which.data = "norm"))
+})
+
+test_that("remove.undetected.proteins returns an error if imputed data are required but not available", {
+  expect_error(remove.undetected.proteins(DEprot.object = DEprot::test.toolbox$dpo.norm, min.n.samples = 1, which.data = "imp"))
+})
+
+
+test_that("remove.undetected.proteins returns an error if the type of data required is not recognized", {
+  expect_error(remove.undetected.proteins(DEprot.object = DEprot::test.toolbox$dpo.norm, min.n.samples = 1, which.data = "hello"))
 })
 
 

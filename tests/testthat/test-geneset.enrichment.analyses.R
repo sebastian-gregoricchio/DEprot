@@ -65,6 +65,18 @@ test_that("the function simplify.enrichment is working for GSEA analyses", {
 })
 
 
+test_that("the function simplify.enrichment is not working when the input is not of class DEprot.enrichResult", {
+  expect_error(simplify.enrichment(enrichment.results = geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$geneset,
+                                                                           contrast = 1,
+                                                                           TERM2GENE = DEprot::test.toolbox$geneset,
+                                                                           enrichment.type = "GSEA",
+                                                                           gsea.rank.method = "foldchange",
+                                                                           pvalueCutoff = 1,
+                                                                           qvalueCutoff = 1)))
+
+})
+
+
 
 
 test_that("the function NES.plot is working for GSEA analyses", {

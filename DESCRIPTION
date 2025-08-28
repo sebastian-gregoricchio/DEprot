@@ -59,6 +59,7 @@ Imports:
 Suggests:
   BiocManager,
   devtools,
+  ggraph,
   rmarkdown,
   knitr,
   prettydoc,
