@@ -21,6 +21,7 @@
 ^doc$
 ^Meta$
 ^resources$
+^reference$
 ^export$
 ^_config.yaml$
 ^.*.png$
