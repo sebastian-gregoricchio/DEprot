@@ -9,6 +9,8 @@
 #'
 #' @import dplyr
 #' @import progress
+#' @import legendry
+#' @import ggdendro
 #'
 #' @author Sebastian Gregoricchio
 #'
