@@ -185,7 +185,9 @@ plot.MA =
           ma.plot =
             ma.plot +
             ggrepel::geom_label_repel(data = filt.tb,
-                                      aes(label = prot.id),
+                                      aes(x = basemean.log2,
+                                          y = log2.Fold_group1.vs.group2,
+                                          label = prot.id),
                                       color = "black",
                                       show.legend = FALSE,
                                       min.segment.length = min.segment.length.labels,
@@ -195,7 +197,9 @@ plot.MA =
           ma.plot =
             ma.plot +
             ggrepel::geom_text_repel(data = filt.tb,
-                                     aes(label = prot.id),
+                                     aes(x = basemean.log2,
+                                         y = log2.Fold_group1.vs.group2,
+                                         label = prot.id),
                                      color = "black",
                                      show.legend = FALSE,
                                      min.segment.length = min.segment.length.labels,

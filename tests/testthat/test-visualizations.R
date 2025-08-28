@@ -4,12 +4,17 @@ test_that("contrast.scatter works", {
 
 
 test_that("expression.boxplot works", {
-  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14"))
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", shape.column = "replicate"))
+})
+
+
+test_that("expression.boxplot works (grouped)", {
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", group.by.metadata.column = "combined.id"))
 })
 
 
 test_that("expression.boxplot works (Z-score)", {
-  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", scale.expression = TRUE))
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp, protein.id = "protein.14", scale.expression = TRUE))
 })
 
 
@@ -23,14 +28,61 @@ test_that("heatmap.contrasts works using the uncorrected p-value", {
 })
 
 
+
+test_that("heatmap.counts works for differential analyses", {
+  expect_no_error(heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1))
+})
+
+test_that("heatmap.counts works for differential analyses (scaled rows)", {
+  expect_no_error(heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, scale = "row"))
+})
+
+test_that("heatmap.counts works for differential analyses (scaled columns)", {
+  expect_no_error(heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, scale = "column"))
+})
+
+test_that("heatmap.counts works for differential analyses (top.n proteins)", {
+  expect_no_error(heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5, contrast = 1, scale = "column"))
+})
+
+
+test_that("heatmap.counts works for differential analyses (average groups)", {
+  expect_no_error(heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5, contrast = 1, scale = "column", group.by.metadata.column = "combined.id"))
+})
+
+
+
+
+
 test_that("plot.MA works ", {
   expect_no_error(plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1))
 })
+
+test_that("plot.MA works with uncorrected pvalue (label in box)", {
+  expect_no_error(plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, use.uncorrected.pvalue = T, dot.labels = "protein.19", labels.in.boxes = TRUE))
+})
+
+test_that("plot.MA works with uncorrected pvalue (label as text)", {
+  expect_no_error(plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, use.uncorrected.pvalue = T, dot.labels = "protein.19", labels.in.boxes = FALSE))
+})
+
+
 
 
 test_that("plot.volcano works ", {
   expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1))
 })
+
+test_that("plot.volcano works (label in box)", {
+  expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, dot.labels = "protein.19", labels.in.boxes = TRUE))
+})
+
+
+test_that("plot.volcano works (label as text)", {
+  expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, dot.labels = "protein.19", labels.in.boxes = FALSE))
+})
+
+
 
 
 
@@ -63,7 +115,15 @@ test_that("plot.upset works", {
 
 
 
-test_that("protein.summary works", {
-  expect_no_error(protein.summary(DEprot.object = DEprot::test.toolbox$dpo.imp, group.column = "combined.id"))
+test_that("protein.summary works (frequency)", {
+  expect_no_error(protein.summary(DEprot.object = DEprot::test.toolbox$dpo.imp, group.column = "combined.id", n.labels = "frequency", show.frequency = TRUE))
+})
+
+test_that("protein.summary works (percentage)", {
+  expect_no_error(protein.summary(DEprot.object = DEprot::test.toolbox$dpo.imp, group.column = "combined.id", n.labels = "percentage"))
+})
+
+test_that("protein.summary works (counts)", {
+  expect_no_error(protein.summary(DEprot.object = DEprot::test.toolbox$dpo.imp, group.column = "combined.id", n.labels = "counts"))
 })
 
