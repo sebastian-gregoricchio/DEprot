@@ -33,7 +33,7 @@ test_that("errors are returned if the column.id idnidcated is not present in the
 
 ##########################################################################################
 
-test_that("the function is working", {
+test_that("the function load.counts.2 is working", {
   expect_no_error(load.counts2(counts = DEprot::unimputed.counts,
                                metadata = DEprot::sample.config,
                                data.type = "norm",

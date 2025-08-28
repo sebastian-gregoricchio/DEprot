@@ -29,3 +29,12 @@ test_that("no error is returned when performing differential analyses (limma)", 
                                         replicate.column = "replicate",
                                         linear.FC.th = 1.2))
 })
+
+
+
+
+test_that("no error is returned when reapplying differential analyses thresholds", {
+  expect_no_failure(reapply.thresholds(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, linear.FC = 1.45))
+})
+
+
