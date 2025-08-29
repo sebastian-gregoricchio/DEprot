@@ -90,6 +90,9 @@ reapply.thresholds =
                                                       "unresponsive",
                                                       "null")))
 
+      DEprot.analyses.object@analyses.result.list[[i]]$results$diff.status[is.na(DEprot.analyses.object@analyses.result.list[[i]]$results$diff.status)] = "null"
+
+
       ## Recount the n of diff genes
       old_log2FC_col_name = colnames(DEprot.analyses.object@analyses.result.list[[i]]$results)[5]
       colnames(DEprot.analyses.object@analyses.result.list[[i]]$results)[5] = "log2.Fold_group1.vs.group2"

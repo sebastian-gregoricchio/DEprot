@@ -64,18 +64,6 @@ diff.analyses.prolfqua =
     meta.tb = DEprot.object@metadata
 
 
-    ### Check 'replicate.column' presence
-    if (!is.null(replicate.column[[1]])) {
-      if (!(replicate.column %in% colnames(meta.tb))) {
-        stop("The 'replicate.column' is not present in the metadata of the object.")
-        #return(DEprot.object)
-      } else {
-        meta.tb[,replicate.column[[1]]] = as.character(meta.tb[,replicate.column[[1]]])
-      }
-    }
-
-
-
 
     ### Check contrasts
     if (all(is.na(DEprot.object@contrasts))) {
@@ -126,7 +114,7 @@ diff.analyses.prolfqua =
                                    var.2 = contrasts[[i]][3],
                                    group.1 = meta.tb[meta.tb[,contrasts[[i]][1]] == contrasts[[i]][2],"column.id"],
                                    group.2 = meta.tb[meta.tb[,contrasts[[i]][1]] == contrasts[[i]][3],"column.id"],
-                                   paired.test = include.rep.model)
+                                   paired.test = FALSE)
         names(contrasts.info)[i] = paste0(contrasts[[i]][1], "_", contrasts[[i]][2], ".vs.", contrasts[[i]][3])
       }
     }
@@ -322,6 +310,8 @@ diff.analyses.prolfqua =
                                                       "unresponsive",
                                                       "null")))
 
+      diff.tb$diff.status[is.na(diff.tb$diff.status)] = "null"
+
       # -----------------------------------------------------------------------------------
 
 
@@ -330,9 +320,9 @@ diff.analyses.prolfqua =
                                      sample.subset = c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2),
                                      which.data = which.data)
 
-      scatter.PC1.2 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(include.rep.model)+1, NULL, replicate.column), plot.zero.lines = FALSE) + geom_hline(yintercept = 0, colour = "gray", linetype = 2) + theme(legend.position = "none")
+      scatter.PC1.2 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 1, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = NULL, plot.zero.lines = FALSE) + geom_hline(yintercept = 0, colour = "gray", linetype = 2) + theme(legend.position = "none")
       if (length(unique(sign(PCA.data@PCs$PC1))) > 1){scatter.PC1.2 + geom_vline(xintercept = 0, colour = "gray", linetype = 2)}
-      scatter.PC2.3 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 3, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = switch(isTRUE(include.rep.model)+1, NULL, replicate.column))
+      scatter.PC2.3 = DEprot::plot.PC.scatter(DEprot.PCA.object = PCA.data, PC.x = 3, PC.y = 2, color.column = contrasts.info[[i]]$metadata.column, shape.column = NULL)
 
 
       ## Run Correlations
@@ -381,6 +371,7 @@ diff.analyses.prolfqua =
         #xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
         xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
+        guides(color = guide_legend(override.aes = list(size = 3))) +
         theme_classic() +
         theme(axis.text = ggtext::element_markdown(color = "black"),
               axis.title = ggtext::element_markdown(color = "black"),
@@ -513,7 +504,7 @@ diff.analyses.prolfqua =
           differential.analyses.params = list(linear.FC.th = linear.FC.th,
                                               linear.FC.unresp.range = linear.FC.unresp.range,
                                               padj.th = padj.th,
-                                              padj.method = padj.method,
+                                              padj.method = "effective FDR",
                                               counts.used = data.used,
                                               strategy = list(strategy.id = strategy,
                                                               model.function = modelFunction),

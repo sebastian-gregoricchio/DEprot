@@ -287,6 +287,8 @@ diff.analyses =
                                                       "unresponsive",
                                                       "null")))
 
+      diff.tb$diff.status[is.na(diff.tb$diff.status)] = "null"
+
 
       ## Run PCA
       PCA.data = DEprot::perform.PCA(DEprot.object = DEprot.object,
@@ -345,6 +347,7 @@ diff.analyses =
         #xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
         xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
+        guides(color = guide_legend(override.aes = list(size = 3))) +
         theme_classic() +
         theme(axis.text = ggtext::element_markdown(color = "black"),
               axis.title = ggtext::element_markdown(color = "black"),
