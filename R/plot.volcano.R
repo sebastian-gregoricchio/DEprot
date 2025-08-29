@@ -62,6 +62,15 @@ plot.volcano =
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
       stop("The input must be an object of class 'DEprot.analyses'.")
       #return()
+    } else {
+      # identify whether the analyses have been performed using prolfqua
+      is.prolfqua = "strategy" %in% names(DEprot.analyses.object@differential.analyses.params)
+
+      if (isTRUE(is.prolfqua)) {
+        padj.label = "-log<sub>10</sub>(*FDR*)"
+      } else {
+        padj.label = "-log<sub>10</sub>(*P<sub>adj</sub>*)"
+      }
     }
 
     ### check and collect contrast
@@ -138,9 +147,10 @@ plot.volcano =
                          drop = FALSE) +
       geom_hline(yintercept = -log10(DEprot.analyses.object@differential.analyses.params$padj.th), linetype = 2, color = "gray40") +
       geom_vline(xintercept = c(-1,1)*log2(DEprot.analyses.object@differential.analyses.params$linear.FC.th), linetype = 2, color = "gray40") +
-      ylab(ifelse(use.uncorrected.pvalue == FALSE, yes = "-log~10~(*P~adj~*)", no = "-log~10~(*P*)")) +
+      ylab(ifelse(use.uncorrected.pvalue == FALSE, yes = padj.label, no = "-log~10~(*P*)")) +
       xlab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
       ggtitle(ifelse(is.null(title), yes = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"),no = title)) +
+      guides(color = guide_legend(override.aes = list(size = max(c(point.size, 3))))) +
       theme_classic() +
       theme(axis.text = ggtext::element_markdown(color = "black"),
             axis.title = ggtext::element_markdown(color = "black"),

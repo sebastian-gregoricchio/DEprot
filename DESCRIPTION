@@ -42,6 +42,7 @@ Imports:
 	pcaMethods,
 	plyr,
 	progress,
+	prolfqua,
 	purrr,
 	RColorBrewer,
 	stats,
@@ -71,7 +72,8 @@ Suggests:
   tidyr
 biocViews:
 Remotes:
-  sebastian-gregoricchio/aPEAR
+  sebastian-gregoricchio/aPEAR,
+  fgcz/prolfqua
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
