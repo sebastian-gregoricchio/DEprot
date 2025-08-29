@@ -26,3 +26,4 @@
 ^_config.yaml$
 ^.*.png$
 ^google.*.html$
+^LICENSE$

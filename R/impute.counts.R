@@ -23,19 +23,19 @@
 #'
 #' @import dplyr
 #' @import ggplot2
-#' @import missForest
-#' @importFrom VIM kNN
-#' @import laeken
-#' @import pcaMethods
-#' @importFrom reshape2 melt
 #' @import ggtext
 #' @import doRNG
+#' @importFrom missForest missForest
+#' @importFrom VIM kNN
+#' @importFrom laeken weightedMean
+#' @importFrom pcaMethods pca Q2 llsImpute
+#' @importFrom reshape2 melt
 #' @importFrom doParallel registerDoParallel
 #' @importFrom reshape2 melt
 #' @importFrom foreach foreach
 #' @importFrom ggpubr theme_pubr
 #' @importFrom glmnet cv.glmnet
-#' @importFrom stats cor integrate na.omit pnorm predict sd
+#' @importFrom stats cor integrate na.omit pnorm predict sd alias
 #'
 #' @author Sebastian Gregoricchio
 #'
