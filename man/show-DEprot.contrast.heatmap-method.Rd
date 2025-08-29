@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{show,DEprot.contrast.heatmap-method}
 \alias{show,DEprot.contrast.heatmap-method}
-\title{DEprot.cluster.heatmap show-method}
+\title{DEprot.contrast.heatmap show-method}
 \usage{
 \S4method{show}{DEprot.contrast.heatmap}(object)
 }
@@ -10,5 +10,5 @@
 \item{object}{Object of class \code{DEprot.contrast.heatmap}}
 }
 \description{
-DEprot.cluster.heatmap show-method
+DEprot.contrast.heatmap show-method
 }
