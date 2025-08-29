@@ -12,6 +12,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @importFrom pcaMethods pca
+#' @importFrom stats prcomp
 #'
 #' @author Sebastian Gregoricchio
 #'

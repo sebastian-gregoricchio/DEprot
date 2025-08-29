@@ -27,8 +27,8 @@
 #' @import legendry
 #' @import ggdendro
 #' @importFrom purrr pmap
-#' @importFrom stats dist
 #' @importFrom reshape2 dcast
+#' @importFrom stats dist hclust
 #'
 #' @author Sebastian Gregoricchio
 #'

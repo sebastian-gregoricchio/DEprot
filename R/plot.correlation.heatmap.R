@@ -31,9 +31,9 @@
 #' @import ggdendro
 #' @import viridis
 #' @importFrom farver get_channel
-#' @importFrom stats as.dist
 #' @importFrom reshape2 melt
 #' @import ggtext
+#' @importFrom stats as.dist cor hclust
 #'
 #' @author Sebastian Gregoricchio
 #'

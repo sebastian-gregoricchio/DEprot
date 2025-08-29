@@ -28,6 +28,8 @@ Imports:
 	ggrepel,
 	ggridges,
 	ggpubr,
+	graphics,
+	grDevices,
 	HarmonizR,
 	laeken,
 	legendry,
@@ -42,11 +44,13 @@ Imports:
 	progress,
 	purrr,
 	RColorBrewer,
+	stats,
 	reshape2,
 	rvcheck,
 	stringr,
 	VIM,
-	viridis
+	viridis,
+	utils
 Suggests:
   BiocManager,
   covr,

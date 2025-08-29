@@ -37,7 +37,7 @@
 #' @importFrom purrr pmap
 #' @importFrom reshape2 melt
 #' @import ggtext
-#' @importFrom stats dist
+#' @importFrom stats dist hclust
 #'
 #' @author Sebastian Gregoricchio
 #'

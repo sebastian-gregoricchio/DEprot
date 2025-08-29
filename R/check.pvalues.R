@@ -13,6 +13,7 @@
 #' @import ggplot2
 #' @import dplyr
 #' @import ggtext
+#' @importFrom graphics hist
 #'
 #' @export check.pvalues
 

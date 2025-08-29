@@ -35,6 +35,7 @@
 #' @importFrom foreach foreach
 #' @importFrom ggpubr theme_pubr
 #' @importFrom glmnet cv.glmnet
+#' @importFrom stats cor integrate na.omit pnorm predict sd
 #'
 #' @author Sebastian Gregoricchio
 #'

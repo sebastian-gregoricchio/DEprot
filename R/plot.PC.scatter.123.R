@@ -22,6 +22,7 @@
 #' @import ggplot2
 #' @importFrom stringr str_to_title
 #' @import patchwork
+#' @importFrom grDevices rainbow
 #'
 #' @author Sebastian Gregoricchio
 #'

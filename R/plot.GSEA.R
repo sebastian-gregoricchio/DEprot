@@ -37,6 +37,8 @@
 #' @import ggplot2
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom patchwork wrap_plots
+#' @importFrom grDevices dev.off pdf
+#' @importFrom utils getFromNamespace
 #'
 #' @author Sebastian Gregoricchio
 #'

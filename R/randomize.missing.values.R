@@ -13,6 +13,7 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom stats quantile runif
 #'
 #' @author Sebastian Gregoricchio
 #'

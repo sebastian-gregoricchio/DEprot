@@ -14,6 +14,7 @@
 #' @import ggplot2
 #' @importFrom ggpubr stat_cor
 #' @importFrom patchwork wrap_plots
+#' @importFrom stats cor.test glm
 #'
 #' @export compare.ranking
 

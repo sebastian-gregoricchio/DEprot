@@ -11,6 +11,8 @@
 #' @import progress
 #' @import legendry
 #' @import ggdendro
+#' @importFrom grDevices dev.off pdf
+#' @importFrom utils write.table
 #'
 #' @author Sebastian Gregoricchio
 #'

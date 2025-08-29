@@ -17,6 +17,7 @@
 #' @import ggtext
 #' @importFrom stringr str_to_title
 #' @importFrom ggpubr stat_cor
+#' @importFrom stats glm
 #'
 #' @export contrast.scatter
 

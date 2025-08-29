@@ -28,6 +28,7 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @import ggtext
 #' @import ggrepel
+#' @importFrom grDevices colorRampPalette
 #'
 #' @author Sebastian Gregoricchio
 #'

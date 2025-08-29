@@ -42,6 +42,7 @@
 #' @importFrom purrr pmap
 #' @importFrom ggpubr stat_cor theme_pubr
 #' @importFrom ggridges geom_density_ridges
+#' @importFrom stats cor.test glm runif
 #'
 #' @export compare.imp.methods
 

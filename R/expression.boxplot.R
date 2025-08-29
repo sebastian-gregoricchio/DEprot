@@ -18,6 +18,7 @@
 #' @import ggplot2
 #' @importFrom ggpubr stat_compare_means
 #' @import ggtext
+#' @importFrom stats sd
 #'
 #' @author Sebastian Gregoricchio
 #'

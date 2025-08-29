@@ -24,6 +24,8 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom purrr pmap
 #' @import ggtext
+#' @importFrom grDevices colorRampPalette
+#' @importFrom stats t.test wilcox.test p.adjust t.test wilcox.test
 #'
 #' @author Sebastian Gregoricchio
 #'

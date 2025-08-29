@@ -26,6 +26,8 @@
 #' @importFrom purrr pmap
 #' @import progress
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom grDevices colorRampPalette
+#' @importFrom stats model.matrix
 #'
 #' @author Sebastian Gregoricchio
 #'

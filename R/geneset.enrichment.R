@@ -22,6 +22,7 @@
 #' @import ggtext
 #' @import viridis
 #' @import aPEAR
+#' @importFrom stats cor.test
 #'
 #' @author Sebastian Gregoricchio
 #'
