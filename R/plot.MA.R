@@ -67,6 +67,12 @@ plot.MA =
         data = DEprot.analyses.object@analyses.result.list[[contrast]]$results
         n.diff = DEprot.analyses.object@analyses.result.list[[contrast]]$n.diff
         contrasts.info = DEprot.analyses.object@contrasts[[contrast]]
+
+        # Change the column for 'FDR' column into 'padj' for prolfqua analyses
+        if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
+          data = data %>% dplyr::rename(padj = FDR)
+        }
+
       } else {
         stop("The 'contrast' indicated is not available.")
       }

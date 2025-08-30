@@ -1,8 +1,8 @@
 #' @title check.pvalues
 #'
-#' @description Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expression results
+#' @description Compares the distributions of the P-values and corresponding adjusted P-values.
 #'
-#' @param DEprot.analyses.object An object of class \code{DEprot.analyses}.
+#' @param DEprot.analyses.object An object of class \code{DEprot.analyses} (if generated using prolfqua, an error is returned).
 #' @param contrast Number indicating the position of the contrast to use for the plotting. Default: \code{1}.
 #' @param histogram.binwidth Numeric value indicating. Default: \code{0.05}
 #' @param p.value.color String indicating the color to use for the p-values. Default: \code{"steelblue"}.
@@ -33,6 +33,10 @@ check.pvalues =
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
       stop("The input must be an object of class 'DEprot.analyses'.")
       #return(invisible())
+
+      # identify whether the analyses have been performed using prolfqua
+    } else if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
+      stop("The analyses have been performed using `prolfqua`. P-adjusted values are not available.")
     }
 
     ### check and collect contrast

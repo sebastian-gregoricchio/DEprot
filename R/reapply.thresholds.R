@@ -5,7 +5,7 @@
 #' @param DEprot.analyses.object An object of class \code{DEprot.analyses}.
 #' @param linear.FC Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
-#' @param p.adjusted Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: \code{0.05}.
+#' @param p.adjusted Numeric value indicating the p.adjusted threshold (or FDR threshold if analyses performed usinf prolfqua) to apply to the differential analyses. Default: \code{0.05}.
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
@@ -54,6 +54,14 @@ reapply.thresholds =
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
       stop("The input must be an object of class 'DEprot.analyses'.")
       #return(DEprot.analyses.object)
+
+      # Change the name for 'FDR' column into 'padj' for prolfqua analyses
+    } else if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
+      for (i in 1:length(DEprot.analyses.object@analyses.result.list)) {
+        DEprot.analyses.object@analyses.result.list[[i]]$results =
+          DEprot.analyses.object@analyses.result.list[[i]]$results %>%
+          dplyr::rename(padj = FDR)
+      }
     }
 
 
@@ -129,6 +137,17 @@ reapply.thresholds =
                         up.color = up.color,
                         down.color = down.color)
     }
+
+
+    # Change back the name for 'padj' column into 'FDR' for prolfqua analyses
+    if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
+      for (i in 1:length(DEprot.analyses.object@analyses.result.list)) {
+        DEprot.analyses.object@analyses.result.list[[i]]$results =
+          DEprot.analyses.object@analyses.result.list[[i]]$results %>%
+          dplyr::rename(FDR = padj)
+      }
+    }
+
 
     ## return object
     return(DEprot.analyses.object)

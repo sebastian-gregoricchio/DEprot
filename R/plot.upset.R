@@ -55,6 +55,14 @@ plot.upset =
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
       stop("The input must be an object of class 'DEprot.analyses'.")
       #return()
+
+      # Change the name for 'FDR' column into 'padj' for prolfqua analyses
+    } else if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
+      for (i in 1:length(DEprot.analyses.object@analyses.result.list)) {
+        DEprot.analyses.object@analyses.result.list[[i]]$results =
+          DEprot.analyses.object@analyses.result.list[[i]]$results %>%
+          dplyr::rename(padj = FDR)
+      }
     }
 
 

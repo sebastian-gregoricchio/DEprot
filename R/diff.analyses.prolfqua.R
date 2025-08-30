@@ -465,7 +465,7 @@ diff.analyses.prolfqua =
 
 
       ### Build list
-      diff.analyses.list[[i]] = list(results = diff.tb,
+      diff.analyses.list[[i]] = list(results = diff.tb %>% dplyr::rename(FDR = padj),
                                      n.diff =  n.diff,
                                      PCA.data = PCA.data,
                                      PCA.plots = (scatter.PC1.2 | scatter.PC2.3) / PCA.data@cumulative.PC.plot,

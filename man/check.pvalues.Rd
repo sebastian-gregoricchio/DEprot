@@ -13,7 +13,7 @@ check.pvalues(
 )
 }
 \arguments{
-\item{DEprot.analyses.object}{An object of class \code{DEprot.analyses}.}
+\item{DEprot.analyses.object}{An object of class \code{DEprot.analyses} (if generated using prolfqua, an error is returned).}
 
 \item{contrast}{Number indicating the position of the contrast to use for the plotting. Default: \code{1}.}
 
@@ -27,5 +27,5 @@ check.pvalues(
 A DEprot.pvalues object containing 3 slots: distribution histogram of p-values and p-values adjusted and, line plot of ranked p-values.
 }
 \description{
-Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expression results
+Compares the distributions of the P-values and corresponding adjusted P-values.
 }

@@ -209,6 +209,11 @@ heatmap.counts =
             fc.data = DEprot.object@analyses.result.list[[contrast]]$results
             colnames(fc.data)[5] = "log2.Fold_group1.vs.group2"
 
+            # Change the column name for 'FDR' column into 'padj' for prolfqua analyses
+            if ("strategy" %in% names(DEprot.object@differential.analyses.params)) {
+              fc.data = fc.data %>% dplyr::rename(padj = FDR)
+            }
+
             ## recompute up-downs if required
             if (use.uncorrected.pvalue == TRUE) {
               fc.data$padj = fc.data$p.value

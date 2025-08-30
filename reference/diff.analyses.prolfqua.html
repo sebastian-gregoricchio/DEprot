@@ -66,7 +66,7 @@
 <span>  <span class="va">contrast.list</span>,</span>
 <span>  linear.FC.th <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  linear.FC.unresp.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span><span class="op">)</span>,</span>
-<span>  padj.th <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  FDR.th <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  strategy <span class="op">=</span> <span class="st">"lm"</span>,</span>
 <span>  moderate.variance <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  up.color <span class="op">=</span> <span class="st">"indianred"</span>,</span>
@@ -98,8 +98,8 @@
 <dd><p>A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: <code>c(1/1.1, 1.1)</code>.</p></dd>
 
 
-<dt id="arg-padj-th">padj.th<a class="anchor" aria-label="anchor" href="#arg-padj-th"></a></dt>
-<dd><p>Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: <code>0.05</code>.</p></dd>
+<dt id="arg-fdr-th">FDR.th<a class="anchor" aria-label="anchor" href="#arg-fdr-th"></a></dt>
+<dd><p>Numeric value indicating the FDR threshold to apply to the differential analyses. Default: <code>0.05</code>.</p></dd>
 
 
 <dt id="arg-strategy">strategy<a class="anchor" aria-label="anchor" href="#arg-strategy"></a></dt>

@@ -421,7 +421,7 @@ setMethod(f = "show",
           definition = function(object) {print(object@upset)})
 
 
-#' @title DEprot.cluster.heatmap show-method
+#' @title DEprot.contrast.heatmap show-method
 #' @param object Object of class \code{DEprot.contrast.heatmap}
 #' @export
 setMethod(f = "show",
