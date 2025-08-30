@@ -101,7 +101,7 @@ heatmap.contrasts =
       colnames(fc.tb.list[[i]])[5] = "log2.Fold_group1.vs.group2"
 
       # Change the column name for 'FDR' column into 'padj' for prolfqua analyses
-      if ("strategy" %in% names(DEprot.object@differential.analyses.params)) {
+      if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
         fc.tb.list[[i]] = fc.tb.list[[i]] %>% dplyr::rename(padj = FDR)
       }
 
