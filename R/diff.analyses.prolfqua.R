@@ -6,7 +6,7 @@
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
-#' @param padj.th Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: \code{0.05}.
+#' @param FDR.th Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.
 #' @param strategy String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "glm" (general lm), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).
 #' @param moderate.variance String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
@@ -36,7 +36,7 @@ diff.analyses.prolfqua =
            contrast.list,
            linear.FC.th = 2,
            linear.FC.unresp.range = c(1/1.1, 1.1),
-           padj.th = 0.05,
+           FDR.th = 0.05,
            strategy = "lm",
            moderate.variance = FALSE,
            up.color = "indianred",
@@ -286,7 +286,7 @@ diff.analyses.prolfqua =
       ## Define signif status
       de.status =
         function(FC, p) {
-          ifelse(p < padj.th,
+          ifelse(p < FDR.th,
                  yes = ifelse(abs(FC) >= log2(linear.FC.th),
                               yes = ifelse(sign(FC) == 1,
                                            yes = contrasts.info[[i]]$var.1,
@@ -365,7 +365,7 @@ diff.analyses.prolfqua =
         scale_color_manual(values = colors.plots,
                            name = "Differential\nstatus",
                            drop = FALSE) +
-        geom_hline(yintercept = -log10(padj.th), linetype = 2, color = "gray40") +
+        geom_hline(yintercept = -log10(FDR.th), linetype = 2, color = "gray40") +
         geom_vline(xintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
         ylab("-log~10~(*FDR*)") +
         #xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
@@ -503,7 +503,7 @@ diff.analyses.prolfqua =
           contrasts = contrasts.info,
           differential.analyses.params = list(linear.FC.th = linear.FC.th,
                                               linear.FC.unresp.range = linear.FC.unresp.range,
-                                              padj.th = padj.th,
+                                              padj.th = FDR.th,
                                               padj.method = "effective FDR",
                                               counts.used = data.used,
                                               strategy = list(strategy.id = strategy,
