@@ -5,7 +5,9 @@
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param sample.subset String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
-#' @param n.PCs Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{10}.
+#' @param n.PCs Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{50}.
+#' @param center.data Logical value indicating whether the data should be centered. Default: \code{TRUE}.
+#' @param scale.data Logical value indicating whether the data should be scaled. Default: \code{TRUE}.
 #'
 #' @return A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
 #'
@@ -22,7 +24,9 @@ perform.PCA =
   function(DEprot.object,
            sample.subset = NULL,
            which.data = "imputed",
-           n.PCs = 10) {
+           n.PCs = 50,
+           center.data = TRUE,
+           scale.data = TRUE) {
 
     # ### Libraries
     # require(dplyr)
@@ -98,7 +102,7 @@ perform.PCA =
     # -----------------------------
     # Data without NAs (e.g., imputed data)
     if (!(TRUE %in% is.na(mat))) {
-      pc = prcomp(mat, center = TRUE, scale. = TRUE)
+      pc = prcomp(mat, center = center.data, scale. = scale.data)
       pc.summary = summary(pc)
 
 
@@ -119,7 +123,8 @@ perform.PCA =
       # ---------------------------
       # For data with NA/NaN, such as raw/normalized data
     } else {
-      pc = pcaMethods::pca(object = t(mat), method = "nipals", nPcs = max(c(3, round(n.PCs,0)), na.rm = TRUE), center = TRUE, scale. = TRUE)
+      t_mat = t(mat)
+      pc = pcaMethods::pca(object = t_mat, method = "nipals", nPcs = min(c(nrow(t(mat)), round(n.PCs,0)), na.rm = TRUE), center = center.data, scale. = scale.data)
 
 
       ### Combine PCA with metadata

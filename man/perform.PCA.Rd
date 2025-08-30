@@ -8,7 +8,9 @@ perform.PCA(
   DEprot.object,
   sample.subset = NULL,
   which.data = "imputed",
-  n.PCs = 10
+  n.PCs = 50,
+  center.data = TRUE,
+  scale.data = TRUE
 )
 }
 \arguments{
@@ -18,7 +20,11 @@ perform.PCA(
 
 \item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
-\item{n.PCs}{Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{10}.}
+\item{n.PCs}{Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{50}.}
+
+\item{center.data}{Logical value indicating whether the data should be centered. Default: \code{TRUE}.}
+
+\item{scale.data}{Logical value indicating whether the data should be scaled. Default: \code{TRUE}.}
 }
 \value{
 A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
