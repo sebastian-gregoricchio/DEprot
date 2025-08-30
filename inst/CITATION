@@ -1,0 +1,20 @@
+citHeader("To cite 'DEprot' in publications use:")
+
+citEntry(entry = "Article",
+  title        = "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data",
+  author       = personList(as.person("Nils Eickhoff"),
+                            as.person("Andries M. Bergman"),
+                            as.person("Wilbert Zwart"),
+                            as.person("Sebastian Gregoricchio")),
+  journal      = "XYZ",
+  year         = "202X",
+  volume       = "XX",
+  issue        = "XX",
+  pages        = "XX",
+  url          = "https://doi.org/XYZ",
+
+  textVersion  = paste("N. Eickhoff et al.,",
+                       "Title",
+                       "Journal Name, Volume X, Issue X (202X), Pages XX-YY;",
+                       "doi: 10.XY/XYZ/XYZ")
+)

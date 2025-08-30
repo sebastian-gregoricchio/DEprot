@@ -63,6 +63,7 @@ Suggests:
   matrixStats,
   prettydoc,
   pryr,
+  qpdf,
   rmarkdown,
   randomForest,
   R.utils,
