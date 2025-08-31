@@ -47,7 +47,7 @@ install.packages("DEprot")
 
 ### Developmental versions
 ```r
-## Install devtools from CRAN (if not installed)
+## Install devtools from CRAN (if not already installed)
 # install.packages("devtools")
 
 ## Or the development version from GitHub:
@@ -68,6 +68,20 @@ devtools::install_github("kerseviciute/aPEAR",
                          build_manual = FALSE,
                          build_vignettes = FALSE)
 ```
+
+In order to avoid possible issues, we provide also an renv for the restoration of the packages required for `DEprot` to work:
+```r
+## Install renv from CRAN (if not already installed)
+install.packages("renv")
+
+## Restore the environment in the DEprot folder
+renv::restore(project = "/path/to/DEprot")
+
+## Install DEprot
+install.packages("DEprot")
+```
+
+
 
 
 <br />
