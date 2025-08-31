@@ -30,8 +30,10 @@ Two ggplots combined in an object of class \code{patchwork}.
 Compare the two possible methods for the gene ranking used to perform Gene Set Enrichment Analyses (GSEA).
 }
 \examples{
-ranking <- compare.ranking(DEprot::test.toolbox$diff.exp.limma, contrast = 1)
-ranking
+\dontrun{
+  ranking <- compare.ranking(DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+  ranking
+}
 
 
 }
