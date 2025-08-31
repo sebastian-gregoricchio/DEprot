@@ -147,11 +147,35 @@
 <dd><p>Logical value to indicate whether overwrite analyses already generated. Default: <code>FALSE</code>.</p></dd>
 
 </dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    <p>An object of class <code>DEprot.analyses</code></p>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic Differential analyses with paired analyses</span></span></span>
+<span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">diff.analyses</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
+<span class="r-in"><span>                     contrast.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"FBS"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                          <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"6h.10nM.E2"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                     linear.FC.th <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Differential analyses with paired analyses</span></span></span>
+<span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">diff.analyses</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
+<span class="r-in"><span>                     contrast.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"FBS"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                          <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"6h.10nM.E2"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                     paired.test <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                     replicate.column <span class="op">=</span> <span class="st">"replicate"</span>,</span></span>
+<span class="r-in"><span>                     linear.FC.th <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

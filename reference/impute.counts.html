@@ -77,6 +77,7 @@
 <span>  pcaMethods.nPCs.to.test <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  RegImpute.max.iterations <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  RegImpute.fillmethod <span class="op">=</span> <span class="st">"row_mean"</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -137,6 +138,10 @@
 <dd><p>String identifying the fill method to be used in the <code>RegImpute</code> method (from<code>DreamAI</code>). One among <code>"row_mean"</code> and <code>"zeros"</code>. Default: <code>"row_mean"</code>. It throws an warning if <code>"row_median"</code> is used.</p></dd>
 
 
+<dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
+<dd><p>Numeric value indicating the seed to use for the randomization. Default: <code>NULL</code>, automatically generated (saved in the <code>seed</code> element in the final imputation method list).</p></dd>
+
+
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical valued indicating whether processing messages should be printed. Default: <code>FALSE</code>.</p></dd>
 
@@ -154,6 +159,28 @@
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">impute.counts</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.norm</span>,</span></span>
+<span class="r-in"><span>                     method <span class="op">=</span> <span class="st">"missForest"</span>,</span></span>
+<span class="r-in"><span>                     missForest.cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Foreach loop (doParallelMC) had changed the current RNG type: RNG was restored to same type, next state</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The response has five or fewer unique values.  Are you sure you want to do regression?</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

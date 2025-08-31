@@ -83,6 +83,55 @@
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Extract metadata for DEprot oeejct</span></span></span>
+<span class="r-in"><span><span class="fu">get.metadata</span><span class="op">(</span><span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="dpo.imputed.counts.html">dpo.imputed.counts</a></span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              column.id           sample.id cell  condition    combined.id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         BCa_FBS_rep1        BCa_FBS_rep1  BCa        FBS        BCa_FBS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     BCa_6h.DMSO_rep1    BCa_6h.DMSO_rep1  BCa    6h.DMSO    BCa_6h.DMSO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  BCa_6h.10nM.E2_rep1 BCa_6h.10nM.E2_rep1  BCa 6h.10nM.E2 BCa_6h.10nM.E2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         BCa_FBS_rep2        BCa_FBS_rep2  BCa        FBS        BCa_FBS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5     BCa_6h.DMSO_rep2    BCa_6h.DMSO_rep2  BCa    6h.DMSO    BCa_6h.DMSO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  BCa_6h.10nM.E2_rep2 BCa_6h.10nM.E2_rep2  BCa 6h.10nM.E2 BCa_6h.10nM.E2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         BCa_FBS_rep3        BCa_FBS_rep3  BCa        FBS        BCa_FBS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8     BCa_6h.DMSO_rep3    BCa_6h.DMSO_rep3  BCa    6h.DMSO    BCa_6h.DMSO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  BCa_6h.10nM.E2_rep3 BCa_6h.10nM.E2_rep3  BCa 6h.10nM.E2 BCa_6h.10nM.E2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10        BCa_FBS_rep4        BCa_FBS_rep4  BCa        FBS        BCa_FBS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11    BCa_6h.DMSO_rep4    BCa_6h.DMSO_rep4  BCa    6h.DMSO    BCa_6h.DMSO</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 BCa_6h.10nM.E2_rep4 BCa_6h.10nM.E2_rep4  BCa 6h.10nM.E2 BCa_6h.10nM.E2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    replicate old.column.id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       rep1      Sample_A</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       rep1      Sample_B</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       rep1      Sample_C</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       rep2      Sample_D</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       rep2      Sample_E</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       rep2      Sample_F</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7       rep3      Sample_G</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8       rep3      Sample_H</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9       rep3      Sample_I</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10      rep4      Sample_J</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11      rep4      Sample_K</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12      rep4      Sample_L</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Extract metadata for DEprot object</span></span></span>
+<span class="r-in"><span><span class="fu">get.metadata</span><span class="op">(</span><span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">diff.exp.limma</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    column.id           sample.id cell  condition    combined.id replicate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   Sample_A        BCa_FBS_rep1  BCa        FBS        BCa_FBS      rep1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   Sample_B    BCa_6h.DMSO_rep1  BCa    6h.DMSO    BCa_6h.DMSO      rep1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   Sample_C BCa_6h.10nM.E2_rep1  BCa 6h.10nM.E2 BCa_6h.10nM.E2      rep1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   Sample_D        BCa_FBS_rep2  BCa        FBS        BCa_FBS      rep2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   Sample_E    BCa_6h.DMSO_rep2  BCa    6h.DMSO    BCa_6h.DMSO      rep2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   Sample_F BCa_6h.10nM.E2_rep2  BCa 6h.10nM.E2 BCa_6h.10nM.E2      rep2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   Sample_G        BCa_FBS_rep3  BCa        FBS        BCa_FBS      rep3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   Sample_H    BCa_6h.DMSO_rep3  BCa    6h.DMSO    BCa_6h.DMSO      rep3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   Sample_I BCa_6h.10nM.E2_rep3  BCa 6h.10nM.E2 BCa_6h.10nM.E2      rep3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  Sample_J        BCa_FBS_rep4  BCa        FBS        BCa_FBS      rep4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  Sample_K    BCa_6h.DMSO_rep4  BCa    6h.DMSO    BCa_6h.DMSO      rep4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  Sample_L BCa_6h.10nM.E2_rep4  BCa 6h.10nM.E2 BCa_6h.10nM.E2      rep4</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

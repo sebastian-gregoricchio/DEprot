@@ -91,11 +91,33 @@
 <dd><p>Logical value to indicate whether progress messages should be printed. Default: <code>TRUE</code>.</p></dd>
 
 </dl></div>
+    <div id="value">
+    <h2>Value</h2>
+    <p>Nothing is returned, data are exported locally.</p>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span>  <span class="co"># Export data for all contrasts</span></span></span>
+<span class="r-in"><span>  <span class="fu">DEprot</span><span class="fu">::</span><span class="fu">export.analyses</span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">diff.exp.limma</span>,</span></span>
+<span class="r-in"><span>                         output.folder <span class="op">=</span> <span class="va">out_dir</span>,</span></span>
+<span class="r-in"><span>                          verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>  <span class="co"># Export data for only a subset of contrasts</span></span></span>
+<span class="r-in"><span>  <span class="fu">DEprot</span><span class="fu">::</span><span class="fu">export.analyses</span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span></span>
+<span class="r-in"><span>                          contrast.subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,<span class="fl">6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          output.folder <span class="op">=</span> <span class="va">out_dir</span>,</span></span>
+<span class="r-in"><span>                          verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

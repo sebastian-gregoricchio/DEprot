@@ -135,6 +135,41 @@
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Perform Over-Representation Analyses (ORA)</span></span></span>
+<span class="r-in"><span><span class="va">ora.results</span> <span class="op">&lt;-</span> <span class="fu">geneset.enrichment</span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">diff.exp.limma</span>,</span></span>
+<span class="r-in"><span>                                  contrast <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                  TERM2GENE <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">geneset</span>,</span></span>
+<span class="r-in"><span>                                  enrichment.type <span class="op">=</span> <span class="st">"ORA"</span>,</span></span>
+<span class="r-in"><span>                                  diff.status.category <span class="op">=</span> <span class="st">"FBS"</span>,</span></span>
+<span class="r-in"><span>                                  pvalueCutoff <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                  qvalueCutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">fill</span> is already present.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">fill</span> is already present.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Perform GeneSet Enrichment Analyses (GSEA)</span></span></span>
+<span class="r-in"><span><span class="va">gsea.results</span> <span class="op">&lt;-</span> <span class="fu">geneset.enrichment</span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">diff.exp.limma</span>,</span></span>
+<span class="r-in"><span>                                   contrast <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                   TERM2GENE <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">geneset</span>,</span></span>
+<span class="r-in"><span>                                   enrichment.type <span class="op">=</span> <span class="st">"GSEA"</span>,</span></span>
+<span class="r-in"><span>                                   gsea.rank.method <span class="op">=</span> <span class="st">"foldchange"</span>,</span></span>
+<span class="r-in"><span>                                   pvalueCutoff <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                                   qvalueCutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> using 'fgsea' for GSEA analysis, please cite Korotkevich et al (2019).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> preparing geneSet collections...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> GSEA analysis...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> leading edge analysis...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> done...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">fill</span> is already present.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

@@ -120,6 +120,30 @@
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Perform Principal Component Analyses (PCA)</span></span></span>
+<span class="r-in"><span><span class="va">pca</span> <span class="op">&lt;-</span> <span class="fu"><a href="perform.PCA.html">perform.PCA</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot PC1-vs-PC2 scatter</span></span></span>
+<span class="r-in"><span><span class="fu">plot.PC.scatter</span><span class="op">(</span>DEprot.PCA.object <span class="op">=</span> <span class="va">pca</span>,</span></span>
+<span class="r-in"><span>                color.column <span class="op">=</span> <span class="st">"condition"</span>,</span></span>
+<span class="r-in"><span>                shape.column <span class="op">=</span> <span class="st">"replicate"</span>,</span></span>
+<span class="r-in"><span>                label.column <span class="op">=</span> <span class="st">"replicate"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.PC.scatter-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plot PC2-vs-PC3 scatter</span></span></span>
+<span class="r-in"><span><span class="fu">plot.PC.scatter</span><span class="op">(</span>DEprot.PCA.object <span class="op">=</span> <span class="va">pca</span>,</span></span>
+<span class="r-in"><span>                PC.x <span class="op">=</span> <span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                PC.y <span class="op">=</span> <span class="fl">2</span>,</span></span>
+<span class="r-in"><span>                color.column <span class="op">=</span> <span class="st">"condition"</span>,</span></span>
+<span class="r-in"><span>                shape.column <span class="op">=</span> <span class="st">"replicate"</span>,</span></span>
+<span class="r-in"><span>                label.column <span class="op">=</span> <span class="st">"replicate"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot.PC.scatter-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

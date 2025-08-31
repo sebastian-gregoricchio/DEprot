@@ -228,6 +228,41 @@ A new dataset containing only proteins with known values is created, a certain p
     <div class="dont-index"><p><a href="https://www.rdocumentation.org/packages/missForest/" class="external-link">missForest</a>, <a href="https://cran.r-project.org/web/packages/VIM/index.html" class="external-link">VIM</a>, <a href="https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html" class="external-link">pcaMethods</a> R-packages.</p></div>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">comparison</span> <span class="op">&lt;-</span> <span class="fu">compare.imp.methods</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.norm</span>,</span></span>
+<span class="r-in"><span>                                  percentage.test <span class="op">=</span> <span class="fl">100</span>,</span></span>
+<span class="r-in"><span>                                  sample.group.column <span class="op">=</span> <span class="st">"combined.id"</span>,</span></span>
+<span class="r-in"><span>                                  missForest.cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The number of usable proteins is lower than the number of proteins requested.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: foreach</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: rngtools</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Foreach loop (doParallelMC) had changed the current RNG type: RNG was restored to same type, next state</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Back Filling With Method:  row_mean"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Starting Imputation With  10  Max. Iterations"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  1 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  2 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0479076916301436"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  3 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0146307421581834"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  4 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00440291712937566"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  5 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00126544165727692"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  6 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0013512978906258"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  7 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00128993115151664"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  8 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00128917565795598"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  9 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00128932963092317"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  10 / 10"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.000208821719910077"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

@@ -110,6 +110,16 @@
     <p>Sebastian Gregoricchio</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="load.counts2.html">load.counts2</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="unimputed.counts.html">unimputed.counts</a></span>, metadata <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="sample.config.html">sample.config</a></span>, log.base <span class="op">=</span> <span class="fl">2</span>, data.type <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The counts matrix contained 295 rows with only NA values.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The latter have been removed from the matrix.</span>
+<span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">randomize.missing.values</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>, group.column <span class="op">=</span> <span class="st">"combined.id"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Random Seed used: 24790</span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
