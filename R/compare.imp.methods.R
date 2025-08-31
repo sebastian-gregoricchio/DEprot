@@ -49,7 +49,15 @@
 #' comparison <- compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm,
 #'                                   percentage.test = 100,
 #'                                   sample.group.column = "combined.id",
-#'                                   missForest.cores = 1)
+#'                                   run.missForest = FALSE,
+#'                                   run.BPCA = TRUE,
+#'                                   run.PPCA = TRUE,
+#'                                   run.kNN = FALSE,
+#'                                   run.tkNN = FALSE,
+#'                                   run.corkNN = TRUE,
+#'                                   run.LLS = TRUE,
+#'                                   run.SVD = FALSE,
+#'                                   run.RegImpute = FALSE)
 #'
 #' summary(comparison)
 #'
