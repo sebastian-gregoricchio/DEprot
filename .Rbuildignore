@@ -27,3 +27,4 @@
 ^.*.png$
 ^google.*.html$
 ^LICENSE$
+^citation.cff$
