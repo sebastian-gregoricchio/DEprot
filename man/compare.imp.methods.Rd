@@ -108,6 +108,9 @@ comparison <- compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm,
                                   sample.group.column = "combined.id",
                                   missForest.cores = 1)
 
+summary(comparison)
+
+comparison
 
 }
 \seealso{

@@ -51,6 +51,9 @@
 #'                                   sample.group.column = "combined.id",
 #'                                   missForest.cores = 1)
 #'
+#' summary(comparison)
+#'
+#' comparison
 #'
 #' @export compare.imp.methods
 

@@ -240,24 +240,38 @@ A new dataset containing only proteins with known values is created, a certain p
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Starting Imputation With  10  Max. Iterations"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  1 / 10"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  2 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0479076916301436"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0260292275635976"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  3 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0146307421581834"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00426151675242696"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  4 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00440291712937566"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.000848046395076443"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  5 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00126544165727692"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.000167106155407433"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  6 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0013512978906258"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00222743352670326"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  7 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00128993115151664"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00216237101611037"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  8 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00128917565795598"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00184789244177583"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  9 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00128932963092317"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.00185201775614564"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Working on Iteration:  10 / 10"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.000208821719910077"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NRMSE =  0.0128629865122575"</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            imputation.method      RMSE correlation.coeff processing.time rank</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PPCA                    PPCA 0.6086783         0.9830473            0.61    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> tkNN                    tkNN 0.6144851         0.9824167            0.00    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> corkNN                corkNN 0.6144851         0.9824167            0.00    3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BPCA                    BPCA 0.6272062         0.9791381            0.66    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> missForest        missForest 0.6278174         0.9791044            0.14    5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> RegImpute          RegImpute 0.6489160         0.9745780            6.41    6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> kNN                      kNN 0.6875344         0.9691990            0.33    7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SVD                      SVD 0.7158274         0.9703325            0.11    8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LLS                      LLS 0.7489155         0.9674068            0.01    9</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">comparison</span></span></span>
+<span class="r-plt img"><img src="compare.imp.methods-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

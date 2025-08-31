@@ -18,6 +18,7 @@
 #'
 #' @examples
 #' ranking <- compare.ranking(DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+#' ranking
 #'
 #'
 #' @export compare.ranking

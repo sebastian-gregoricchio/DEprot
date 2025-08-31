@@ -31,6 +31,7 @@ Compare the two possible methods for the gene ranking used to perform Gene Set E
 }
 \examples{
 ranking <- compare.ranking(DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+ranking
 
 
 }
