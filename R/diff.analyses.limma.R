@@ -35,14 +35,14 @@
 #'
 #' @examples
 #' # Basic differential analyses including replicate model
-#' dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$geneset,
+#' dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                            contrast.list = list(c("condition", "FBS", "6h.DMSO"),
 #'                                                 c("condition", "6h.10nM.E2", "6h.DMSO")),
 #'                            linear.FC.th = 1.5)
 #'
 #'
 #' # Differential analyses including replicate model
-#' dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$geneset,
+#' dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                            contrast.list = list(c("condition", "FBS", "6h.DMSO"),
 #'                                                 c("condition", "6h.10nM.E2", "6h.DMSO")),
 #'                            include.rep.model = TRUE,

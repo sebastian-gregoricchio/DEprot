@@ -41,13 +41,13 @@ test_that("the function geneset.enrichment is working for ORA analyses", {
 
 
 test_that("the function simplify is working for ORA analyses", {
-  expect_no_error(suppressMessages(simplify.enrichment(enrichment.results = DEprot::test.toolbox$ora.results)))
+  expect_no_failure(suppressMessages(simplify.enrichment(enrichment.results = DEprot::test.toolbox$ora.results)))
 })
 
 
 
 test_that("the function simplify.enrichment is working for GSEA analyses", {
-  expect_no_error(suppressMessages(simplify.enrichment(enrichment.results = DEprot::test.toolbox$gsea.results)))
+  expect_no_failure(suppressMessages(simplify.enrichment(enrichment.results = DEprot::test.toolbox$gsea.results)))
 })
 
 
