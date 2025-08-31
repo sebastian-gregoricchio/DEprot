@@ -33,7 +33,8 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
-#' plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+#' plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1) +
+#'   ggplot2::ylab("log~2~(Fold Change FBS/6h.DMSO)")
 #'
 #'
 #' @export plot.MA

@@ -69,7 +69,8 @@ Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expre
 plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
              contrast = 1,
              dot.labels = "protein.19",
-             labels.in.boxes = FALSE)
+             labels.in.boxes = FALSE) +
+  ggplot2::xlab("log~2~(Fold Change FBS/6h.DMSO)")
 
 }
 \author{

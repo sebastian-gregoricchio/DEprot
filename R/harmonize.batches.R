@@ -15,6 +15,11 @@
 #' @return An object of class \code{DEprot}
 #'
 #' @examples
+#' # Add batch column to the DEprot object
+#' dpo = DEprot::test.toolbox$dpo.raw
+#' dpo@metadata$batch = c(rep("A",6), rep("B",6))
+#'
+#' # Correct batch effects
 #' dpo <- harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,
 #'                          batch.column = "batch",
 #'                          cores = 1)

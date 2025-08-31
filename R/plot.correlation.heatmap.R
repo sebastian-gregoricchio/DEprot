@@ -38,6 +38,8 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
+#' require(legendry)
+#'
 #' correlation <- plot.correlation.heatmap(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                                         correlation.method = "spearman",
 #'                                         which.data = "imputed",

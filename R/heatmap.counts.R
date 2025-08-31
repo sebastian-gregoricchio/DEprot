@@ -42,6 +42,8 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
+#' require(legendry)
+#'
 #' # Counts per each sample
 #' heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
 #'                top.n = 5,

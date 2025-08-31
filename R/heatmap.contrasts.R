@@ -33,6 +33,7 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
+#' require(legendry)
 #' heatmap.contrasts(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5)
 #'
 #'

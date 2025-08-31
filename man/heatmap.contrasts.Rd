@@ -63,6 +63,7 @@ A \code{DEprot.contrast.heatmap} object, which contains the heatmap (ggplot) and
 Plots an heatmap of the log2(FoldChange) for differentially expressed proteins
 }
 \examples{
+require(legendry)
 heatmap.contrasts(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5)
 
 

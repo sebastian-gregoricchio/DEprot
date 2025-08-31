@@ -173,7 +173,9 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">correlation</span> <span class="op">&lt;-</span> <span class="fu">plot.correlation.heatmap</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="va"><a href="https://teunbrand.github.io/legendry/" class="external-link">legendry</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">correlation</span> <span class="op">&lt;-</span> <span class="fu">plot.correlation.heatmap</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
 <span class="r-in"><span>                                        correlation.method <span class="op">=</span> <span class="st">"spearman"</span>,</span></span>
 <span class="r-in"><span>                                        which.data <span class="op">=</span> <span class="st">"imputed"</span>,</span></span>
 <span class="r-in"><span>                                        correlation.scale.limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>

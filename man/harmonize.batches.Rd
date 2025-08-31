@@ -20,6 +20,11 @@ An object of class \code{DEprot}
 The function uses the package \href{https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html}{\code{HarmonizR}} to correct batch effects in a combined table of multiple experiments.
 }
 \examples{
+# Add batch column to the DEprot object
+dpo = DEprot::test.toolbox$dpo.raw
+dpo@metadata$batch = c(rep("A",6), rep("B",6))
+
+# Correct batch effects
 dpo <- harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,
                          batch.column = "batch",
                          cores = 1)

@@ -87,6 +87,8 @@ A \code{DEprot.contrast.heatmap} object, which contains the heatmap and the hclu
 Plots an heatmap of the counts (raw, normalized, or imputed). It is possible to perform a scaling (z-score) by row or by column.
 }
 \examples{
+require(legendry)
+
 # Counts per each sample
 heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
                top.n = 5,

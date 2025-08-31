@@ -93,7 +93,12 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">harmonize.batches</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.raw</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Add batch column to the DEprot object</span></span></span>
+<span class="r-in"><span><span class="va">dpo</span> <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.raw</span></span></span>
+<span class="r-in"><span><span class="va">dpo</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">batch</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"B"</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Correct batch effects</span></span></span>
+<span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">harmonize.batches</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.raw</span>,</span></span>
 <span class="r-in"><span>                         batch.column <span class="op">=</span> <span class="st">"batch"</span>,</span></span>
 <span class="r-in"><span>                         cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,     batch.column = "batch", cores = 1):</span> The 'batch.column' is not present in the metadata of the object.</span>
