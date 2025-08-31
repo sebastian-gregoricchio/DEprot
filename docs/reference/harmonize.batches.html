@@ -98,10 +98,22 @@
 <span class="r-in"><span><span class="va">dpo</span><span class="op">@</span><span class="va">metadata</span><span class="op">$</span><span class="va">batch</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="fl">6</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"B"</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Correct batch effects</span></span></span>
-<span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">harmonize.batches</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.raw</span>,</span></span>
+<span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">harmonize.batches</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span></span>
 <span class="r-in"><span>                         batch.column <span class="op">=</span> <span class="st">"batch"</span>,</span></span>
 <span class="r-in"><span>                         cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,     batch.column = "batch", cores = 1):</span> The 'batch.column' is not present in the metadata of the object.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Initializing HarmonizR...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Reading the files...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Splitting the data using ComBat adjustment...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found2batches</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adjusting for0covariate(s) or covariate level(s)</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found32Missing Data Values </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Standardizing Data across genes</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Fitting L/S model and finding priors</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Finding parametric adjustments</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Adjusting the Data</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Rebuilding...</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Termination.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -25,7 +25,7 @@ dpo = DEprot::test.toolbox$dpo.raw
 dpo@metadata$batch = c(rep("A",6), rep("B",6))
 
 # Correct batch effects
-dpo <- harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,
+dpo <- harmonize.batches(DEprot.object = dpo,
                          batch.column = "batch",
                          cores = 1)
 
