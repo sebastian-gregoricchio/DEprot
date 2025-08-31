@@ -10,7 +10,8 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
-#' dpo_renamed <- rename.samples(DEprot.object = DEprot::test.toolbox$dpo.imp, metadata.column = "sample.id")
+#' dpo_renamed <- rename.samples(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                               metadata.column = "sample.id")
 #'
 #' @export rename.samples
 

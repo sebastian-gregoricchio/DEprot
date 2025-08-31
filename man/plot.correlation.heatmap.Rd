@@ -74,6 +74,7 @@ correlation <- plot.correlation.heatmap(DEprot.object = DEprot::test.toolbox$dpo
                                         which.data = "imputed",
                                         correlation.scale.limits = c(NA,1))
 
+correlation
 
 }
 \author{

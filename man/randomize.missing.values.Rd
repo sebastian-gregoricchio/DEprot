@@ -33,8 +33,13 @@ A \code{DEprot} object in which values for proteins which display a number of NA
 Function that allows to assign random values (from the bottom-X percent of the LFQ values distribution) to proteins that show missing values for all the replicates of a specific condition.
 }
 \examples{
-dpo <- load.counts2(counts = DEprot::unimputed.counts, metadata = DEprot::sample.config, log.base = 2, data.type = "norm")
-dpo <- randomize.missing.values(DEprot.object = dpo, group.column = "combined.id")
+dpo <- load.counts2(counts = DEprot::unimputed.counts,
+                    metadata = DEprot::sample.config,
+                    log.base = 2,
+                    data.type = "norm")
+
+dpo <- randomize.missing.values(DEprot.object = dpo,
+                                group.column = "combined.id")
 
 }
 \author{

@@ -18,8 +18,13 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
-#' dpo <- load.counts2(counts = DEprot::unimputed.counts, metadata = DEprot::sample.config, log.base = 2, data.type = "norm")
-#' dpo <- randomize.missing.values(DEprot.object = dpo, group.column = "combined.id")
+#' dpo <- load.counts2(counts = DEprot::unimputed.counts,
+#'                     metadata = DEprot::sample.config,
+#'                     log.base = 2,
+#'                     data.type = "norm")
+#'
+#' dpo <- randomize.missing.values(DEprot.object = dpo,
+#'                                 group.column = "combined.id")
 #'
 #' @export randomize.missing.values
 

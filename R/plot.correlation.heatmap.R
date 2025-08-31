@@ -43,6 +43,7 @@
 #'                                         which.data = "imputed",
 #'                                         correlation.scale.limits = c(NA,1))
 #'
+#' correlation
 #'
 #' @export plot.correlation.heatmap
 

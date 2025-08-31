@@ -22,7 +22,9 @@
 #' @examples
 #' contrast.scatter(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
 #'                  contrast.x = 1,
-#'                  contrast.y = 2)
+#'                  contrast.y = 2) +
+#'   ylab("log~2~(Fold Change 6h.10nM.E2/6h.DMSO)") +
+#'   xlab("log~2~(Fold Change FBS/6h.DMSO)")
 #'
 #'
 #' @export contrast.scatter

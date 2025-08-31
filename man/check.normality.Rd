@@ -28,6 +28,6 @@ This function performs principal component analyses (PCA).
 }
 \examples{
 norm <- check.normality(DEprot.object = DEprot::test.toolbox$dpo.imp)
-
+patchwork::wrap_plots(norm@qqplots$Sample_A, norm@densities$Sample_A)
 
 }

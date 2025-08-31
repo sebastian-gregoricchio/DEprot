@@ -39,7 +39,8 @@ An object of the same class than the input provided to the function.
 Allows for the re-computation of the differential status and re-plotting volcano and MA plot for each contrast.
 }
 \examples{
-dpo_analyses = reapply.thresholds(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, linear.FC = 1.3, p.adjusted = 0.01)
+dpo_analyses <- reapply.thresholds(DEprot::test.toolbox$diff.exp.limma,
+                                   linear.FC = 1.3, p.adjusted = 0.01)
 
 
 }
