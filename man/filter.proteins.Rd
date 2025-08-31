@@ -21,12 +21,12 @@ Function that allows for removing or keeping specific proteins from any \code{DE
 }
 \examples{
 # Remove a subset of proteins
-dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$dpo.raw,
                        proteins = c("protein.29","protein.30"),
                        mode = "remove")
 
 # Retain a subset of proteins
-dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$dpo.raw,
                        proteins = c("protein.29","protein.30"),
                        mode = "keep")
 
