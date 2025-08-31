@@ -61,8 +61,7 @@ Function that allows for the imputation of missing values using 4 possible algor
 }
 \examples{
 dpo <- impute.counts(DEprot.object = DEprot::test.toolbox$dpo.norm,
-                     method = "missForest",
-                     missForest.cores = 1)
+                     method = "bPCA")
 
 
 }

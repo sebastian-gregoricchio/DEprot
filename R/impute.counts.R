@@ -42,8 +42,7 @@
 #'
 #' @examples
 #' dpo <- impute.counts(DEprot.object = DEprot::test.toolbox$dpo.norm,
-#'                      method = "missForest",
-#'                      missForest.cores = 1)
+#'                      method = "bPCA")
 #'
 #'
 #' @export impute.counts
