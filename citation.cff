@@ -13,7 +13,7 @@ authors:
 preferred-citation:
   authors:
   - family-names: "Nils"
-  given-names: "Eickhoff"
+    given-names: "Eickhoff"
   - family-names: "Andries M."
     given-names: "Bergman"
   - family-names: "Wilbert"
