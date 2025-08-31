@@ -102,6 +102,14 @@ A \code{DEprot.RMSE} object.
 Function that computes the Root Mean Squared Error (RMSE) for all the 4 possibile imputation algorithms: \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://rdrr.io/cran/VIM/man/kNN.html}{kNN}, \href{https://rdrr.io/bioc/pcaMethods/man/llsImpute.html}{LLS}, \href{https://rdrr.io/bioc/pcaMethods/man/pca.html}{SVD}.
 A new dataset containing only proteins with known values is created, a certain percentage of NAs is then manually introduced (with the possibility to respect the "pattern" of the missing values). This percentage is equivalent to the percentage of missing values in the original data set. At the end the imputed values in the new data set are compared with the measured (expected) ones.
 }
+\examples{
+comparison <- compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm,
+                                  percentage.test = 100,
+                                  sample.group.column = "combined.id",
+                                  missForest.cores = 1)
+
+
+}
 \seealso{
 \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages.
 }

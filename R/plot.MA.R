@@ -32,6 +32,10 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+#'
+#'
 #' @export plot.MA
 
 plot.MA =

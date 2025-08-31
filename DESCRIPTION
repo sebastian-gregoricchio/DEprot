@@ -1,11 +1,15 @@
 Package: DEprot
 Type: Package
-Title: An R-package for proteomics differential analyses
+Title: Differential Expression for (LFQ) Proteomics
 Version: 0.1.0
-Author: Sebastian Gregoricchio
+Authors@R: person("Sebastian", "Gregoricchio", email = "s.regoricchio@nki.nl", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9209-5403"))
 Maintainer: Sebastian Gregoricchio <s.gregoricchio@nki.nl>
-Description: An R-package for proteomics differential analyses using LFQ values.
-License: GPL-3
+Description:
+  User-friendly wrapper for the analyses of LFQ-based proteomics. It includes several imputation methods,
+  normalization of the data, differential analyses with 3 different methods and data visualization. 
+  It is possibile also to perform geneset enrichment analyses (including redudancy semplification),
+  compare the different methods of imputation and compute the corresponding RMSE on custom datasets.
+License: GPL-3 + file LICENSE
 Depends:
 	R (>= 4.0.3)
 Imports:
@@ -34,6 +38,7 @@ Imports:
 	laeken,
 	legendry,
 	limma,
+	lubridate,
 	MBQN,
 	methods,
 	missForest,

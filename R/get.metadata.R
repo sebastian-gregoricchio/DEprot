@@ -8,10 +8,17 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Extract metadata for DEprot oeejct
+#' get.metadata(DEprot::dpo.imputed.counts)
+#'
+#' # Extract metadata for DEprot object
+#' get.metadata(DEprot::test.toolbox$diff.exp.limma)
+#'
 #' @export get.metadata
-#'
-#'
-#'
+
+
+
 get.metadata =
   function(DEprot.object) {
 

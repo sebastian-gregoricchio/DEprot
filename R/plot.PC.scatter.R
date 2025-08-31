@@ -22,6 +22,25 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Perform Principal Component Analyses (PCA)
+#' pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
+#'
+#' # Plot PC1-vs-PC2 scatter
+#' plot.PC.scatter(DEprot.PCA.object = pca,
+#'                 color.column = "condition",
+#'                 shape.column = "replicate",
+#'                 label.column = "replicate")
+#'
+#' # Plot PC2-vs-PC3 scatter
+#' plot.PC.scatter(DEprot.PCA.object = pca,
+#'                 PC.x = 3,
+#'                 PC.y = 2,
+#'                 color.column = "condition",
+#'                 shape.column = "replicate",
+#'                 label.column = "replicate")
+#'
+#'
 #' @export plot.PC.scatter
 
 plot.PC.scatter =

@@ -65,6 +65,13 @@ A ggplot object.
 \description{
 Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expression results
 }
+\examples{
+plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+             contrast = 1,
+             dot.labels = "protein.19",
+             labels.in.boxes = FALSE)
+
+}
 \author{
 Sebastian Gregoricchio
 }

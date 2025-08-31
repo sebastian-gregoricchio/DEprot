@@ -29,3 +29,8 @@ A DEprot.pvalues object containing 3 slots: distribution histogram of p-values a
 \description{
 Compares the distributions of the P-values and corresponding adjusted P-values.
 }
+\examples{
+pvals = check.pvalues(DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+
+
+}

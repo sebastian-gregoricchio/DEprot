@@ -12,10 +12,16 @@ get.results(DEprot.analyses.object, contrast = 1)
 \item{contrast}{Number indicating the position of the contrast to use for the plotting.}
 }
 \value{
-A data.frame.
+A data frame.
 }
 \description{
 Simplifies the access to the differential expression results table
+}
+\examples{
+get.results(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+            contrast = 1)
+
+
 }
 \author{
 Sebastian Gregoricchio

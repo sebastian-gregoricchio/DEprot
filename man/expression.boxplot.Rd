@@ -41,6 +41,27 @@ A boxplot of class ggplot2.
 \description{
 Plots a boxplot of the expression of a specific protein. Samples can be groups depending on a metadata column.
 }
+\examples{
+# Expression for all samples of protein 'protein.14'
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = "protein.14",
+                   shape.column = "replicate")
+
+
+# Expression of protein 'protein.14' grouped by condition (combined.id)
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = "protein.14",
+                   group.by.metadata.column = "combined.id")
+
+
+# Expression of protein 'protein.14' grouped by condition (combined.id) and Z-scored
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = "protein.14",
+                   group.by.metadata.column = "combined.id",
+                   scale.expression = TRUE)
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

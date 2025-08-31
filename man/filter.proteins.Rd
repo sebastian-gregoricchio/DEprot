@@ -19,6 +19,19 @@ An object of class \code{DEprot} (S4 vector).
 \description{
 Function that allows for removing or keeping specific proteins from any \code{DEprot} object class.
 }
+\examples{
+# Remove a subset of proteins
+dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+                       proteins = c("protein.29","protein.30"),
+                       mode = "remove")
+
+# Retain a subset of proteins
+dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+                       proteins = c("protein.29","protein.30"),
+                       mode = "keep")
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

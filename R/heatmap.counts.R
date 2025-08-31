@@ -41,6 +41,21 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Counts per each sample
+#' heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+#'                top.n = 5,
+#'                contrast = 1,
+#'                scale = "column")
+#'
+#' # Counts averaged by group
+#' heatmap.counts(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+#'                top.n = 5,
+#'                contrast = 1,
+#'                scale = "column",
+#'                group.by.metadata.column = "combined.id")
+#'
+#'
 #' @export heatmap.counts
 
 heatmap.counts =

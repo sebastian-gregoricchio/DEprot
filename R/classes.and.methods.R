@@ -492,3 +492,13 @@ setMethod(f = "show",
             })
 
 
+#' @title DEprot.RMSE summary-method
+#' @param object Object of class \code{DEprot.RMSE}
+#' @export
+setMethod(f = "summary",
+          signature = "DEprot.RMSE",
+          definition = function(object) {object@RMSE.scores}
+) #end method
+
+
+

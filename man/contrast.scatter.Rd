@@ -35,3 +35,10 @@ A scatter plot of class ggplot2.
 \description{
 Plots a scatter plot of the log2(fold change expression) derived from two differential analyses contrasts.
 }
+\examples{
+contrast.scatter(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+                 contrast.x = 1,
+                 contrast.y = 2)
+
+
+}

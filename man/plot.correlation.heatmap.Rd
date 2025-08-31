@@ -68,6 +68,14 @@ A \code{DEprot.correlation} with the correlation heatmap in ggplot format.
 \description{
 Function to generate a correlation heatmap. Includes dendrogram and clustering of the data.
 }
+\examples{
+correlation <- plot.correlation.heatmap(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                                        correlation.method = "spearman",
+                                        which.data = "imputed",
+                                        correlation.scale.limits = c(NA,1))
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

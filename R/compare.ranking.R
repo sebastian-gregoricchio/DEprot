@@ -16,6 +16,10 @@
 #' @importFrom patchwork wrap_plots
 #' @importFrom stats cor.test glm residuals
 #'
+#' @examples
+#' ranking <- compare.ranking(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+#'
+#'
 #' @export compare.ranking
 
 

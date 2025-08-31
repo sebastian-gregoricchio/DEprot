@@ -20,6 +20,13 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' dpo <- load.counts2(counts = DEprot::unimputed.counts,
+#'                     metadata = DEprot::sample.config,
+#'                     log.base = 2,
+#'                     data.type = "raw")
+#'
+#'
 #' @export load.counts2
 
 load.counts2 =

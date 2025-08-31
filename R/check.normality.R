@@ -14,6 +14,10 @@
 #' @import ggtext
 #' @import ggpubr
 #'
+#' @examples
+#' norm <- check.normality(DEprot.object = DEprot::test.toolbox$dpo.imp)
+#'
+#'
 #' @export check.normality
 
 

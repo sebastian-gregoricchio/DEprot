@@ -38,6 +38,11 @@ A ggplot object.
 \description{
 Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expression results
 }
+\examples{
+plot.counts(DEprot.object = DEprot::test.toolbox$dpo.imp)
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

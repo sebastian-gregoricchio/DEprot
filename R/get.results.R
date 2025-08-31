@@ -5,9 +5,14 @@
 #' @param DEprot.analyses.object An object of class \code{DEprot.analyses}.
 #' @param contrast Number indicating the position of the contrast to use for the plotting.
 #'
-#' @return A data.frame.
+#' @return A data frame.
 #'
 #' @author Sebastian Gregoricchio
+#'
+#' @examples
+#' get.results(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+#'             contrast = 1)
+#'
 #'
 #' @export get.results
 

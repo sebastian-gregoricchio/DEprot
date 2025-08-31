@@ -23,6 +23,10 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' plot.counts(DEprot.object = DEprot::test.toolbox$dpo.imp)
+#'
+#'
 #' @export plot.counts
 
 plot.counts =

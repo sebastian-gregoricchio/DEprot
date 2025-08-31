@@ -18,6 +18,21 @@ A list of similarity matrix \code{sim.mat} and input preference vector \code{ip.
 \description{
 Calculate Jaccard Similarity.
 }
+\examples{
+\dontrun{
+  padj_list = enrichment.results@enrichment.discovery@result$p.adjust
+  names(padj_list) = enrichment.results@enrichment.discovery@result$ID
+
+  set_list = enrichment.results@enrichment.discovery@geneSets[names(padj_list)]
+
+
+  jaccard.sim <- jaccardSim(idsInSet = set_list,
+                            score = -log10(padj_list))
+}
+}
+\references{
+John M Elizarraras, Yuxing Liao, Zhiao Shi, Qian Zhu, Alexander R Pico, Bing Zhang, WebGestalt 2024: faster gene set analysis and new support for metabolomics and multi-omics, Nucleic Acids Research, Volume 52, Issue W1, 5 July 2024, Pages W415–W421, \url{https://doi.org/10.1093/nar/gkae456}.
+}
 \author{
 Zhiao Shi, Yuxing Liao
 }

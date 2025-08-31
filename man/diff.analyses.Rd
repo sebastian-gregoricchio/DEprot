@@ -53,8 +53,29 @@
 
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }
+\value{
+An object of class \code{DEprot.analyses}
+}
 \description{
 Allows for the computation of differential analyses using multiple t/Wilcox tests. Includes means, Fold Changes, and p-values.
+}
+\examples{
+# Basic Differential analyses with paired analyses
+dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                     contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                          c("condition", "6h.10nM.E2", "6h.DMSO")),
+                     linear.FC.th = 1.5)
+
+
+# Differential analyses with paired analyses
+dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                     contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                          c("condition", "6h.10nM.E2", "6h.DMSO")),
+                     paired.test = TRUE,
+                     replicate.column = "replicate",
+                     linear.FC.th = 1.5)
+
+
 }
 \author{
 Sebastian Gregoricchio

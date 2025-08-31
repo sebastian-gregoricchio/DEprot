@@ -37,6 +37,13 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' correlation <- plot.correlation.heatmap(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                                         correlation.method = "spearman",
+#'                                         which.data = "imputed",
+#'                                         correlation.scale.limits = c(NA,1))
+#'
+#'
 #' @export plot.correlation.heatmap
 
 

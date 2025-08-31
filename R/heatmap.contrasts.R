@@ -32,6 +32,10 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' heatmap.contrasts(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5)
+#'
+#'
 #' @export heatmap.contrasts
 
 heatmap.contrasts =

@@ -18,6 +18,7 @@ impute.counts(
   pcaMethods.nPCs.to.test = 5,
   RegImpute.max.iterations = 10,
   RegImpute.fillmethod = "row_mean",
+  seed = NULL,
   verbose = FALSE
 )
 }
@@ -48,6 +49,8 @@ impute.counts(
 
 \item{RegImpute.fillmethod}{String identifying the fill method to be used in the \code{RegImpute} method (from\code{DreamAI}). One among \code{"row_mean"} and \code{"zeros"}. Default: \code{"row_mean"}. It throws an warning if \code{"row_median"} is used.}
 
+\item{seed}{Numeric value indicating the seed to use for the randomization. Default: \code{NULL}, automatically generated (saved in the \code{seed} element in the final imputation method list).}
+
 \item{verbose}{Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.}
 }
 \value{
@@ -55,6 +58,13 @@ A \code{DEprot} object. The boxplot showing the distribution of the protein inte
 }
 \description{
 Function that allows for the imputation of missing values using 4 possible algorithms: \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://rdrr.io/cran/VIM/man/kNN.html}{kNN}, \href{https://rdrr.io/bioc/pcaMethods/man/llsImpute.html}{LLS}, \href{https://rdrr.io/bioc/pcaMethods/man/pca.html}{SVD}.
+}
+\examples{
+dpo <- impute.counts(DEprot.object = DEprot::test.toolbox$dpo.norm,
+                     method = "missForest",
+                     missForest.cores = 1)
+
+
 }
 \seealso{
 \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages, \href{https://github.com/sebastian-gregoricchio/DreamAI/}{DreamAI}, \href{https://github.com/BioGenies/imputomics}{imputomics}.

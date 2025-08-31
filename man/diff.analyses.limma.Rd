@@ -53,8 +53,31 @@
 
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }
+\value{
+An object of class \code{DEprot.analyses}
+}
 \description{
 Allows for the computation of differential analyses using \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}. Includes means, Fold Changes, and p-values.
+}
+\examples{
+# Basic differential analyses including replicate model
+dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$geneset,
+                           contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                                c("condition", "6h.10nM.E2", "6h.DMSO")),
+                           linear.FC.th = 1.5)
+
+
+# Differential analyses including replicate model
+dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$geneset,
+                           contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                                c("condition", "6h.10nM.E2", "6h.DMSO")),
+                           include.rep.model = TRUE,
+                           replicate.column = "replicate",
+                           linear.FC.th = 1.5)
+
+
+
+
 }
 \author{
 Sebastian Gregoricchio

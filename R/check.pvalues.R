@@ -15,6 +15,10 @@
 #' @import ggtext
 #' @importFrom graphics hist
 #'
+#' @examples
+#' pvals = check.pvalues(DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+#'
+#'
 #' @export check.pvalues
 
 

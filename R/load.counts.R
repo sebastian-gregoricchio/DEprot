@@ -19,6 +19,26 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Raw counts
+#' dpo <- load.counts(counts = DEprot::unimputed.counts,
+#'                    metadata = DEprot::sample.config,
+#'                    log.base = 2)
+#'
+#' # Normalized counts
+#' dpo <- load.counts(counts = DEprot::unimputed.counts,
+#'                    metadata = DEprot::sample.config,
+#'                    log.base = 2,
+#'                    normalization.method = "MaxQuant automatic")
+#'
+#' # Imputed counts
+#' dpo <- load.counts(counts = DEprot::unimputed.counts,
+#'                    metadata = DEprot::sample.config,
+#'                    log.base = 2,
+#'                    imputation = "missForest")
+#'
+#'
+#'
 #' @export load.counts
 
 load.counts =

@@ -26,3 +26,8 @@ A \code{DEprot.normality} object containing: the \code{norm.statement} indicatin
 \description{
 This function performs principal component analyses (PCA).
 }
+\examples{
+norm <- check.normality(DEprot.object = DEprot::test.toolbox$dpo.imp)
+
+
+}

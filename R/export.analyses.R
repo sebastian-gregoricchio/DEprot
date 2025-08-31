@@ -16,6 +16,23 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @return Nothing is returned, data are exported locally.
+#'
+#' @examples
+#' \dontrun{
+#'   # Export data for all contrasts
+#'   DEprot::export.analyses(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+#'                          output.folder = out_dir,
+#'                           verbose = TRUE)
+#'
+#'
+#'   # Export data for only a subset of contrasts
+#'   DEprot::export.analyses(DEprot.analyses.object = dpo_analyses,
+#'                           contrast.subset = c(1:3,6),
+#'                           output.folder = out_dir,
+#'                           verbose = TRUE)
+#' }
+#'
 #' @export export.analyses
 
 

@@ -15,6 +15,14 @@ Data.frame corresponding to the metadata of the provided object.
 \description{
 Function to extract the metadata from a \code{DEprot} object.
 }
+\examples{
+# Extract metadata for DEprot oeejct
+get.metadata(DEprot::dpo.imputed.counts)
+
+# Extract metadata for DEprot object
+get.metadata(DEprot::test.toolbox$diff.exp.limma)
+
+}
 \author{
 Sebastian Gregoricchio
 }

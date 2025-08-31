@@ -26,5 +26,5 @@
 ^_config.yaml$
 ^.*.png$
 ^google.*.html$
-^LICENSE$
+^cran-comments.md$
 ^citation.cff$

@@ -11,6 +11,9 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' recaled_dpo <- rescale.bait(DEprot.object = DEprot::test.toolbox$dpo.imp, bait.id = "protein.29")
+#'
 #' @export rescale.bait
 
 

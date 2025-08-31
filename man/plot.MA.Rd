@@ -59,6 +59,11 @@ A ggplot object.
 \description{
 Plots a MA plot log2(basemean) x log2(FoldChange) of differential expression results
 }
+\examples{
+plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1)
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

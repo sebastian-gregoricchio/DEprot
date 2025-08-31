@@ -39,6 +39,13 @@ If you use this package, please cite:
 
 
 ## Installation
+### Offcial CRAN release
+```r
+install.packages("DEprot")
+```
+
+
+### Developmental versions
 ```r
 ## Install devtools from CRAN (if not installed)
 # install.packages("devtools")
@@ -66,7 +73,7 @@ devtools::install_github("kerseviciute/aPEAR",
 <br />
 
 ## Documentation
-With the package a [web-manual](https://sebastian-gregoricchio.github.io/DEprot/reference/index.html) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
+With the package a [web-manual](https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
 The vignette can be inspected on R as well by typing `browseVignettes("DEprot")`.
 
 Other examples of `DEprot` usage can be found on [Zenodo](https://doi.org/10.5281/zenodo.14823763).

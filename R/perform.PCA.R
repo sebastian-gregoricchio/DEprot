@@ -18,6 +18,9 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
+#'
 #' @export perform.PCA
 
 perform.PCA =

@@ -47,6 +47,28 @@ An object of class \code{DEprot.enrichResult}.
 \description{
 Perform Gene Set Enrichment Analyses (GSEA) or OverRepresentation Analyses (ORA) on a proteomics differential analyses.
 }
+\examples{
+# Perform Over-Representation Analyses (ORA)
+ora.results <- geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+                                  contrast = 1,
+                                  TERM2GENE = DEprot::test.toolbox$geneset,
+                                  enrichment.type = "ORA",
+                                  diff.status.category = "FBS",
+                                  pvalueCutoff = 1,
+                                  qvalueCutoff = 1)
+
+
+# Perform GeneSet Enrichment Analyses (GSEA)
+gsea.results <- geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+                                   contrast = 1,
+                                   TERM2GENE = DEprot::test.toolbox$geneset,
+                                   enrichment.type = "GSEA",
+                                   gsea.rank.method = "foldchange",
+                                   pvalueCutoff = 1,
+                                   qvalueCutoff = 1)
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

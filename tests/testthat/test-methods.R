@@ -64,6 +64,10 @@ test_that("method-show for class DEprot.RMSE works", {
   expect_no_failure(show(suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1))))
 })
 
+test_that("method-summary for class DEprot.RMSE works", {
+  expect_no_failure(summary(suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1))))
+})
+
 
 
 

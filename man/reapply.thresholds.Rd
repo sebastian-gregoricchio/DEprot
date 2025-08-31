@@ -32,8 +32,16 @@ reapply.thresholds(
 
 \item{null.color}{String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.}
 }
+\value{
+An object of the same class than the input provided to the function.
+}
 \description{
 Allows for the re-computation of the differential status and re-plotting volcano and MA plot for each contrast.
+}
+\examples{
+dpo_analyses = reapply.thresholds(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, linear.FC = 1.3, p.adjusted = 0.01)
+
+
 }
 \author{
 Sebastian Gregoricchio

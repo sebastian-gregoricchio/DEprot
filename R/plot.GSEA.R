@@ -42,6 +42,10 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' plot.GSEA(gsea.results = DEprot::test.toolbox$gsea.results, geneset.id = 1)
+#'
+#'
 #' @export plot.GSEA
 
 

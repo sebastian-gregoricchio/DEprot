@@ -17,6 +17,13 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Perform Principal Component Analyses (PCA)
+#' pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
+#'
+#' # Plot cumulative variance barplot
+#' plot.PC.cumulative(pca)
+#'
 #' @export plot.PC.cumulative
 
 plot.PC.cumulative =

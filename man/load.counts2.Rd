@@ -35,6 +35,14 @@ A \code{DEprot} object (S4 vector).
 \description{
 Function used to generate a \code{DEprot} object starting from counts and metadata.
 }
+\examples{
+dpo <- load.counts2(counts = DEprot::unimputed.counts,
+                    metadata = DEprot::sample.config,
+                    log.base = 2,
+                    data.type = "raw")
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

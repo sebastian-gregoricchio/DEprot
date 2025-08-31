@@ -32,6 +32,27 @@ A \code{DEprot} object (S4 vector).
 \description{
 Function used to generate a \code{DEprot} object starting from counts and metadata.
 }
+\examples{
+# Raw counts
+dpo <- load.counts(counts = DEprot::unimputed.counts,
+                   metadata = DEprot::sample.config,
+                   log.base = 2)
+
+# Normalized counts
+dpo <- load.counts(counts = DEprot::unimputed.counts,
+                   metadata = DEprot::sample.config,
+                   log.base = 2,
+                   normalization.method = "MaxQuant automatic")
+
+# Imputed counts
+dpo <- load.counts(counts = DEprot::unimputed.counts,
+                   metadata = DEprot::sample.config,
+                   log.base = 2,
+                   imputation = "missForest")
+
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

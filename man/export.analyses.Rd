@@ -20,8 +20,27 @@ export.analyses(
 
 \item{verbose}{Logical value to indicate whether progress messages should be printed. Default: \code{TRUE}.}
 }
+\value{
+Nothing is returned, data are exported locally.
+}
 \description{
 Export all the results from a DEprot.analyses object into a user-defined folder.
+}
+\examples{
+\dontrun{
+  # Export data for all contrasts
+  DEprot::export.analyses(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+                         output.folder = out_dir,
+                          verbose = TRUE)
+
+
+  # Export data for only a subset of contrasts
+  DEprot::export.analyses(DEprot.analyses.object = dpo_analyses,
+                          contrast.subset = c(1:3,6),
+                          output.folder = out_dir,
+                          verbose = TRUE)
+}
+
 }
 \author{
 Sebastian Gregoricchio

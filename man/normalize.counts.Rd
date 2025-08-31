@@ -26,6 +26,11 @@ A \code{DEprot} object. A boxplot showing the distribution of the protein intens
 \description{
 Function that allows for the tail-robust quantile normalization of the counts using the \href{https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.202000068}{MBQN package}.
 }
+\examples{
+normalize.counts(DEprot.object = DEprot::test.toolbox$dpo.raw)
+
+
+}
 \seealso{
 \link{load.counts}, \href{https://analyticalsciencejournals.onlinelibrary.wiley.com/doi/full/10.1002/pmic.202000068}{MBQN package}.
 }

@@ -44,6 +44,19 @@ A ggplot object.
 \description{
 Plots stacked-barplot recapitulating
 }
+\examples{
+dpo <- load.counts2(counts = DEprot::unimputed.counts,
+                    metadata = DEprot::sample.config,
+                    log.base = 2,
+                    data.type = "raw")
+
+protein.summary(DEprot.object = dpo,
+                group.column = "combined.id",
+                n.labels = "frequency",
+                show.frequency = TRUE)
+
+
+}
 \author{
 Sebastian Gregoricchio
 }

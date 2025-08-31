@@ -29,6 +29,16 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @return An object of class \code{DEprot.analyses}
+#'
+#' @examples
+#' dpo <- diff.analyses.prolfqua(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                               contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+#'                                                    c("condition", "6h.10nM.E2", "6h.DMSO")),
+#'                               strategy = "lm",
+#'                               linear.FC.th = 1.2)
+#'
+#'
 #' @export diff.analyses.prolfqua
 
 diff.analyses.prolfqua =

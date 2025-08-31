@@ -32,6 +32,10 @@ A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance su
 \description{
 This function performs principal component analyses (PCA).
 }
+\examples{
+pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
+
+}
 \author{
 Sebastian Gregoricchio
 }

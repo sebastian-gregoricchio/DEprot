@@ -41,38 +41,18 @@ test_that("the function geneset.enrichment is working for ORA analyses", {
 
 
 test_that("the function simplify is working for ORA analyses", {
-  expect_no_error(simplify.enrichment(enrichment.results = geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
-                                                                              contrast = 1,
-                                                                              TERM2GENE = DEprot::test.toolbox$geneset,
-                                                                              enrichment.type = "ORA",
-                                                                              diff.status.category = "FBS",
-                                                                              pvalueCutoff = 1,
-                                                                              qvalueCutoff = 1)))
-
+  expect_no_error(suppressMessages(simplify.enrichment(enrichment.results = DEprot::test.toolbox$ora.results)))
 })
 
 
 
 test_that("the function simplify.enrichment is working for GSEA analyses", {
-  expect_no_error(simplify.enrichment(enrichment.results = geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
-                                                                              contrast = 1,
-                                                                              TERM2GENE = DEprot::test.toolbox$geneset,
-                                                                              enrichment.type = "GSEA",
-                                                                              gsea.rank.method = "foldchange",
-                                                                              pvalueCutoff = 1,
-                                                                              qvalueCutoff = 1)))
-
+  expect_no_error(suppressMessages(simplify.enrichment(enrichment.results = DEprot::test.toolbox$gsea.results)))
 })
 
 
 test_that("the function simplify.enrichment is not working when the input is not of class DEprot.enrichResult", {
-  expect_error(simplify.enrichment(enrichment.results = geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$geneset,
-                                                                           contrast = 1,
-                                                                           TERM2GENE = DEprot::test.toolbox$geneset,
-                                                                           enrichment.type = "GSEA",
-                                                                           gsea.rank.method = "foldchange",
-                                                                           pvalueCutoff = 1,
-                                                                           qvalueCutoff = 1)))
+  expect_error(simplify.enrichment(enrichment.results = DEprot::test.toolbox$geneset))
 
 })
 

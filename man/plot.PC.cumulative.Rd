@@ -26,6 +26,14 @@ A barplot in ggplot format.
 \description{
 Function to plot the cumulative variance of all the principal components of a PCA.
 }
+\examples{
+# Perform Principal Component Analyses (PCA)
+pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
+
+# Plot cumulative variance barplot
+plot.PC.cumulative(pca)
+
+}
 \author{
 Sebastian Gregoricchio
 }

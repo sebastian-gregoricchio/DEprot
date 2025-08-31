@@ -10,6 +10,11 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' dpo <- load.counts(counts = DEprot::unimputed.counts, metadata = DEprot::sample.config, log.base = 2)
+#' dpo <- remove.undetected.proteins(DEprot.object = dpo, min.n.samples = 3, which.data = "raw")
+#'
+#'
 #' @export remove.undetected.proteins
 
 

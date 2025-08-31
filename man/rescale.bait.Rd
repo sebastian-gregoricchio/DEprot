@@ -17,6 +17,10 @@ An object of class \code{DEprot} or \code{DEprot.analyses} (same class of the in
 \description{
 Rescaling of the imputed counts based on the mean of a specific protein. This is useful for comparing the enrichment of interactors in the RIME experiments.
 }
+\examples{
+recaled_dpo <- rescale.bait(DEprot.object = DEprot::test.toolbox$dpo.imp, bait.id = "protein.29")
+
+}
 \author{
 Sebastian Gregoricchio
 }

@@ -26,6 +26,27 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Perform Over-Representation Analyses (ORA)
+#' ora.results <- geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+#'                                   contrast = 1,
+#'                                   TERM2GENE = DEprot::test.toolbox$geneset,
+#'                                   enrichment.type = "ORA",
+#'                                   diff.status.category = "FBS",
+#'                                   pvalueCutoff = 1,
+#'                                   qvalueCutoff = 1)
+#'
+#'
+#' # Perform GeneSet Enrichment Analyses (GSEA)
+#' gsea.results <- geneset.enrichment(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+#'                                    contrast = 1,
+#'                                    TERM2GENE = DEprot::test.toolbox$geneset,
+#'                                    enrichment.type = "GSEA",
+#'                                    gsea.rank.method = "foldchange",
+#'                                    pvalueCutoff = 1,
+#'                                    qvalueCutoff = 1)
+#'
+#'
 #' @export geneset.enrichment
 
 geneset.enrichment =

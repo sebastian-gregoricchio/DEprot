@@ -19,6 +19,10 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' normalize.counts(DEprot.object = DEprot::test.toolbox$dpo.raw)
+#'
+#'
 #' @export normalize.counts
 
 

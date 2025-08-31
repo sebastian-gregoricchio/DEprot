@@ -29,6 +29,25 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @return An object of class \code{DEprot.analyses}
+#'
+#' @examples
+#' # Basic Differential analyses with paired analyses
+#' dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                      contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+#'                                           c("condition", "6h.10nM.E2", "6h.DMSO")),
+#'                      linear.FC.th = 1.5)
+#'
+#'
+#' # Differential analyses with paired analyses
+#' dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                      contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+#'                                           c("condition", "6h.10nM.E2", "6h.DMSO")),
+#'                      paired.test = TRUE,
+#'                      replicate.column = "replicate",
+#'                      linear.FC.th = 1.5)
+#'
+#'
 #' @export diff.analyses
 
 diff.analyses =

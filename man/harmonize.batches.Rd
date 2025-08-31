@@ -13,8 +13,18 @@ harmonize.batches(DEprot.object, batch.column = "batch", cores = 1)
 
 \item{cores}{Numeric value indicating the number of cores to use for the batch correction. Default: \code{1}.}
 }
+\value{
+An object of class \code{DEprot}
+}
 \description{
 The function uses the package \href{https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html}{\code{HarmonizR}} to correct batch effects in a combined table of multiple experiments.
+}
+\examples{
+dpo <- harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,
+                         batch.column = "batch",
+                         cores = 1)
+
+
 }
 \author{
 Sebastian Gregoricchio

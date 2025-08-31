@@ -12,6 +12,14 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @return An object of class \code{DEprot}
+#'
+#' @examples
+#' dpo <- harmonize.batches(DEprot.object = DEprot::test.toolbox$dpo.raw,
+#'                          batch.column = "batch",
+#'                          cores = 1)
+#'
+#'
 #' @export harmonize.batches
 
 harmonize.batches =

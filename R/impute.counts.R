@@ -15,6 +15,7 @@
 #' @param pcaMethods.nPCs.to.test Numeric value indicating the number of Principal Components to test in order to find the optimal number of PCs to used in the imputation methods from the \code{pcaMethods} package. This includes: 'LLS', 'SVD' (a.k.a 'svdImpute'), 'BPCA-pcaMethods', and 'PPCA'. Default: \code{5}.
 #' @param RegImpute.max.iterations Numeric value indicating the number of maximum iteration for the imputation with \code{RegImpute} (from \code{DreamAI}). Default: \code{10}.
 #' @param RegImpute.fillmethod String identifying the fill method to be used in the \code{RegImpute} method (from\code{DreamAI}). One among \code{"row_mean"} and \code{"zeros"}. Default: \code{"row_mean"}. It throws an warning if \code{"row_median"} is used.
+#' @param seed Numeric value indicating the seed to use for the randomization. Default: \code{NULL}, automatically generated (saved in the \code{seed} element in the final imputation method list).
 #' @param verbose Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.
 #'
 #' @seealso \href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages, \href{https://github.com/sebastian-gregoricchio/DreamAI/}{DreamAI}, \href{https://github.com/BioGenies/imputomics}{imputomics}.
@@ -39,6 +40,12 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' dpo <- impute.counts(DEprot.object = DEprot::test.toolbox$dpo.norm,
+#'                      method = "missForest",
+#'                      missForest.cores = 1)
+#'
+#'
 #' @export impute.counts
 
 
@@ -56,6 +63,7 @@ impute.counts =
            pcaMethods.nPCs.to.test = 5,
            RegImpute.max.iterations = 10,
            RegImpute.fillmethod = "row_mean",
+           seed = NULL,
            verbose = FALSE) {
 
     # ### Libraries
@@ -100,6 +108,16 @@ impute.counts =
     if (!(tolower(method) %in% tolower(c("missForest", "KNN", "kNN-VIM", "tKNN", "corkNN", "SVD", "svd-pcamethods", "svdimpute", "svdimpute-pcamethods", "LLS", "LLS-pcaMethods", "BPCA-pcaMethods", "BPCA", "PPCA", "ppca-pcamethods", "RegImpute", "regimpute-dreamAI")))) {
       stop("The imputation 'method' must be one among: missForest, KNN, tKNN, corkNN, SVD, LLS, BPCA, PPCA, RegImpute.")
       #return(DEprot.object)
+    }
+
+
+
+    ### Set seed
+    if (is.null(seed)) {
+      seed = runif(n = 1, min = 0, max = 2^31-1)
+      set.seed(I(seed))
+    } else {
+      set.seed(I(seed))
     }
 
 
@@ -530,7 +548,8 @@ impute.counts =
                         OOBerror = imputed.cnt$OOBerror,
                         parallelization.mode = ifelse(cores <=1, yes = "none", no = missForest.parallel.mode),
                         cores = cores,
-                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        seed = seed)
 
       imputed.cnt = imputed.cnt$ximp
 
@@ -549,7 +568,8 @@ impute.counts =
       imputation = list(method = "kNN",
                         aggregating.function = "weighted mean",
                         n.nearest.neighbours = kNN.n.nearest.neighbours,
-                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        seed = seed)
 
       ####################################################################################
 
@@ -566,7 +586,8 @@ impute.counts =
                         aggregating.function = "weighted mean",
                         cluster.size = LLS.k,
                         correlation.type = "pearson",
-                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        seed = seed)
 
       #########################################################################################
 
@@ -582,7 +603,8 @@ impute.counts =
       ## Define imputation method list
       imputation = list(method = "SVD",
                         PC.estimation = PC.estimation,
-                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        seed = seed)
 
       #########################################################################################
     } else if (tolower(method) == "tknn") {
@@ -597,7 +619,8 @@ impute.counts =
       ## Define imputation method list
       imputation = list(method = "tkNN",
                         n.nearest.neighbours = ceiling(nrow(cnt)*0.05),
-                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        seed = seed)
 
       #########################################################################################
 
@@ -614,7 +637,8 @@ impute.counts =
         ## Define imputation method list
         imputation = list(method = "BPCA",
                           PC.estimation = PC.estimation,
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          seed = seed)
 
 
         #########################################################################################
@@ -632,7 +656,8 @@ impute.counts =
         ## Define imputation method list
         imputation = list(method = "PPCA",
                           PC.estimation = PC.estimation,
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          seed = seed)
 
         #########################################################################################
 
@@ -650,7 +675,8 @@ impute.counts =
                           parameters = list(fillmethod = RegImpute.fillmethod,
                                             maxiter_RegImpute = RegImpute.max.iterations,
                                             conv_nrmse = 1e-6),
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          seed = seed)
 
         #########################################################################################
 
@@ -666,7 +692,8 @@ impute.counts =
         ## Define imputation method list
         imputation = list(method = "corkNN",
                           n.nearest.neighbours = ceiling(nrow(cnt)*0.05),
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units))
+                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          seed = seed)
       }
 
 

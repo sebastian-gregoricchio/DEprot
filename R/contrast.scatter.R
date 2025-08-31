@@ -19,6 +19,12 @@
 #' @importFrom ggpubr stat_cor
 #' @importFrom stats glm
 #'
+#' @examples
+#' contrast.scatter(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+#'                  contrast.x = 1,
+#'                  contrast.y = 2)
+#'
+#'
 #' @export contrast.scatter
 
 

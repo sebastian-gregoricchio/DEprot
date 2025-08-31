@@ -27,6 +27,9 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' plot.upset(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma)
+#'
 #' @export plot.upset
 
 plot.upset =

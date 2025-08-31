@@ -53,6 +53,10 @@ A \code{DEprot.upset} with the upset plot and the matrix of the observed enriche
 \description{
 Plots an upset-plot for differential expression results
 }
+\examples{
+plot.upset(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma)
+
+}
 \author{
 Sebastian Gregoricchio
 }

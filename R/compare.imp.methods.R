@@ -43,6 +43,14 @@
 #' @importFrom ggpubr stat_cor theme_pubr
 #' @importFrom ggridges geom_density_ridges
 #' @importFrom stats cor.test glm runif
+#' @importFrom lubridate as.duration
+#'
+#' @examples
+#' comparison <- compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm,
+#'                                   percentage.test = 100,
+#'                                   sample.group.column = "combined.id",
+#'                                   missForest.cores = 1)
+#'
 #'
 #' @export compare.imp.methods
 
@@ -278,7 +286,8 @@ compare.imp.methods =
                                                 missForest.variable.wise.OOBerror = missForest.variable.wise.OOBerror,
                                                 missForest.cores = missForest.cores,
                                                 missForest.parallel.mode = missForest.parallel.mode,
-                                                verbose = verbose)
+                                                verbose = verbose,
+                                                seed = seed)
 
       missForest = dpo.na_missForest@imputed.counts
     } else {
@@ -293,7 +302,8 @@ compare.imp.methods =
       dpo.na_kNN = DEprot::impute.counts(DEprot.object = dpo.na,
                                          method = "kNN",
                                          kNN.n.nearest.neighbours = kNN.n.nearest.neighbours,
-                                         verbose = verbose)
+                                         verbose = verbose,
+                                         seed = seed)
       kNN = dpo.na_kNN@imputed.counts
     } else {
       dpo.na_kNN = NULL
@@ -307,7 +317,8 @@ compare.imp.methods =
       dpo.na_LLS = DEprot::impute.counts(DEprot.object = dpo.na,
                                          method = "LLS",
                                          LLS.k = LLS.k,
-                                         verbose = verbose)
+                                         verbose = verbose,
+                                         seed = seed)
       LLS = dpo.na_LLS@imputed.counts
     } else {
       dpo.na_LLS = NULL
@@ -320,7 +331,8 @@ compare.imp.methods =
       dpo.na_SVD = DEprot::impute.counts(DEprot.object = dpo.na,
                                          method = "SVD",
                                          pcaMethods.nPCs.to.test = pcaMethods.nPCs.to.test,
-                                         verbose = verbose)
+                                         verbose = verbose,
+                                         seed = seed)
       SVD = dpo.na_SVD@imputed.counts
     } else {
       dpo.na_SVD = NULL
@@ -334,7 +346,8 @@ compare.imp.methods =
       dpo.na_BPCA = DEprot::impute.counts(DEprot.object = dpo.na,
                                           method = "BPCA",
                                           pcaMethods.nPCs.to.test = pcaMethods.nPCs.to.test,
-                                          verbose = verbose)
+                                          verbose = verbose,
+                                          seed = seed)
       BPCA = dpo.na_BPCA@imputed.counts
     } else {
       dpo.na_BPCA = NULL
@@ -347,7 +360,8 @@ compare.imp.methods =
       dpo.na_PPCA = DEprot::impute.counts(DEprot.object = dpo.na,
                                           method = "PPCA",
                                           pcaMethods.nPCs.to.test = pcaMethods.nPCs.to.test,
-                                          verbose = verbose)
+                                          verbose = verbose,
+                                          seed = seed)
       PPCA = dpo.na_PPCA@imputed.counts
     } else {
       dpo.na_PPCA = NULL
@@ -362,7 +376,8 @@ compare.imp.methods =
                                                method = "RegImpute",
                                                RegImpute.max.iterations = RegImpute.max.iterations,
                                                RegImpute.fillmethod = RegImpute.fillmethod,
-                                               verbose = verbose)
+                                               verbose = verbose,
+                                               seed = seed)
       RegImpute = dpo.na_RegImpute@imputed.counts
     } else {
       dpo.na_RegImpute = NULL
@@ -375,7 +390,8 @@ compare.imp.methods =
       if (isTRUE(verbose)) {message("Performing `tkNN` imputation...")}
       dpo.na_tkNN = DEprot::impute.counts(DEprot.object = dpo.na,
                                           method = "tkNN",
-                                          verbose = verbose)
+                                          verbose = verbose,
+                                          seed = seed)
       tkNN = dpo.na_tkNN@imputed.counts
     } else {
       dpo.na_tkNN = NULL
@@ -388,7 +404,8 @@ compare.imp.methods =
       if (isTRUE(verbose)) {message("Performing `corkNN` imputation...")}
       dpo.na_corkNN = DEprot::impute.counts(DEprot.object = dpo.na,
                                           method = "corkNN",
-                                          verbose = verbose)
+                                          verbose = verbose,
+                                          seed = seed)
       corkNN = dpo.na_corkNN@imputed.counts
     } else {
       dpo.na_corkNN = NULL
@@ -468,7 +485,6 @@ compare.imp.methods =
       MSE_mean.sq.residuals = mean(sqrt(RMSE.tables[[i]]$sq.residuals), na.rm = T)
       RMSE.scores[i] = sqrt(MSE_mean.sq.residuals)
       cor.coeff[i] = suppressWarnings(unname((cor.test(x = RMSE.tables[[i]]$expected.values, y = RMSE.tables[[i]]$imputed.values, method = tolower(correlation.method)))$estimate))
-
     }
 
     names(RMSE.tables) = names(imp.tables)
@@ -476,12 +492,23 @@ compare.imp.methods =
     names(cor.coeff) = names(imp.tables)
 
 
+    ## Collect computation time
+    comp.time = c()
+
+    for (i in 1:length(imputed.objects)) {
+      comp.time[i] = lubridate::as.duration(imputed.objects[[i]]@imputation$processing.time)
+    }
+
+
+
+
     ## Make a table for RMSE and correlation, and rank
     RMSE.scores.tb =
       data.frame(imputation.method = names(RMSE.scores),
                  RMSE = RMSE.scores,
-                 correlation.coeff = cor.coeff) %>%
-      dplyr::arrange(RMSE, desc(correlation.coeff)) %>%
+                 correlation.coeff = cor.coeff,
+                 processing.time = comp.time) %>%
+      dplyr::arrange(RMSE, desc(correlation.coeff), processing.time) %>%
       dplyr::mutate(rank = 1:length(RMSE.scores))
 
 

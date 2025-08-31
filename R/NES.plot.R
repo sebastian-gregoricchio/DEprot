@@ -22,6 +22,10 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' NES.plot(enrichResult = DEprot::test.toolbox$gsea.results)
+#'
+#'
 #' @export NES.plot
 
 

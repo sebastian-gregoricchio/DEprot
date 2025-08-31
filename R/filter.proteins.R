@@ -14,6 +14,18 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' # Remove a subset of proteins
+#' dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+#'                        proteins = c("protein.29","protein.30"),
+#'                        mode = "remove")
+#'
+#' # Retain a subset of proteins
+#' dpo <- filter.proteins(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+#'                        proteins = c("protein.29","protein.30"),
+#'                        mode = "keep")
+#'
+#'
 #' @export filter.proteins
 
 filter.proteins =

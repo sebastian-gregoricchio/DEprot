@@ -16,6 +16,9 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @examples
+#' simplified.enrichment <- simplify.enrichment(enrichment.results = DEprot::test.toolbox$gsea.results)
+#'
 #' @export simplify.enrichment
 
 simplify.enrichment =
