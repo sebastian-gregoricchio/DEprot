@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Differential Expression for (LFQ) Proteomics">
-<meta property="og:description" content="User-friendly wrapper for the analyses of LFQ-based proteomics. It includes several imputation methods, normalization of the data, differential analyses with 3 different methods and data visualization. It is possibile also to perform geneset enrichment analyses (including redudancy semplification), compare the different methods of imputation and compute the corresponding RMSE on custom datasets.">
+<meta property="og:description" content="User-friendly wrapper for the analyses of LFQ-based proteomics. It includes several imputation methods, normalization of the data, differential analyses with 3 different methods and data visualization. It is possible also to perform geneset enrichment analyses (including geneset redundancy simplification), compare the different methods of imputation and compute the corresponding RMSE on custom datasets.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -132,13 +132,26 @@
 <div class="section level3">
 <h3 id="possibile-installation-issues">Possibile installation issues<a class="anchor" aria-label="anchor" href="#possibile-installation-issues"></a>
 </h3>
+<div class="section level4">
+<h4 id="external-dependencies">External dependencies<a class="anchor" aria-label="anchor" href="#external-dependencies"></a>
+</h4>
 <p>The package <a href="https://github.com/kerseviciute/aPEAR" class="external-link"><code>aPEAR</code></a> (<a href="https://doi.org/10.1093/bioinformatics/btad672" class="external-link">Kerseviciute &amp; Gordevicius, Bioinformatics 2023</a>) is required for the ORA/GSEA analyses. However, recently, it is has been removed from the CRAN, but it can be installed using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"kerseviciute/aPEAR"</span>,</span>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/aPEAR"</span>,</span>
 <span>                         build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                         build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
-<p>In order to avoid possible issues, we provide also an renv for the restoration of the packages required for <code>DEprot</code> to work:</p>
+<p>Another package possibly required, is <a href="https://github.com/fgcz/prolfqua" class="external-link"><code>prolfqua</code></a>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"fgcz/prolfqua"</span>,</span>
+<span>                         build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                         build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div class="section level4">
+<h4 id="renv">renv<a class="anchor" aria-label="anchor" href="#renv"></a>
+</h4>
+<p>In order to avoid possible issues, we provide also an renv for the restoration of the packages required for <code>DEprot</code> to work:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install renv from CRAN (if not already installed)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"renv"</span><span class="op">)</span></span>
 <span></span>
@@ -148,6 +161,7 @@
 <span><span class="co">## Install DEprot</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"DEprot"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
+</div>
 </div>
 </div>
 <div class="section level2">
@@ -172,7 +186,7 @@
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
-<p>This package is under a <a href="https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE" class="external-link">GNU General Public License (version 3)</a>.</p>
+<p>This package is under a GNU General Public License (version 3).</p>
 <p><br></p>
 <div class="section level4">
 <h4 id="contributors">Contributors<a class="anchor" aria-label="anchor" href="#contributors"></a>
@@ -224,7 +238,7 @@
 <li><a href="https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="license"></a></li>
 <li><a href="https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml" class="external-link"><img src="https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml/badge.svg" alt="pkgdown"></a></li>
-<li><a href="https://codecov.io/gh/sebastian-gregoricchio/DEprot" class="external-link"><img src="https://codecov.io/gh/sebastian-gregoricchio/DEprot/branch/main/graph/badge.svg" alt="Codecov"></a></li>
+<li><a href="https://app.codecov.io/gh/sebastian-gregoricchio/DEprot" class="external-link"><img src="https://codecov.io/gh/sebastian-gregoricchio/DEprot/branch/main/graph/badge.svg" alt="Codecov"></a></li>
 <li><a href="https://doi.org/10.5281/zenodo.14823763" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.14823763.svg" alt="DOI"></a></li>
 <li><a href="https://github.com/sebastian-gregoricchio/DEprot/fork" class="external-link"><img src="https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social" alt="forks"></a></li>
 </ul>

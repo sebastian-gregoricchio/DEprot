@@ -93,8 +93,8 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 31<sup>th</sup>
-August, 2025</h4>
+            <h4 data-toc-skip class="date">Last update: 01<sup>th</sup>
+September, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
       <div class="hidden name"><code>DEprot.overview.vignette.Rmd</code></div>
@@ -142,20 +142,20 @@ to be LFQ (label-free quantitation) values.</p>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="er">&gt;</span> </span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="er">&gt;</span>   N. Eickhoff, A.M. Bergman, W. Zwart, S.gregoricchio. <span class="st">'DEprot: a</span></span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="st">&gt;   comprehensive R-package for the analyses of label-free quantitation</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="st">&gt;   mass-spectrometry data'</span>. Journal Name, Volume X, Issue <span class="fu">X</span> (<span class="dv">202</span>X),</span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="sc">&gt;</span>   Pages XX<span class="sc">-</span>YY. doi<span class="sc">:</span> <span class="fl">10.</span>XY<span class="sc">/</span>XYZ<span class="sc">/</span>XYZ</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="st">&gt;   mass-spectrometry data'</span>. Zenodo, Volume X, Issue <span class="fu">X</span> (<span class="dv">2025</span>), Pages</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="sc">&gt;</span>   XX<span class="sc">-</span>YY. doi<span class="sc">:</span> <span class="fl">10.5281</span><span class="sc">/</span>zenodo<span class="fl">.14823764</span></span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="er">&gt;</span> A BibTeX entry <span class="cf">for</span> LaTeX users is</span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="sc">&gt;</span> </span>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="er">&gt;</span>   <span class="er">@</span>Article{,</span>
 <span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="sc">&gt;</span>     title <span class="ot">=</span> {DEprot<span class="sc">:</span> a comprehensive R<span class="sc">-</span>package <span class="cf">for</span> the analyses of label<span class="sc">-</span>free quantitation mass<span class="sc">-</span>spectrometry data},</span>
 <span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="sc">&gt;</span>     author <span class="ot">=</span> {Nils Eickhoff and Andries M. Bergman and Wilbert Zwart and Sebastian Gregoricchio},</span>
-<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="sc">&gt;</span>     journal <span class="ot">=</span> {XYZ},</span>
-<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="sc">&gt;</span>     year <span class="ot">=</span> {<span class="dv">202</span>X},</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a><span class="sc">&gt;</span>     journal <span class="ot">=</span> {Zenodo},</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a><span class="sc">&gt;</span>     year <span class="ot">=</span> {<span class="dv">2025</span>},</span>
 <span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a><span class="sc">&gt;</span>     volume <span class="ot">=</span> {XX},</span>
 <span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a><span class="sc">&gt;</span>     issue <span class="ot">=</span> {XX},</span>
 <span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a><span class="sc">&gt;</span>     pages <span class="ot">=</span> {XX},</span>
-<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="sc">&gt;</span>     url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span>XYZ},</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a><span class="sc">&gt;</span>     url <span class="ot">=</span> {https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.5281</span><span class="sc">/</span>zenodo<span class="fl">.14823764</span>},</span>
 <span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a><span class="sc">&gt;</span>   }</span></code></pre></div>
 <p><br></p>
 </div>
@@ -418,27 +418,29 @@ Notice that another import information is whether the data are log
 transformed, and if yes, which is the log base. Recommended
 transformation is the <em>log<sub>2</sub>(score + 1)</em>.</p>
 <p>If data are pre-normalized and/or pre-imputed, it can be indicated
-with the corresponding parameters.<br> If this is not the case,
-leave the parameters as <code>NA</code> (not <code>NULL</code>!).</p>
+with the corresponding parameters <code>data.type</code> and any
+information about the method used that you woould like to store in the
+object can be added using the corresponding parameters
+<code>normalization.method</code> and
+<code>imputation.method</code>.<br></p>
 <p>Ultimately, if the metadata table does not contain a
 <code>column.id</code> column corresponding to the row names of the
 <code>counts_table</code>, it is possible to indicate the name of
 another column that should be assumed as to be the
 <code>column.id</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>dpo <span class="ot">&lt;-</span> <span class="fu">load.counts</span>(<span class="at">counts =</span> unimputed.counts,</span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                   <span class="at">metadata =</span> sample.config,</span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                   <span class="at">log.base =</span> <span class="dv">2</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>                   <span class="at">imputation =</span> <span class="cn">NA</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>                   <span class="at">normalization.method =</span> <span class="cn">NA</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>                   <span class="at">column.id =</span> <span class="st">"column.id"</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>dpo</span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="sc">&gt;</span> DEprot object<span class="sc">:</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="er">&gt;</span>            Samples<span class="sc">:</span>  <span class="dv">12</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="sc">&gt;</span>           Proteins<span class="sc">:</span>  <span class="dv">12944</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="sc">&gt;</span>   Counts available<span class="sc">:</span>  raw</span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="sc">&gt;</span> Log transformation<span class="sc">:</span>  log2</span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="sc">&gt;</span>   Metadata columns<span class="sc">:</span>  column.id, sample.id, cell, condition, combined.id, replicate</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>dpo <span class="ot">&lt;-</span> <span class="fu">load.counts2</span>(<span class="at">counts =</span> unimputed.counts,</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                    <span class="at">metadata =</span> sample.config,</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>                    <span class="at">data.type =</span> <span class="st">"raw"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>                    <span class="at">log.base =</span> <span class="dv">2</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>                    <span class="at">column.id =</span> <span class="st">"column.id"</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>dpo</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="sc">&gt;</span> DEprot object<span class="sc">:</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="er">&gt;</span>            Samples<span class="sc">:</span>  <span class="dv">12</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="sc">&gt;</span>           Proteins<span class="sc">:</span>  <span class="dv">12944</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="sc">&gt;</span>   Counts available<span class="sc">:</span>  raw</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="sc">&gt;</span> Log transformation<span class="sc">:</span>  log2</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="sc">&gt;</span>   Metadata columns<span class="sc">:</span>  column.id, sample.id, cell, condition, combined.id, replicate</span></code></pre></div>
 <p><br></p>
 This object is an S4-vector of class <code>DEprot</code>. The S4-vectors
 are containers of slots that can be accessed using the symbol
@@ -2212,7 +2214,7 @@ analyses</td>
 <div class="section level3">
 <h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h3>
-<p>With the package a detailed <a href="https://sebastian-gregoricchio.github.io/DEprot/DEprot_manual.pdf" class="external-link">PDF
+<p>With the package a detailed <a href="https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html" class="external-link">web
 manual</a> with details for each function and respective parameters is
 available.</p>
 <p>The R-package have been published on <a href="https://github.com/sebastian-gregoricchio/DEprot" class="external-link">GitHub</a> and a
@@ -2239,8 +2241,7 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <div class="section level3">
 <h3 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h3>
-<p>This package is under a <a href="https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE" class="external-link">GNU
-General Public License (version 3)</a>.</p>
+<p>This package is under a GNU General Public License (version 3).</p>
 </div>
 </div>
   </div>
