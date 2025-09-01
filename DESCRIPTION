@@ -7,7 +7,7 @@ Maintainer: Sebastian Gregoricchio <s.gregoricchio@nki.nl>
 Description:
   User-friendly wrapper for the analyses of LFQ-based proteomics. It includes several imputation methods,
   normalization of the data, differential analyses with 3 different methods and data visualization. 
-  It is possibile also to perform geneset enrichment analyses (including redudancy semplification),
+  It is possible also to perform geneset enrichment analyses (including geneset redundancy simplification),
   compare the different methods of imputation and compute the corresponding RMSE on custom datasets.
 License: GPL-3 + file LICENSE
 Depends:
@@ -77,9 +77,7 @@ Suggests:
   testthat (>= 3.0.0),
   tidyr
 biocViews:
-Remotes:
-  sebastian-gregoricchio/aPEAR,
-  fgcz/prolfqua
+Additional_repositories: https://sebastian-gregoricchio.github.io/drat/
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz

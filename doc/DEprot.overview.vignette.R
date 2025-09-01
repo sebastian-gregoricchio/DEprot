@@ -44,12 +44,11 @@ data("unimputed.counts", package = "DEprot")
 knitr::kable(data.frame(head(unimputed.counts[,1:6])), row.names = T, caption = "**Unimputed log2(LFQ) values**")
 
 ## ----make_dpo-----------------------------------------------------------------
-dpo <- load.counts(counts = unimputed.counts,
-                   metadata = sample.config,
-                   log.base = 2,
-                   imputation = NA,
-                   normalization.method = NA,
-                   column.id = "column.id")
+dpo <- load.counts2(counts = unimputed.counts,
+                    metadata = sample.config,
+                    data.type = "raw",
+                    log.base = 2,
+                    column.id = "column.id")
 
 dpo
 

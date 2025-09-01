@@ -153,18 +153,16 @@ knitr::kable(data.frame(head(unimputed.counts[,1:6])), row.names = T, caption = 
 Now we will combine the the counts and metadata to create a `DEprot` object (hereafter defined as *dpo*).<br></br>
 Notice that another import information is whether the data are log transformed, and if yes, which is the log base. Recommended transformation is the *log~2~(score + 1)*.
 
-If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameters.<br></br>
-If this is not the case, leave the parameters as `NA` (not `NULL`!).
+If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameters `data.type` and any information about the method used that you woould like to store in the object can be added using the corresponding parameters `normalization.method` and `imputation.method`.<br></br>
 
 Ultimately, if the metadata table does not contain a `column.id` column corresponding to the row names of the `counts_table`, it is possible to indicate the name of another column that should be assumed as to be the `column.id`.
 
 ```{r make_dpo}
-dpo <- load.counts(counts = unimputed.counts,
-                   metadata = sample.config,
-                   log.base = 2,
-                   imputation = NA,
-                   normalization.method = NA,
-                   column.id = "column.id")
+dpo <- load.counts2(counts = unimputed.counts,
+                    metadata = sample.config,
+                    data.type = "raw",
+                    log.base = 2,
+                    column.id = "column.id")
 
 dpo
 ```
@@ -1249,7 +1247,7 @@ The output is an object of class `DEprot.enrichResult`:
 -----------------
 # **Package information** {#info}
 ## Documentation
-With the package a detailed [PDF manual](https://sebastian-gregoricchio.github.io/DEprot/DEprot_manual.pdf) with details for each function and respective parameters is available.
+With the package a detailed [web manual](https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html) with details for each function and respective parameters is available.
 
 The R-package have been published on [GitHub](https://github.com/sebastian-gregoricchio/DEprot) and a [git-pages website](https://sebastian-gregoricchio.github.io/DEprot) is available as well. At both these sites it is possible to find the installation procedure, required dependencies, and the links for changeLog, manual and vignette.
 
@@ -1268,4 +1266,4 @@ For any suggestion, bug fixing, commentary please contact fill an [Issues](https
 
 
 ## License
-This package is under a [GNU General Public License (version 3)](https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE).
+This package is under a GNU General Public License (version 3).

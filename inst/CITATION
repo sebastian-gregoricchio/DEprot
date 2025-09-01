@@ -2,19 +2,20 @@ citHeader("To cite 'DEprot' in publications use:")
 
 citEntry(entry = "Article",
   title        = "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data",
-  author       = personList(as.person("Nils Eickhoff"),
-                            as.person("Andries M. Bergman"),
-                            as.person("Wilbert Zwart"),
-                            as.person("Sebastian Gregoricchio")),
-  journal      = "XYZ",
-  year         = "202X",
+  author       = c(person("Nils", "Eickhoff", role = "aut"),
+                   person("Andries M.", "Bergman", role = "aut"),
+                   person("Wilbert", "Zwart", role = "aut"),
+                   person("Sebastian", "Gregoricchio", email = "s.regoricchio@nki.nl", role = c("aut", "cre"),
+                          comment = c(ORCID = "0000-0001-9209-5403"))),
+  journal      = "Zenodo",
+  year         = "2025",
   volume       = "XX",
   issue        = "XX",
   pages        = "XX",
-  url          = "https://doi.org/XYZ",
+  url          = "https://doi.org/10.5281/zenodo.14823764",
 
   textVersion  = paste("N. Eickhoff, A.M. Bergman, W. Zwart, S.gregoricchio.",
                        "'DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data'.",
-                       "Journal Name, Volume X, Issue X (202X), Pages XX-YY.",
-                       "doi: 10.XY/XYZ/XYZ")
+                       "Zenodo, Volume X, Issue X (2025), Pages XX-YY.",
+                       "doi: 10.5281/zenodo.14823764")
 )

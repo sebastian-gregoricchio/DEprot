@@ -1,8 +1,8 @@
-![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot)
+![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot/)
 [![license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE)
 [![R-CMD-check](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml)
-[![Codecov](https://codecov.io/gh/sebastian-gregoricchio/DEprot/branch/main/graph/badge.svg)](https://codecov.io/gh/sebastian-gregoricchio/DEprot)
+[![Codecov](https://codecov.io/gh/sebastian-gregoricchio/DEprot/branch/main/graph/badge.svg)](https://app.codecov.io/gh/sebastian-gregoricchio/DEprot)
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14823763.svg)](https://doi.org/10.5281/zenodo.14823763)
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 <!-- ![update](https://badges.pufler.dev/updated/sebastian-gregoricchio/DEprot)
@@ -61,14 +61,25 @@ devtools::install_github("sebastian-gregoricchio/DEprot",
 ```
 
 ### Possibile installation issues
+#### External dependencies
 The package [`aPEAR`](https://github.com/kerseviciute/aPEAR) ([Kerseviciute & Gordevicius, Bioinformatics 2023](https://doi.org/10.1093/bioinformatics/btad672)) is required for the ORA/GSEA analyses. However, recently, it is has been removed from the CRAN, but it can be installed using:
 
 ```r
-devtools::install_github("kerseviciute/aPEAR",
+devtools::install_github("sebastian-gregoricchio/aPEAR",
                          build_manual = FALSE,
                          build_vignettes = FALSE)
 ```
 
+Another package possibly required, is [`prolfqua`](https://github.com/fgcz/prolfqua):
+```r
+devtools::install_github("fgcz/prolfqua",
+                         build_manual = FALSE,
+                         build_vignettes = FALSE)
+```
+
+<br>
+
+#### renv
 In order to avoid possible issues, we provide also an renv for the restoration of the packages required for `DEprot` to work:
 ```r
 ## Install renv from CRAN (if not already installed)
@@ -105,7 +116,7 @@ A list of all releases and respective description of changes applied could be fo
 For any suggestion, bug fixing, commentary please report it in the [issues](https://github.com/sebastian-gregoricchio/DEprot/issues)/[request](https://github.com/sebastian-gregoricchio/DEprot/pulls) tab of this repository.
 
 ## License
-This package is under a [GNU General Public License (version 3)](https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE).
+This package is under a GNU General Public License (version 3).
 
 <br />
 
