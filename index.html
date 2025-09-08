@@ -108,26 +108,19 @@
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <div class="section level3">
-<h3 id="offcial-cran-release">Offcial CRAN release<a class="anchor" aria-label="anchor" href="#offcial-cran-release"></a>
-</h3>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"DEprot"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
 <h3 id="developmental-versions">Developmental versions<a class="anchor" aria-label="anchor" href="#developmental-versions"></a>
 </h3>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co">## Install devtools from CRAN (if not already installed)</span></span>
-<span><span class="co"># install.packages("devtools")</span></span>
-<span></span>
-<span><span class="co">## Or the development version from GitHub:</span></span>
-<span><span class="co"># install.packages("devtools")</span></span>
-<span><span class="co"># devtools::install_github("r-lib/devtools")</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Install remotes from CRAN (if not already installed)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://remotes.r-lib.org" class="external-link">"remotes"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Install the DEprot package</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
-<span>                         build_manual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
+<span>                        build_manual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                        build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                        </span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="possibile-installation-issues">Possibile installation issues<a class="anchor" aria-label="anchor" href="#possibile-installation-issues"></a>
@@ -136,30 +129,34 @@
 <h4 id="external-dependencies">External dependencies<a class="anchor" aria-label="anchor" href="#external-dependencies"></a>
 </h4>
 <p>The package <a href="https://github.com/kerseviciute/aPEAR" class="external-link"><code>aPEAR</code></a> (<a href="https://doi.org/10.1093/bioinformatics/btad672" class="external-link">Kerseviciute &amp; Gordevicius, Bioinformatics 2023</a>) is required for the ORA/GSEA analyses. However, recently, it is has been removed from the CRAN, but it can be installed using:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/aPEAR"</span>,</span>
-<span>                         build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                         build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/aPEAR"</span>,</span>
+<span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Another package possibly required, is <a href="https://github.com/fgcz/prolfqua" class="external-link"><code>prolfqua</code></a>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"fgcz/prolfqua"</span>,</span>
-<span>                         build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                         build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"fgcz/prolfqua"</span>,</span>
+<span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level4">
 <h4 id="renv">renv<a class="anchor" aria-label="anchor" href="#renv"></a>
 </h4>
 <p>In order to avoid possible issues, we provide also an renv for the restoration of the packages required for <code>DEprot</code> to work:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install renv from CRAN (if not already installed)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"renv"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Restore the environment in the DEprot folder</span></span>
 <span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/restore.html" class="external-link">restore</a></span><span class="op">(</span>project <span class="op">=</span> <span class="st">"/path/to/DEprot"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Install DEprot</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"DEprot"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">## Install DEprot (if not already installed)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://sebastian-gregoricchio.github.io/DEprot/" class="external-link">"DEprot"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
+<span>                          build_manual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                          build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
 <p><br></p>
 </div>
 </div>
