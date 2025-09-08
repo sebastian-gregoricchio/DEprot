@@ -1,4 +1,4 @@
-![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot/)
+![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot?sort=semver)
 [![license](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://sebastian-gregoricchio.github.io/DEprot/LICENSE.md/LICENSE)
 [![R-CMD-check](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml)
@@ -39,25 +39,19 @@ If you use this package, please cite:
 
 
 ## Installation
-### Offcial CRAN release
-```r
-install.packages("DEprot")
-```
-
-
 ### Developmental versions
 ```r
-## Install devtools from CRAN (if not already installed)
-# install.packages("devtools")
-
-## Or the development version from GitHub:
-# install.packages("devtools")
-# devtools::install_github("r-lib/devtools")
+## Install remotes from CRAN (if not already installed)
+if (!require("remotes", quietly = TRUE)) {
+  install.packages("remotes")
+}
 
 # Install the DEprot package
-devtools::install_github("sebastian-gregoricchio/DEprot",
-                         build_manual = TRUE,
-                         build_vignettes = TRUE)
+remotes::install_github("sebastian-gregoricchio/DEprot",
+                        build_manual = TRUE,
+                        build_vignettes = TRUE)
+                        
+
 ```
 
 ### Possibile installation issues
@@ -65,16 +59,16 @@ devtools::install_github("sebastian-gregoricchio/DEprot",
 The package [`aPEAR`](https://github.com/kerseviciute/aPEAR) ([Kerseviciute & Gordevicius, Bioinformatics 2023](https://doi.org/10.1093/bioinformatics/btad672)) is required for the ORA/GSEA analyses. However, recently, it is has been removed from the CRAN, but it can be installed using:
 
 ```r
-devtools::install_github("sebastian-gregoricchio/aPEAR",
-                         build_manual = FALSE,
-                         build_vignettes = FALSE)
+remotes::install_github("sebastian-gregoricchio/aPEAR",
+                        build_manual = FALSE,
+                        build_vignettes = FALSE)
 ```
 
 Another package possibly required, is [`prolfqua`](https://github.com/fgcz/prolfqua):
 ```r
-devtools::install_github("fgcz/prolfqua",
-                         build_manual = FALSE,
-                         build_vignettes = FALSE)
+remotes::install_github("fgcz/prolfqua",
+                        build_manual = FALSE,
+                        build_vignettes = FALSE)
 ```
 
 <br>
@@ -88,8 +82,12 @@ install.packages("renv")
 ## Restore the environment in the DEprot folder
 renv::restore(project = "/path/to/DEprot")
 
-## Install DEprot
-install.packages("DEprot")
+## Install DEprot (if not already installed)
+if (!require("DEprot", quietly = TRUE)) {
+  remotes::install_github("sebastian-gregoricchio/DEprot",
+                          build_manual = TRUE,
+                          build_vignettes = TRUE)
+}
 ```
 
 
