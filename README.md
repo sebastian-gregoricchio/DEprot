@@ -74,13 +74,16 @@ remotes::install_github("fgcz/prolfqua",
 <br>
 
 #### renv
-In order to avoid possible issues, we provide also an renv for the restoration of the packages required for `DEprot` to work:
+In order to avoid possible issues, we provide also an renv for the restoration of the packages required for `DEprot` to work.<br>
+We uploaded multiple operative systems and R version builds on the [Zenodo](https://doi.org/10.5281/zenodo.14823763) repository.<br>
+Unzip the build of interest and install the `renv` package.
+
 ```r
 ## Install renv from CRAN (if not already installed)
 install.packages("renv")
 
 ## Restore the environment in the DEprot folder
-renv::restore(project = "/path/to/DEprot")
+renv::restore(project = "/path/to/DEprot_renv_folder")
 
 ## Install DEprot (if not already installed)
 if (!require("DEprot", quietly = TRUE)) {
