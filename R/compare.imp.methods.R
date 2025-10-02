@@ -136,6 +136,11 @@ compare.imp.methods =
       cnt = DEprot.object@raw.counts
     }
 
+    ### Check that the counts contain at least 1 NA
+    if (anyNA.data.frame(cnt) == FALSE) {
+      stop(paste0("No NAs are present in the data. Imputation methods cannot be tested."))
+    }
+
 
 
     ### Check sample.group.column

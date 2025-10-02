@@ -263,6 +263,11 @@ geneset.enrichment =
     ### gsub the protein.id if necessary
     if (!is.null(gsub.pattern.prot.id)) {
       data$prot.id = gsub(gsub.pattern.prot.id, "", data$prot.id)
+
+      ### Check that no empty names ("") are present
+      if ("" %in% data$prot.id) {
+        warning("Upon pattern.prot.id removal some proteins have empty names ''. The latter will be removed.")
+      }
     }
 
 
@@ -299,9 +304,12 @@ geneset.enrichment =
       gene_list = gene_list_df$mean.score
       names(gene_list) = gene_list_df$gene
 
+      # Remove genes with empty names ('')
+      gene_list = gene_list[names(gene_list) != ""]
 
 
-      #### perform enrichments
+
+      #### perform enrichment
       enrichment.discovery = tryCatch(clusterProfiler::GSEA(geneList = gene_list,
                                                             pvalueCutoff = pvalueCutoff,
                                                             pAdjustMethod = pAdjustMethod,
