@@ -13,7 +13,7 @@ License: GPL-3 + file LICENSE
 Depends:
 	R (>= 4.0.3)
 Imports:
-	aPEAR,
+	aPEAR (>= 1.0.0),
 	apcluster,
 	clusterProfiler,
 	colorspace,
