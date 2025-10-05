@@ -176,7 +176,7 @@ load.counts2 =
                   no = paste0(ifelse(log.base == exp(1),
                                      yes = "ln", no = paste0("log<sub>",log.base,"</sub>")),
                               "(Intensity)"))) +
-      ggtitle(ifelse(is.null(normalization.method),
+      ggtitle(ifelse(is.na(normalization.method),
                      yes = "**Unnormalized**",
                      no = paste0("**Normalized**<br>(",normalization.method,")"))) +
       xlab("Sample") +
@@ -211,8 +211,8 @@ load.counts2 =
       raw.counts = cnt
       #norm.counts = NULL
       #imputed.counts = NULL
-      #imputed = F
-      #normalized = F
+      #imputed = FALSE
+      #normalized = FALSE
       #normalization.method = "none"
       #imputation.method = "none"
 
@@ -222,7 +222,7 @@ load.counts2 =
       #boxplot.imputed = NA
       #raw.counts = NULL
       #imputed.counts = NULL
-      #imputed = F
+      #imputed = FALSE
       norm.counts = cnt
       normalized = TRUE
       #imputation.method = "none"
