@@ -753,7 +753,7 @@ impute.counts =
                   no = paste0(ifelse(DEprot.object@log.base == exp(1),
                                      yes = "ln", no = paste0("log~",DEprot.object@log.base,"~")),
                               "(Intensity)"))) +
-      ggtitle(label = "**Imputed data**", subtitle = "*missForest*") +
+      ggtitle(label = "**Imputed data**", subtitle = paste0("*",imputation$method, "*")) +
       xlab("Sample") +
       theme_classic() +
       theme(axis.text.y = element_text(color = "black"),
