@@ -17,7 +17,7 @@ Imports:
 	apcluster,
 	clusterProfiler,
 	colorspace,
-	ComplexUpset (>= 1.3.6),
+	ComplexUpset,
 	curl,
 	data.table,
 	doParallel,
@@ -79,8 +79,7 @@ Suggests:
 biocViews:
 Remotes:
   sebastian-gregoricchio/aPEAR,
-  fgcz/prolfqua,
-  krassowski/complex-upset
+  fgcz/prolfqua
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
