@@ -71,6 +71,13 @@ remotes::install_github("fgcz/prolfqua",
                         build_vignettes = FALSE)
 ```
 
+Another package that might not be updated to the last version (>= 1.3.6) is [`ComplexUpset`](https://CRAN.R-project.org/package=ComplexUpset):
+```r
+remotes::install_github("krassowski/complex-upset",
+                        build_manual = FALSE,
+                        build_vignettes = FALSE)
+```
+
 <br>
 
 #### renv
