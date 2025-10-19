@@ -265,12 +265,13 @@ expression.boxplot =
       ggtitle(paste0("**",protein.id,"**")) +
       xlab(NULL) +
       ylab(ifelse(test = scale.expression == TRUE,
-                  yes = paste0("centered log~",DEprot.object@log.base,"~(expression)"),
-                  no = paste0("log~",DEprot.object@log.base,"~(expression)"))) +
+                  yes = paste0("centered log<sub>",DEprot.object@log.base,"</sub>(expression)"),
+                  no = paste0("log<sub>",DEprot.object@log.base,"</sub>(expression)"))) +
       ggpubr::stat_compare_means(method = ifelse(test = length(unique(exp.tb$group)) == 2, yes = "wilcox", no = "kruskal"), show.legend = FALSE) +
       guides(color = "none", fill = "none") +
       theme_classic() +
-      theme(axis.title = ggtext::element_markdown(color = "black"),
+      theme(axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             axis.text.x = element_text(color = "black", angle = x.label.angle, hjust = ifelse(x.label.angle %in% c(0), yes = 0.5, no = 1)),
             axis.text.y = element_text(color = "black"),

@@ -349,14 +349,16 @@ diff.analyses.limma =
                            drop = FALSE) +
         geom_hline(yintercept = -log10(padj.th), linetype = 2, color = "gray40") +
         geom_vline(xintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
-        ylab("-log~10~(*P~adj~*)") +
-        #xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
-        xlab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
+        ylab("-log<sub>10</sub>(*P<sub>adj</sub>*)") +
+        #xlab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1, "/", contrasts.info[[i]]$var.2,"</sub>)")) +
+        xlab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
         guides(color = guide_legend(override.aes = list(size = 3))) +
         theme_classic() +
-        theme(axis.text = ggtext::element_markdown(color = "black"),
-              axis.title = ggtext::element_markdown(color = "black"),
+        theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
+              axis.text.y.left = ggtext::element_markdown(color = "black"),
+              axis.title.x = ggtext::element_markdown(color = "black"),
+              axis.title.y = ggtext::element_markdown(color = "black"),
               axis.ticks = element_line(color = "black"),
               plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
               aspect.ratio = 1)
@@ -415,8 +417,8 @@ diff.analyses.limma =
         geom_hline(yintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
         geom_hline(yintercept = 0, linetype = 1, color = "steelblue") +
         theme_classic() +
-        xlab("log~2~(Base Mean)") +
-        ylab(paste0("log~2~(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
+        xlab("log<sub>2</sub>(Base Mean)") +
+        ylab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
         scale_x_continuous(expand = c(0,0)) +
         annotate(geom = "text",
@@ -431,7 +433,8 @@ diff.analyses.limma =
                  label = paste0("n = ",n.diff[n.diff$diff.status == contrasts.info[[i]]$var.1,"n"])) +
         theme(axis.ticks = element_line(color = "black"),
               axis.text = element_text(color = "black"),
-              axis.title = ggtext::element_markdown(color = "black"),
+              axis.title.x = ggtext::element_markdown(color = "black"),
+              axis.title.y = ggtext::element_markdown(color = "black"),
               plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
               aspect.ratio = 0.6)
 

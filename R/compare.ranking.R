@@ -118,7 +118,7 @@ compare.ranking =
       geom_hline(yintercept = zero_cor, color = "gray", linetype = 2) +
       scale_color_manual(values = c("up" = color.up, "down" = color.down)) +
       ylab("Rank on Spearman's correlation") +
-      xlab("Rank on log~2~(Fold Change)") +
+      xlab("Rank on log<sub>2</sub>(Fold Change)") +
       ggtitle(label = paste0(contrasts.info$metadata.column,": **",contrasts.info$var.1,"** *vs* **", contrasts.info$var.2,"**"),
               subtitle = "Ranks correlation") +
       geom_smooth(method = "glm", formula = y~x, color = regression.line.color, fill = regression.line.color) +
@@ -129,7 +129,8 @@ compare.ranking =
       theme_classic() +
       theme(aspect.ratio = 1,
             axis.text = element_text(color = "black"),
-            axis.title = ggtext::element_markdown(color = "black"),
+            axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(color = "black", hjust = 0.5),
             axis.ticks = element_line(color = "black"),
@@ -151,7 +152,7 @@ compare.ranking =
       geom_hline(yintercept = 0, color = "gray", linetype = 2) +
       scale_color_manual(values = c("up" = color.up, "down" = color.down)) +
       ylab("Spearman's correlation coefficient (\u03c1)") +
-      xlab("log~2~(Fold Change)") +
+      xlab("log<sub>2</sub>(Fold Change)") +
       ggtitle(label = paste0(contrasts.info$metadata.column,": **",contrasts.info$var.1,"** *vs* **", contrasts.info$var.2,"**"),
               subtitle = "Scores correlation") +
       geom_smooth(method = "glm", formula = y~x, color = regression.line.color, fill = regression.line.color) +
@@ -161,7 +162,8 @@ compare.ranking =
       scale_y_continuous(limits = c(-1,1)) +
       theme(aspect.ratio = 1,
             axis.text = element_text(color = "black"),
-            axis.title = ggtext::element_markdown(color = "black"),
+            axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(color = "black", hjust = 0.5),
             axis.ticks = element_line(color = "black"),

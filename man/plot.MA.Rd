@@ -61,7 +61,7 @@ Plots a MA plot log2(basemean) x log2(FoldChange) of differential expression res
 }
 \examples{
 plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1) +
-  ggplot2::ylab("log~2~(Fold Change FBS/6h.DMSO)")
+  ggplot2::ylab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 
 
 }

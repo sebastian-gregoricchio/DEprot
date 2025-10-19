@@ -34,7 +34,7 @@
 #'
 #' @examples
 #' plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1) +
-#'   ggplot2::ylab("log~2~(Fold Change FBS/6h.DMSO)")
+#'   ggplot2::ylab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 #'
 #'
 #' @export plot.MA
@@ -167,8 +167,8 @@ plot.MA =
       geom_hline(yintercept = c(-1,1)*log2(DEprot.analyses.object@differential.analyses.params$linear.FC.th), linetype = 2, color = "gray40") +
       geom_hline(yintercept = 0, linetype = 1, color = "steelblue") +
       theme_classic() +
-      xlab("log~2~(Base Mean)") +
-      ylab(paste0("log~2~(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
+      xlab("log<sub>2</sub>(Base Mean)") +
+      ylab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
       ggtitle(ifelse(is.null(title), yes = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"), no = title)) +
       scale_x_continuous(expand = c(0,0)) +
       annotate(geom = "text",
@@ -183,7 +183,8 @@ plot.MA =
                label = paste0("n = ",n.diff[n.diff$diff.status == contrasts.info$var.1,"n"])) +
       theme(axis.ticks = element_line(color = "black"),
             axis.text = element_text(color = "black"),
-            axis.title = ggtext::element_markdown(color = "black"),
+            axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             aspect.ratio = 0.6)
 

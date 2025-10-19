@@ -388,6 +388,14 @@ contrast.scatter <-
 
 contrast.scatter
 
+## ----contrast_LFQ, fig.width=5, fig.height=5----------------------------------
+contrast_LFQ <-
+  contrast.LFQ(DEprot.analyses.object = dpo_analyses,
+               contrast = 2,
+               dot.labels = "protein.3081")
+
+contrast_LFQ
+
 ## ----heatmap_counts, fig.width=13, fig.height=4.5-----------------------------
 ## Plotting from a DEprot object
 imputed_counts_heatmap <- 

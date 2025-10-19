@@ -60,6 +60,7 @@ require(legendry)
 
 ![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot)
 ![license](https://img.shields.io/badge/License-GPLv3-blue.png)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14823763.svg)](https://doi.org/10.5281/zenodo.14823763)
 
 [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
 
@@ -811,6 +812,22 @@ contrast.scatter <-
                    symmetric.axes = TRUE)
 
 contrast.scatter
+```
+
+
+<br>
+
+
+#### Scatter between average-LFQ values for one contrast
+Using the function `contrast.LFQ` it is possible to plot a scatter of the average LFQ values for the two conditions involved in a specific contrast. dots will be colored by log~2~(Fold Change), while the size corresponds to the P-value adjusted (or FRD is `prolfqua` is used).
+
+```{r contrast_LFQ, fig.width=5, fig.height=5}
+contrast_LFQ <-
+  contrast.LFQ(DEprot.analyses.object = dpo_analyses,
+               contrast = 2,
+               dot.labels = "protein.3081")
+
+contrast_LFQ
 ```
 
 

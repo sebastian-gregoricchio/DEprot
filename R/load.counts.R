@@ -193,7 +193,8 @@ load.counts =
       theme_classic() +
       theme(axis.text.y = element_text(color = "black"),
             axis.text.x = element_text(color = "black", hjust = 1, angle = 30),
-            axis.title = ggtext::element_markdown(color = "black"),
+            axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             axis.ticks.y = element_line(color = "black"),
             axis.ticks.x = element_blank(),
             plot.title = ggtext::element_markdown(hjust = 0.5),

@@ -178,7 +178,8 @@ plot.upset =
                                                           width = 0.75) +
                                         scale_y_continuous(expand = c(0,0)) +
                                         ggtitle(label = title, subtitle = subtitle) +
-                                        theme(axis.text = ggtext::element_markdown(color = "black"),
+                                        theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
+                                              axis.text.y.left = ggtext::element_markdown(color = "black"),
                                               panel.grid.major.x = element_blank(),
                                               axis.line.y = element_line(colour = "black"),
                                               axis.ticks.y = element_line(colour = "black"),
@@ -189,9 +190,11 @@ plot.upset =
                 scale_y_reverse(expand = c(0,0)) +
                 theme(axis.line.x = element_line(colour = "black"),
                       axis.ticks.x = element_line(colour = "black")),
-              themes = upset_modify_themes(list("intersections_matrix" = theme(axis.text = ggtext::element_markdown(color = "black"),
+              themes = upset_modify_themes(list("intersections_matrix" = theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
+                                                                               axis.text.y.left = ggtext::element_markdown(color = "black"),
                                                                                panel.grid.major.x = element_blank()),
-                                                "overall_sizes" = theme(axis.text = ggtext::element_markdown(color = "black")))),
+                                                "overall_sizes" = theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
+                                                                        axis.text.y.left = ggtext::element_markdown(color = "black")))),
               sort_intersections_by = sort.intersections,
               sort_sets = sort.sets,
               height_ratio = height.ratio,

@@ -488,7 +488,8 @@ impute.counts =
           ggpubr::theme_pubr() +
           theme(plot.title = ggtext::element_markdown(hjust = 0.5),
                 plot.subtitle = ggtext::element_markdown(hjust = 0.5),
-                axis.title = ggtext::element_markdown(hjust = 0.5))
+                axis.title.x = ggtext::element_markdown(hjust = 0.5),
+                axis.title.y = ggtext::element_markdown(hjust = 0.5))
 
         return(list(cross.validation.results = cv_res,
                     Q2.PCs = Q2_PCs,
@@ -751,14 +752,15 @@ impute.counts =
       ylab(ifelse(is.null(DEprot.object@log.base),
                   yes = "Intensity",
                   no = paste0(ifelse(DEprot.object@log.base == exp(1),
-                                     yes = "ln", no = paste0("log~",DEprot.object@log.base,"~")),
+                                     yes = "ln", no = paste0("log<sub>",DEprot.object@log.base,"</sub>")),
                               "(Intensity)"))) +
       ggtitle(label = "**Imputed data**", subtitle = paste0("*",imputation$method, "*")) +
       xlab("Sample") +
       theme_classic() +
       theme(axis.text.y = element_text(color = "black"),
             axis.text.x = element_text(color = "black", hjust = 1, angle = 30),
-            axis.title = ggtext::element_markdown(color = "black"),
+            axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             axis.ticks.y = element_line(color = "black"),
             axis.ticks.x = element_blank(),
             plot.title = ggtext::element_markdown(hjust = 0.5),

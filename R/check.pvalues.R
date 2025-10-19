@@ -86,7 +86,8 @@ check.pvalues =
               subtitle = "*P*-value distribution") +
       theme_classic() +
       theme(axis.text = element_text(color = "black"),
-            axis.title = ggtext::element_markdown(),
+            axis.title.x = ggtext::element_markdown(),
+            axis.title.y = ggtext::element_markdown(),
             plot.title = ggtext::element_markdown(hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(hjust = 0.5))
 
@@ -105,14 +106,15 @@ check.pvalues =
       geom_vline(xintercept = padj_th, linetype = 3, color = "black") +
       scale_x_continuous(expand = c(0.01,0)) +
       scale_y_continuous(expand = c(0,0)) +
-      xlab("*P*~adjusted~") +
+      xlab("*P*<sub>adjusted</sub>") +
       ylab("Count") +
       ggtitle(label = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"),
-              subtitle = paste0("*P*~adjusted~ distribution<br>(adjust method: ",
+              subtitle = paste0("*P*<sub>adjusted</sub> distribution<br>(adjust method: ",
                                 DEprot.analyses.object@differential.analyses.params$padj.method,")")) +
       theme_classic() +
       theme(axis.text = element_text(color = "black"),
-            axis.title = ggtext::element_markdown(),
+            axis.title.x = ggtext::element_markdown(),
+            axis.title.y = ggtext::element_markdown(),
             plot.title = ggtext::element_markdown(hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(hjust = 0.5))
 
@@ -140,7 +142,8 @@ check.pvalues =
       xlab("Rank") +
       theme_classic() +
       theme(axis.text = element_text(color = "black"),
-            axis.title = ggtext::element_markdown(),
+            axis.title.x = ggtext::element_markdown(),
+            axis.title.y = ggtext::element_markdown(),
             plot.title = ggtext::element_markdown(hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(hjust = 0.5))
 

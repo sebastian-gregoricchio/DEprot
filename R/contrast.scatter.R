@@ -114,10 +114,11 @@ contrast.scatter =
                        cor.coef.name = dplyr::case_when(tolower(correlation.method) == "pearson" ~ "R",
                                                         tolower(correlation.method) == "spearman" ~ "rho",
                                                         tolower(correlation.method) == "kendall" ~ "tau")) +
-      xlab(paste0("log~2~(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.1,"</sup>&frasl;<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.2,"</sub></sub>)")) +
-      ylab(paste0("log~2~(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.1,"</sup>&frasl;<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.2,"</sub></sub>)")) +
+      xlab(paste0("log<sub>2</sub>(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.1,"</sup>&frasl;<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.2,"</sub></sub>)")) +
+      ylab(paste0("log<sub>2</sub>(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.1,"</sup>&frasl;<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.2,"</sub></sub>)")) +
       theme_classic() +
-      theme(axis.title = ggtext::element_markdown(color = "black"),
+      theme(axis.title.x = ggtext::element_markdown(color = "black"),
+            axis.title.y = ggtext::element_markdown(color = "black"),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             axis.text = element_text(color = "black"),
             axis.ticks = element_line(color = "black"),

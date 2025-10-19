@@ -81,9 +81,6 @@
 #                     ora.results = test.ora.results)
 #
 #
-
-
-
 # ################################################################################
 # # Generate data files
 # usethis::use_data(unimputed.counts,
@@ -95,4 +92,5 @@
 #                   #dpo.imputed,
 #                   #dpo.DE.results,
 #                   test.toolbox
+#                   compress = "xz",
 #                   overwrite = TRUE)

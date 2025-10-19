@@ -127,3 +127,27 @@ test_that("protein.summary works (counts)", {
   expect_no_error(protein.summary(DEprot.object = DEprot::test.toolbox$dpo.imp, group.column = "combined.id", n.labels = "counts"))
 })
 
+
+
+
+
+test_that("contrast.LFQ works (text label)", {
+  expect_no_error(contrast.LFQ(DEprot::test.toolbox$diff.exp.limma, dot.labels = "protein.17", label.font.size = 3, labels.in.boxes = TRUE, show.only.differential = TRUE, show.only.significant = TRUE, log2FC.scale.min = -1.1, log2FC.scale.max = 1.1))
+})
+
+test_that("contrast.LFQ works (box label)", {
+  expect_no_error(contrast.LFQ(DEprot::test.toolbox$diff.exp.limma, dot.labels = "protein.17", label.font.size = 3, labels.in.boxes = FALSE, show.only.differential = TRUE, show.only.significant = TRUE, log2FC.scale.min = -1.1, log2FC.scale.max = 1.1))
+})
+
+test_that("contrast.LFQ does not work when wrong contrast provided", {
+  expect_error(contrast.LFQ(DEprot::test.toolbox$diff.exp.limma, contrast = 100))
+})
+
+test_that("contrast.LFQ does not work when the object is not of class DEprot.analyses", {
+  expect_error(contrast.LFQ(DEprot::test.toolbox$dpo.raw))
+})
+
+
+
+
+
