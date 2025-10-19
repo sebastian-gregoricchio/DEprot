@@ -164,7 +164,7 @@ to be LFQ (label-free quantitation) values.</p>
 </h3>
 <p>Data can be loaded as raw values, pre-normalized unimputed LFQ values
 or, imputed LFQ values. Further, if multiple batches are available, it
-is possible to perform batch corrections by combining LFQ uimputed
+is possible to perform batch corrections by combining LFQ unimputed
 tables and load this data as “raw” in order to perform a batch
 harmonization.</p>
 <p>Using normalized and imputed data, <code>DEprot</code> will help you
@@ -419,7 +419,7 @@ transformed, and if yes, which is the log base. Recommended
 transformation is the <em>log<sub>2</sub>(score + 1)</em>.</p>
 <p>If data are pre-normalized and/or pre-imputed, it can be indicated
 with the corresponding parameters <code>data.type</code> and any
-information about the method used that you woould like to store in the
+information about the method used that you would like to store in the
 object can be added using the corresponding parameters
 <code>normalization.method</code> and
 <code>imputation.method</code>.<br></p>
@@ -677,9 +677,9 @@ and DDA (Data-Dependent Acquisition).</p>
 <blockquote>
 <p><code>HarmonizR</code> is not a required dependency, therefore if
 this function is used and <code>HarmonizR</code> is not already
-installed, a warning will indicate the requred installation. The package
-can be installed by: <code>BiocManager::install("HarmonizR")</code>, or
-alternatively
+installed, a warning will indicate the required installation. The
+package can be installed by:
+<code>BiocManager::install("HarmonizR")</code>, or alternatively
 <code>devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")</code>.</p>
 </blockquote>
 <p>To use the <code>harmonize.batches</code> is sufficient to provide a
@@ -1857,9 +1857,9 @@ stacked bar plot will be generated per each sample. The input object
 must belong to either <code>DEprot</code> or
 <code>DEprot.analyses</code> classes.</p>
 <blockquote>
-<p><strong>NOTE</strong>: this plot is meaningfult only on raw and/or
+<p><strong>NOTE</strong>: this plot is meaningful only on raw and/or
 unimputed normalized data. Indeed, estimation of missing values is not
-possibile on the imputed tables.</p>
+possible on the imputed tables.</p>
 </blockquote>
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts</span> <span class="op">&lt;-</span></span>
@@ -1942,7 +1942,7 @@ boxplots, PCAs, correlations, differential tables, differential protein
 counts, violin and MA-plot will be recomputed.</p>
 <blockquote>
 <p><strong>NOTE</strong>: we discourage the filtering before
-normalization/bacth correction and imputation, as well as before
+normalization/batch correction and imputation, as well as before
 limma-base differential analyses. In all these methods are based on the
 assumption that the proteins ‘available’ are ‘all’ the proteins
 available, which is not the case.</p>
@@ -1955,10 +1955,10 @@ available, which is not the case.</p>
 removing cytoplasmic proteins.</p>
 <blockquote>
 <p>Notice that this is only an example and, since the protein IDs are
-randomized, it would not applicable for the example dataset availble
+randomized, it would not applicable for the example dataset available
 with <code>DEprot</code>. Furthermore <code>DEprot</code> does not
 include the packages <code>AnnotationDbi</code> and
-<code>org.Hs.eg.db</code>, which can be installed throug the
+<code>org.Hs.eg.db</code>, which can be installed through the
 <code>Bioconductor</code> portal.</p>
 </blockquote>
 <p><br></p>
