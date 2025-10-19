@@ -98,7 +98,7 @@ citation("DEprot")
 <br>
 
 ## General workflow
-Data can be loaded as raw values, pre-normalized unimputed LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ uimputed tables and load this data as "raw" in order to perform a batch harmonization.
+Data can be loaded as raw values, pre-normalized unimputed LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ unimputed tables and load this data as "raw" in order to perform a batch harmonization.
 
 Using normalized and imputed data, `DEprot` will help you in the differential analyses as well in performing quality controls on your data (sample correlation, principal components analyses (PCA)).
 
@@ -154,7 +154,7 @@ knitr::kable(data.frame(head(unimputed.counts[,1:6])), row.names = T, caption = 
 Now we will combine the the counts and metadata to create a `DEprot` object (hereafter defined as *dpo*).<br></br>
 Notice that another import information is whether the data are log transformed, and if yes, which is the log base. Recommended transformation is the *log~2~(score + 1)*.
 
-If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameters `data.type` and any information about the method used that you woould like to store in the object can be added using the corresponding parameters `normalization.method` and `imputation.method`.<br></br>
+If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameters `data.type` and any information about the method used that you would like to store in the object can be added using the corresponding parameters `normalization.method` and `imputation.method`.<br></br>
 
 Ultimately, if the metadata table does not contain a `column.id` column corresponding to the row names of the `counts_table`, it is possible to indicate the name of another column that should be assumed as to be the `column.id`.
 
@@ -257,7 +257,7 @@ patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
 ## Batch effect correction
 Proteomics is highly susceptible to batch effects. Hereafter we use the package [`HarmonizR`](https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html) package, developed by [H.Voß & S.Schlumbohm (*Nat.Commun.*, 2022)](https://doi.org/10.1038/s41467-022-31007-x). This tool besides handling multiple experiments, allows for the batch correction of data derived by the combination of both DIA (Data-Independent Acquisition) and DDA (Data-Dependent Acquisition).
 
-> `HarmonizR` is not a required dependency, therefore if this function is used and `HarmonizR` is not already installed, a warning will indicate the requred installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
+> `HarmonizR` is not a required dependency, therefore if this function is used and `HarmonizR` is not already installed, a warning will indicate the required installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
 
 
 To use the `harmonize.batches` is sufficient to provide a `DEprot` object containing a combined table of multiple experiments and indicate the identifier of a column in the metadata table which corresponds to the batch annotation. The result is a DEprot object with the same structure described in the previous paragraph. <br>
@@ -1023,7 +1023,7 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 ## Count detected proteins
 In order to know how many proteins have been detected in each sample, it is possible to use the function `protein.summary`. A stacked bar plot will be generated per each sample. The input object must belong to either `DEprot` or `DEprot.analyses` classes.
 
-> **NOTE**: this plot is meaningfult only on raw and/or unimputed normalized data. Indeed, estimation of missing values is not possibile on the imputed tables.
+> **NOTE**: this plot is meaningful only on raw and/or unimputed normalized data. Indeed, estimation of missing values is not possibile on the imputed tables.
 
 ```{r protein_summary, fig.height=3, fig.width=10}
 protein.counts <-
@@ -1094,7 +1094,7 @@ With the function `filter.proteins` is possible to indicate a vector containing 
 
 This function works for both `DEprot` and `DEprot.analyses` classes. The output will look exactly as the original, however counts tables (raw, normalized, imputed), count boxplots, PCAs, correlations, differential tables, differential protein counts, violin and MA-plot will be recomputed.
 
-> **NOTE**: we discourage the filtering before normalization/bacth correction and imputation, as well as before limma-base differential analyses. In all these methods are based on the assumption that the proteins 'available' are 'all' the proteins available, which is not the case.
+> **NOTE**: we discourage the filtering before normalization/batch correction and imputation, as well as before limma-base differential analyses. In all these methods are based on the assumption that the proteins 'available' are 'all' the proteins available, which is not the case.
 
 <br>
 
@@ -1102,7 +1102,7 @@ This function works for both `DEprot` and `DEprot.analyses` classes. The output 
 ### Filtering examples
 Hereafter are shown two examples for keeping nuclear proteins or removing cytoplasmic proteins.
 
->Notice that this is only an example and, since the protein IDs are randomized, it would not applicable for the example dataset availble with `DEprot`. Furthermore `DEprot` does not include the packages `AnnotationDbi` and `org.Hs.eg.db`, which can be installed throug the `Bioconductor` portal.
+>Notice that this is only an example and, since the protein IDs are randomized, it would not applicable for the example dataset available with `DEprot`. Furthermore `DEprot` does not include the packages `AnnotationDbi` and `org.Hs.eg.db`, which can be installed through the `Bioconductor` portal.
 
 <br>
 

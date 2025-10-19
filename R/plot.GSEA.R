@@ -18,7 +18,7 @@
 #' @param condition.label.negative String indicating the label to use for the condition showing a negative ranking score (right side of the plot). Ignored if \code{add.condition.labels = FALSE}. Default: \code{NULL}, none or automatic.
 #' @param rank.max.color String indicating any R-supported color to be used for the max rank dotted lines and annotation. Default: \code{'indianred'}.
 #' @param ranking.color String indicating any R-supported color to be used for the ranked list plot (histogram). Default: \code{'gray'}.
-#' @param gradient.colors Two-values string vector indicating the shadows of palettes to use for the genset gradient. Possible values: 'Blues', 'Greens', 'Greys', 'Oranges', 'Purples', 'Reds'. Default: \code{c('Reds', 'Blues')}.
+#' @param gradient.colors Two-values string vector indicating the shadows of palettes to use for the geneset gradient. Possible values: 'Blues', 'Greens', 'Greys', 'Oranges', 'Purples', 'Reds'. Default: \code{c('Reds', 'Blues')}.
 #' @param title.position String indicating the position of the title: 'left', 'center', 'right'. Default: \code{'center'}.
 #' @param title String indicating the title to use. Default: \code{NA}, this will automatically use the geneset name chosen. Use \code{NULL} to do not plot the title.
 #' @param image.file.name String indicating the full path for the export of a pdf file of the combined plot. Default: \code{NULL}, no plot will be exported.
@@ -137,19 +137,19 @@ plot.GSEA =
       if (geneset.id <= nrow(results) & geneset.id > 0) {gene.set = results$ID[geneset.id]
       } else {
         print(data.frame(gene.set.ID = results$ID))
-        stop("The genset.id must be a string or a numeric value among the ones above.")
+        stop("The geneset.id must be a string or a numeric value among the ones above.")
         #return(invisible())
       }
     } else if (is.character(geneset.id)) {
       if (geneset.id %in% results$ID) {gene.set = geneset.id
       } else {
         print(data.frame(gene.set.ID = results$ID))
-        stop("The genset.id must be a string or a numeric value among the ones above.")
+        stop("The geneset.id must be a string or a numeric value among the ones above.")
         #return(invisible())
       }
     } else {
       print(data.frame(gene.set.ID = results$ID))
-      stop("The genset.id must be a string or a numeric value among the ones above.")
+      stop("The geneset.id must be a string or a numeric value among the ones above.")
       return(invisible())
     }
 

@@ -48,6 +48,6 @@ DEprot.analyses class
 
 \item{\code{contrasts}}{List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.}
 
-\item{\code{differential.analyses.params}}{List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustement method, etc.). Class: \code{"ANY"}.}
+\item{\code{differential.analyses.params}}{List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustment method, etc.). Class: \code{"ANY"}.}
 }}
 

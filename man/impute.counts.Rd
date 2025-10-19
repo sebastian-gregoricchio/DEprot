@@ -66,7 +66,7 @@ dpo <- impute.counts(DEprot.object = DEprot::test.toolbox$dpo.norm,
 
 }
 \seealso{
-\href{https://www.rdocumentation.org/packages/missForest/}{missForest}, \href{https://cran.r-project.org/web/packages/VIM/index.html}{VIM}, \href{https://www.bioconductor.org/packages/release/bioc/html/pcaMethods.html}{pcaMethods} R-packages, \href{https://github.com/sebastian-gregoricchio/DreamAI/}{DreamAI}, \href{https://github.com/BioGenies/imputomics}{imputomics}.
+\href{https://CRAN.R-project.org/package=missForest}{missForest}, \href{https://CRAN.R-project.org/package=VIM}{VIM}, \href{https://CRAN.R-project.org/package=pcaMethods}{pcaMethods} R-packages, \href{https://github.com/WangLab-MSSM/DreamAI}{DreamAI}, \href{https://github.com/BioGenies/imputomics}{imputomics}.
 }
 \author{
 Sebastian Gregoricchio

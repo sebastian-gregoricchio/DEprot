@@ -7,7 +7,7 @@
 \format{
 A data frame with 20475 rows and 4 columns:
 \describe{
-  \item{\code{complex.id}}{Numeric value idnciating the complex ID}
+  \item{\code{complex.id}}{Numeric value indicating the complex ID}
   \item{\code{complex.name}}{Extended name of the complex}
   \item{\code{organism}}{Specie to which the complex belong}
   \item{\code{protein.members}}{List of the proteins}

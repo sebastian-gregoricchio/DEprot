@@ -63,7 +63,7 @@
 
 \item{ranking.color}{String indicating any R-supported color to be used for the ranked list plot (histogram). Default: \code{'gray'}.}
 
-\item{gradient.colors}{Two-values string vector indicating the shadows of palettes to use for the genset gradient. Possible values: 'Blues', 'Greens', 'Greys', 'Oranges', 'Purples', 'Reds'. Default: \code{c('Reds', 'Blues')}.}
+\item{gradient.colors}{Two-values string vector indicating the shadows of palettes to use for the geneset gradient. Possible values: 'Blues', 'Greens', 'Greys', 'Oranges', 'Purples', 'Reds'. Default: \code{c('Reds', 'Blues')}.}
 
 \item{title.position}{String indicating the position of the title: 'left', 'center', 'right'. Default: \code{'center'}.}
 

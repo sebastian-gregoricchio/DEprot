@@ -54,7 +54,7 @@ remotes::install_github("sebastian-gregoricchio/DEprot",
 
 ```
 
-### Possibile installation issues
+### Possible installation issues
 #### External dependencies
 The package [`aPEAR`](https://github.com/kerseviciute/aPEAR) ([Kerseviciute & Gordevicius, Bioinformatics 2023](https://doi.org/10.1093/bioinformatics/btad672)) is required for the ORA/GSEA analyses. However, recently, it is has been removed from the CRAN, but it can be installed using:
 

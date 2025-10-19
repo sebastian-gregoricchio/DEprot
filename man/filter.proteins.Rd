@@ -9,7 +9,7 @@
 \arguments{
 \item{DEprot.object}{Object of class \code{DEprot}.}
 
-\item{proteins}{String vector indicating a list of proteins to be use as filtering criteria. It must correspond to the counts rown names and 'prot.id' column of the analyses object.}
+\item{proteins}{String vector indicating a list of proteins to be use as filtering criteria. It must correspond to the counts row names and 'prot.id' column of the analyses object.}
 
 \item{mode}{String indicating the mode to use for the filtering. If 'keep' the proteins are selected and kept, while if 'remove' the proteins are discarded. Default: \code{"keep"}.}
 }

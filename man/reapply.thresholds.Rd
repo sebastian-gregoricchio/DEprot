@@ -20,7 +20,7 @@ reapply.thresholds(
 
 \item{linear.FC}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}
 
-\item{p.adjusted}{Numeric value indicating the p.adjusted threshold (or FDR threshold if analyses performed usinf prolfqua) to apply to the differential analyses. Default: \code{0.05}.}
+\item{p.adjusted}{Numeric value indicating the p.adjusted threshold (or FDR threshold if analyses performed using \code{prolfqua}) to apply to the differential analyses. Default: \code{0.05}.}
 
 \item{linear.FC.unresp.range}{A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.}
 

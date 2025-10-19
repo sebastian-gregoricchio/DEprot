@@ -67,7 +67,7 @@ setClass(Class = "DEprot",
 #'        \item{\code{volcano}: }{volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using \link{plot.volcano}}
 #'        \item{\code{MA.plot}: }{MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using \link{plot.MA}}}
 #' @slot contrasts List of contrasts. each contrast is a vector indicating, in the order: metadata.table.column - groupA - groupB; (groupA / group B). Class: \code{"ANY"}.
-#' @slot differential.analyses.params List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustement method, etc.). Class: \code{"ANY"}.
+#' @slot differential.analyses.params List of parameters used to run the differential analyses (fold change thresholds, p-value threshold, p-adjustment method, etc.). Class: \code{"ANY"}.
 #'
 #' @export
 
@@ -146,7 +146,7 @@ setClass(Class = "DEprot.correlation",
 
 #' @title DEprot.upset class
 #'
-#' @slot upset Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between cointrasts. Class: \code{"ANY"}.
+#' @slot upset Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between contrasts. Class: \code{"ANY"}.
 #' @slot obs.matrix Logical matrix indicating all the proteins that are differentially expressed at least in a contrast (rows). Columns indicate a specific contrast. The logical values indicate whether a protein is found differential in a specific contrast (column). Therefore, this table can be used to extract the proteins included in a specific overlap. Class: \code{"ANY"}.
 #'
 #' @export

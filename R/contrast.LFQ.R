@@ -6,8 +6,8 @@
 #' @param contrast Integer indicating the position of the contrast to use. Default: \code{1}.
 #' @param show.only.differential Logical value indicating whether only up or down regulated proteins should be plotted. Default: \code{FALSE}.
 #' @param show.only.significant Logical value indicating whether only proteins with a significant p-value adjusted should be plotted. Notice that this is subordinated to `show.only.differential` (differential proteins pass the P-adj threshold by default). Default: \code{FALSE}.
-#' @param log2FC.positive.color String indicating any R-supported color for the positive foldchage values. Default: \code{"firebrick"}.
-#' @param log2FC.negative.color String indicating any R-supported color for the negative foldchage values. Default: \code{"steelblue4"}.
+#' @param log2FC.positive.color String indicating any R-supported color for the positive foldchange values. Default: \code{"firebrick"}.
+#' @param log2FC.negative.color String indicating any R-supported color for the negative foldchange values. Default: \code{"steelblue4"}.
 #' @param log2FC.scale.min Numeric value indicating the minimum of the foldchange scale (lower values will be colored with the minimum of the scale). Default: \code{NULL}.
 #' @param log2FC.scale.max Numeric value indicating the maximum of the foldchange scale (lower values will be colored with the maximum of the scale). Default: \code{NULL}.
 #' @param identical.axes Logical value indicating whether the axes should be forces to be identical between x and y. Default: \code{TRUE}.

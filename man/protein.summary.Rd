@@ -22,7 +22,7 @@ protein.summary(
 
 \item{group.column}{String indicating a column among the ones in the metadata table. Default: \code{"column.id"} (no groups).}
 
-\item{sample.subset}{String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). If subset is applied, the proteins with all NAs will be removed (total number of protains will be alterated). Default: \code{NULL} (no subsetting).}
+\item{sample.subset}{String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). If subset is applied, the proteins with all NAs will be removed (total number of proteins will be altered). Default: \code{NULL} (no subsetting).}
 
 \item{n.labels}{String indicating the type of values to display on the barplot. One among: \code{NULL} (no labels), "frequency", "percentage", "counts". Default: \code{NULL} (no labels).}
 

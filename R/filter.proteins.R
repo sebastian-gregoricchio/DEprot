@@ -3,7 +3,7 @@
 #' @description Function that allows for removing or keeping specific proteins from any \code{DEprot} object class.
 #'
 #' @param DEprot.object Object of class \code{DEprot}.
-#' @param proteins String vector indicating a list of proteins to be use as filtering criteria. It must correspond to the counts rown names and 'prot.id' column of the analyses object.
+#' @param proteins String vector indicating a list of proteins to be use as filtering criteria. It must correspond to the counts row names and 'prot.id' column of the analyses object.
 #' @param mode String indicating the mode to use for the filtering. If 'keep' the proteins are selected and kept, while if 'remove' the proteins are discarded. Default: \code{"keep"}.
 #'
 #' @return An object of class \code{DEprot} (S4 vector).

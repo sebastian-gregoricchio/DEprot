@@ -31,7 +31,7 @@ Calculate Jaccard Similarity.
 }
 }
 \references{
-John M Elizarraras, Yuxing Liao, Zhiao Shi, Qian Zhu, Alexander R Pico, Bing Zhang, WebGestalt 2024: faster gene set analysis and new support for metabolomics and multi-omics, Nucleic Acids Research, Volume 52, Issue W1, 5 July 2024, Pages W415–W421, \url{https://doi.org/10.1093/nar/gkae456}.
+John M Elizarraras, Yuxing Liao, Zhiao Shi, Qian Zhu, Alexander R Pico, Bing Zhang, WebGestalt 2024: faster gene set analysis and new support for metabolomics and multi-omics, Nucleic Acids Research, Volume 52, Issue W1, 5 July 2024, Pages W415–W421, \doi{https://doi.org/10.1093/nar/gkae456}.
 }
 \author{
 Zhiao Shi, Yuxing Liao
