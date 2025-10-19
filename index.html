@@ -137,13 +137,18 @@
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"fgcz/prolfqua"</span>,</span>
 <span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<p>Another package that might not be updated to the last version (&gt;= 1.3.6) is <a href="https://CRAN.R-project.org/package=ComplexUpset" class="external-link"><code>ComplexUpset</code></a>:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"krassowski/complex-upset"</span>,</span>
+<span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level4">
 <h4 id="renv">renv<a class="anchor" aria-label="anchor" href="#renv"></a>
 </h4>
 <p>In order to avoid possible issues, we provide also an renv for the restoration of the packages required for <code>DEprot</code> to work.<br> We uploaded multiple operative systems and R version builds on the <a href="https://doi.org/10.5281/zenodo.14823763" class="external-link">Zenodo</a> repository.<br> Unzip the build of interest and install the <code>renv</code> package.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Install renv from CRAN (if not already installed)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"renv"</span><span class="op">)</span></span>
 <span></span>

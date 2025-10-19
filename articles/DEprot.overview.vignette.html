@@ -93,8 +93,8 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 10<sup>th</sup>
-September, 2025</h4>
+            <h4 data-toc-skip class="date">Last update: 19<sup>th</sup>
+October, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
       <div class="hidden name"><code>DEprot.overview.vignette.Rmd</code></div>
@@ -107,7 +107,7 @@ September, 2025</h4>
 body {
 text-align: justify}
 </style>
-<p><img src="https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot" alt="release"><img src="https://img.shields.io/badge/License-GPLv3-blue.png" alt="license"></p>
+<p><img src="https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot" alt="release"><img src="https://img.shields.io/badge/License-GPLv3-blue.png" alt="license"><a href="https://doi.org/10.5281/zenodo.14823763" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.14823763.svg" alt="DOI"></a></p>
 <p><a href="https://sebastian-gregoricchio.github.io/DEprot" class="external-link"><img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height="150/"></a></p>
 <hr>
 <div class="section level2">
@@ -813,21 +813,22 @@ method to impute the data:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">@</span><span class="va">imputation</span><span class="op">[</span><span class="op">-</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code>&gt; DEprot object:
 &gt;            Samples:  12
-&gt;           Proteins:  13239
+&gt;           Proteins:  12692
 &gt;   Counts available:  raw, normalized, imputed
 &gt; Log transformation:  log2
-&gt;   Metadata columns:  column.id, sample.id, cell, condition, combined.id, replicate, old.column.id</code></pre>
+&gt;   Metadata columns:  column.id, sample.id, cell, condition, combined.id, replicate, old.column.id, batch</code></pre>
 <pre><code>&gt;        BCa_FBS_rep1    BCa_6h.DMSO_rep1 BCa_6h.10nM.E2_rep1        BCa_FBS_rep2 
 &gt;                   0                   0                   0                   0 
 &gt;    BCa_6h.DMSO_rep2 BCa_6h.10nM.E2_rep2 
 &gt;                   0                   0</code></pre>
 <table class="table">
 <colgroup>
-<col width="15%">
-<col width="21%">
-<col width="30%">
-<col width="8%">
-<col width="23%">
+<col width="13%">
+<col width="18%">
+<col width="26%">
+<col width="7%">
+<col width="20%">
+<col width="13%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">method</th>
@@ -835,13 +836,15 @@ method to impute the data:</p>
 <th align="left">parallelization.mode</th>
 <th align="right">cores</th>
 <th align="left">processing.time</th>
+<th align="right">seed</th>
 </tr></thead>
 <tbody><tr class="odd">
 <td align="left">missForest</td>
 <td align="right">100</td>
 <td align="left">variables</td>
-<td align="right">12</td>
-<td align="left">3.02 mins</td>
+<td align="right">10</td>
+<td align="left">47.69 mins</td>
+<td align="right">1554189635</td>
 </tr></tbody>
 </table>
 <p><br></p>
@@ -1281,15 +1284,15 @@ distributed; and if not, which ones are not normally distributed.</p>
 &gt; 6     condition: 6h.10nM.E2 vs FBS    condition 6h.10nM.E2     FBS        TRUE
 &gt; 7     condition: 6h.10nM.E2 vs FBS    condition 6h.10nM.E2     FBS        TRUE
 &gt; 8     condition: 6h.10nM.E2 vs FBS    condition 6h.10nM.E2     FBS        TRUE
-&gt;    diff.status     n median.FoldChange
-&gt; 1      6h.DMSO     0                NA
-&gt; 2   6h.10nM.E2     0                NA
-&gt; 3 unresponsive  8557       0.004011163
-&gt; 4         null  4682       0.150392374
-&gt; 5          FBS   272      -1.273486884
-&gt; 6   6h.10nM.E2   299       1.260394829
-&gt; 7 unresponsive  2358      -0.010138355
-&gt; 8         null 10310      -0.188567885</code></pre>
+&gt;    diff.status    n median.FoldChange
+&gt; 1      6h.DMSO    0                NA
+&gt; 2   6h.10nM.E2    0                NA
+&gt; 3 unresponsive 8640      -0.000650564
+&gt; 4         null 4052       0.138645880
+&gt; 5          FBS  415      -1.293597142
+&gt; 6   6h.10nM.E2  253       1.232724711
+&gt; 7 unresponsive 2155      -0.011973627
+&gt; 8         null 9869      -0.235058768</code></pre>
 <p>The summary can be collected by using the generic function
 <code>summary</code>:</p>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
@@ -1422,62 +1425,62 @@ using the <code>get.results</code> function.</p>
 <tbody>
 <tr class="odd">
 <td align="left">protein.1</td>
-<td align="right">18.85442</td>
-<td align="right">18.91504</td>
-<td align="right">18.79380</td>
-<td align="right">0.1212396</td>
-<td align="right">0.6342736</td>
-<td align="right">0.9189262</td>
+<td align="right">18.82259</td>
+<td align="right">18.87524</td>
+<td align="right">18.76995</td>
+<td align="right">0.1052937</td>
+<td align="right">0.6525152</td>
+<td align="right">0.9373013</td>
 <td align="left">unresponsive</td>
 </tr>
 <tr class="even">
 <td align="left">protein.2</td>
-<td align="right">23.07816</td>
-<td align="right">23.08739</td>
-<td align="right">23.06894</td>
-<td align="right">0.0184512</td>
-<td align="right">0.8673988</td>
-<td align="right">0.9781933</td>
+<td align="right">23.05429</td>
+<td align="right">23.06756</td>
+<td align="right">23.04102</td>
+<td align="right">0.0265348</td>
+<td align="right">0.7961895</td>
+<td align="right">0.9640562</td>
 <td align="left">unresponsive</td>
 </tr>
 <tr class="odd">
 <td align="left">protein.3</td>
-<td align="right">15.68530</td>
-<td align="right">15.65794</td>
-<td align="right">15.71266</td>
-<td align="right">-0.0547179</td>
-<td align="right">0.7188334</td>
-<td align="right">0.9405324</td>
+<td align="right">15.67194</td>
+<td align="right">15.63737</td>
+<td align="right">15.70651</td>
+<td align="right">-0.0691479</td>
+<td align="right">0.5797026</td>
+<td align="right">0.9195075</td>
 <td align="left">unresponsive</td>
 </tr>
 <tr class="even">
 <td align="left">protein.4</td>
-<td align="right">21.14521</td>
-<td align="right">21.09930</td>
-<td align="right">21.19112</td>
-<td align="right">-0.0918296</td>
-<td align="right">0.2081734</td>
-<td align="right">0.7869470</td>
+<td align="right">21.14449</td>
+<td align="right">21.10038</td>
+<td align="right">21.18860</td>
+<td align="right">-0.0882180</td>
+<td align="right">0.2850665</td>
+<td align="right">0.8414855</td>
 <td align="left">unresponsive</td>
 </tr>
 <tr class="odd">
 <td align="left">protein.5</td>
-<td align="right">19.56671</td>
-<td align="right">19.62718</td>
-<td align="right">19.50624</td>
-<td align="right">0.1209374</td>
-<td align="right">0.1169272</td>
-<td align="right">0.7417323</td>
+<td align="right">19.54217</td>
+<td align="right">19.59634</td>
+<td align="right">19.48800</td>
+<td align="right">0.1083424</td>
+<td align="right">0.0552216</td>
+<td align="right">0.7276195</td>
 <td align="left">unresponsive</td>
 </tr>
 <tr class="even">
 <td align="left">protein.6</td>
-<td align="right">15.31226</td>
-<td align="right">15.32551</td>
-<td align="right">15.29901</td>
-<td align="right">0.0264997</td>
-<td align="right">0.6433742</td>
-<td align="right">0.9227061</td>
+<td align="right">15.28886</td>
+<td align="right">15.29176</td>
+<td align="right">15.28595</td>
+<td align="right">0.0058098</td>
+<td align="right">0.9302923</td>
+<td align="right">0.9928526</td>
 <td align="left">unresponsive</td>
 </tr>
 </tbody>
@@ -1563,6 +1566,24 @@ contrasts of a differential expression analyses object.</p>
 <p><br></p>
 </div>
 <div class="section level5">
+<h5 id="scatter-between-average-lfq-values-for-one-contrast">Scatter between average-LFQ values for one contrast<a class="anchor" aria-label="anchor" href="#scatter-between-average-lfq-values-for-one-contrast"></a>
+</h5>
+<p>Using the function <code>contrast.LFQ</code> it is possible to plot a
+scatter of the average LFQ values for the two conditions involved in a
+specific contrast. dots will be colored by log<sub>2</sub>(Fold Change),
+while the size corresponds to the P-value adjusted (or FRD is
+<code>prolfqua</code> is used).</p>
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">contrast_LFQ</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/contrast.LFQ.html">contrast.LFQ</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
+<span>               contrast <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>               dot.labels <span class="op">=</span> <span class="st">"protein.3081"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">contrast_LFQ</span></span></code></pre></div>
+<p><img src="DEprot.overview.vignette_files/figure-html/contrast_LFQ-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><br></p>
+</div>
+<div class="section level5">
 <h5 id="heatmaps">Heatmaps<a class="anchor" aria-label="anchor" href="#heatmaps"></a>
 </h5>
 <p>To plot results heatmaps there are two functions available:</p>
@@ -1590,7 +1611,7 @@ definition is based on the differential score, computed as:
 <p>The resulting object is of class <code>DEprot.counts.heatmap</code>,
 and contains the ggplot-heatmap, the row cluster and the column
 cluster.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Plotting from a DEprot object</span></span>
 <span><span class="va">imputed_counts_heatmap</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/heatmap.counts.html">heatmap.counts</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
@@ -1631,7 +1652,7 @@ negative and 0 values.</p>
 <p>We will apply this to the
 <code>imputed_counts_heatmap_diffProteins</code> heatmap from the
 previous example.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Z-score by row</span></span>
 <span><span class="va">imputed_counts_heatmap_diffProteins_rowScaled</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/heatmap.counts.html">heatmap.counts</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
@@ -1678,7 +1699,7 @@ replicates of a condition).</p>
 <p>In the next example we will average the replicates of each condition
 using the <code>combined.id</code> column form the metadata of the
 <code>dpo_analyses</code> object.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/heatmap.counts.html">heatmap.counts</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                 group.by.metadata.column <span class="op">=</span> <span class="st">"combined.id"</span>,</span>
@@ -1706,7 +1727,7 @@ Only differential proteins are shown.<br> Also in this case it is
 possible to show only the top <em>N</em> differential proteins. However
 the top <em>N</em> of each contrast will be shown. This means than
 <em>N</em> proteins might be shown.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FC_heatmap</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/heatmap.contrasts.html">heatmap.contrasts</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                    contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span>,</span>
@@ -1733,7 +1754,7 @@ between all the contrasts including in the provided object can be
 visualized by co-occurrence. It is also possible to subset only specific
 contrasts indicating a numeric vector in the flag
 <code>sort.intersections</code>.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">upset.plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot.upset.html">plot.upset</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                         contrast.subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,</span>
 <span>                         title <span class="op">=</span> <span class="st">"**My upset plot**"</span>,</span>
@@ -1753,7 +1774,7 @@ contrasts indicating a numeric vector in the flag
 is returned. The latter shows for each condition if a protein has been
 found to be differential. Only proteins that are differential in at
 least one condition are shown.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">upset.plot</span><span class="op">@</span><span class="va">obs.matrix</span></span></code></pre></div>
 <table class="table">
 <caption><strong>Upset observations matrix</strong></caption>
@@ -1840,7 +1861,7 @@ must belong to either <code>DEprot</code> or
 unimputed normalized data. Indeed, estimation of missing values is not
 possibile on the imputed tables.</p>
 </blockquote>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  n.labels <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -1855,7 +1876,7 @@ possibile on the imputed tables.</p>
 groups. A group can be defined using any column of the metadata table.
 In the output stacked bar plot, each color will show how many proteins
 in how many samples within a group were detected.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts.byCondition</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  group.column <span class="op">=</span> <span class="st">"condition"</span>,</span>
@@ -1877,7 +1898,7 @@ expression can be grouped by a column of the metadata using the
 <code>group.by.metadata.column</code> parameter. Furthermore it is
 possible to scale the values using Z-scores (parameter
 <code>scale.expression = TRUE</code>).</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### raw expression</span></span>
 <span><span class="va">protein.1733_raw</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/expression.boxplot.html">expression.boxplot</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
@@ -1942,7 +1963,7 @@ include the packages <code>AnnotationDbi</code> and
 </blockquote>
 <p><br></p>
 <p><strong>KEEP NUCLEAR PROTEINS</strong></p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nucleus</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span><span class="fu">org.Hs.eg.db</span><span class="fu">::</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>                                 keytype <span class="op">=</span> <span class="st">"GOALL"</span>,</span>
 <span>                                 keys <span class="op">=</span> <span class="st">"GO:0005634"</span>, <span class="co">#nucleus</span></span>
@@ -1953,7 +1974,7 @@ include the packages <code>AnnotationDbi</code> and
 <span>                                        mode <span class="op">=</span> <span class="st">"keep"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p><strong>REMOVE CYTOPLASMIC PROTEINS</strong></p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cytoplasm</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span><span class="fu">org.Hs.eg.db</span><span class="fu">::</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>                                   keytype <span class="op">=</span> <span class="st">"GOALL"</span>,</span>
 <span>                                   keys <span class="op">=</span> <span class="st">"GO:0005737"</span>, <span class="co">#cytoplasm</span></span>
@@ -1976,35 +1997,35 @@ differentials from the beginning, the function
 <code>reapply.thresholds</code> can be used to re-compute the
 differential status, re-plot volcanos and MA-plots, and the n.diff
 summary table.</p>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">=</span></span>
-<span id="cb52-2"><a href="#cb52-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
-<span id="cb52-3"><a href="#cb52-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
-<span id="cb52-4"><a href="#cb52-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
-<span id="cb52-5"><a href="#cb52-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
-<span id="cb52-6"><a href="#cb52-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
-<span id="cb52-7"><a href="#cb52-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
-<span id="cb52-8"><a href="#cb52-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
-<span id="cb52-9"><a href="#cb52-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
-<span id="cb52-10"><a href="#cb52-10" tabindex="-1"></a></span>
-<span id="cb52-11"><a href="#cb52-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
-<span id="cb52-12"><a href="#cb52-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
-<span id="cb52-13"><a href="#cb52-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb52-14"><a href="#cb52-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb52-15"><a href="#cb52-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb52-16"><a href="#cb52-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb52-17"><a href="#cb52-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb52-18"><a href="#cb52-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb52-19"><a href="#cb52-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb52-20"><a href="#cb52-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb52-21"><a href="#cb52-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
-<span id="cb52-22"><a href="#cb52-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb52-23"><a href="#cb52-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb52-24"><a href="#cb52-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8557</span>       <span class="fl">0.004011163</span></span>
-<span id="cb52-25"><a href="#cb52-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4682</span>       <span class="fl">0.150392374</span></span>
-<span id="cb52-26"><a href="#cb52-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">853</span>      <span class="sc">-</span><span class="fl">0.834965843</span></span>
-<span id="cb52-27"><a href="#cb52-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">748</span>       <span class="fl">0.930139628</span></span>
-<span id="cb52-28"><a href="#cb52-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2358</span>      <span class="sc">-</span><span class="fl">0.010138355</span></span>
-<span id="cb52-29"><a href="#cb52-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9280</span>      <span class="sc">-</span><span class="fl">0.180716097</span></span></code></pre></div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">=</span></span>
+<span id="cb53-2"><a href="#cb53-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
+<span id="cb53-3"><a href="#cb53-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
+<span id="cb53-4"><a href="#cb53-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
+<span id="cb53-5"><a href="#cb53-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
+<span id="cb53-6"><a href="#cb53-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
+<span id="cb53-7"><a href="#cb53-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb53-8"><a href="#cb53-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
+<span id="cb53-9"><a href="#cb53-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
+<span id="cb53-10"><a href="#cb53-10" tabindex="-1"></a></span>
+<span id="cb53-11"><a href="#cb53-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
+<span id="cb53-12"><a href="#cb53-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
+<span id="cb53-13"><a href="#cb53-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb53-14"><a href="#cb53-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb53-15"><a href="#cb53-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb53-16"><a href="#cb53-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb53-17"><a href="#cb53-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb53-18"><a href="#cb53-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb53-19"><a href="#cb53-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb53-20"><a href="#cb53-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb53-21"><a href="#cb53-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
+<span id="cb53-22"><a href="#cb53-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb53-23"><a href="#cb53-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb53-24"><a href="#cb53-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8640</span>      <span class="sc">-</span><span class="fl">0.000650564</span></span>
+<span id="cb53-25"><a href="#cb53-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4052</span>       <span class="fl">0.138645880</span></span>
+<span id="cb53-26"><a href="#cb53-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS <span class="dv">1256</span>      <span class="sc">-</span><span class="fl">0.839063794</span></span>
+<span id="cb53-27"><a href="#cb53-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">714</span>       <span class="fl">0.889335532</span></span>
+<span id="cb53-28"><a href="#cb53-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2155</span>      <span class="sc">-</span><span class="fl">0.011973627</span></span>
+<span id="cb53-29"><a href="#cb53-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">8567</span>      <span class="sc">-</span><span class="fl">0.217186666</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -2031,7 +2052,7 @@ from the CORUM data and use it for GSEA and ORA analyses.</p>
 <div class="section level4">
 <h4 id="define-geneset">Define geneSet<a class="anchor" aria-label="anchor" href="#define-geneset"></a>
 </h4>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## GeneSet Enrichment Analyses</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"corum_v5.0"</span>, package <span class="op">=</span> <span class="st">"DEprot"</span><span class="op">)</span></span>
 <span></span>
@@ -2107,7 +2128,7 @@ the two groups. Depending on the sample size, this two methods can lead
 to different ranking. To compare the two methods it is possible to plot
 the correlation of the two ranks and scores using
 <code>compare.ranking</code>:</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare.ranking.html">compare.ranking</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                contrast <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/compare_ranking-1.png" width="960" style="display: block; margin: auto;"></p>
@@ -2116,7 +2137,7 @@ the correlation of the two ranks and scores using
 <div class="section level5">
 <h5 id="geneset-enrichment-analyses-gsea">GeneSet Enrichment Analyses (GSEA)<a class="anchor" aria-label="anchor" href="#geneset-enrichment-analyses-gsea"></a>
 </h5>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GSEA.results</span> <span class="op">=</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -2132,7 +2153,7 @@ the correlation of the two ranks and scores using
 <div class="section level5">
 <h5 id="overrepresentation-analyses-ora">OverRepresentation Analyses (ORA)<a class="anchor" aria-label="anchor" href="#overrepresentation-analyses-ora"></a>
 </h5>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ORA.results</span> <span class="op">=</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
