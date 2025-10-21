@@ -132,19 +132,20 @@ filter.proteins =
 
 
       ## Recompute PCA and corr
+      # If prolfqua is used, imputed data might not be available: selection of the data to use:
+      if (!is.null(DEprot.object@imputed.counts)) {
+        data.type.to.use = "imputed"
+      } else if (!is.null(DEprot.object@norm.counts)) {
+        data.type.to.use = "normalized"
+      } else {
+        data.type.to.use = "raw"
+      }
+
       DEprot.object@analyses.result.list =
         purrr::pmap(.l = list(res = DEprot.object@analyses.result.list,
                               contr = DEprot.object@contrasts),
                     .f = function(res, contr) {
 
-                      # If prolfqua is used, imputed data might not be available: selection of the data to use:
-                      if (!is.null(DEprot.object@imputed.counts)) {
-                        data.type.to.use = "imputed"
-                      } else if (!is.null(DEprot.object@norm.counts)) {
-                        data.type.to.use = "normalized"
-                      } else {
-                        data.type.to.use = "raw"
-                      }
 
                       samples = unique(c(contr$group.1, contr$group.2))
 

@@ -100,6 +100,12 @@ perform.PCA =
     ### Convert all NaN/NA
     mat[is.nan(mat)] = NA
 
+    # After subsetting certain rows might contain rows with only NA. Warning will be returned and rows removed for PCA
+    if (ncol(mat) %in% rowSums(is.na(mat))) {
+      warning("Data contain rows (proteins) with only NAs. These rows will be removed to perform PC analyses.")
+      mat = mat[rowSums(is.na(mat)) != ncol(mat),]
+    }
+
 
     ### Compute PCA
     # -----------------------------
