@@ -182,7 +182,7 @@ heatmap.contrasts =
                 linewidth = cell.border.width,
                 show.legend = T) +
       scale_x_discrete(name = "Contrast ID", expand = c(0,0), position = "top") +
-      scale_fill_gradient2(name = "log~2~(Fold Change)",
+      scale_fill_gradient2(name = "log<sub>2</sub>(Fold Change)",
                            low = low.color,
                            mid = mid.color,
                            high = high.color,

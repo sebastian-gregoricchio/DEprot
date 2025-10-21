@@ -23,8 +23,8 @@
 #' contrast.scatter(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
 #'                  contrast.x = 1,
 #'                  contrast.y = 2) +
-#'   ggplot2::ylab("log~2~(Fold Change 6h.10nM.E2/6h.DMSO)") +
-#'   ggplot2::xlab("log~2~(Fold Change FBS/6h.DMSO)")
+#'   ggplot2::ylab("log<sub>2</sub>(Fold Change 6h.10nM.E2/6h.DMSO)") +
+#'   ggplot2::xlab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 #'
 #'
 #' @export contrast.scatter

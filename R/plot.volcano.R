@@ -37,7 +37,7 @@
 #'              contrast = 1,
 #'              dot.labels = "protein.19",
 #'              labels.in.boxes = FALSE) +
-#'   ggplot2::xlab("log~2~(Fold Change FBS/6h.DMSO)")
+#'   ggplot2::xlab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 #'
 #' @export plot.volcano
 

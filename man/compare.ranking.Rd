@@ -4,7 +4,7 @@
 \alias{compare.ranking}
 \title{compare.ranking}
 \usage{
-\method{compare}{ranking}(
+compare.ranking(
   DEprot.analyses.object,
   contrast,
   color.up = "indianred",
