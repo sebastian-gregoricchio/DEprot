@@ -7,6 +7,7 @@
 \method{diff}{analyses.prolfqua}(
   DEprot.object,
   contrast.list,
+  replicate.column = NULL,
   linear.FC.th = 2,
   linear.FC.unresp.range = c(1/1.1, 1.1),
   FDR.th = 0.05,
@@ -24,6 +25,8 @@
 \item{DEprot.object}{An object of class \code{DEprot}.}
 
 \item{contrast.list}{List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.}
+
+\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.}
 
 \item{linear.FC.th}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}
 

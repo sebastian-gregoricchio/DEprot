@@ -4,6 +4,7 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
+#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
 #' @param FDR.th Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.
@@ -44,6 +45,7 @@
 diff.analyses.prolfqua =
   function(DEprot.object,
            contrast.list,
+           replicate.column = NULL,
            linear.FC.th = 2,
            linear.FC.unresp.range = c(1/1.1, 1.1),
            FDR.th = 0.05,
@@ -130,6 +132,18 @@ diff.analyses.prolfqua =
     }
 
 
+    ## Check strategy compatibility
+    if (is.null(replicate.column)) {
+      if (!(tolower(strategy) %in% c("lm", "glm", "rlm"))) {
+        stop("The `replicate.column` is not provided. Which means that only linear models ('lm', 'glm', 'rlm') can be applied.\nChange the `strategy` to 'lm', 'glm' or 'rlm', or provide the column of the metadata corresponsing to the replicates.")
+      }
+    } else {
+      if (!(replicate.column %in% colnames(DEprot.object@metadata))) {
+        stop("The `replicate.column` is not present in the metadata of the object.")
+      }
+    }
+
+
 
     ### Check and extract table
     if (tolower(which.data) == "raw") {
@@ -195,12 +209,12 @@ diff.analyses.prolfqua =
     linear.FC.unresp.range = sort(linear.FC.unresp.range)
 
     # specify model
-    modelFunction = switch(strategy,
-                           glm = prolfqua::strategy_glm("log_protein_abundance  ~ Group"),
-                           lm = prolfqua::strategy_lm("log_protein_abundance  ~ Group"),
-                           lmer = prolfqua::strategy_lmer("log_protein_abundance  ~ Group"),
-                           logistf = prolfqua::strategy_logistf("log_protein_abundance  ~ Group"),
-                           rlm = prolfqua::strategy_rlm("log_protein_abundance  ~ Group"))
+    modelFunction = switch(tolower(strategy),
+                           glm = prolfqua::strategy_glm("log_protein_abundance ~ Group"),
+                           lm = prolfqua::strategy_lm("log_protein_abundance ~ Group"),
+                           lmer = prolfqua::strategy_lmer("log_protein_abundance ~ Group + (1|rep)"),
+                           logistf = prolfqua::strategy_logistf("log_protein_abundance ~ Group + rep"),
+                           rlm = prolfqua::strategy_rlm("log_protein_abundance ~ Group"))
 
     diff.analyses.list = list()
 
@@ -212,13 +226,23 @@ diff.analyses.prolfqua =
 
       meta.filt$Group = meta.filt[,contrasts.info[[i]]$metadata.column]
       meta.filt$Sample = meta.filt$column.id
-      meta.filt = meta.filt %>% dplyr::select(Sample, Group)
+
+      if (is.null(replicate.column)) {
+        meta.filt = meta.filt %>% dplyr::select(Sample, Group)
+      } else {
+        meta.filt =
+          meta.filt %>%
+          dplyr::select(Sample, Group, dplyr::all_of(replicate.column)) %>%
+          dplyr::rename(rep = dplyr::all_of(replicate.column))
+      }
+
 
 
       # Filter matrix
       mat.filt = data.frame(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], check.names = FALSE)
       mat.filt$protein_Id = rownames(mat.filt)
       mat.filt.long = reshape2::melt(data = mat.filt, value.name = "Intensity.log2", variable.name = "Sample", id.vars = "protein_Id")
+
 
       # Convert intensities in linear scale
       mat.filt.long$Intensity = 2^(mat.filt.long$Intensity.log2) - 1
@@ -243,6 +267,10 @@ diff.analyses.prolfqua =
       atable$workIntensity = "Intensity"
       atable$hierarchy[["protein_Id"]] = "protein_Id"
       atable$factors[["Group"]] = "Group"
+
+      if (!is.null(replicate.column)) {
+        atable$factors[["rep"]] = "rep"
+      }
 
       config = prolfqua::AnalysisConfiguration$new(atable)
 
