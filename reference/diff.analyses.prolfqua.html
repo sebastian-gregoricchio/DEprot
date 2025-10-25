@@ -67,6 +67,7 @@
 <span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span></span>
 <span>  <span class="va">DEprot.object</span>,</span>
 <span>  <span class="va">contrast.list</span>,</span>
+<span>  replicate.column <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linear.FC.th <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  linear.FC.unresp.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span><span class="op">)</span>,</span>
 <span>  FDR.th <span class="op">=</span> <span class="fl">0.05</span>,</span>
@@ -91,6 +92,10 @@
 
 <dt id="arg-contrast-list">contrast.list<a class="anchor" aria-label="anchor" href="#arg-contrast-list"></a></dt>
 <dd><p>List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.</p></dd>
+
+
+<dt id="arg-replicate-column">replicate.column<a class="anchor" aria-label="anchor" href="#arg-replicate-column"></a></dt>
+<dd><p>String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if <code>paired.test = TRUE</code>. Default: <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-linear-fc-th">linear.FC.th<a class="anchor" aria-label="anchor" href="#arg-linear-fc-th"></a></dt>
