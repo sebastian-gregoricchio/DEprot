@@ -3,7 +3,7 @@
 [![R-CMD-check](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/R-CMD-check.yaml)
 [![pkgdown](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml/badge.svg)](https://github.com/sebastian-gregoricchio/DEprot/actions/workflows/pkgdown.yaml)
 [![Codecov](https://codecov.io/gh/sebastian-gregoricchio/DEprot/branch/main/graph/badge.svg)](https://app.codecov.io/gh/sebastian-gregoricchio/DEprot)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14823763.svg)](https://doi.org/10.5281/zenodo.14823763)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.17472993.svg)](https://doi.org/10.5281/zenodo.17472993)
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 <!-- ![update](https://badges.pufler.dev/updated/sebastian-gregoricchio/DEprot)
 ![visits](https://badges.pufler.dev/visits/sebastian-gregoricchio/DEprot) -->
@@ -82,7 +82,7 @@ remotes::install_github("krassowski/complex-upset",
 
 #### renv
 In order to avoid possible issues, we provide also an renv for the restoration of the packages required for `DEprot` to work.<br>
-We uploaded multiple operative systems and R version builds on the [Zenodo](https://doi.org/10.5281/zenodo.14823763) repository.<br>
+We uploaded multiple operative systems and R version builds on the [Zenodo](https://doi.org/10.5281/zenodo.17472993) repository.<br>
 Unzip the build of interest and install the `renv` package.
 
 ```r
@@ -109,7 +109,7 @@ if (!require("DEprot", quietly = TRUE)) {
 With the package a [web-manual](https://sebastian-gregoricchio.github.io/DEprot/manual/index.html) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
 The vignette can be inspected on R as well by typing `browseVignettes("DEprot")`.
 
-Other examples of `DEprot` usage can be found on [Zenodo](https://doi.org/10.5281/zenodo.14823763).
+Other examples of `DEprot` usage can be found on [Zenodo](https://doi.org/10.5281/zenodo.17472993).
 
 
 <br />
