@@ -34,6 +34,7 @@
 #' @importFrom reshape2 melt
 #' @import ggtext
 #' @importFrom stats as.dist cor hclust
+#' @importFrom scales squish
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -247,6 +248,7 @@ plot.correlation.heatmap =
       scale_fill_gradientn(name = "Correlation\ncoefficient",
                            colours = palette,
                            limits = correlation.scale.limits,
+                           oob = scales::squish,
                            na.value = palette[ncol(palette)])
 
 

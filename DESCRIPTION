@@ -50,6 +50,7 @@ Imports:
 	prolfqua,
 	purrr,
 	RColorBrewer,
+	scales,
 	stats,
 	reshape2,
 	rvcheck,
