@@ -93,8 +93,8 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 03<sup>th</sup>
-November, 2025</h4>
+            <h4 data-toc-skip class="date">Last update: 12<sup>th</sup>
+December, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
       <div class="hidden name"><code>DEprot.overview.vignette.Rmd</code></div>
@@ -613,7 +613,7 @@ LFQ intensities, while red and blue dashed lines correspond to maximum
 and minimum LFQ value for each sample.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.raw</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/display_boxplot_raw-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/display_boxplot_raw-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <p>In this package we apply the Modified Balanced Quantile Normalization
 (MBQN) from the <a href="https://www.bioconductor.org/packages/release/bioc/html/MBQN.html" class="external-link"><code>MBQN</code></a>
 package and developed by <a href="https://doi.org/10.1002/pmic.202000068" class="external-link">E.Brombacher <em>et
@@ -662,7 +662,7 @@ downstream analyses.</p>
 LFQ values per each sample is generated and stored in a vector slot.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.raw</span>, <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.norm</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/plot_norm-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/plot_norm-1.png" class="r-plt" width="768" style="display: block; margin: auto;"></p>
 <p><br></p>
 <div class="section level3">
 <h3 id="batch-effect-correction">Batch effect correction<a class="anchor" aria-label="anchor" href="#batch-effect-correction"></a>
@@ -852,7 +852,7 @@ method to impute the data:</p>
 LFQ values per each sample is generated and stored in a vector slot.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.raw</span>, <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.norm</span>, <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.imputed</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/plot_imputed-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/plot_imputed-1.png" class="r-plt" width="864" style="display: block; margin: auto;"></p>
 <p><br></p>
 <hr>
 </div>
@@ -935,7 +935,7 @@ PC</td>
 <span><span class="fu"><a href="../reference/plot.PC.cumulative.html">plot.PC.cumulative</a></span><span class="op">(</span>DEprot.PCA.object <span class="op">=</span> <span class="va">PCA</span>,</span>
 <span>                   bar.color <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
 <span>                   line.color <span class="op">=</span> <span class="st">"navyblue"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/run_cumulative-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/run_cumulative-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Plot PC scatters</span></span>
 <span><span class="va">PC_1.2</span> <span class="op">&lt;-</span></span>
@@ -960,7 +960,7 @@ PC</td>
 <span>                  plot.zero.lines <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">PC_1.2</span>, <span class="va">PC_2.3</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/run_PCA-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/run_PCA-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>Alternatively, the combination of PC1.2 and PC2.3 can be
 automatically generated using the function
@@ -977,7 +977,7 @@ automatically generated using the function
 <span>                    plot.zero.line.x.12 <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                    plot.zero.line.y.23 <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                    plot.zero.line.x.23 <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/unnamed-chunk-4-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level4">
 <h4 id="analyze-pcs-on-a-sample-subset">Analyze PCs on a sample subset<a class="anchor" aria-label="anchor" href="#analyze-pcs-on-a-sample-subset"></a>
@@ -1000,7 +1000,7 @@ and FBS conditions).</p>
 <span>                   bar.color <span class="op">=</span> <span class="st">"indianred"</span>,</span>
 <span>                   line.color <span class="op">=</span> <span class="st">"firebrick4"</span>,</span>
 <span>                   title <span class="op">=</span> <span class="st">"**Only ERa active**"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/make_PCA_subset-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/make_PCA_subset-1.png" class="r-plt" width="768" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Plot PC scatters</span></span>
 <span><span class="va">PC.fbs.e2_1.2</span> <span class="op">&lt;-</span></span>
@@ -1025,7 +1025,7 @@ and FBS conditions).</p>
 <span>                  plot.zero.lines <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">PC.fbs.e2_1.2</span>, <span class="va">PC.fbs.e2_2.3</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/make_PCA_scatters_subset-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/make_PCA_scatters_subset-1.png" class="r-plt" width="768" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 </div>
@@ -1047,7 +1047,7 @@ correlations are an index of similarity.</p>
 <span>                           plot.subtitle <span class="op">=</span> <span class="st">"All samples"</span>,</span>
 <span>                           display.values <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">corr.all.samples</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/make_correlation_all-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/make_correlation_all-1.png" class="r-plt" width="864" style="display: block; margin: auto;"></p>
 <p>Also in this case the sample correlation can be computed for a subset
 of samples as shown before for the <a href="#pca">PCAs</a>.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
@@ -1064,7 +1064,7 @@ of samples as shown before for the <a href="#pca">PCAs</a>.</p>
 <span>                           display.values <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">corr.ERa.active</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/make_correlation_subset-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/make_correlation_subset-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <p>The <code>DEprot.correlation</code> correlation object contains the
 following slots:</p>
 <table class="table">
@@ -1205,7 +1205,7 @@ distributed; and if not, which ones are not normally distributed.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## example of Q-Q and density plots</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">normality</span><span class="op">@</span><span class="va">qqplots</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">normality</span><span class="op">@</span><span class="va">densities</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/normality_test_plots-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/normality_test_plots-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -1494,10 +1494,10 @@ using the <code>get.results</code> function.</p>
 analyses of the samples involved in the contrast.</p>
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo_analyses</span><span class="op">@</span><span class="va">analyses.result.list</span><span class="op">$</span><span class="va">condition_6h.10nM.E2.vs.6h.DMSO</span><span class="op">$</span><span class="va">PCA.plots</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/DE_PCA_scatters_replotting-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/DE_PCA_scatters_replotting-1.png" class="r-plt" width="768" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo_analyses</span><span class="op">@</span><span class="va">analyses.result.list</span><span class="op">$</span><span class="va">condition_6h.10nM.E2.vs.6h.DMSO</span><span class="op">$</span><span class="va">correlations</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/DE_correlations-1.png" width="960" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/DE_correlations-1.png" class="r-plt" width="960" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level4">
@@ -1519,7 +1519,7 @@ analyses.<br> This can be performed using the
 <span>                                   histogram.binwidth <span class="op">=</span> <span class="fl">0.025</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">pval.distribution</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/check_pvalues-1.png" width="768" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/check_pvalues-1.png" class="r-plt" width="768" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -1542,7 +1542,7 @@ differential status of the proteins.</p>
 <span><span class="va">MAplot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot.MA.html">plot.MA</a></span><span class="op">(</span><span class="va">dpo_analyses</span>, contrast <span class="op">=</span> <span class="fl">1</span>, use.uncorrected.pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">volcano</span>, <span class="va">MAplot</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/DE_volcano_MA-1.png" width="864" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/DE_volcano_MA-1.png" class="r-plt" width="864" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -1562,7 +1562,7 @@ contrasts of a differential expression analyses object.</p>
 <span>                   symmetric.axes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">contrast.scatter</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/contrast_scatter-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/contrast_scatter-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -1580,7 +1580,7 @@ while the size corresponds to the P-value adjusted (or FRD is
 <span>               dot.labels <span class="op">=</span> <span class="st">"protein.3081"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">contrast_LFQ</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/contrast_LFQ-1.png" width="480" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/contrast_LFQ-1.png" class="r-plt" width="480" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -1643,7 +1643,7 @@ cluster.</p>
 <span><span class="co">## Combine heatmaps</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">imputed_counts_heatmap</span><span class="op">@</span><span class="va">heatmap</span>,</span>
 <span>                      <span class="va">imputed_counts_heatmap_diffProteins</span><span class="op">@</span><span class="va">heatmap</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts-1.png" width="1248" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts-1.png" class="r-plt" width="1248" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>Instead of “pure” counts, it is possible to compute Z-scores of the
 values and plot a divergent heatmap.<br> In this case instead of a
@@ -1690,7 +1690,7 @@ previous example.</p>
 <span><span class="co">## Combine heatmaps</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">imputed_counts_heatmap_diffProteins_rowScaled</span><span class="op">@</span><span class="va">heatmap</span>,</span>
 <span>                      <span class="va">imputed_counts_heatmap_diffProteins_columnScaled</span><span class="op">@</span><span class="va">heatmap</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts_zscores-1.png" width="960" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts_zscores-1.png" class="r-plt" width="960" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>Ultimately, With this function is also possible to group data based
 on the values of a metadata’s column. In this way it is possible to
@@ -1715,7 +1715,7 @@ using the <code>combined.id</code> column form the metadata of the
 <span>                 title <span class="op">=</span> <span class="st">"condition: **6h.10nM.E2** *vs* **6h.DMSO** (all)&lt;br&gt;Imputed counts Z-score"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition</span><span class="op">@</span><span class="va">heatmap</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts_groups-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts_groups-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level6">
@@ -1740,7 +1740,7 @@ the top <em>N</em> of each contrast will be shown. This means than
 <span>                    protein.names.pattern <span class="op">=</span> <span class="st">"protein[.]"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">FC_heatmap</span><span class="op">@</span><span class="va">heatmap</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_foldchanges-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/heatmap_foldchanges-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 </div>
@@ -1768,7 +1768,7 @@ contrasts indicating a numeric vector in the flag
 <span>                         use.uncorrected.pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">upset.plot</span>  <span class="co"># or upset.plot@upset</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/upset_plot-1.png" width="700" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/upset_plot-1.png" class="r-plt" width="700" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>Besides the plot, also a <code>TRUE</code>/<code>FALSE</code> table
 is returned. The latter shows for each condition if a protein has been
@@ -1870,7 +1870,7 @@ possible on the imputed tables.</p>
 <span>                  title <span class="op">=</span> <span class="st">"**# Proteins identified in each sample**"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">protein.counts</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/protein_summary-1.png" width="960" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/protein_summary-1.png" class="r-plt" width="960" style="display: block; margin: auto;"></p>
 <p><br></p>
 <p>Another possibility is to study the protein co-detection by sample
 groups. A group can be defined using any column of the metadata table.
@@ -1886,7 +1886,7 @@ in how many samples within a group were detected.</p>
 <span>                  title <span class="op">=</span> <span class="st">"**# Proteins identified per _Condition_**"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">protein.counts.byCondition</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/protein_summary_by_condition-1.png" width="384" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/protein_summary_by_condition-1.png" class="r-plt" width="384" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -1923,7 +1923,7 @@ possible to scale the values using Z-scores (parameter
 <span>                     x.label.angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">protein.1733_raw</span>, <span class="va">protein.1733_scaled</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/expression_boxplot-1.png" width="672" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/expression_boxplot-1.png" class="r-plt" width="672" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -2131,7 +2131,7 @@ the correlation of the two ranks and scores using
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare.ranking.html">compare.ranking</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                contrast <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/compare_ranking-1.png" width="960" style="display: block; margin: auto;"></p>
+<p><img src="DEprot.overview.vignette_files/figure-html/compare_ranking-1.png" class="r-plt" width="960" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -2282,7 +2282,7 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
