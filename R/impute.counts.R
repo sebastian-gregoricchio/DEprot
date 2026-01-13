@@ -16,7 +16,7 @@
 #' @param RegImpute.max.iterations Numeric value indicating the number of maximum iteration for the imputation with \code{RegImpute} (from \code{DreamAI}). Default: \code{10}.
 #' @param RegImpute.fillmethod String identifying the fill method to be used in the \code{RegImpute} method (from\code{DreamAI}). One among \code{"row_mean"} and \code{"zeros"}. Default: \code{"row_mean"}. It throws an warning if \code{"row_median"} is used.
 #' @param seed Numeric value indicating the seed to use for the randomization. Default: \code{NULL}, automatically generated (saved in the \code{seed} element in the final imputation method list).
-#' @param verbose Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.
+#' @param verbose Logical value indicating whether processing messages should be printed. Default: \code{FALSE}.
 #'
 #' @seealso \href{https://CRAN.R-project.org/package=missForest}{missForest}, \href{https://CRAN.R-project.org/package=VIM}{VIM}, \href{https://CRAN.R-project.org/package=pcaMethods}{pcaMethods} R-packages, \href{https://github.com/WangLab-MSSM/DreamAI}{DreamAI}, \href{https://github.com/BioGenies/imputomics}{imputomics}.
 #'

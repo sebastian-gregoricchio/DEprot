@@ -51,7 +51,7 @@ impute.counts(
 
 \item{seed}{Numeric value indicating the seed to use for the randomization. Default: \code{NULL}, automatically generated (saved in the \code{seed} element in the final imputation method list).}
 
-\item{verbose}{Logical valued indicating whether processing messages should be printed. Default: \code{FALSE}.}
+\item{verbose}{Logical value indicating whether processing messages should be printed. Default: \code{FALSE}.}
 }
 \value{
 A \code{DEprot} object. The boxplot showing the distribution of the protein intensity is remade and added to the slot (\code{boxplot.imputed}). A list with parameters and other info about the imputation is added as well in the \code{imputation} slot.
