@@ -1,4 +1,4 @@
-citHeader("To cite 'DEprot' in publications use:")
+citHeader("To cite `DEprot` in publications use:")
 
 citEntry(entry = "Article",
   title        = "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data",
@@ -14,7 +14,7 @@ citEntry(entry = "Article",
   volume       = "XX",
   issue        = "XX",
   pages        = "XX",
-  url          = "https://doi.org/XYZ",
+  url          = "https://doi.org/lqag015",
 
   textVersion  = paste("N. Eickhoff, L. Hoekman, O. Bleijerveld, A.M. Bergman, W. Zwart, S. Gregoricchio.",
                        "'DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data'.",

@@ -1,37 +1,45 @@
 cff-version: 1.2.0
 message: "If you use DEprot, please cite this publication:"
 authors:
-- family-names: "Nils"
-  given-names: "Eickhoff"
-- family-names: "Andries M."
-  given-names: "Bergman"
-- family-names: "Wilbert"
-  given-names: "Zwart"
+- family-names: "Eickhoff"
+  given-names: "Nils"
+- family-names: "Hoekman"
+  given-names: "Liesbeth"
+- family-names: "Bleijerveld"
+  given-names: "Onno"
+- family-names: "Bergman"
+  given-names: "Andries M."
+- family-names: "Zwart"
+  given-names: "Wilbert"
 - family-names: "Gregoricchio"
   given-names: "Sebastian"
   orcid: "https://orcid.org/0000-0001-9209-5403"
 preferred-citation:
   authors:
-  - family-names: "Nils"
-    given-names: "Eickhoff"
-  - family-names: "Andries M."
-    given-names: "Bergman"
-  - family-names: "Wilbert"
-    given-names: "Zwart"
+  - family-names: "Eickhoff"
+    given-names: "Nils"
+  - family-names: "Hoekman"
+    given-names: "Liesbeth"
+  - family-names: "Bleijerveld"
+    given-names: "Onno"
+  - family-names: "Bergman"
+    given-names: "Andries M."
+  - family-names: "Zwart"
+    given-names: "Wilbert"
   - family-names: "Gregoricchio"
     given-names: "Sebastian"
     orcid: "https://orcid.org/0000-0001-9209-5403"
   title: "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data"
   type: article
-  doi: 10.XYZ/XYZ/XYZ
+  doi: 10.1093/nargab/lqag015
   issue: XX
   volume: XX
-  year: 20XX
-  url: https://doi.org/XYZ/XYZ/XYZ
-  journal: "XYZ"
+  year: 2026
+  url: https://doi.org/10.1093/nargab/lqag015
+  journal: "NAR Genomics and Bioinformatics"
 title: "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data"
 issue: XYZ
 volume: XYZ
-doi: XYZ/XYZ/XYZ
-year: 20XX
-url: https://doi.org/XYZ/XYZ/XYZ
+doi: 10.1093/nargab/lqag015
+year: 2026
+url: https://doi.org/10.1093/nargab/lqag015

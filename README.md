@@ -28,7 +28,10 @@ If you use this package, please cite:
 <font size="-0.5">
 
 <div style="margin-left:2%; margin-right:2%; text-align: justify">
-*No publication associated yet.*
+<i>DEprot</i>: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data.<br>
+Eickhoff N., Hoekman L., Bleijerveld O., Bergman A.M., Zwart W., Gregoricchio S.<br>
+<i>NAR Genomics and Bioinformatics</i> (2026)<br>
+doi: <a href="https://doi.org/10.1093/nargab/lqag015">10.1093/nargab/lqag015</a>
 </div>
 </font>
 

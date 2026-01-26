@@ -60,7 +60,7 @@ require(legendry)
 
 ![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot)
 ![license](https://img.shields.io/badge/License-GPLv3-blue.png)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14823763.svg)](https://doi.org/10.5281/zenodo.14823763)
+[![Zenodo](https://zenodo.org/badge/DOI/10.5281/zenodo.17472993.svg)](https://doi.org/10.5281/zenodo.17472993)
 
 [<img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height = 150/>](https://sebastian-gregoricchio.github.io/DEprot)
 
@@ -81,8 +81,10 @@ If you use this package, please cite:
 <p style='margin-top:1em; text-align:left'> **Citation** </p>
 
 <div style="margin-left:2%; margin-right:2%; text-align: justify">
-"No publication associated yet *et al.*, *XYZ* (2123). <br>
-*doi*: [XYZ/XYZ](https://doi.org/XYZ)
+<i>DEprot</i>: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data.<br>
+Eickhoff N., Hoekman L., Bleijerveld O., Bergman A.M., Zwart W., Gregoricchio S.<br>
+<i>NAR Genomics and Bioinformatics</i> (2026)<br>
+doi: <a href="https://doi.org/10.1093/nargab/lqag015">10.1093/nargab/lqag015</a>
 </div>
 </font>
 
@@ -1023,7 +1025,7 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 ## Count detected proteins
 In order to know how many proteins have been detected in each sample, it is possible to use the function `protein.summary`. A stacked bar plot will be generated per each sample. The input object must belong to either `DEprot` or `DEprot.analyses` classes.
 
-> **NOTE**: this plot is meaningful only on raw and/or unimputed normalized data. Indeed, estimation of missing values is not possibile on the imputed tables.
+> **NOTE**: this plot is meaningful only on raw and/or unimputed normalized data. Indeed, estimation of missing values is not possible on the imputed tables.
 
 ```{r protein_summary, fig.height=3, fig.width=10}
 protein.counts <-
