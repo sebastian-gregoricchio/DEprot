@@ -260,10 +260,11 @@ diff.analyses =
       pval.list = c()
       if (tolower(stat.test) %in% c("t.test", "ttest", "t-test", "t", "student")) {
         for (k in 1:nrow(mat.log2)){
-          pval.list[k] = suppressWarnings(t.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
-                                                 y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
-                                                 paired = contrasts.info[[i]]$paired.test,
-                                                 exact = TRUE))$p.value
+          pval.list[k] = tryCatch(suppressWarnings(t.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
+                                                          y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
+                                                          paired = contrasts.info[[i]]$paired.test,
+                                                          exact = TRUE))$p.value,
+                                  error = function(e) {list(statistic = NA, p.value = NA)})
         }
       } else {
         for (k in 1:nrow(mat.log2)){
