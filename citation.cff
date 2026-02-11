@@ -3,6 +3,7 @@ message: "If you use DEprot, please cite this publication:"
 authors:
 - family-names: "Eickhoff"
   given-names: "Nils"
+  orcid: "https://orcid.org/0000-0003-4461-1607"
 - family-names: "Hoekman"
   given-names: "Liesbeth"
 - family-names: "Bleijerveld"
@@ -18,6 +19,7 @@ preferred-citation:
   authors:
   - family-names: "Eickhoff"
     given-names: "Nils"
+    orcid: "https://orcid.org/0000-0003-4461-1607"
   - family-names: "Hoekman"
     given-names: "Liesbeth"
   - family-names: "Bleijerveld"
@@ -32,14 +34,14 @@ preferred-citation:
   title: "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data"
   type: article
   doi: 10.1093/nargab/lqag015
-  issue: XX
-  volume: XX
+  issue: 1
+  volume: 8
   year: 2026
   url: https://doi.org/10.1093/nargab/lqag015
   journal: "NAR Genomics and Bioinformatics"
 title: "DEprot: a comprehensive R-package for the analyses of label-free quantitation mass-spectrometry data"
-issue: XYZ
-volume: XYZ
+issue: 1
+volume: 8
 doi: 10.1093/nargab/lqag015
 year: 2026
 url: https://doi.org/10.1093/nargab/lqag015
