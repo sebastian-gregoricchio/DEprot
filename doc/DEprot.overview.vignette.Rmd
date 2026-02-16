@@ -592,7 +592,7 @@ The main assumption to run `limma` is that the data are normally distributed. Fo
 * `qqplots`: a list of Q-Q plots (ggplot objects) showing the "correlation" between the distribution of your data and the theoretical normal distribution
 * `densities`: a list of density curves (ggplot objects) depicted the distribution of your data and the overlay with the theoretical normal distribution.
 
-> When a sample is not normally distributed (p-value of the AD normality test < p.threshold) the plot will be red instead of black/blue. Furthermore, a message will tell if all samples are normally distributed; and if not, which ones are not normally distributed.
+> When a sample is not normally distributed (p-value of the AD normality test < p.threshold) the plot will be red instead of black/blue. Furthermore, a message will tell if all samples are normally distributed; and if not, which ones are not normally distributed.<br>However, due to the large number of data used for the normality-test, the p-value can easily lead to the rejection of the null hypothesis (H<sub>0</sub>: distribution is normal). What we suggest is to visually inspect the distribution of the data and identify large/extreme deviations from the theoretical normal distribution (e.g., skewed, bimodal or uniform distributions).
 
 ```{r normality_test, message=T, fig.width=10, fig.height=10}
 normality <- check.normality(DEprot.object = dpo,

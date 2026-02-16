@@ -89,7 +89,7 @@ check.normality =
         ggpubr::ggqqplot(mat[,i],
                          title = paste0("**",colnames(mat)[i], "**"),
                          stroke = NA,
-                         color = ifelse(AD.test[[i]]$p.value < p.threshold, yes = "black", no = "firebrick")) +
+                         color = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = "black", no = "firebrick")) +
         ggtext::geom_richtext(data = data.frame(x = -Inf,
                                                 y = +Inf,
                                                 label = paste0("Anderson-Darling, *P* = ", pval.label)),
@@ -97,7 +97,7 @@ check.normality =
                                             y = y,
                                             label = label),
                               fill = NA,
-                              label.color = ifelse(AD.test[[i]]$p.value < p.threshold, yes = NA, no = "firebrick"),
+                              label.color = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = NA, no = "firebrick"),
                               hjust = -0.1,
                               vjust = 1.5,
                               inherit.aes = FALSE) +
@@ -109,17 +109,17 @@ check.normality =
 
 
       ## Change line color in qqplot
-      qqplot[[i]]$layers[[2]]$aes_params$colour = ifelse(AD.test[[i]]$p.value < p.threshold, yes = "steelblue", no = "firebrick")
-      qqplot[[i]]$layers[[3]]$aes_params$fill = ifelse(AD.test[[i]]$p.value < p.threshold, yes = "steelblue", no = "firebrick")
+      qqplot[[i]]$layers[[2]]$aes_params$colour = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = "steelblue", no = "firebrick")
+      qqplot[[i]]$layers[[3]]$aes_params$fill = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = "steelblue", no = "firebrick")
 
 
       ###### DENSITY
       density[[i]] =
         ggpubr::ggdensity(data = mat[,i],
                           title = paste0("**",colnames(mat)[i], "**"),
-                          fill = ifelse(AD.test[[i]]$p.value < p.threshold, yes = "gray", no = "indianred"),
-                          color = ifelse(AD.test[[i]]$p.value < p.threshold, yes = "gray50", no = "indianred4")) +
-        ggpubr::stat_overlay_normal_density(color = ifelse(AD.test[[i]]$p.value < p.threshold, yes = "steelblue", no = "firebrick4"),
+                          fill = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = "gray", no = "indianred"),
+                          color = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = "gray50", no = "indianred4")) +
+        ggpubr::stat_overlay_normal_density(color = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = "steelblue", no = "firebrick4"),
                                             linetype = "dashed",
                                             linewidth = 1.5) +
         xlab("Intensity") +
@@ -131,7 +131,7 @@ check.normality =
                                             y = y,
                                             label = label),
                               fill = NA,
-                              label.color = ifelse(AD.test[[i]]$p.value < p.threshold, yes = NA, no = "firebrick"),
+                              label.color = ifelse(AD.test[[i]]$p.value >= p.threshold, yes = NA, no = "firebrick"),
                               hjust = -0.1,
                               vjust = 1.5,
                               inherit.aes = FALSE) +
@@ -139,8 +139,6 @@ check.normality =
               aspect.ratio = 1,
               axis.line = element_blank(),
               panel.background = element_rect(fill = NA, linewidth = 1, color = "black"))
-
-
     }
 
     names(AD.test) = colnames(mat)
@@ -149,15 +147,15 @@ check.normality =
 
 
     ### Print message if required
-    normality = sapply(X = AD.test, FUN = function(x){x$p.value < p.threshold}, USE.NAMES = T)
+    normality = sapply(X = AD.test, FUN = function(x){x$p.value >= p.threshold}, USE.NAMES = TRUE)
 
-    if (verbose == T) {
+    if (verbose == TRUE) {
       if (all(normality)) {
         message("All samples display a normal distribution.")
 
       } else {
         message(paste0("The following samples do not display a normal distribution: ",
-                       paste0(names(normality)[isFALSE(normality)], collapse = ", "), "."))
+                       paste0(names(normality)[normality == FALSE], collapse = ", "), "."))
       }
     }
 
