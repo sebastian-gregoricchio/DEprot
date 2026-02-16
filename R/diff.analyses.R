@@ -250,9 +250,9 @@ diff.analyses =
       # means and FoldChange
       diff.tb =
         data.frame(prot.id = rownames(mat.log2),
-                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], na.rm = TRUE),
-                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1], na.rm = TRUE),
-                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2], na.rm = TRUE)) %>%
+                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2), drop = FALSE], na.rm = TRUE),
+                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1, drop = FALSE], na.rm = TRUE),
+                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE], na.rm = TRUE)) %>%
         dplyr::mutate(log2.Fold_group1.vs.group2 = log2.mean.group1 - log2.mean.group2)
 
       ## Wilcoxon/t.test pval

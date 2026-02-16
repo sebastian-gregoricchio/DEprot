@@ -306,9 +306,9 @@ diff.analyses.prolfqua =
       # means and FoldChange
       diff.tb =
         data.frame(prot.id = rownames(mat.log2),
-                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], na.rm = TRUE),
-                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1], na.rm = TRUE),
-                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2], na.rm = TRUE))
+                   basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2), drop = FALSE], na.rm = TRUE),
+                   log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1, drop = FALSE], na.rm = TRUE),
+                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE], na.rm = TRUE))
 
       diff.tb =
         dplyr::left_join(x = diff.tb,
