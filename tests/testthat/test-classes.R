@@ -58,7 +58,7 @@ test_that("class DEprot.pvalues is working", {
 
 
 test_that("class DEprot.RMSE is working", {
-  RMSE = suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1,
+  RMSE = suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1, which.data = "normalized",
                                               run.missForest = FALSE, run.BPCA = FALSE, run.kNN = FALSE, run.tkNN = FALSE, run.corkNN = FALSE, run.LLS = FALSE, run.SVD = TRUE, run.PPCA = FALSE, run.RegImpute = FALSE))
   expect_s4_class(RMSE, "DEprot.RMSE")
 })

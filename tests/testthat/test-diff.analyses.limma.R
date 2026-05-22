@@ -22,19 +22,19 @@ test_that("errors are returned if the object is not containing imputed data (lim
 ##########################################################################################
 
 test_that("no error is returned when performing differential analyses (limma)", {
-  expect_no_failure(diff.analyses.limma(DEprot.object = DEprot::test.toolbox$dpo.imp,
-                                        contrast.list = list(c("condition", "FBS", "6h.DMSO"),
-                                                             c("condition", "6h.10nM.E2", "6h.DMSO")),
-                                        include.rep.model = TRUE,
-                                        replicate.column = "replicate",
-                                        linear.FC.th = 1.2))
+  expect_success(diff.analyses.limma(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                                     contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                                          c("condition", "6h.10nM.E2", "6h.DMSO")),
+                                     include.rep.model = TRUE,
+                                     replicate.column = "replicate",
+                                     linear.FC.th = 1.2))
 })
 
 
 
 
 test_that("no error is returned when reapplying differential analyses thresholds", {
-  expect_no_failure(reapply.thresholds(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, linear.FC = 1.45))
+  expect_success(reapply.thresholds(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, linear.FC = 1.45))
 })
 
 
