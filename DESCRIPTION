@@ -80,7 +80,8 @@ Suggests:
 biocViews:
 Remotes:
   sebastian-gregoricchio/aPEAR,
-  fgcz/prolfqua
+  fgcz/prolfqua,
+  cran/bayesbio
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
