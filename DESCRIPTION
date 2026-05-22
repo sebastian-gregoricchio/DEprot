@@ -69,7 +69,6 @@ Suggests:
   knitr,
   matrixStats,
   prettydoc,
-  pryr,
   qpdf,
   rmarkdown,
   randomForest,
