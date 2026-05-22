@@ -80,6 +80,40 @@ plot.GSEA =
 
 
     #####################################
+    # gseaScores from DOSE
+    gseaScores <- function (geneList, geneSet, exponent = 1, fortify = FALSE)
+    {
+      geneSet <- intersect(geneSet, names(geneList))
+      N <- length(geneList)
+      Nh <- length(geneSet)
+      Phit <- Pmiss <- numeric(N)
+      hits <- names(geneList) %in% geneSet
+      Phit[hits] <- abs(geneList[hits])^exponent
+      NR <- sum(Phit)
+      Phit <- cumsum(Phit/NR)
+      Pmiss[!hits] <- 1/(N - Nh)
+      Pmiss <- cumsum(Pmiss)
+      runningES <- Phit - Pmiss
+      max.ES <- max(runningES)
+      min.ES <- min(runningES)
+      if (abs(max.ES) > abs(min.ES)) {
+        ES <- max.ES
+      }
+      else {
+        ES <- min.ES
+      }
+      df <- data.frame(x = seq_along(runningES), runningScore = runningES,
+                       position = as.integer(hits))
+      if (fortify == TRUE) {
+        return(df)
+      }
+      df$gene = names(geneList)
+      res <- list(ES = ES, runningES = df)
+      return(res)
+    }
+
+
+
     # gsInfo from enrichplot
     gsInfo <- function(object, geneSetID) {
       geneList <- object@geneList
@@ -89,7 +123,7 @@ plot.GSEA =
 
       geneSet <- object@geneSets[[geneSetID]]
       exponent <- object@params[["exponent"]]
-      gseaScores <- getFromNamespace("gseaScores", "DOSE")
+      #gseaScores <- getFromNamespace("gseaScores", "DOSE")
       df <- gseaScores(geneList, geneSet, exponent, fortify=TRUE)
       df$ymin <- 0
       df$ymax <- 0
