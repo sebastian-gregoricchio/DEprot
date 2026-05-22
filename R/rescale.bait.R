@@ -73,7 +73,7 @@ rescale.bait =
 
     ### make scaling method
     scaling.method =
-      list(original.imputation = DEprot.object@imputation,
+      list(original.imputation = DEprot.object@imputation.method,
            bait.rescaling = list(source.matrix = mat,
                                  bait.id = bait.id,
                                  bait.scores = data.frame(sample.id = names(bait.scores),
@@ -87,7 +87,7 @@ rescale.bait =
     ### Return new rescaled object
     rescaled.dpo = DEprot.object
     rescaled.dpo@imputed.counts = mat.scaled.log
-    rescaled.dpo@imputation = scaling.method
+    rescaled.dpo@imputation.method = scaling.method
 
     return(rescaled.dpo)
 

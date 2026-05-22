@@ -8,7 +8,7 @@
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
 #' @param FDR.th Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.
-#' @param strategy String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "glm" (general lm), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).
+#' @param strategy String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).
 #' @param moderate.variance String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
@@ -135,7 +135,7 @@ diff.analyses.prolfqua =
     ## Check strategy compatibility
     if (is.null(replicate.column)) {
       if (!(tolower(strategy) %in% c("lm", "glm", "rlm"))) {
-        stop("The `replicate.column` is not provided. Which means that only linear models ('lm', 'glm', 'rlm') can be applied.\nChange the `strategy` to 'lm', 'glm' or 'rlm', or provide the column of the metadata corresponsing to the replicates.")
+        stop("The `replicate.column` is not provided. Which means that only linear models ('lm', 'rlm') can be applied.\nChange the `strategy` to 'lm' or 'rlm', or provide the column of the metadata corresponsing to the replicates.")
       }
     } else {
       if (!(replicate.column %in% colnames(DEprot.object@metadata))) {
@@ -220,7 +220,7 @@ diff.analyses.prolfqua =
 
     # specify model
     modelFunction = switch(tolower(strategy),
-                           glm = prolfqua::strategy_glm("log_protein_abundance ~ Group"),
+                           glm = prolfqua::strategy_lm("log_protein_abundance ~ Group"),
                            lm = prolfqua::strategy_lm("log_protein_abundance ~ Group"),
                            lmer = prolfqua::strategy_lmer("log_protein_abundance ~ Group + (1|rep)"),
                            logistf = prolfqua::strategy_logistf("log_protein_abundance ~ Group + rep"),
@@ -271,18 +271,44 @@ diff.analyses.prolfqua =
       combo.table.long$isotopeLabel = "light"
 
 
+      # # create TableAnnotation and AnalysisConfiguration
+      # atable = prolfqua::AnalysisTableAnnotation$new()
+      # atable$fileName = "Sample"
+      # atable$workIntensity = "Intensity"
+      # atable$hierarchy[["protein_Id"]] = "protein_Id"
+      # atable$factors[["Group"]] = "Group"
+      #
+      # if (!is.null(replicate.column)) {
+      #   atable$factors[["rep"]] = "rep"
+      # }
+      #
+      # config = prolfqua::AnalysisConfiguration$new(atable)
+
+
       # create TableAnnotation and AnalysisConfiguration
-      atable = prolfqua::AnalysisTableAnnotation$new()
-      atable$fileName = "Sample"
-      atable$workIntensity = "Intensity"
-      atable$hierarchy[["protein_Id"]] = "protein_Id"
-      atable$factors[["Group"]] = "Group"
+      if ("AnalysisTableAnnotation" %in% names(asNamespace("prolfqua"))) {
+        # Old API (< 1.6.x)
+        atable = prolfqua::AnalysisTableAnnotation$new()
+        atable$fileName = "Sample"
+        atable$workIntensity = "Intensity"
+        atable$hierarchy[["protein_Id"]] = "protein_Id"
+        atable$factors[["Group"]] = "Group"
+        if (!is.null(replicate.column)) {
+          atable$factors[["rep"]] = "rep"
+        }
+        config = prolfqua::AnalysisConfiguration$new(atable)
 
-      if (!is.null(replicate.column)) {
-        atable$factors[["rep"]] = "rep"
+      } else {
+        # New API (>= 1.6.x)
+        config = prolfqua::AnalysisConfiguration$new()
+        config$file_name = "Sample"
+        config$work_intensity = "Intensity"
+        config$hierarchy[["protein_Id"]] = "protein_Id"
+        config$factors[["Group"]] = "Group"
+        if (!is.null(replicate.column)) {
+          config$factors[["rep"]] = "rep"
+        }
       }
-
-      config = prolfqua::AnalysisConfiguration$new(atable)
 
 
       # Build LFQData object

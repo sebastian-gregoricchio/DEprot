@@ -34,7 +34,7 @@
 
 \item{FDR.th}{Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.}
 
-\item{strategy}{String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "glm" (general lm), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).}
+\item{strategy}{String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).}
 
 \item{moderate.variance}{String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.}
 
