@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -79,6 +79,10 @@
 <dd><p>Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: <code>"ANY"</code>.</p></dd>
 
 
+<dt><code>random.counts</code></dt>
+<dd><p>Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: <code>"ANY"</code>.</p></dd>
+
+
 <dt><code>imputed.counts</code></dt>
 <dd><p>Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: <code>"ANY"</code>.</p></dd>
 
@@ -91,14 +95,6 @@
 <dd><p>Logical value indicating whether the data are log-transformed or not. Class: <code>"logical"</code>.</p></dd>
 
 
-<dt><code>imputed</code></dt>
-<dd><p>Logical value indicating whether the data are imputed. Class: <code>"logical"</code>.</p></dd>
-
-
-<dt><code>imputation</code></dt>
-<dd><p>String (or any other class) value indicating the imputation method. Class: <code>"ANY"</code>.</p></dd>
-
-
 <dt><code>normalized</code></dt>
 <dd><p>Logical value indicating whether the data are normalized. Class: <code>"logical"</code>.</p></dd>
 
@@ -107,12 +103,32 @@
 <dd><p>String (or any other class) value indicating the normalization method. Class: <code>"ANY"</code>. Class: <code>"ANY"</code>.</p></dd>
 
 
+<dt><code>randomized</code></dt>
+<dd><p>Logical value indicating whether the bottom distribution randomization has been applied. Class: <code>"logical"</code>.</p></dd>
+
+
+<dt><code>randomization.method</code></dt>
+<dd><p>List indicating the parameters used for the randomization (bottom distribution). Class" <code>"ANY"</code>.</p></dd>
+
+
+<dt><code>imputed</code></dt>
+<dd><p>Logical value indicating whether the data are imputed. Class: <code>"logical"</code>.</p></dd>
+
+
+<dt><code>imputation.method</code></dt>
+<dd><p>String (or any other class) value indicating the imputation method. Class: <code>"ANY"</code>.</p></dd>
+
+
 <dt><code>boxplot.raw</code></dt>
 <dd><p>Ggplot object showing the distribution of the raw values per sample. Class: <code>"ANY"</code>.</p></dd>
 
 
 <dt><code>boxplot.norm</code></dt>
 <dd><p>Ggplot object showing the distribution of the normalized values per sample. Class: <code>"ANY"</code>.</p></dd>
+
+
+<dt><code>boxplot.random</code></dt>
+<dd><p>Ggplot object showing the distribution of the randomized values per sample. Class: <code>"ANY"</code>.</p></dd>
 
 
 <dt><code>boxplot.imputed</code></dt>

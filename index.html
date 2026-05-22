@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -117,7 +117,7 @@
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="co"># Install the DEprot package</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
 <span>                        build_manual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                        build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -129,17 +129,17 @@
 </h4>
 <p>The package <a href="https://github.com/kerseviciute/aPEAR" class="external-link"><code>aPEAR</code></a> (<a href="https://doi.org/10.1093/bioinformatics/btad672" class="external-link">Kerseviciute &amp; Gordevicius, Bioinformatics 2023</a>) is required for the ORA/GSEA analyses. However, recently, it is has been removed from the CRAN, but it can be installed using:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/aPEAR"</span>,</span>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sebastian-gregoricchio/aPEAR"</span>,</span>
 <span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Another package possibly required, is <a href="https://github.com/fgcz/prolfqua" class="external-link"><code>prolfqua</code></a>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"fgcz/prolfqua"</span>,</span>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"fgcz/prolfqua"</span>,</span>
 <span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>Another package that might not be updated to the last version (&gt;= 1.3.6) is <a href="https://CRAN.R-project.org/package=ComplexUpset" class="external-link"><code>ComplexUpset</code></a>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"krassowski/complex-upset"</span>,</span>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"krassowski/complex-upset"</span>,</span>
 <span>                        build_manual <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                        build_vignettes <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -157,7 +157,7 @@
 <span></span>
 <span><span class="co">## Install DEprot (if not already installed)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">require</a></span><span class="op">(</span><span class="st"><a href="https://sebastian-gregoricchio.github.io/DEprot/" class="external-link">"DEprot"</a></span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
+<span>  <span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"sebastian-gregoricchio/DEprot"</span>,</span>
 <span>                          build_manual <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                          build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>

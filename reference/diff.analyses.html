@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -140,7 +140,7 @@
 
 
 <dt id="arg-which-data">which.data<a class="anchor" aria-label="anchor" href="#arg-which-data"></a></dt>
-<dd><p>String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: <code>"imputed"</code>.</p></dd>
+<dd><p>String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: <code>"imputed"</code>.</p></dd>
 
 
 <dt id="arg-overwrite-analyses">overwrite.analyses<a class="anchor" aria-label="anchor" href="#arg-overwrite-analyses"></a></dt>
@@ -158,7 +158,7 @@
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic Differential analyses with paired analyses</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Basic Differential analyses with unpaired analyses</span></span></span>
 <span class="r-in"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">diff.analyses</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
 <span class="r-in"><span>                     contrast.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"FBS"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                                          <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"6h.10nM.E2"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span><span class="op">)</span>,</span></span>

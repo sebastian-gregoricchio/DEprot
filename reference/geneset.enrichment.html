@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@
 
 
 <dt id="arg-gsea-rank-method">gsea.rank.method<a class="anchor" aria-label="anchor" href="#arg-gsea-rank-method"></a></dt>
-<dd><p>String indicating the type of gene ranking to use for GSEA analyses. Possible options: <code>"foldchange"</code> (log2FC value of the contrast), <code>"correlation"</code> (spearman's correlation coefficient of the imputed counts between the two groups in the contrast). Default: <code>"foldchange"</code>.</p></dd>
+<dd><p>String indicating the type of gene ranking to use for GSEA analyses. Possible options: <code>"foldchange"</code> (log2FC value of the contrast), <code>"correlation"</code> (spearman's correlation coefficient of the imputed counts between the two groups in the contrast), <code>"statistic"</code> (statistic column of the results). Default: <code>"foldchange"</code>.</p></dd>
 
 
 <dt id="arg-diff-status-category">diff.status.category<a class="anchor" aria-label="anchor" href="#arg-diff-status-category"></a></dt>
@@ -147,6 +147,7 @@
 <span class="r-in"><span>                                  qvalueCutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">fill</span> is already present.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>showCategory (5) is larger than available items (3). Using 3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">fill</span> is already present.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span>
 <span class="r-in"><span></span></span>
@@ -159,11 +160,7 @@
 <span class="r-in"><span>                                   gsea.rank.method <span class="op">=</span> <span class="st">"foldchange"</span>,</span></span>
 <span class="r-in"><span>                                   pvalueCutoff <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                                   qvalueCutoff <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> using 'fgsea' for GSEA analysis, please cite Korotkevich et al (2019).</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> preparing geneSet collections...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> GSEA analysis...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> leading edge analysis...</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> done...</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>showCategory (5) is larger than available items (3). Using 3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Scale for <span style="color: #00BB00;">fill</span> is already present.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Adding another scale for <span style="color: #00BB00;">fill</span>, which will replace the existing scale.</span>
 <span class="r-in"><span></span></span>
