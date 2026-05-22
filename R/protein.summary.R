@@ -66,10 +66,15 @@ protein.summary =
     ### Check and extract counts table
     if (!is.null(DEprot.object@raw.counts)) {
       mat = DEprot.object@raw.counts
+      message("Raw data are used.")
     } else if (!is.null(DEprot.object@norm.counts)) {
       mat = DEprot.object@norm.counts
+      message("Normalized data are used.")
+    } else if (!is.null(DEprot.object@random.counts)) {
+      mat = DEprot.object@random.counts
+      message("Randomized data are used.")
     } else {
-      stop("Your object must contain either 'raw' or 'normalized' data.")
+      stop("Your object must contain either 'raw', 'normalized' or 'randomized' data.")
       #return(DEprot.object)
     }
 

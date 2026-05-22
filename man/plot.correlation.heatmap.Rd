@@ -32,7 +32,7 @@
 
 \item{sample.subset}{Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{palette}{Vector of colors corresponding to the palette to use for the heatmap color scale. Default: \code{viridis::mako(100, direction = -1)}.}
 

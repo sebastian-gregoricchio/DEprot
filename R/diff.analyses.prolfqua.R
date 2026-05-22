@@ -14,7 +14,7 @@
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
 #' @param null.color String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
 #' @import dplyr
@@ -161,7 +161,7 @@ diff.analyses.prolfqua =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -170,14 +170,24 @@ diff.analyses.prolfqua =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                  "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
       #return(DEprot.object)
     }
+
 
 
     ## Convert table to log2
@@ -316,7 +326,7 @@ diff.analyses.prolfqua =
                          by = c("prot.id" = "protein_Id")) %>%
         dplyr::rename(log2.Fold_group1.vs.group2 = diff,
                       padj = FDR) %>%
-        dplyr::select(prot.id, basemean.log2, log2.mean.group1, log2.mean.group2, log2.Fold_group1.vs.group2, p.value, padj)
+        dplyr::select(prot.id, basemean.log2, log2.mean.group1, log2.mean.group2, log2.Fold_group1.vs.group2, p.value, padj, statistic, df)
 
 
 
@@ -513,6 +523,7 @@ diff.analyses.prolfqua =
                                      correlations = corr.data.pearson@heatmap | corr.data.spearman@heatmap,
                                      volcano = volcano,
                                      MA.plot = ma.plot,
+                                     statistic.distribution = DEprot::identify.distribution(diff.tb$statistic),
                                      prolfqua.out = list(LFQ.data = lfqpro,
                                                          model = mod,
                                                          contrast = contrastX,
@@ -530,15 +541,19 @@ diff.analyses.prolfqua =
           metadata = DEprot.object@metadata,
           raw.counts = DEprot.object@raw.counts,
           norm.counts =  DEprot.object@norm.counts,
+          random.counts =  DEprot.object@random.counts,
           imputed.counts = DEprot.object@imputed.counts,
           log.base = DEprot.object@log.base,
           log.transformed = DEprot.object@log.transformed,
           imputed = DEprot.object@imputed,
-          imputation = DEprot.object@imputation,
+          imputation.method = DEprot.object@imputation.method,
           normalized = DEprot.object@normalized,
           normalization.method = DEprot.object@normalization.method,
+          randomized = DEprot.object@randomized,
+          randomization.method = DEprot.object@randomization.method,
           boxplot.raw = DEprot.object@boxplot.raw,
           boxplot.norm = DEprot.object@boxplot.norm,
+          boxplot.random = DEprot.object@boxplot.random,
           boxplot.imputed = DEprot.object@boxplot.imputed,
           analyses.result.list = diff.analyses.list,
           contrasts = contrasts.info,

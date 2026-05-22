@@ -6,7 +6,7 @@
 #' @param contrast Number indicating the position of the contrast to use for the plotting.
 #' @param TERM2GENE Data.frame containing two columns 'gs_name' (IDs of the gene sets) and 'gene_symbol' (indicating the gene IDs). No default.
 #' @param enrichment.type String indicating the type of analyses to perform. One among: GSEA, ORA. No default.
-#' @param gsea.rank.method String indicating the type of gene ranking to use for GSEA analyses. Possible options: \code{"foldchange"} (log2FC value of the contrast), \code{"correlation"} (spearman's correlation coefficient of the imputed counts between the two groups in the contrast). Default: \code{"foldchange"}.
+#' @param gsea.rank.method String indicating the type of gene ranking to use for GSEA analyses. Possible options: \code{"foldchange"} (log2FC value of the contrast), \code{"correlation"} (spearman's correlation coefficient of the imputed counts between the two groups in the contrast), \code{"statistic"} (statistic column of the results). Default: \code{"foldchange"}.
 #' @param diff.status.category String indicating a diff.status among the ones present in the results table of the specific contrast. Used only one 'ORA' is performed. Default: \code{NULL}.
 #' @param gsub.pattern.prot.id String indicating a pattern to be passed to gsub and to remove from the prot.id. Default: \code{NULL} (non changes in the IDs).
 #' @param pvalueCutoff Numeric value indicating the adjusted pvalue cutoff on enrichment tests to report. Default: \code{0.05}.
@@ -116,10 +116,6 @@ geneset.enrichment =
                         perc.bleeding.x = 8,
                         axes.text.size = 10,
                         title = "NES enrichments") {
-
-      # # libraries
-      # require(dplyr)
-      # require(ggplot2)
 
 
       # extract results and clean
@@ -281,7 +277,9 @@ geneset.enrichment =
         gene_list = data[,5]
         names(gene_list) = data$prot.id
         gene_list = sort(gene_list, decreasing = TRUE)
-      } else { ### correlation mode
+        rank.method = "foldchange"
+
+      } else if (tolower(gsea.rank.method) %in% c("cor", "corr", "correlation", "correlations")) { ### correlation mode
         ### extract tables by group
         counts_var1 = DEprot.analyses.object@imputed.counts[,contrasts.info$group.1]
         counts_var2 = DEprot.analyses.object@imputed.counts[,contrasts.info$group.2]
@@ -290,6 +288,15 @@ geneset.enrichment =
         corr_scores = sapply(1:nrow(counts_var1), function(x){suppressWarnings(cor.test(x = group_idx, y = c(counts_var2[x,],counts_var1[x,]), method = "spearman"))$estimate}, USE.NAMES = F)
         names(corr_scores) = rownames(counts_var1)
         gene_list = sort(corr_scores, decreasing = TRUE)
+
+        rank.method = "correlation"
+
+      } else {
+        gene_list = data$statistic
+        names(gene_list) = data$prot.id
+        gene_list = sort(gene_list, decreasing = TRUE)
+
+        rank.method = "statistic"
       }
 
 
@@ -330,7 +337,10 @@ geneset.enrichment =
 
       dotplot_fold.enrichment = NULL
 
+      ## --------- OverRepresentation Anlyses (ORA)
     } else {
+      rank.method = NA #no ranking applied for ORA
+
       enrichment.discovery = tryCatch(clusterProfiler::enricher(gene = dplyr::filter(.data = data,
                                                                                      diff.status == diff.status.category)$prot.id,
                                                                 pvalueCutoff = pvalueCutoff,
@@ -389,7 +399,7 @@ geneset.enrichment =
                             contrast = contrasts.info,
                             diff.status.category = diff.status.category,
                             gsub.pattern.prot.id = gsub.pattern.prot.id,
-                            gsea.rank.method = gsea.rank.method,
+                            gsea.rank.method = rank.method,
                             pvalueCutoff = pvalueCutoff,
                             qvalueCutoff = qvalueCutoff,
                             pAdjustMethod = pAdjustMethod,

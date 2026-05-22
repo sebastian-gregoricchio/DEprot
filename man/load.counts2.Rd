@@ -10,6 +10,7 @@ load.counts2(
   data.type,
   log.base,
   normalization.method = NA,
+  randomization.method = NA,
   imputation.method = NA,
   column.id = "column.id"
 )
@@ -24,6 +25,8 @@ load.counts2(
 \item{log.base}{Number indicating the base of the log used to transform the counts. If none transformation is applied, indicate the base \code{1}.}
 
 \item{normalization.method}{String or list indicating the normalization method used. If none, use the default value \code{NA}.}
+
+\item{randomization.method}{String or list indicating the randomization method used. If none, use the default value \code{NA}.}
 
 \item{imputation.method}{A string indicating the imputation method used. If none, use the default value \code{NA}.}
 

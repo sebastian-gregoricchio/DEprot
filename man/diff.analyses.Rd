@@ -49,7 +49,7 @@
 
 \item{null.color}{String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }
@@ -60,7 +60,7 @@ An object of class \code{DEprot.analyses}
 Allows for the computation of differential analyses using multiple t/Wilcox tests. Includes means, Fold Changes, and p-values.
 }
 \examples{
-# Basic Differential analyses with paired analyses
+# Basic Differential analyses with unpaired analyses
 dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,
                      contrast.list = list(c("condition", "FBS", "6h.DMSO"),
                                           c("condition", "6h.10nM.E2", "6h.DMSO")),

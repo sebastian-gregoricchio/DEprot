@@ -183,12 +183,15 @@ This object is an S4-vector of class `DEprot`. The S4-vectors are containers of 
 | *imputed.counts*               | table containing the imputed counts, if not available it will be `NULL`                                   |
 | *log.base*                     | a number indicating the base of the log used to transform the table, if not available it will be `NA`     |
 | *log.transformed*              | logical value indicating whether the data are log-transformed or not                                      |
-| *imputed*                      | logical value indicating whether the data are imputed or not                                              |
-| *imputation*                   | discussed further in the [Imputation paragraph](#imputation)                                              |
 | *normalized*                   | logical value indicating whether the data are normalized or not                                           |
 | *normalization.method*         | a string indicating the type of normalization applied, if not available it will be `NA`                   |
+| *randomized*                   | logical value indicating whether the data have been randomizedor not                                      |
+| *randomization.method*         | a list indicating the type of randomization applied, if not available it will be `NA`                     |
+| *imputed*                      | logical value indicating whether the data are imputed or not                                              |
+| *imputation.method*            | discussed further in the [Imputation paragraph](#imputation)                                              |
 | *boxplot.raw*                  | box+violin plot of the distribution of the LFQ intensities per sample obtained from the raw counts        |
 | *boxplot.norm*                 | box+violin plot of the distribution of the LFQ intensities per sample obtained from the normalized counts |
+| *boxplot.random*               | box+violin plot of the distribution of the LFQ intensities per sample obtained from the randomized counts |
 | *boxplot.imputed*              | box+violin plot of the distribution of the LFQ intensities per sample obtained from the imputed counts    |
 | *analyses.result.list*         | discussed further in the [Differential Expression analyses paragraph](#diffexp)                           |
 | *contrasts*                    | discussed further in the [Differential Expression analyses paragraph](#diffexp)                           |
@@ -326,6 +329,33 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
 
 <br>
 
+## Choice of the imputation method
+We implemented the function `compare.imp.methods` to compare the different imputation methods and choose the best one for your data type. Indeed, your dataset is subset and NAs are introduce simulating distribution and proportion of the original data.
+
+
+```{r choice_of_imp, fig.width = 15, fig.height = 12, message=FALSE, warning=FALSE}
+imp.comparison <- compare.imp.methods(DEprot.object = dpo,
+                                      percentage.test = 30,
+                                      sample.group.column = "combined.id",
+                                      which.data = "normalized",
+                                      seed = 1234,
+                                      run.kNN = FALSE, # time consuming
+                                      verbose = TRUE)
+
+patchwork::wrap_plots(c(imp.comparison@correlation.plots,
+                        imp.comparison@density.residuals))
+```
+
+<br>
+
+```{r summary_impute_comparison, echo=FALSE}
+summary(imp.comparison)
+```
+
+
+<br>
+
+## Apply imputation
 Hereafter, an example in how to use the `missForest` method to impute the data:
 
 ```{r imputation_example, eval = F}
@@ -702,13 +732,14 @@ The `analyses.result.list`, for each contrast, stores a list with the following 
 
 | Element        | Description                                                                                                        |
 | -------------: | :----------------------------------------------------------------------------------------------------------------- |
-| *results*      | a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status |
+| *results*      | a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, test statistic, degrees of freedom and differential.status |
 | *n.diff*       | a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null) |
 | *PCA.data*     | output of `perform.PCA` for the subset of samples analyzed in a specific contrast                                  |
 | *PCA.plots*    | combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot                            |
 | *correlations* | combination of Pearson and Spearman correlation heatmaps (obtained by `plot.correlation.heatmap`) for the subset of samples analyzed in a specific contrast |
 | *volcano*      | volcano plot showing the log2(FoldChange) x -log10(p.adjusted) of differential expression results; it can be regenerated using `plot.volcano` |
 | *MA.plot*      | MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using `plot.MA` |
+| *statistic.distribution* | A list containing the best-fitting distribution name (one among: 't', 'norm', 'f', 'chisq', NA), an AIC/BIC comparison table, the fitted model objects, and a Kolmogorov-Smirnov goodness-of-fit test for the best candidate. |
 
 
 If the function `diff.analyses.limma` was used, an additional slot called `limma.fit` will be available and will contain the results of `limma::contrasts.fit`.
@@ -1206,7 +1237,7 @@ knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein com
 For GSEA analyses the genes in the differential table of the provided contrast can be ranked either by using the log~2~(Fold Change) [default] or the Spearman's correlation of the imputed counts between the two groups. Depending on the sample size, this two methods can lead to different ranking. To compare the two methods it is possible to plot the correlation of the two ranks and scores using `compare.ranking`:
 
 
-```{r compare_ranking, fig.width=10, fig.height=5}
+```{r compare_ranking, fig.width=15, fig.height=10}
 compare.ranking(DEprot.analyses.object = dpo_analyses,
                 contrast = 2)
 ```

@@ -4,7 +4,7 @@
 #'
 #' @param DEprot.object A \code{DEprot} object.
 #' @param min.n.samples Numeric value indicating the minimum number of sample in which a protein must be detected to be kept. Default: \code{3}.
-#' @param which.data String indicating which type of counts should be used to define the proteins to remove. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"normalized"}.
+#' @param which.data String indicating which type of counts should be used to define the proteins to remove. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"normalized"}.
 #'
 #' @return A \code{DEprot} object.
 #'
@@ -51,7 +51,7 @@ remove.undetected.proteins =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -60,12 +60,21 @@ remove.undetected.proteins =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                  "Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
       #return(DEprot.object)
     }
 

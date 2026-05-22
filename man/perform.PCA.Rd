@@ -18,7 +18,7 @@ perform.PCA(
 
 \item{sample.subset}{String vector indicating the column names (samples) to keep in the counts table (the 'column.id' in the metadata table). Default: \code{NULL} (no subsetting).}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{n.PCs}{Integer number indicating the number of PCs to be computed. This is used only when NAs are present in the the data set. Default: \code{50}.}
 

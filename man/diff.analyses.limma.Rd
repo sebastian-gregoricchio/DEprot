@@ -49,7 +49,7 @@
 
 \item{null.color}{String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{overwrite.analyses}{Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.}
 }

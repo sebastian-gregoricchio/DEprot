@@ -4,12 +4,12 @@
 \alias{compare.imp.methods}
 \title{compare.imp.methods}
 \usage{
-compare.imp.methods(
+\method{compare}{imp.methods}(
   DEprot.object,
   percentage.test = 30,
   correlation.method = "pearson",
   sample.group.column = NULL,
-  use.normalized.data = TRUE,
+  which.data = "randomized",
   run.missForest = TRUE,
   run.kNN = TRUE,
   run.tkNN = TRUE,
@@ -45,7 +45,7 @@ compare.imp.methods(
 
 \item{sample.group.column}{String indicating the ID of any column of the metadata table. This will be used to introduce the same frequencies of n-missing values for a protein and therefore not introducing the NAs completely at random in the dataset. Default: \code{NULL}, NAs are assigned randomly (same percentage of NAs present in the original table).}
 
-\item{use.normalized.data}{Logical value indicating whether the imputation should be performed based on the rationalized data. Default: \code{TRUE}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random'. Default: \code{"randomized"}.}
 
 \item{run.missForest}{Logical values indicating whether the test for the \code{missForest} imputation should be performed. Default: \code{TRUE}.}
 

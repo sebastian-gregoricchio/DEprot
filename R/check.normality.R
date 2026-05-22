@@ -4,7 +4,7 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param p.threshold Numeric value indicating the p-value threshold to use to define whether a distribution is normal (based on Anderson-Darling normality test). Default: \code{0.05}.
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param verbose Logical value indicating whether messages should be printed. Default: \code{TRUE}.
 #'
 #' @return A \code{DEprot.normality} object containing: the \code{norm.statement} indicating whether all the samples are normally distributed or not, the \code{norm.AD.tests} list of Anderson-Darling normality test outputs, a list of \code{qqplots} and \code{densities} profiles for each sample.
@@ -45,7 +45,7 @@ check.normality =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
@@ -54,7 +54,7 @@ check.normality =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -63,12 +63,21 @@ check.normality =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                  "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
       #return(DEprot.object)
     }
 

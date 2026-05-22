@@ -15,7 +15,7 @@ remove.undetected.proteins(
 
 \item{min.n.samples}{Numeric value indicating the minimum number of sample in which a protein must be detected to be kept. Default: \code{3}.}
 
-\item{which.data}{String indicating which type of counts should be used to define the proteins to remove. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"normalized"}.}
+\item{which.data}{String indicating which type of counts should be used to define the proteins to remove. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"normalized"}.}
 }
 \value{
 A \code{DEprot} object.

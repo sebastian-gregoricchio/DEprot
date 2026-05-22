@@ -15,7 +15,7 @@
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
 #' @param null.color String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
 #' @import dplyr
@@ -165,7 +165,7 @@ diff.analyses.limma =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
@@ -174,7 +174,7 @@ diff.analyses.limma =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -183,7 +183,16 @@ diff.analyses.limma =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
@@ -262,9 +271,13 @@ diff.analyses.limma =
       ## Combine results with diff.tb
       diff.tb =
         dplyr::left_join(x = diff.tb,
-                         y = dplyr::select(.data = results.limma, prot.id, P.Value, adj.P.Val),
+                         y = dplyr::select(.data = results.limma, prot.id, P.Value, adj.P.Val, t),
                          by = "prot.id") %>%
-        dplyr::rename(p.value = P.Value, padj = adj.P.Val)
+        dplyr::rename(p.value = P.Value,
+                      padj = adj.P.Val,
+                      statistic = t)
+
+      diff.tb$df = (fitted.data$df.prior + fitted.data$df.residual)[match(diff.tb$prot.id, rownames(fitted.data$t))]
 
 
       ## Define signif status
@@ -457,6 +470,7 @@ diff.analyses.limma =
                                      correlations = corr.data.pearson@heatmap | corr.data.spearman@heatmap,
                                      volcano = volcano,
                                      MA.plot = ma.plot,
+                                     statistic.distribution = DEprot::identify.distribution(diff.tb$statistic),
                                      limma.fit = fitted.data)
 
       pb$tick()
@@ -471,15 +485,19 @@ diff.analyses.limma =
           metadata = DEprot.object@metadata,
           raw.counts = DEprot.object@raw.counts,
           norm.counts =  DEprot.object@norm.counts,
+          random.counts =  DEprot.object@random.counts,
           imputed.counts = DEprot.object@imputed.counts,
           log.base = DEprot.object@log.base,
           log.transformed = DEprot.object@log.transformed,
           imputed = DEprot.object@imputed,
-          imputation = DEprot.object@imputation,
+          imputation.method = DEprot.object@imputation.method,
           normalized = DEprot.object@normalized,
           normalization.method = DEprot.object@normalization.method,
+          randomized = DEprot.object@randomized,
+          randomization.method = DEprot.object@randomization.method,
           boxplot.raw = DEprot.object@boxplot.raw,
           boxplot.norm = DEprot.object@boxplot.norm,
+          boxplot.random = DEprot.object@boxplot.random,
           boxplot.imputed = DEprot.object@boxplot.imputed,
           analyses.result.list = diff.analyses.list,
           contrasts = contrasts.info,

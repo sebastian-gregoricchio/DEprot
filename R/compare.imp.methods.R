@@ -7,7 +7,7 @@
 #' @param percentage.test Numeric value between 0 (excluded) and 100 indicating the percentage of proteins to use for the test dataset. Default: \code{30}.
 #' @param correlation.method String indicating the method to use for the correlations. One among: 'pearson', 'spearman'. Default: \code{"pearson"}.
 #' @param sample.group.column String indicating the ID of any column of the metadata table. This will be used to introduce the same frequencies of n-missing values for a protein and therefore not introducing the NAs completely at random in the dataset. Default: \code{NULL}, NAs are assigned randomly (same percentage of NAs present in the original table).
-#' @param use.normalized.data Logical value indicating whether the imputation should be performed based on the rationalized data. Default: \code{TRUE}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random'. Default: \code{"randomized"}.
 #' @param run.missForest Logical values indicating whether the test for the \code{missForest} imputation should be performed. Default: \code{TRUE}.
 #' @param run.kNN Logical values indicating whether the test for the \code{kNN} imputation method should be performed. Default: \code{TRUE}.
 #' @param run.corkNN Logical values indicating whether the test for the \code{corkNN} imputation method should be performed. Default: \code{TRUE}.
@@ -70,7 +70,7 @@ compare.imp.methods =
            percentage.test = 30,
            correlation.method = "pearson",
            sample.group.column = NULL,
-           use.normalized.data = TRUE,
+           which.data = "randomized",
            run.missForest = TRUE,
            run.kNN = TRUE,
            run.tkNN = TRUE,
@@ -123,18 +123,26 @@ compare.imp.methods =
     }
 
 
-    ### Check if normalized data are available
-    if (use.normalized.data == TRUE) {
+    ### Check if normalized/raw data are available
+    if (tolower(which.data) %in% c("normalized", "norm", "n")) {
       if (is.null(DEprot.object@norm.counts)) {
-        stop(paste0("You asked to use normalized data for the imputation, but normalized data are not available.\n",
-                    "       To perform imputation on raw data, set 'use.normalized.data = FALSE'."))
+        stop("You asked to use normalized data for the imputation, but normalized data are not available.\n")
         #return(DEprot.object)
       } else {
         cnt = DEprot.object@norm.counts
       }
+    } else if (tolower(which.data) %in% c("random", "randomized")) {
+      if (is.null(DEprot.object@random.counts)) {
+        stop("You asked to use randomized data for the imputation, but randomized data are not available.\n")
+        #return(DEprot.object)
+      } else {
+        cnt = DEprot.object@random.counts
+      }
     } else {
       cnt = DEprot.object@raw.counts
     }
+
+
 
     ### Check that the counts contain at least 1 NA
     if (anyNA.data.frame(cnt) == FALSE) {
@@ -289,7 +297,7 @@ compare.imp.methods =
     ### Generate a new dpo object with the reduced and artificially modified data
     dpo.na = DEprot::load.counts2(counts = sample.data.na,
                                   metadata = DEprot.object@metadata,
-                                  data.type = "normalized",
+                                  data.type = which.data,
                                   log.base = DEprot.object@log.base)
 
 
@@ -297,6 +305,7 @@ compare.imp.methods =
     if (run.missForest == TRUE) {
       if (isTRUE(verbose)) {message("Performing `missForest` imputation...")}
       dpo.na_missForest = DEprot::impute.counts(DEprot.object = dpo.na,
+                                                which.data = which.data,
                                                 method = "missForest",
                                                 missForest.max.iterations = missForest.max.iterations,
                                                 missForest.variable.wise.OOBerror = missForest.variable.wise.OOBerror,
@@ -316,6 +325,7 @@ compare.imp.methods =
     if (run.kNN == TRUE) {
       if (isTRUE(verbose)) {message("Performing `kNN` imputation...")}
       dpo.na_kNN = DEprot::impute.counts(DEprot.object = dpo.na,
+                                         which.data = which.data,
                                          method = "kNN",
                                          kNN.n.nearest.neighbours = kNN.n.nearest.neighbours,
                                          verbose = verbose,
@@ -331,6 +341,7 @@ compare.imp.methods =
     if (run.LLS == TRUE) {
       if (isTRUE(verbose)) {message("Performing `LLS` imputation...")}
       dpo.na_LLS = DEprot::impute.counts(DEprot.object = dpo.na,
+                                         which.data = which.data,
                                          method = "LLS",
                                          LLS.k = LLS.k,
                                          verbose = verbose,
@@ -345,6 +356,7 @@ compare.imp.methods =
     if (run.SVD == TRUE) {
       if (isTRUE(verbose)) {message("Performing `SVD` imputation...")}
       dpo.na_SVD = DEprot::impute.counts(DEprot.object = dpo.na,
+                                         which.data = which.data,
                                          method = "SVD",
                                          pcaMethods.nPCs.to.test = pcaMethods.nPCs.to.test,
                                          verbose = verbose,
@@ -360,6 +372,7 @@ compare.imp.methods =
     if (run.BPCA == TRUE) {
       if (isTRUE(verbose)) {message("Performing `BPCA` imputation...")}
       dpo.na_BPCA = DEprot::impute.counts(DEprot.object = dpo.na,
+                                          which.data = which.data,
                                           method = "BPCA",
                                           pcaMethods.nPCs.to.test = pcaMethods.nPCs.to.test,
                                           verbose = verbose,
@@ -374,6 +387,7 @@ compare.imp.methods =
     if (run.PPCA == TRUE) {
       if (isTRUE(verbose)) {message("Performing `PPCA` imputation...")}
       dpo.na_PPCA = DEprot::impute.counts(DEprot.object = dpo.na,
+                                          which.data = which.data,
                                           method = "PPCA",
                                           pcaMethods.nPCs.to.test = pcaMethods.nPCs.to.test,
                                           verbose = verbose,
@@ -389,6 +403,7 @@ compare.imp.methods =
     if (run.RegImpute == TRUE) {
       if (isTRUE(verbose)) {message("Performing `RegImpute` imputation...")}
       dpo.na_RegImpute = DEprot::impute.counts(DEprot.object = dpo.na,
+                                               which.data = which.data,
                                                method = "RegImpute",
                                                RegImpute.max.iterations = RegImpute.max.iterations,
                                                RegImpute.fillmethod = RegImpute.fillmethod,
@@ -405,6 +420,7 @@ compare.imp.methods =
     if (run.tkNN == TRUE) {
       if (isTRUE(verbose)) {message("Performing `tkNN` imputation...")}
       dpo.na_tkNN = DEprot::impute.counts(DEprot.object = dpo.na,
+                                          which.data = which.data,
                                           method = "tkNN",
                                           verbose = verbose,
                                           seed = seed)
@@ -419,9 +435,10 @@ compare.imp.methods =
     if (run.corkNN == TRUE) {
       if (isTRUE(verbose)) {message("Performing `corkNN` imputation...")}
       dpo.na_corkNN = DEprot::impute.counts(DEprot.object = dpo.na,
-                                          method = "corkNN",
-                                          verbose = verbose,
-                                          seed = seed)
+                                            which.data = which.data,
+                                            method = "corkNN",
+                                            verbose = verbose,
+                                            seed = seed)
       corkNN = dpo.na_corkNN@imputed.counts
     } else {
       dpo.na_corkNN = NULL
@@ -512,7 +529,7 @@ compare.imp.methods =
     comp.time = c()
 
     for (i in 1:length(imputed.objects)) {
-      comp.time[i] = lubridate::as.duration(imputed.objects[[i]]@imputation$processing.time)
+      comp.time[i] = lubridate::as.duration(imputed.objects[[i]]@imputation.method$processing.time)
     }
 
 

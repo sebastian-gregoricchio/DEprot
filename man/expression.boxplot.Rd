@@ -21,7 +21,7 @@ expression.boxplot(
 
 \item{protein.id}{String indicating a protein for which plot the expression. The identifier must correspond to the full row.name of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object).}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'randomized', 'random', 'imp'. Default: \code{"imputed"}.}
 
 \item{sample.subset}{Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).}
 

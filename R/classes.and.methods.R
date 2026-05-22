@@ -1,17 +1,24 @@
+#' @import methods
+NULL
+
 #' @title DEprot class
 #'
 #' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
 #' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
 #' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
+#' @slot random.counts Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.
 #' @slot imputed.counts Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.
 #' @slot log.base Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.
 #' @slot log.transformed Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.
-#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
-#' @slot imputation String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
 #' @slot normalized Logical value indicating whether the data are normalized. Class: \code{"logical"}.
 #' @slot normalization.method String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.
+#' @slot randomized Logical value indicating whether the bottom distribution randomization has been applied. Class: \code{"logical"}.
+#' @slot randomization.method List indicating the parameters used for the randomization (bottom distribution). Class" \code{"ANY"}.
+#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
+#' @slot imputation.method String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
 #' @slot boxplot.raw Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
+#' @slot boxplot.random Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
 #' @slot analyses.result.list For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
 #' @slot contrasts For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
@@ -23,15 +30,19 @@ setClass(Class = "DEprot",
          slots = list(metadata = "ANY",
                       raw.counts = "ANY",
                       norm.counts = "ANY",
+                      random.counts = "ANY",
                       imputed.counts = "ANY",
                       log.base = "numeric",
                       log.transformed = "logical",
-                      imputed = "logical",
-                      imputation = "ANY",
+                      randomized = "logical",
+                      randomization.method = "ANY",
                       normalized = "logical",
                       normalization.method = "ANY",
+                      imputed = "logical",
+                      imputation.method = "ANY",
                       boxplot.raw = "ANY",
                       boxplot.norm = "ANY",
+                      boxplot.random = "ANY",
                       boxplot.imputed = "ANY",
                       analyses.result.list = "ANY",
                       contrasts = "ANY",
@@ -47,19 +58,23 @@ setClass(Class = "DEprot",
 #' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
 #' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
 #' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
+#' @slot random.counts Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.
 #' @slot imputed.counts Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.
 #' @slot log.base Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.
 #' @slot log.transformed Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.
-#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
-#' @slot imputation String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
 #' @slot normalized Logical value indicating whether the data are normalized. Class: \code{"logical"}.
 #' @slot normalization.method String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.
+#' @slot randomized Logical value indicating whether the bottom distribution randomization has been applied. Class: \code{"logical"}.
+#' @slot randomization.method List indicating the parameters used for the randomization (bottom distribution). Class" \code{"ANY"}.
+#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
+#' @slot imputation.method String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
 #' @slot boxplot.raw Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
+#' @slot boxplot.random Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
 #' @slot analyses.result.list List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
 #'      \describe{
-#'        \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, differential.status}
+#'        \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, test statistic, degrees of freedom and differential.status}
 #'        \item{\code{n.diff}: }{a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null)}
 #'        \item{\code{PCA.data}: }{output of \link{perform.PCA} for the subset of samples analyzed in a specific contrast}
 #'        \item{\code{PCA.plots}: }{combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot}
@@ -75,21 +90,23 @@ setClass(Class = "DEprot.analyses",
          slots = list(metadata = "ANY",
                       raw.counts = "ANY",
                       norm.counts = "ANY",
+                      random.counts = "ANY",
                       imputed.counts = "ANY",
                       log.base = "numeric",
                       log.transformed = "logical",
-                      imputed = "logical",
-                      imputation = "ANY",
+                      randomized = "logical",
+                      randomization.method = "ANY",
                       normalized = "logical",
                       normalization.method = "ANY",
+                      imputed = "logical",
+                      imputation.method = "ANY",
                       boxplot.raw = "ANY",
                       boxplot.norm = "ANY",
+                      boxplot.random = "ANY",
                       boxplot.imputed = "ANY",
                       analyses.result.list = "ANY",
                       contrasts = "ANY",
                       differential.analyses.params = "ANY"))
-
-
 
 
 
@@ -302,12 +319,17 @@ setMethod(f = "show",
                 tb.type.norm = "normalized"
               } else {tb.type.norm = NULL}
 
+              if (!is.null(object@random.counts)) {
+                tb = object@random.counts
+                tb.type.random = "randomized"
+              } else {tb.type.random = NULL}
+
               if (!is.null(object@imputed.counts)) {
                 tb = object@imputed.counts
                 tb.type.imputed = "imputed"
               } else {tb.type.imputed = NULL}
 
-              cnt.avilable = c(tb.type.raw, tb.type.norm, tb.type.imputed)
+              cnt.avilable = c(tb.type.raw, tb.type.norm, tb.type.random, tb.type.imputed)
               cnt.avilable = cnt.avilable[!is.null(cnt.avilable)]
 
 
@@ -335,7 +357,8 @@ setMethod(f = "show",
 
               for (i in 1:length(object@analyses.result.list)) {
                 recap = rbind(recap,
-                              cbind(data.frame(contrast.id = rep(paste0(object@contrasts[[i]]$metadata.column, ": ", object@contrasts[[i]]$var.1, " vs ", object@contrasts[[i]]$var.2), 4),
+                              cbind(data.frame(n.contrast = i,
+                                               contrast.id = rep(paste0(object@contrasts[[i]]$metadata.column, ": ", object@contrasts[[i]]$var.1, " vs ", object@contrasts[[i]]$var.2), 4),
                                                group.factor = rep(object@contrasts[[i]]$metadata.column, 4),
                                                group1 = rep(object@contrasts[[i]]$var.1, 4),
                                                group2 = rep(object@contrasts[[i]]$var.2, 4),

@@ -3,7 +3,7 @@
 #' @description Plots an heatmap of the counts (raw, normalized, or imputed). It is possible to perform a scaling (z-score) by row or by column.
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param contrast Numeric vector indicating the position of the contrast to use for the plotting. Only differential proteins in this contrast will be shown. Option available only for an object of class \code{DEprot.analyses}. Default: \code{NULL} (non differential protein selection).
 #' @param top.n Numeric value indicated the top differentially expressed proteins to consider for the contrast selected. The rank is based on the product of log2Fc and -log10Padj. Option available only for an object of class \code{DEprot.analyses}. Default: \code{NULL} (all differential proteins of that contrast).
 #' @param sample.subset Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).
@@ -169,7 +169,7 @@ heatmap.counts =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                       "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
@@ -178,7 +178,7 @@ heatmap.counts =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                       "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -187,13 +187,22 @@ heatmap.counts =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                       "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                     "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      return(DEprot.object)
+                  "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 

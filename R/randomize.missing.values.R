@@ -6,6 +6,7 @@
 #' @param group.column String indicating a column for the metadata table which indicates the IDs of the conditions within which the missing values should be tested.
 #' @param tail.percentage Numeric value between 0 and 100 (excluded) indicating the threshold percentage of the distribution from which random values should be sampled. Default: \code{3} (percent).
 #' @param percentage.missing Numeric value between 0 and 100 (included) indicated the minimal percentage of missing values per group required to apply the imputation. For instance, if \code{percentage.missing = 75} and the sample group contains 4 samples, imputation will be applied when at least 3 out of 4 values are missing. Default: \code{100} (all values are missing in the group).
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized'. Default: \code{"normalized"}.
 #' @param seed Numeric value value indicating the random seed used for the imputation. By default a random integer between 0 and 50000 is selected (if \code{verbose = TRUE} a message is printed indicating the seed used).
 #' @param verbose Logical value to define whether the message indicating which random seed was used should be printed. Default: \code{TRUE}.
 #'
@@ -35,6 +36,7 @@ randomize.missing.values =
            group.column,
            percentage.missing = 100,
            tail.percentage = 3,
+           which.data = "normalized",
            seed = floor(runif(n = 1, min = 0, max = 50000)),
            verbose = TRUE) {
 
@@ -47,17 +49,26 @@ randomize.missing.values =
     ### check object
     if (!("DEprot" %in% class(DEprot.object))) {
       stop("The input must be an object of class 'DEprot'.")
-      #return(DEprot.object)
     }
 
 
-    ### Check if normalized data are available
-    if (DEprot.object@normalized == FALSE) {
-      stop("The 'DEprot' object must contain normalized counts.")
-      #return(DEprot.object)
+    ### Check if normalized/raw data are available
+    if (tolower(which.data) %in% c("normalized", "norm", "n")) {
+      if (DEprot.object@normalized == FALSE) {
+        stop("The 'DEprot' object does not contain normalized counts.")
+      } else {
+        counts = DEprot.object@norm.counts
+      }
+    } else if (tolower(which.data) %in% c("raw", "r")) {
+      if (is.null(raw.counts)) {
+        stop("The 'DEprot' does not contain raw counts.")
+      } else {
+        counts = DEprot.object@random.counts
+      }
     } else {
-      counts = DEprot.object@norm.counts
+      stop("Indicate a data type among: 'raw' and 'normalized.")
     }
+
 
 
     ### Check that the group column is available
@@ -126,13 +137,20 @@ randomize.missing.values =
 
 
     ### substitute the counts in the original object and return the latter
-    DEprot.object@norm.counts = as.matrix(randomized.counts)
-    DEprot.object@boxplot.norm =
+    DEprot.object@random.counts = as.matrix(randomized.counts)
+    DEprot.object@randomized = TRUE
+    DEprot.object@randomization.method = list(group.column = group.column,
+                                              percentage.missing = percentage.missing,
+                                              tail.percentage = tail.percentage,
+                                              data.used = which.data,
+                                              seed = seed)
+
+    DEprot.object@boxplot.random =
       DEprot::plot.counts(DEprot.object = DEprot.object,
-                          which.data = "norm",
-                          violin.color = "purple") +
-      ggtitle(label = DEprot.object@boxplot.norm$labels$title,
-              subtitle = DEprot.object@boxplot.norm$labels$subtitle)
+                          which.data = "randomized",
+                          violin.color = "gold2") +
+      ggtitle(label = "**Randomized**",
+              subtitle = paste0("*tail: ", tail.percentage, "%, missing: ", percentage.missing, "%, grouped by: '", group.column, "'*"))
 
 
     return(DEprot.object)

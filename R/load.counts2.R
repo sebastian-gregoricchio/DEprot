@@ -7,6 +7,7 @@
 #' @param data.type String indicating the type of data that are loaded. One among: 'raw', 'normalized', 'imputed'.
 #' @param log.base Number indicating the base of the log used to transform the counts. If none transformation is applied, indicate the base \code{1}.
 #' @param normalization.method String or list indicating the normalization method used. If none, use the default value \code{NA}.
+#' @param randomization.method String or list indicating the randomization method used. If none, use the default value \code{NA}.
 #' @param imputation.method A string indicating the imputation method used. If none, use the default value \code{NA}.
 #' @param column.id String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of \code{counts}.
 #'
@@ -35,6 +36,7 @@ load.counts2 =
            data.type,
            log.base,
            normalization.method = NA,
+           randomization.method = NA,
            imputation.method = NA,
            column.id = "column.id") {
 
@@ -63,8 +65,8 @@ load.counts2 =
 
 
     # Check counts type
-    if (!(tolower(data.type) %in% c("raw", "r", "n", "nor", "norm", "normalized", "i", "imp", "im", "imputed"))) {
-      stop("The `data.type` must be one among: 'raw', 'normalized', 'imputed'")
+    if (!(tolower(data.type) %in% c("raw", "r", "n", "nor", "norm", "normalized", "i", "imp", "im", "imputed", "randomized", "random"))) {
+      stop("The `data.type` must be one among: 'raw', 'normalized', 'randomized', 'imputed'")
       #return()
     }
 
@@ -136,6 +138,26 @@ load.counts2 =
       dplyr::summarise(min = min(value, na.rm = TRUE),
                        max = max(value, na.rm = TRUE))
 
+
+    # compose plot title string and coloring parameters
+    if (tolower(data.type) %in% c("raw", "r", "n")) {
+      plot.title = "**Raw data**"
+      fill.color = "darkorange"
+      border.color = "darkorange3"
+    } else if (tolower(data.type) %in% c("nor", "norm", "normalized")) {
+      plot.title = "**Normalized**"
+      fill.color = "purple"
+      border.color = "purple4"
+    } else if (tolower(data.type) %in% c("i", "imp", "im", "imputed")) {
+      plot.title = "**Imputed**"
+      fill.color = "forestgreen"
+      border.color = "darkgreen"
+    } else {
+      plot.title = "**Randomized**"
+      fill.color = "gold2"
+      border.color = "gold4"
+    }
+
     boxplot =
       ggplot() +
       geom_violin(data = melt.cnt,
@@ -144,14 +166,14 @@ load.counts2 =
                                 group = variable),
                   width = 0.75,
                   alpha = 0.75,
-                  fill = "darkorange",
+                  fill = fill.color,
                   color = NA) +
       geom_boxplot(data = melt.cnt,
                    mapping = aes(x = variable,
                                  y = value,
                                  group = variable),
                    fill = "white",
-                   color = "darkorange3",
+                   color = border.color,
                    width = 0.15,
                    outlier.color = "black",
                    outlier.stroke = NA,
@@ -176,9 +198,7 @@ load.counts2 =
                   no = paste0(ifelse(log.base == exp(1),
                                      yes = "ln", no = paste0("log<sub>",log.base,"</sub>")),
                               "(Intensity)"))) +
-      ggtitle(ifelse(is.na(normalization.method),
-                     yes = "**Unnormalized**",
-                     no = paste0("**Normalized**<br>(",normalization.method,")"))) +
+      ggtitle(plot.title) +
       xlab("Sample") +
       theme_classic() +
       theme(axis.text.y = element_text(color = "black"),
@@ -195,12 +215,15 @@ load.counts2 =
     ## base values
     boxplot.raw = NA
     boxplot.norm = NA
+    boxplot.random = NA
     boxplot.imputed = NA
     raw.counts = NULL
     norm.counts = NULL
+    random.counts = NULL
     imputed.counts = NULL
     imputed = FALSE
     normalized = FALSE
+    randomized = FALSE
 
 
     # ------------------------------------------------------------------------------------
@@ -228,7 +251,7 @@ load.counts2 =
       normalized = TRUE
       #imputation.method = "none"
 
-    } else {
+    } else if (tolower(data.type) %in% c("i", "imp", "im", "imputed")) {
       #boxplot.raw = NA
       #boxplot.norm = NA
       boxplot.imputed = boxplot
@@ -236,7 +259,11 @@ load.counts2 =
       #norm.counts = NULL
       imputed.counts = cnt
       imputed = TRUE
-      normalized = TRUE
+
+    } else {
+      boxplot.random = boxplot
+      random.counts = cnt
+      randomized = TRUE
     }
 
     # ------------------------------------------------------------------------------------
@@ -250,15 +277,17 @@ load.counts2 =
           metadata = meta,
           raw.counts = raw.counts,
           norm.counts = norm.counts,
+          random.counts = random.counts,
           imputed.counts = imputed.counts,
           log.base = log.base,
           log.transformed = ifelse(is.null(log.base), yes = FALSE, no = TRUE),
           imputed = imputed,
-          imputation = imputation.method,
+          imputation.method = imputation.method,
           normalized = normalized,
           normalization.method = normalization.method,
           boxplot.raw = boxplot.raw,
           boxplot.norm = boxplot.norm,
+          boxplot.random = boxplot.random,
           boxplot.imputed = boxplot.imputed,
           analyses.result.list = NULL,
           contrasts = NA,

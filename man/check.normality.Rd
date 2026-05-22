@@ -16,7 +16,7 @@ check.normality(
 
 \item{p.threshold}{Numeric value indicating the p-value threshold to use to define whether a distribution is normal (based on Anderson-Darling normality test). Default: \code{0.05}.}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{verbose}{Logical value indicating whether messages should be printed. Default: \code{TRUE}.}
 }

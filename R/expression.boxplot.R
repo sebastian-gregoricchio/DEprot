@@ -4,7 +4,7 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param protein.id String indicating a protein for which plot the expression. The identifier must correspond to the full row.name of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object).
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'randomized', 'random', 'imp'. Default: \code{"imputed"}.
 #' @param sample.subset Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).
 #' @param shape.column String indicating a column from the metadata table. This column will be used as factor for the shape of the points on the boxplot. Default: \code{NULL}: no different shapes.
 #' @param group.by.metadata.column String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{"column.id"} (no groups).
@@ -114,7 +114,7 @@ expression.boxplot =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
@@ -123,8 +123,8 @@ expression.boxplot =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        #return(invisible())
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
@@ -132,13 +132,22 @@ expression.boxplot =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        #return(invisible())
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      #return(invisible())
+                  "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 

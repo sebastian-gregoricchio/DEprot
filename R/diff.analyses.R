@@ -15,7 +15,7 @@
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
 #' @param null.color String indicating the color to use for null proteins in the plots. Default: \code{"gray"}.
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
 #' @import dplyr
@@ -32,7 +32,7 @@
 #' @return An object of class \code{DEprot.analyses}
 #'
 #' @examples
-#' # Basic Differential analyses with paired analyses
+#' # Basic Differential analyses with unpaired analyses
 #' dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                      contrast.list = list(c("condition", "FBS", "6h.DMSO"),
 #'                                           c("condition", "6h.10nM.E2", "6h.DMSO")),
@@ -200,7 +200,7 @@ diff.analyses =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
@@ -209,7 +209,7 @@ diff.analyses =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -218,12 +218,21 @@ diff.analyses =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                  "Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
       #return(DEprot.object)
     }
 
@@ -258,26 +267,56 @@ diff.analyses =
       ## Wilcoxon/t.test pval
       # split the matrix in vectors
       pval.list = c()
+      stat.list = c()
+      df.list = c()
+
       if (tolower(stat.test) %in% c("t.test", "ttest", "t-test", "t", "student")) {
         for (k in 1:nrow(mat.log2)){
-          pval.list[k] = tryCatch(suppressWarnings(t.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
-                                                          y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
-                                                          paired = contrasts.info[[i]]$paired.test,
-                                                          exact = TRUE))$p.value,
-                                  error = function(e) {list(statistic = NA, p.value = NA)})
+          test.result = tryCatch(suppressWarnings(t.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
+                                                         y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
+                                                         paired = contrasts.info[[i]]$paired.test,
+                                                         exact = TRUE)),
+                                 error = function(e) {list(statistic = c("t" = NA), p.value = NA, parameter = c("df" = NA))})
+
+          pval.list[k] = unname(test.result$p.value)
+          stat.list[k] = unname(test.result$statistic["t"])
+          df.list[k] = unname(test.result$parameter["df"])
         }
+
+        ### Using wilcoxon instead
       } else {
         for (k in 1:nrow(mat.log2)){
-          pval.list[k] = suppressWarnings(wilcox.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
-                                                      y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
-                                                      paired = contrasts.info[[i]]$paired.test,
-                                                      exact = TRUE))$p.value
+          test.result = tryCatch(suppressWarnings(wilcox.test(x = as.vector(mat.log2[k,contrasts.info[[i]]$group.1]),
+                                                              y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
+                                                              paired = contrasts.info[[i]]$paired.test,
+                                                              exact = TRUE)),
+                                 error = function(e) {list(statistic = c("W" = NA), p.value = NA)})
+
+          pval.list[k] = unname(test.result$p.value)
+          stat.list[k] = unname(test.result$statistic["W"])
+
+          ## Compute df like value
+          x = as.vector(mat.log2[k, contrasts.info[[i]]$group.1])
+          y = as.vector(mat.log2[k, contrasts.info[[i]]$group.2])
+
+          n.group1 = sum(!is.na(x))
+          n.group2 = sum(!is.na(y))
+
+          if (contrasts.info[[i]]$paired.test) {
+            # only complete pairs count
+            n.pairs = sum(!is.na(x) & !is.na(y))
+            df.list[k] = n.pairs - 1
+          } else {
+            df.list[k] = n.group1 + n.group2 - 2
+          }
         }
       }
 
 
       diff.tb$p.value = pval.list
       diff.tb$padj = p.adjust(p = diff.tb$p.value, method = padj.method)
+      diff.tb$statistic = stat.list
+      diff.tb$df = df.list
 
 
       ## Define signif status
@@ -470,7 +509,8 @@ diff.analyses =
                                      PCA.plots = (scatter.PC1.2 | scatter.PC2.3) / PCA.data@cumulative.PC.plot,
                                      correlations = corr.data.pearson@heatmap | corr.data.spearman@heatmap,
                                      volcano = volcano,
-                                     MA.plot = ma.plot)
+                                     MA.plot = ma.plot,
+                                     statistic.distribution = DEprot::identify.distribution(diff.tb$statistic))
     }
 
     names(diff.analyses.list) = names(contrasts.info)
@@ -482,15 +522,19 @@ diff.analyses =
           metadata = DEprot.object@metadata,
           raw.counts = DEprot.object@raw.counts,
           norm.counts =  DEprot.object@norm.counts,
+          random.counts =  DEprot.object@random.counts,
           imputed.counts = DEprot.object@imputed.counts,
           log.base = DEprot.object@log.base,
           log.transformed = DEprot.object@log.transformed,
           imputed = DEprot.object@imputed,
-          imputation = DEprot.object@imputation,
+          imputation.method = DEprot.object@imputation.method,
           normalized = DEprot.object@normalized,
           normalization.method = DEprot.object@normalization.method,
+          randomized = DEprot.object@randomized,
+          randomization.method = DEprot.object@randomization.method,
           boxplot.raw = DEprot.object@boxplot.raw,
           boxplot.norm = DEprot.object@boxplot.norm,
+          boxplot.random = DEprot.object@boxplot.random,
           boxplot.imputed = DEprot.object@boxplot.imputed,
           analyses.result.list = diff.analyses.list,
           contrasts = contrasts.info,

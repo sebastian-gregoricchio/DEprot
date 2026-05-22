@@ -7,7 +7,7 @@
 impute.counts(
   DEprot.object,
   method = "missForest",
-  use.normalized.data = TRUE,
+  which.data = "randomized",
   overwrite.imputation = FALSE,
   missForest.max.iterations = 100,
   missForest.variable.wise.OOBerror = TRUE,
@@ -27,7 +27,7 @@ impute.counts(
 
 \item{method}{String indicating the imputation method to use. One among: 'missForest', 'kNN' (VIM), 'tkNN' (imputomics), 'corkNN' (imputomics), 'LLS' (pcaMethods), 'SVD' (a.k.a svdImpute, pcaMethods), 'BPCA' (pcaMethods), 'PPCA' (pcaMethods), 'RegImpute' (DreamAI). Default: \code{"missForest"}.}
 
-\item{use.normalized.data}{Logical value indicating whether the imputation should be performed based on the rationalized data. Default: \code{TRUE}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random'. Default: \code{"randomized"}.}
 
 \item{overwrite.imputation}{Logical value to indicate whether, in the case already available, the table of imputed counts should be overwritten. Default: \code{FALSE}.}
 

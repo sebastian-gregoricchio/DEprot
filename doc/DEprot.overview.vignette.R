@@ -103,6 +103,21 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
                                 percentage.missing = 100, # completely missing
                                 tail.percentage = 3)
 
+## ----choice_of_imp, fig.width = 15, fig.height = 12, message=FALSE, warning=FALSE----
+imp.comparison <- compare.imp.methods(DEprot.object = dpo,
+                                      percentage.test = 30,
+                                      sample.group.column = "combined.id",
+                                      which.data = "normalized",
+                                      seed = 1234,
+                                      run.kNN = FALSE, # time consuming
+                                      verbose = TRUE)
+
+patchwork::wrap_plots(c(imp.comparison@correlation.plots,
+                        imp.comparison@density.residuals))
+
+## ----summary_impute_comparison, echo=FALSE------------------------------------
+summary(imp.comparison)
+
 ## ----imputation_example, eval = F---------------------------------------------
 # ## Without parallelization
 # dpo <- impute.counts(DEprot.object = dpo,
@@ -626,7 +641,7 @@ corum_geneSet =
 
 knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
 
-## ----compare_ranking, fig.width=10, fig.height=5------------------------------
+## ----compare_ranking, fig.width=15, fig.height=10-----------------------------
 compare.ranking(DEprot.analyses.object = dpo_analyses,
                 contrast = 2)
 

@@ -9,6 +9,7 @@ randomize.missing.values(
   group.column,
   percentage.missing = 100,
   tail.percentage = 3,
+  which.data = "normalized",
   seed = floor(runif(n = 1, min = 0, max = 50000)),
   verbose = TRUE
 )
@@ -21,6 +22,8 @@ randomize.missing.values(
 \item{percentage.missing}{Numeric value between 0 and 100 (included) indicated the minimal percentage of missing values per group required to apply the imputation. For instance, if \code{percentage.missing = 75} and the sample group contains 4 samples, imputation will be applied when at least 3 out of 4 values are missing. Default: \code{100} (all values are missing in the group).}
 
 \item{tail.percentage}{Numeric value between 0 and 100 (excluded) indicating the threshold percentage of the distribution from which random values should be sampled. Default: \code{3} (percent).}
+
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized'. Default: \code{"normalized"}.}
 
 \item{seed}{Numeric value value indicating the random seed used for the imputation. By default a random integer between 0 and 50000 is selected (if \code{verbose = TRUE} a message is printed indicating the seed used).}
 

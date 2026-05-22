@@ -76,6 +76,7 @@
 
 
 
+
 #' @title Test toolbox
 #' @docType data
 #' @description Set of objects and datasets used for the package tests.
@@ -84,6 +85,7 @@
 #'   \item{\code{test.unimputed.lfq}}{table of a subset of 50 proteins from the \link{unimputed.counts} table. Usable in combination with \link{sample.config}}
 #'   \item{\code{dpo.raw}}{Object of class \code{DEprot} with unimputed data loaded as raw}
 #'   \item{\code{dpo.norm}}{Object of class \code{DEprot} containing MBQN normalized data}
+#'   \item{\code{dpo.random}}{Object of class \code{DEprot} containing randomized values using the \code{replicate} column and \code{75\%} of missingness}
 #'   \item{\code{dpo.imp}}{Object of class \code{DEprot} containing missForest imputed data}
 #'   \item{\code{diff.exp.limma}}{Object of class \code{DEprot.analyses} containing \code{limma} defined differential expression for two contrasts}
 #'   \item{\code{geneset}}{Dummy geneset TERM2GENE table for GSEA and ORA analyses containing 3 sets of proteins}

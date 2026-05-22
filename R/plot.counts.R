@@ -3,7 +3,7 @@
 #' @description Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expression results
 #'
 #' @param DEprot.object An object of class \code{DEprot.analyses}.
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'random', 'randomized', imputed', 'imp'. Default: \code{"imputed"}.
 #' @param violin.color String indicating the color to use for the violin plots. Default: \code{"darkorange"}.
 #' @param max.line.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param min.line.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
@@ -61,7 +61,7 @@ plot.counts =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
@@ -70,7 +70,7 @@ plot.counts =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
@@ -79,12 +79,21 @@ plot.counts =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
+                  "       Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
       #return(DEprot.object)
     }
 

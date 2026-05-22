@@ -75,6 +75,23 @@ rename.samples =
     }
 
 
+    # rename randomized counts
+    if (!is.null(DEprot.object@random.counts)) {
+      for (i in 1:nrow(DEprot.object@metadata)) {
+        colnames(DEprot.object@random.counts)[which(colnames(DEprot.object@random.counts) == DEprot.object@metadata$old.column.id[i])] = DEprot.object@metadata$column.id[i]
+      }
+
+      ## replot counts
+      DEprot.object@boxplot.random =
+        DEprot::plot.counts(DEprot.object = DEprot.object,
+                            which.data = "randomized",
+                            violin.color = "gold2",
+                            title = DEprot.object@boxplot.random$labels$title,
+                            subtitle = DEprot.object@boxplot.random$labels$subtitle,
+                            convert.log2 = TRUE)
+    }
+
+
     # rename imputed counts
     if (!is.null(DEprot.object@imputed.counts)) {
       for (i in 1:nrow(DEprot.object@metadata)) {

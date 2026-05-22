@@ -54,6 +54,8 @@ load.counts =
     # require(ggplot2)
     # require(methods)
 
+    warning("This fucntion is deprecated. Please use `load.counts2()` instead.")
+
 
     ### Check counts
     check.rownames =
@@ -264,15 +266,19 @@ load.counts =
           metadata = meta,
           raw.counts = raw.counts,
           norm.counts = norm.counts,
+          random.counts = NA,
           imputed.counts = imputed.counts,
           log.base = log.base,
           log.transformed = ifelse(is.null(log.base), yes = FALSE, no = TRUE),
           imputed = imputed,
-          imputation = imputation,
+          imputation.method = imputation,
           normalized = normalized,
           normalization.method = normalization.method,
+          randomized = FALSE,
+          randomization.method = NA,
           boxplot.raw = boxplot.raw,
           boxplot.norm = boxplot.norm,
+          boxplot.random = NA,
           boxplot.imputed = boxplot.imputed,
           analyses.result.list = NULL,
           contrasts = NA,

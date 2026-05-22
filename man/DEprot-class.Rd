@@ -16,23 +16,31 @@ DEprot class
 
 \item{\code{norm.counts}}{Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.}
 
+\item{\code{random.counts}}{Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.}
+
 \item{\code{imputed.counts}}{Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.}
 
 \item{\code{log.base}}{Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.}
 
 \item{\code{log.transformed}}{Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.}
 
-\item{\code{imputed}}{Logical value indicating whether the data are imputed. Class: \code{"logical"}.}
-
-\item{\code{imputation}}{String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.}
-
 \item{\code{normalized}}{Logical value indicating whether the data are normalized. Class: \code{"logical"}.}
 
 \item{\code{normalization.method}}{String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.}
 
+\item{\code{randomized}}{Logical value indicating whether the bottom distribution randomization has been applied. Class: \code{"logical"}.}
+
+\item{\code{randomization.method}}{List indicating the parameters used for the randomization (bottom distribution). Class" \code{"ANY"}.}
+
+\item{\code{imputed}}{Logical value indicating whether the data are imputed. Class: \code{"logical"}.}
+
+\item{\code{imputation.method}}{String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.}
+
 \item{\code{boxplot.raw}}{Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.}
 
 \item{\code{boxplot.norm}}{Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.}
+
+\item{\code{boxplot.random}}{Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.}
 
 \item{\code{boxplot.imputed}}{Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.}
 

@@ -30,13 +30,29 @@
 #
 #
 #
+#
+# imp.comparison = DEprot::compare.imp.methods(DEprot.object = DEprot::dpo.imputed.counts,
+#                                              percentage.test = 30,
+#                                              sample.group.column = "combined.id",
+#                                              which.data = "normalized",
+#                                              seed = 1234,
+#                                              run.kNN = FALSE,
+#                                              verbose = TRUE)
+#
+# imp.comparison.results = list(RMSE.scores = imp.comparison@RMSE.scores,
+#                               correlation.plots = patchwork::wrap_plots(c(imp.comparison@correlation.plots,
+#                                                                           imp.comparison@density.residuals)))
+#
+#
+#
 # ###################
-# ## TEST TOOLBOX
+## TEST TOOLBOX
 # test.unimputed.lfq = DEprot::unimputed.counts[1:51,]
 # test.dpo.raw = DEprot::load.counts2(counts = test.unimputed.lfq, metadata = DEprot::sample.config, data.type = "raw", log.base = 2)
 # test.dpo.raw = DEprot::remove.undetected.proteins(test.dpo.raw, which.data = "raw")
 # test.dpo.norm = DEprot::normalize.counts(test.dpo.raw)
-# test.dpo.imp.miss = DEprot::impute.counts(test.dpo.norm)
+# test.dpo.random = DEprot::randomize.missing.values(test.dpo.norm, group.column = "combined.id", percentage.missing = 75)
+# test.dpo.imp.miss = DEprot::impute.counts(test.dpo.random)
 # test.diff.exp.limma = DEprot::diff.analyses.limma(DEprot.object = test.dpo.imp.miss,
 #                                                   contrast.list = list(c("condition", "FBS", "6h.DMSO"),
 #                                                                        c("condition", "6h.10nM.E2", "6h.DMSO")),
@@ -74,6 +90,7 @@
 # test.toolbox = list(unimputed.lfq = test.unimputed.lfq,
 #                     dpo.raw = test.dpo.raw,
 #                     dpo.norm = test.dpo.norm,
+#                     dpo.random = test.dpo.random,
 #                     dpo.imp = test.dpo.imp.miss,
 #                     diff.exp.limma = test.diff.exp.limma,
 #                     geneset = test.geneset,
@@ -91,6 +108,6 @@
 #                   #dpo.QN,
 #                   #dpo.imputed,
 #                   #dpo.DE.results,
-#                   test.toolbox
+#                   test.toolbox,
 #                   compress = "xz",
 #                   overwrite = TRUE)

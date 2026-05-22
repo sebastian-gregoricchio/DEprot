@@ -84,6 +84,26 @@ filter.proteins =
     }
 
 
+
+    # filter randomized counts
+    if (!is.null(DEprot.object@random.counts)) {
+      if (tolower(mode) %in% c("keep","k")) {
+        DEprot.object@random.counts = DEprot.object@random.counts[(rownames(DEprot.object@random.counts) %in% proteins),]
+      } else {
+        DEprot.object@random.counts = DEprot.object@random.counts[!(rownames(DEprot.object@random.counts) %in% proteins),]
+      }
+
+      ## replot counts
+      DEprot.object@boxplot.random =
+        DEprot::plot.counts(DEprot.object = DEprot.object,
+                            which.data = "randomized",
+                            violin.color = "gold2",
+                            title = DEprot.object@boxplot.random$labels$title,
+                            subtitle = DEprot.object@boxplot.random$labels$subtitle,
+                            convert.log2 = TRUE)
+    }
+
+
     # filter imputed counts
     if (!is.null(DEprot.object@imputed.counts)) {
       if (tolower(mode) %in% c("keep","k")) {
@@ -135,6 +155,8 @@ filter.proteins =
       # If prolfqua is used, imputed data might not be available: selection of the data to use:
       if (!is.null(DEprot.object@imputed.counts)) {
         data.type.to.use = "imputed"
+      } else if (!is.null(DEprot.object@random.counts)) {
+        data.type.to.use = "randomized"
       } else if (!is.null(DEprot.object@norm.counts)) {
         data.type.to.use = "normalized"
       } else {

@@ -6,7 +6,7 @@
 #' @param palette Vector of colors corresponding to the palette to use for the heatmap color scale. Default: \code{viridis::mako(100, direction = -1)}.
 #' @param correlation.method String indicating the clustering method to use to generate the correlation matrix. Possible options: 'pearson', 'spearman', 'kendall'. Default: \code{"pearson"}.
 #' @param sample.subset Vector indicating the name of the columns (\code{column.id} in the metadata table) to use/subset for the correlation. Default: \code{NULL} (no subsetting).
-#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.
+#' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param correlation.scale.limits Two-elements vector to indicate lower and higher limits, respectively, to apply to the correlation coefficient color scale. Default: \code{c(0,1)}.
 #' @param exclude.diagonal Logical value indicating whether the plot diagonal (y = x) should be omitted. Default: \code{FALSE}.
 #' @param dendrogram.position String indicating the position of the dendrogram. One among: "top", "bottom", "left", "right". Default: \code{"left"}.
@@ -105,8 +105,8 @@ plot.correlation.heatmap =
         data.used = "raw"
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        #return()
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
@@ -114,8 +114,8 @@ plot.correlation.heatmap =
         data.used = "normalized"
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        #return()
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
@@ -123,13 +123,22 @@ plot.correlation.heatmap =
         data.used = "imputed"
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
-                    "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-        #return()
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
+      }
+    } else if (tolower(which.data) %in% c("randomized", "random")) {
+      if (!is.null(DEprot.object@random.counts)) {
+        mat = DEprot.object@random.counts
+        data.used = "randomized"
+      } else {
+        stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
+                    "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+        #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
-                  "       Please indicated a count type among 'raw', 'normalized', 'imputed', using the option 'which.data'."))
-      #return()
+                  "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
+      #return(DEprot.object)
     }
 
 

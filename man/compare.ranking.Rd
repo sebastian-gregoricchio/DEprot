@@ -4,7 +4,7 @@
 \alias{compare.ranking}
 \title{compare.ranking}
 \usage{
-compare.ranking(
+\method{compare}{ranking}(
   DEprot.analyses.object,
   contrast,
   color.up = "indianred",
@@ -17,9 +17,9 @@ compare.ranking(
 
 \item{contrast}{Number indicating the position of the contrast to use for the plotting.}
 
-\item{color.up}{String indicating any R-supported color that will be used for dots with a positive fold change. Default: \code{"indianred"}.}
+\item{color.up}{String indicating any R-supported color that will be used for dots with a positive scores. Default: \code{"indianred"}.}
 
-\item{color.down}{String indicating any R-supported color that will be used for dots with a negative fold change. Default: \code{"steelblue"}.}
+\item{color.down}{String indicating any R-supported color that will be used for dots with a negative scores. Default: \code{"steelblue"}.}
 
 \item{regression.line.color}{String indicating any R-supported color to use for the regression line and error. Default: \code{"purple"}.}
 }
@@ -27,7 +27,7 @@ compare.ranking(
 Two ggplots combined in an object of class \code{patchwork}.
 }
 \description{
-Compare the two possible methods for the gene ranking used to perform Gene Set Enrichment Analyses (GSEA).
+Compare the three possible methods for the gene ranking used to perform Gene Set Enrichment Analyses (GSEA).
 }
 \examples{
 \dontrun{

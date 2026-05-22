@@ -18,7 +18,7 @@
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot.analyses}.}
 
-\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'imp'. Default: \code{"imputed"}.}
+\item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'random', 'randomized', imputed', 'imp'. Default: \code{"imputed"}.}
 
 \item{violin.color}{String indicating the color to use for the violin plots. Default: \code{"darkorange"}.}
 
