@@ -61,11 +61,11 @@ test_that("method-show for class DEprot.normality works", {
 
 
 test_that("method-show for class DEprot.RMSE works", {
-  expect_success(show(suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1))))
+  expect_success(show(suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1, which.data = "normalized"))))
 })
 
 test_that("method-summary for class DEprot.RMSE works", {
-  expect_success(summary(suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1))))
+  expect_success(summary(suppressWarnings(compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm, percentage.test = 100, sample.group.column = "combined.id", missForest.cores = 1, which.data = "normalized"))))
 })
 
 
