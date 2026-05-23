@@ -112,7 +112,7 @@ randomize.missing.values =
 
     for (i in 1:length(groups)) {
       samples.in.group = DEprot.object@metadata$column.id[DEprot.object@metadata[,group.column] == groups[i]]
-      counts.subset = counts[,samples.in.group]
+      counts.subset = counts[,samples.in.group, drop=FALSE]
       n.samples = length(samples.in.group)
 
       # count NAs per row
