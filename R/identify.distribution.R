@@ -5,7 +5,7 @@
 #' Comparison is based on AIC (Akaike Information Criterion) and BIC (Bayesian Information Criterion) values,
 #' and a Kolmogorov-Smirnov test is performed on the best-fitting distribution.
 #'
-#' @param stats Numeric vector of test statistic values (e.g., from a Wilcoxon or t-test). \code{NA} values are removed internally.
+#' @param values Numeric vector of test statistic values (e.g., from a Wilcoxon or t-test). \code{NA} values are removed internally.
 #'
 #' @return A list with the following elements:
 #' \describe{

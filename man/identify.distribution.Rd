@@ -7,7 +7,7 @@
 \method{identify}{distribution}(values)
 }
 \arguments{
-\item{stats}{Numeric vector of test statistic values (e.g., from a Wilcoxon or t-test). \code{NA} values are removed internally.}
+\item{values}{Numeric vector of test statistic values (e.g., from a Wilcoxon or t-test). \code{NA} values are removed internally.}
 }
 \value{
 A list with the following elements:
