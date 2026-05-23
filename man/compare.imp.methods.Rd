@@ -106,6 +106,7 @@ A new dataset containing only proteins with known values is created, a certain p
 comparison <- compare.imp.methods(DEprot.object = DEprot::test.toolbox$dpo.norm,
                                   percentage.test = 100,
                                   sample.group.column = "combined.id",
+                                  which.data = "normalized",
                                   run.missForest = FALSE,
                                   run.BPCA = TRUE,
                                   run.PPCA = TRUE,
