@@ -24,9 +24,10 @@ A \code{DEprot} object.
 This function allows for the removal of all the proteins that occur below a certain threshold (detected in at least n samples).
 }
 \examples{
-dpo <- load.counts(counts = DEprot::unimputed.counts,
-                   metadata = DEprot::sample.config,
-                   log.base = 2)
+dpo <- load.counts2(counts = DEprot::unimputed.counts,
+                    metadata = DEprot::sample.config,
+                    data.type = "raw",
+                    log.base = 2)
 
 dpo <- remove.undetected.proteins(DEprot.object = dpo,
                                   min.n.samples = 3,

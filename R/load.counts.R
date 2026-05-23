@@ -1,6 +1,6 @@
 #' @title load.counts
 #'
-#' @description Function used to generate a \code{DEprot} object starting from counts and metadata.
+#' @description Function used to generate a \code{DEprot} object starting from counts and metadata. This function is deprecated use \link{load.counts2} instead.
 #'
 #' @param counts A data.frame or a matrix in which the rownames are the proteins and the columns the samples.
 #' @param metadata A data.frame containing at least one column called \code{column.id} which corresponds to the colnames of \code{counts}. Any other column can be added and will correspond to a "feature"of each sample.
