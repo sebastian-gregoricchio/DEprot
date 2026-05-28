@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.1</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>plot.PC.scatter</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.0.0/R/plot.PC.scatter.R" class="external-link"><code>R/plot.PC.scatter.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/R/plot.PC.scatter.R" class="external-link"><code>R/plot.PC.scatter.R</code></a></small>
     <div class="hidden name"><code>plot.PC.scatter.Rd</code></div>
     </div>
 
@@ -71,7 +71,8 @@
 <span>  color.column <span class="op">=</span> <span class="st">"column.id"</span>,</span>
 <span>  shape.column <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  label.column <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  plot.zero.lines <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  plot.zero.line.x <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  plot.zero.line.y <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -103,8 +104,12 @@
 <dd><p>String indicating the name of the column in the <code>metadata</code> to use as label of the dots. Default: <code>NULL</code> (no labeling).</p></dd>
 
 
-<dt id="arg-plot-zero-lines">plot.zero.lines<a class="anchor" aria-label="anchor" href="#arg-plot-zero-lines"></a></dt>
-<dd><p>Logical value to indicate whether to plot two gray dashed lines in correspondence of y=0 and x=0. Default: <code>TRUE</code>.</p></dd>
+<dt id="arg-plot-zero-line-x">plot.zero.line.x<a class="anchor" aria-label="anchor" href="#arg-plot-zero-line-x"></a></dt>
+<dd><p>Logical value to indicate whether to plot two gray dashed line in correspondence of x=0. Default: <code>TRUE</code>.</p></dd>
+
+
+<dt id="arg-plot-zero-line-y">plot.zero.line.y<a class="anchor" aria-label="anchor" href="#arg-plot-zero-line-y"></a></dt>
+<dd><p>Logical value to indicate whether to plot two gray dashed line in correspondence of y=0. Default: <code>TRUE</code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -129,7 +134,8 @@
 <span class="r-in"><span><span class="fu">plot.PC.scatter</span><span class="op">(</span>DEprot.PCA.object <span class="op">=</span> <span class="va">pca</span>,</span></span>
 <span class="r-in"><span>                color.column <span class="op">=</span> <span class="st">"condition"</span>,</span></span>
 <span class="r-in"><span>                shape.column <span class="op">=</span> <span class="st">"replicate"</span>,</span></span>
-<span class="r-in"><span>                label.column <span class="op">=</span> <span class="st">"replicate"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                label.column <span class="op">=</span> <span class="st">"replicate"</span>,</span></span>
+<span class="r-in"><span>                plot.zero.line.y <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot.PC.scatter-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot PC2-vs-PC3 scatter</span></span></span>
