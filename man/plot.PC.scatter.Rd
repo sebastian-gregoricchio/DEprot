@@ -11,7 +11,8 @@
   color.column = "column.id",
   shape.column = NULL,
   label.column = NULL,
-  plot.zero.lines = TRUE
+  plot.zero.line.x = TRUE,
+  plot.zero.line.y = TRUE
 )
 }
 \arguments{
@@ -27,7 +28,9 @@
 
 \item{label.column}{String indicating the name of the column in the \code{metadata} to use as label of the dots. Default: \code{NULL} (no labeling).}
 
-\item{plot.zero.lines}{Logical value to indicate whether to plot two gray dashed lines in correspondence of y=0 and x=0. Default: \code{TRUE}.}
+\item{plot.zero.line.x}{Logical value to indicate whether to plot two gray dashed line in correspondence of x=0. Default: \code{TRUE}.}
+
+\item{plot.zero.line.y}{Logical value to indicate whether to plot two gray dashed line in correspondence of y=0. Default: \code{TRUE}.}
 }
 \value{
 A ggplot object.
@@ -43,7 +46,8 @@ pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
 plot.PC.scatter(DEprot.PCA.object = pca,
                 color.column = "condition",
                 shape.column = "replicate",
-                label.column = "replicate")
+                label.column = "replicate",
+                plot.zero.line.y = FALSE)
 
 # Plot PC2-vs-PC3 scatter
 plot.PC.scatter(DEprot.PCA.object = pca,

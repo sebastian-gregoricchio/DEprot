@@ -126,7 +126,8 @@ plot.PC.scatter.123 =
                               color.column = color.column,
                               shape.column = shape.column,
                               label.column = label.column,
-                              plot.zero.lines = FALSE) +
+                              plot.zero.line.x = FALSE,
+                              plot.zero.line.y = FALSE) +
       scale_color_manual(values = scatter.colors) +
       theme(legend.position = "none")
 
@@ -137,7 +138,8 @@ plot.PC.scatter.123 =
                               color.column = color.column,
                               shape.column = shape.column,
                               label.column = label.column,
-                              plot.zero.lines = FALSE) +
+                              plot.zero.line.x = FALSE,
+                              plot.zero.line.y = FALSE) +
       ylab(NULL) +
       scale_color_manual(values = scatter.colors)
 

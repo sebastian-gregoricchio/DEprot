@@ -178,8 +178,8 @@ PC_1.2 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = F) +
-  geom_hline(yintercept = 0, color = "gray", linetype = "dashed") +
+                  plot.zero.line.x = FALSE,
+                  plot.zero.line.y = TRUE) +
   theme(legend.position = "none")
 
 
@@ -190,11 +190,12 @@ PC_2.3 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = TRUE)
+                  plot.zero.line.x = TRUE,
+                  plot.zero.line.y = TRUE)
 
 patchwork::wrap_plots(PC_1.2, PC_2.3, nrow = 1)
 
-## -----------------------------------------------------------------------------
+## ----run_plotPCscatter123-----------------------------------------------------
 plot.PC.scatter.123(DEprot.PCA.object = PCA,
                     color.column = "condition",
                     shape.column = "replicate",
@@ -206,6 +207,20 @@ plot.PC.scatter.123(DEprot.PCA.object = PCA,
                     plot.zero.line.x.12 = FALSE,
                     plot.zero.line.y.23 = TRUE,
                     plot.zero.line.x.23 = TRUE)
+
+## ----run_biplot, fig.height=4-------------------------------------------------
+PC_biplot_1.2 <-
+  plot.PC.biplot(DEprot.PCA.object = PCA,
+                 PC.x = 1,
+                 PC.y = 2,
+                 color.column = "condition",
+                 shape.column = "replicate",
+                 label.column = NULL,
+                 n.loadings = 5,
+                 plot.zero.line.x = TRUE,
+                 plot.zero.line.y = TRUE)
+
+PC_biplot_1.2
 
 ## ----make_PCA_subset, fig.width=8---------------------------------------------
 ## Perform the analyses (DEprot.PCA object)
@@ -231,8 +246,8 @@ PC.fbs.e2_1.2 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = F) +
-  geom_hline(yintercept = 0, color = "gray", linetype = "dashed") +
+                  plot.zero.line.x = FALSE,
+                  plot.zero.line.y = TRUE) +
   theme(legend.position = "none")
   
   
@@ -243,7 +258,8 @@ PC.fbs.e2_2.3 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = T)
+                  plot.zero.line.x = TRUE,
+                  plot.zero.line.y = TRUE)
 
 patchwork::wrap_plots(PC.fbs.e2_1.2, PC.fbs.e2_2.3, nrow = 1)
 

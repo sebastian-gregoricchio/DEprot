@@ -346,6 +346,7 @@ patchwork::wrap_plots(c(imp.comparison@correlation.plots,
                         imp.comparison@density.residuals))
 ```
 
+
 <br>
 
 ```{r summary_impute_comparison, echo=FALSE}
@@ -457,8 +458,8 @@ PC_1.2 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = F) +
-  geom_hline(yintercept = 0, color = "gray", linetype = "dashed") +
+                  plot.zero.line.x = FALSE,
+                  plot.zero.line.y = TRUE) +
   theme(legend.position = "none")
 
 
@@ -469,17 +470,17 @@ PC_2.3 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = TRUE)
+                  plot.zero.line.x = TRUE,
+                  plot.zero.line.y = TRUE)
 
 patchwork::wrap_plots(PC_1.2, PC_2.3, nrow = 1)
 ```
 
 <br>
 
-
 Alternatively, the combination of PC1.2 and PC2.3 can be automatically generated using the function `plot.PC.scatter.123`:
 
-```{r}
+```{r run_plotPCscatter123}
 plot.PC.scatter.123(DEprot.PCA.object = PCA,
                     color.column = "condition",
                     shape.column = "replicate",
@@ -493,7 +494,27 @@ plot.PC.scatter.123(DEprot.PCA.object = PCA,
                     plot.zero.line.x.23 = TRUE)
 ```
 
+<br>
 
+#### PC biplot
+It is also possible to visualize the top proteins driving the sample segregation along the PCs using `plot.PC.biplot`. This function overlays protein loading arrows on the PCA scatter: each arrow points in the direction of the protein's contribution, and its length reflects the magnitude. The `n.loadings` parameter controls how many top contributing proteins should be displayed.
+
+```{r run_biplot, fig.height=4}
+PC_biplot_1.2 <-
+  plot.PC.biplot(DEprot.PCA.object = PCA,
+                 PC.x = 1,
+                 PC.y = 2,
+                 color.column = "condition",
+                 shape.column = "replicate",
+                 label.column = NULL,
+                 n.loadings = 5,
+                 plot.zero.line.x = TRUE,
+                 plot.zero.line.y = TRUE)
+
+PC_biplot_1.2
+```
+
+<br>
 
 ### Analyze PCs on a sample subset
 These analyses can also be performed for a subset of samples by indicated the sample names of interest.<br></br>
@@ -524,8 +545,8 @@ PC.fbs.e2_1.2 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = F) +
-  geom_hline(yintercept = 0, color = "gray", linetype = "dashed") +
+                  plot.zero.line.x = FALSE,
+                  plot.zero.line.y = TRUE) +
   theme(legend.position = "none")
   
   
@@ -536,7 +557,8 @@ PC.fbs.e2_2.3 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.lines = T)
+                  plot.zero.line.x = TRUE,
+                  plot.zero.line.y = TRUE)
 
 patchwork::wrap_plots(PC.fbs.e2_1.2, PC.fbs.e2_2.3, nrow = 1)
 ```

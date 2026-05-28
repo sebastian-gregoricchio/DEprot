@@ -8,7 +8,9 @@
 #' @param color.column String indicating the name of the column in the \code{metadata} to use as factor for the dot colors. Default: \code{"column.id"} (each sample a color).
 #' @param shape.column String indicating the name of the column in the \code{metadata} to use as factor for the dot shapes. Default: \code{NULL} (all dots).
 #' @param label.column String indicating the name of the column in the \code{metadata} to use as label of the dots. Default: \code{NULL} (no labeling).
-#' @param plot.zero.lines Logical value to indicate whether to plot two gray dashed lines in correspondence of y=0 and x=0. Default: \code{TRUE}.
+#' @param plot.zero.line.x Logical value to indicate whether to plot two gray dashed line in correspondence of x=0. Default: \code{TRUE}.
+#' @param plot.zero.line.y Logical value to indicate whether to plot two gray dashed line in correspondence of y=0. Default: \code{TRUE}.
+
 #'
 #' @return A ggplot object.
 #'
@@ -30,7 +32,8 @@
 #' plot.PC.scatter(DEprot.PCA.object = pca,
 #'                 color.column = "condition",
 #'                 shape.column = "replicate",
-#'                 label.column = "replicate")
+#'                 label.column = "replicate",
+#'                 plot.zero.line.y = FALSE)
 #'
 #' # Plot PC2-vs-PC3 scatter
 #' plot.PC.scatter(DEprot.PCA.object = pca,
@@ -50,11 +53,8 @@ plot.PC.scatter =
            color.column = "column.id",
            shape.column = NULL,
            label.column = NULL,
-           plot.zero.lines = TRUE) {
-
-
-    # ### Libraries
-    # require(ggplot2)
+           plot.zero.line.x = TRUE,
+           plot.zero.line.y = TRUE) {
 
 
     ### check object
@@ -117,10 +117,15 @@ plot.PC.scatter =
                  color = color,
                  label = label))
 
-    if (plot.zero.lines == TRUE) {
+    if (plot.zero.line.x == TRUE) {
       PCA.plot =
         PCA.plot +
-        geom_vline(xintercept = 0, color = "gray", linetype = 2) +
+        geom_vline(xintercept = 0, color = "gray", linetype = 2)
+    }
+
+    if (plot.zero.line.y == TRUE) {
+      PCA.plot =
+        PCA.plot +
         geom_hline(yintercept = 0, color = "gray", linetype = 2)
     }
 

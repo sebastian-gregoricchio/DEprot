@@ -103,6 +103,13 @@ test_that("plot.PC.scatter.123 works ", {
 })
 
 
+test_that("plot.PC.biplot works ", {
+  pca = perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
+  expect_no_error(plot.PC.biplot(DEprot.PCA.object = pca, color.column = "condition", shape.column = "replicate", label.column = "replicate"))
+})
+
+
+
 
 test_that("plot.counts works", {
   expect_no_error(plot.counts(DEprot.object = DEprot::test.toolbox$dpo.imp))
