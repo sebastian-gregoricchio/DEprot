@@ -76,8 +76,7 @@ diff.analyses =
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
       if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        stop("The input must be an object of class 'DEprot'.")
-        #return(DEprot.object)
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses.")
       }
     }
 

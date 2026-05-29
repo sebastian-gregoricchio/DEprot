@@ -46,16 +46,27 @@ load.counts2 =
     # require(methods)
 
 
+    ### Check missing inputs
+    if (missing(counts)) {stop("Provide 'counts': a data.frame or a matrix in which the rownames are the proteins and the columns the samples.", call. = FALSE)}
+    if (missing(metadata)) {stop("Provide 'metadata': a data.frame containing at least one column called `column.id` which corresponds to the colnames of `counts`.\nAny other column can be added and will correspond to a 'feature' of each sample.", call. = FALSE)}
+    if (missing(data.type)) {stop("Define which type of data is providied indicating one 'data.type' among: raw, randomized, normalized, imputed.", call. = FALSE)}
+    if (missing(log.base)) {stop("Provided the 'log.base' used to transform the counts. If linear, indicate `1`.", call. = FALSE)}
+
+
     ### Check counts
     check.rownames =
       function(x) {
+        ### Check if the matrix has rownames
+        if (is.null(rownames(x))) {
+          stop("The count matrix has no protein row names.", call. = FALSE)}
+
         ### Check if "" (empty names) are present
         if ("" %in% rownames(x) | NA %in% rownames(x)) {
           stop("The rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
           #return(return())
           ### Check if rownames are duplicated
         } else if (TRUE %in% duplicated(rownames(counts))) {
-          message("One or more rownames in the counts tables are duplicated. Only unique values are allowed. The `make.unique` function is applied on counts rownames unisng a '.' as separator.")
+          message("One or more rownames in the counts tables are duplicated. Only unique values are allowed.\nThe `make.unique` function is applied on counts rownames using a '.' as separator.")
           rownames(x) = make.unique(names = rownames(x), sep = ".")
           return(x)
         } else {
@@ -65,7 +76,7 @@ load.counts2 =
 
 
     # Check counts type
-    if (!(tolower(data.type) %in% c("raw", "r", "n", "nor", "norm", "normalized", "i", "imp", "im", "imputed", "randomized", "random"))) {
+    if (!(tolower(data.type) %in% c("raw", "r", "n", "nor", "norm", "normalized", "normalised", "i", "imp", "im", "imputed", "randomized", "randomised", "random"))) {
       stop("The `data.type` must be one among: 'raw', 'normalized', 'randomized', 'imputed'")
       #return()
     }
@@ -240,7 +251,7 @@ load.counts2 =
       #normalization.method = "none"
       #imputation.method = "none"
 
-    } else if (tolower(data.type) %in% c("n", "nor", "norm", "normalized")) {
+    } else if (tolower(data.type) %in% c("n", "nor", "norm", "normalized", "normalised")) {
       #boxplot.raw = NA
       boxplot.norm = boxplot
       #boxplot.imputed = NA

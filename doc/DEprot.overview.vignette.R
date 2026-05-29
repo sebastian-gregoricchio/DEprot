@@ -101,7 +101,9 @@ new_meta
 dpo <- randomize.missing.values(DEprot.object = dpo,
                                 group.column = "combined.id",
                                 percentage.missing = 100, # completely missing
-                                tail.percentage = 3)
+                                tail.percentage = 3,
+                                seed = 1234,
+                                verbose = FALSE)
 
 ## ----choice_of_imp, fig.width = 15, fig.height = 12, message=FALSE, warning=FALSE----
 imp.comparison <- compare.imp.methods(DEprot.object = dpo,
@@ -110,7 +112,7 @@ imp.comparison <- compare.imp.methods(DEprot.object = dpo,
                                       which.data = "normalized",
                                       seed = 1234,
                                       run.kNN = FALSE, # time consuming
-                                      verbose = TRUE)
+                                      verbose = FALSE)
 
 patchwork::wrap_plots(c(imp.comparison@correlation.plots,
                         imp.comparison@density.residuals))
@@ -122,25 +124,27 @@ summary(imp.comparison)
 # ## Without parallelization
 # dpo <- impute.counts(DEprot.object = dpo,
 #                      method = "missForest",
-#                      use.normalized.data = TRUE,
+#                      which.data = "randomized",
 #                      missForest.max.iterations = 100,
-#                      missForest.variable.wise.OOBerror = T)
+#                      missForest.variable.wise.OOBerror = TRUE,
+#                      seed = 1234)
 # 
 # 
 # ## With parallelization
 # dpo <- impute.counts(DEprot.object = dpo,
 #                      method = "missForest",
-#                      use.normalized.data = TRUE,
+#                      which.data = "randomized",
 #                      missForest.max.iterations = 100,
 #                      missForest.variable.wise.OOBerror = TRUE,
-#                      missForest.cores = 10,
-#                      missForest.parallel.mode = "variables")
+#                      missForest.cores = 20,
+#                      missForest.parallel.mode = "variables",
+#                      seed = 1234)
 # 
 # dpo
 # 
-# head(dpo@imputation$OOBerror)
+# head(dpo@imputation.method$OOBerror)
 # 
-# data.frame(dpo@imputation[-3])
+# data.frame(dpo@imputation.method[-3])
 
 ## ----load_imputation, echo=FALSE----------------------------------------------
 data("dpo.imputed.counts", package = "DEprot")
@@ -148,14 +152,16 @@ dpo = dpo.imputed.counts
 dpo
 
 ## ----load_imputation2, echo=FALSE---------------------------------------------
-error = dpo@imputation$OOBerror
+error = dpo@imputation.method$OOBerror
 names(error) = colnames(dpo@imputed.counts)
 head(error)
 
-knitr::kable(data.frame(dpo@imputation[-3]), row.names = F)
+knitr::kable(data.frame(dpo@imputation.method[-3]), row.names = F)
 
-## ----plot_imputed, fig.width=9, fig.align='center'----------------------------
-patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, dpo@boxplot.imputed, nrow = 1)
+## ----plot_imputed, fig.width=7, fig.height=8, fig.align='center'--------------
+patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm,
+                      dpo@boxplot.random, dpo@boxplot.imputed,
+                      ncol = 2)
 
 ## ----make_PCA, fig.width=8----------------------------------------------------
 ## Perform the analyses (DEprot.PCA object)

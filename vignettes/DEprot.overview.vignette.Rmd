@@ -268,6 +268,8 @@ Proteomics is highly susceptible to batch effects. Hereafter we use the package 
 To use the `harmonize.batches` is sufficient to provide a `DEprot` object containing a combined table of multiple experiments and indicate the identifier of a column in the metadata table which corresponds to the batch annotation. The result is a DEprot object with the same structure described in the previous paragraph. <br>
 Here, for simplicity, we will add manually a column to the metadata table with "dummy" batches.
 
+> Batch harmonization replaces the normalization: so data can be loaded as 'raw' and "normalized" using `harmonize.batches`. Do not apply additional MBQN normalization.
+
 <br>
 
 ```{r, eval = F}
@@ -322,7 +324,9 @@ To overcome this possibility, it is possible to use the function `randomize.miss
 dpo <- randomize.missing.values(DEprot.object = dpo,
                                 group.column = "combined.id",
                                 percentage.missing = 100, # completely missing
-                                tail.percentage = 3)
+                                tail.percentage = 3,
+                                seed = 1234,
+                                verbose = FALSE)
 ```
 
 >Using the `"column.id"` as *group.column* is equivalent to impute all the data with this method.
@@ -340,7 +344,7 @@ imp.comparison <- compare.imp.methods(DEprot.object = dpo,
                                       which.data = "normalized",
                                       seed = 1234,
                                       run.kNN = FALSE, # time consuming
-                                      verbose = TRUE)
+                                      verbose = FALSE)
 
 patchwork::wrap_plots(c(imp.comparison@correlation.plots,
                         imp.comparison@density.residuals))
@@ -363,25 +367,27 @@ Hereafter, an example in how to use the `missForest` method to impute the data:
 ## Without parallelization
 dpo <- impute.counts(DEprot.object = dpo,
                      method = "missForest",
-                     use.normalized.data = TRUE,
+                     which.data = "randomized",
                      missForest.max.iterations = 100,
-                     missForest.variable.wise.OOBerror = T)
+                     missForest.variable.wise.OOBerror = TRUE,
+                     seed = 1234)
 
 
 ## With parallelization
 dpo <- impute.counts(DEprot.object = dpo,
                      method = "missForest",
-                     use.normalized.data = TRUE,
+                     which.data = "randomized",
                      missForest.max.iterations = 100,
                      missForest.variable.wise.OOBerror = TRUE,
-                     missForest.cores = 10,
-                     missForest.parallel.mode = "variables")
+                     missForest.cores = 20,
+                     missForest.parallel.mode = "variables",
+                     seed = 1234)
 
 dpo
 
-head(dpo@imputation$OOBerror)
+head(dpo@imputation.method$OOBerror)
 
-data.frame(dpo@imputation[-3])
+data.frame(dpo@imputation.method[-3])
 ```
 
 ```{r load_imputation, echo=FALSE}
@@ -390,11 +396,11 @@ dpo = dpo.imputed.counts
 dpo
 ```
 ```{r load_imputation2, echo=FALSE}
-error = dpo@imputation$OOBerror
+error = dpo@imputation.method$OOBerror
 names(error) = colnames(dpo@imputed.counts)
 head(error)
 
-knitr::kable(data.frame(dpo@imputation[-3]), row.names = F)
+knitr::kable(data.frame(dpo@imputation.method[-3]), row.names = F)
 ```
 
 <br>
@@ -402,8 +408,10 @@ knitr::kable(data.frame(dpo@imputation[-3]), row.names = F)
 
 Also in this case a box/violin plot with the corresponding imputed LFQ values per each sample is generated and stored in a vector slot.
 
-```{r plot_imputed, fig.width=9, fig.align='center'}
-patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, dpo@boxplot.imputed, nrow = 1)
+```{r plot_imputed, fig.width=7, fig.height=8, fig.align='center'}
+patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm,
+                      dpo@boxplot.random, dpo@boxplot.imputed,
+                      ncol = 2)
 ```
 
 <br>

@@ -81,8 +81,7 @@ diff.analyses.limma =
     ### check object and extract metadata table
     if (!("DEprot" %in% class(DEprot.object))) {
       if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        stop("The input must be an object of class 'DEprot'.")
-        #return(DEprot.object)
+        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses.")
       }
     }
 
@@ -93,7 +92,6 @@ diff.analyses.limma =
     if (!is.null(replicate.column[[1]])) {
       if (!(replicate.column %in% colnames(meta.tb))) {
         stop("The 'replicate.column' is not present in the metadata of the object.")
-        #return(DEprot.object)
       } else {
         meta.tb[,replicate.column[[1]]] = as.character(meta.tb[,replicate.column[[1]]])
       }
@@ -168,7 +166,7 @@ diff.analyses.limma =
                     "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
-    } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
+    } else if (tolower(which.data) %in% c("norm", "normalized", "normalised", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
         mat = DEprot.object@norm.counts
         data.used = "normalized"
@@ -186,7 +184,7 @@ diff.analyses.limma =
                     "Please indicated a count type among 'raw', 'normalized', 'randomized, 'imputed', using the option 'which.data'."))
         #return(DEprot.object)
       }
-    } else if (tolower(which.data) %in% c("randomized", "random")) {
+    } else if (tolower(which.data) %in% c("randomized", "randomised", "random")) {
       if (!is.null(DEprot.object@random.counts)) {
         mat = DEprot.object@random.counts
         data.used = "randomized"
