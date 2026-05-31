@@ -345,7 +345,7 @@ SAINTq =
                  color = AvgP)) +
         geom_point(stroke = NA, alpha = 0.5) +
         ggtitle(paste0("**",unique(saint$Bait)[i],"** *vs* **",control,"**")) +
-        xlab(paste0("log<sub>2</sub>(Fold Change<sub>","bait","</sup>&frasl;<sub>","ctrl","</sub></sub>)")) +
+        xlab(paste0("log<sub>2</sub>(Fold Change<sub>","bait","</sup>/<sub>","ctrl","</sub></sub>)")) +
         ylab("-log<sub>10</sub>(bFDR)") +
         viridis::scale_color_viridis(option = viridis.palette, direction = viridis.direction, begin = viridis.begin, end = viridis.end) +
         ggpubr::theme_pubr(legend = "right") +

@@ -50,7 +50,7 @@ test_that("SAINTq function works on normalized counts", {
 })
 
 
-test_that("SAINTq function works on normalized counts", {
+test_that("SAINTq function works on randomized counts", {
   expect_no_error(SAINTq(DEprot.object = DEprot::test.toolbox$dpo.imp,
                          control = "BCa_6h.DMSO",
                          metadata.column = "combined.id",
