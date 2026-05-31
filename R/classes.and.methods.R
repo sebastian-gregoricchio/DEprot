@@ -300,6 +300,78 @@ setClass(Class = "DEprot.RMSE",
                       density.residuals = "ANY"))
 
 
+
+
+#' @title DEprot.SAINTq class
+#'
+#' @description
+#' S4 object storing the results of \code{\link{SAINTq}}: the SAINTq
+#' interaction-scoring tables, the corresponding volcano plots, and the
+#' parameters used to compute the scores.
+#'
+#' @slot scores A named \code{list} (one element per bait) of \code{data.frame}s
+#'   containing the SAINTq scoring tables. Each table reports one row per
+#'   bait-prey pair with the following columns:
+#'   \itemize{
+#'     \item \code{Bait}: name of the bait group (a value of the \code{metadata.column}) scored in this table; constant within each per-bait element of the list.
+#'     \item \code{Control}: name of the control group (a value of the \code{metadata.column}).
+#'     \item \code{Prey}: identifier of the prey protein (the row name of the LFQ count matrix).
+#'     \item \code{n.rep}: number of bait replicates in which the prey was quantified (i.e. non-missing values).
+#'     \item \code{AvgP}: \emph{average probability}, the main SAINTq score.
+#'       It is the posterior probability of a true (bait-specific) interaction
+#'       averaged across the bait replicates. Ranges in \code{[0, 1]}; higher
+#'       values indicate higher confidence.
+#'     \item \code{MaxP}: the maximum per-replicate posterior probability across the bait replicates (the score of the single best replicate).
+#'     \item \code{log2.FoldChange_bait.vs.control}: enrichment of the prey in the bait over the control, on the linear scale, computed as \code{log2(avg.bait) - log2(avg.ctrl)}.
+#'     \item \code{avg.bait}: mean \code{log2} intensity of the prey across the bait replicates.
+#'     \item \code{avg.ctrl}: mean \code{log2} intensity of the prey across the control run (the background mean \eqn{\mu_F} of the model;
+#'       replaced by the global \code{background} value for preys never detected in the control).
+#'     \item \code{bFDR}: Bayesian false discovery rate of the interaction,
+#'       derived from the \code{AvgP} values as the cumulative mean of \code{(1 - AvgP)}
+#'       down the probability-ranked list. Lower values indicate higher confidence.
+#'   }
+#'   Class: \code{"ANY"}.
+#'
+#' @slot volcanoes A named \code{list} (one element per bait) of \code{ggplot}
+#'   objects. Each is a volcano-style plot of the interactions for that bait,
+#'   showing the \code{log2(FoldChange)} on the x-axis against \code{-log10(bFDR)}
+#'   on the y-axis, with the size and color of the points encoding the
+#'   \code{AvgP} score. Class: \code{"ANY"}.
+#'
+#' @slot parameters A \code{list} recording the settings and fitted quantities used for the scoring:
+#'   \itemize{
+#'     \item \code{prior.pi}: prior probability of a true interaction (\eqn{\pi_T});
+#'       either estimated by expectation-maximization or fixed by the user.
+#'     \item \code{fold}: fold change separating the true component from the
+#'       background, such that \code{mu_T = mu_F + log2(fold)}.
+#'     \item \code{delta.log2}: \code{log2(fold)}, i.e. the additive shift (in \code{log2} units)
+#'       applied to the background mean to define the mean of the true component.
+#'     \item \code{sd.scale}: scaling factor of the true-component standard
+#'       deviation relative to the background one (\code{sigma_T = sd.scale * sigma_F}).
+#'     \item \code{min.sd}: lower bound applied to the per-prey background standard deviation,
+#'       preventing over-confident scores from preys with near-constant control intensities.
+#'     \item \code{sigma.global}: global background standard deviation (median of the per-prey control standard deviations),
+#'       used as a fallback for preys with too few control measurements.
+#'     \item \code{background}: \code{log2} background intensity assigned to preys never detected in any control run.
+#'     \item \code{which.data}: the DEprot count matrix that was scored, one of \code{"imputed"}, \code{"randomized"}, \code{"normalized"} or \code{"raw"}.
+#'     \item \code{control}: name of the control group used as the background.
+#'     \item \code{baits}: name(s) of the bait group(s) that were scored.
+#'     \item \code{best.n.rep}: number of top-scoring bait replicates used when averaging the per-replicate posterior probabilities
+#'       into \code{AvgP} (the "best R replicates" option of SAINTexpress). \code{NULL} means that all replicates of each bait were used.
+#'   }
+#'   Class: \code{"ANY"}.
+#'
+#' @seealso \code{\link{SAINTq}}
+#'
+#' @export
+
+setClass(Class = "DEprot.SAINTq",
+         slots = list(scores = "ANY",
+                      volcanoes = "ANY",
+                      parameters = "ANY"))
+
+
+
 ################# METHODS #################
 
 #' @title DEprot show-method
@@ -521,6 +593,33 @@ setMethod(f = "show",
 setMethod(f = "summary",
           signature = "DEprot.RMSE",
           definition = function(object) {object@RMSE.scores}
+) #end method
+
+
+
+#' @title DEprot.SAINTq show-method
+#' @param object Object of class \code{DEprot.SAINTq}
+#' @importFrom patchwork wrap_plots
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.SAINTq",
+          definition =
+            function(object) {
+              plot = patchwork::wrap_plots(object@volcanoes)
+              print(plot)
+            })
+
+
+
+#' @title DEprot.SAINTq summary-method
+#' @param object Object of class \code{DEprot.SAINTq}
+#' @export
+setMethod(f = "summary",
+          signature = "DEprot.SAINTq",
+          definition = function(object) {
+            tb = do.call(rbind, object@scores)
+            rownames(tb) = NULL
+            return(tb)}
 ) #end method
 
 

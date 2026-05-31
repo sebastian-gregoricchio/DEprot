@@ -22,6 +22,26 @@
 "dpo.imputed.counts"
 
 
+#' @title Imputed RIME (LFQ) data
+#' @docType data
+#' @description Subset of data from Eickhoff et al. (Commun Biol, 2025) that have been reanalyzed in Eickhoff et al. (NAR Genom Bioinform, 2026).
+#' @format Object of class \code{DEprot}
+#' @source Eickhoff et al. (Commun Biol, 2025)
+#' @author Nils Eickhoff and Sebastian Gregoricchio
+#' @usage data("rime.dpo")
+"rime.dpo"
+
+
+#' @title SAINTq results for RIME
+#' @docType data
+#' @description Results of SAINTq (original tool) run on a subset of data from Eickhoff et al. (Commun Biol, 2025) that have been reanalyzed in Eickhoff et al. (NAR Genom Bioinform, 2026).
+#' @format Object of class \code{DEprot.SAINTq}
+#' @source Eickhoff et al. (Commun Biol, 2025)
+#' @author Nils Eickhoff and Sebastian Gregoricchio
+#' @usage data("rime.saintq")
+"rime.saintq"
+
+
 #' @title Example of metadata table
 #' @docType data
 #' @description Dummy table for metadata corresponding to the sample configuration of \link{unimputed.counts}.

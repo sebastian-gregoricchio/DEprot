@@ -56,6 +56,7 @@ if (Sys.info()[["sysname"]] == "Darwin") {
 require(DEprot)
 require(dplyr)
 require(legendry)
+require(ggpubr)
 ```
 
 ![release](https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot)
@@ -1079,6 +1080,130 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 ```
 
 <br>
+
+-----------------
+
+# **SAINT score (Significance Analysis of INTeractome)**
+SAINT, developed by [Breitkreutz *et al.* (Science, 2010)](https://doi.org/10.1126/science.1176495), is a methods that assigns the number of identified peptides for each interactor to a probability distribution, which is then exploited to estimate the likelihood of a true interaction (typically SAINT score &#8805;0.95).<br>
+The original methods use the spectral data, however [Teo *et al.* (Proteomics, 2016)](https://doi.org/10.1002/pmic.201500499) developed a method for the computation of the SAINT scores on LFQ data named `SAINTq`. The latter is developed in C++ languange, we here implemented the original algorithm in the function `SAINTq`.
+
+>DISCLAIMER: This is an independent re-implementation of the published model, not a re-wrapping of the C++ program. It returns scores with the same definitions and behavior, but exact numbers can differ from the official \code{SAINTq} binary because of low-level differences (parameter estimation, missing-value and control-compression heuristics).
+
+We benchmarked our re-implementation with the original `SAINTq` using a subset of the data from [Eickhoff *et al.* (Commun Biol, 2025)](https://doi.org/10.1038/s42003-025-08449-2) that have been reanalyzed in [Eickhoff *et al.* (NAR Genom Bioinform, 2026)](https://doi.org/10.1093/nargab/lqag015).
+
+To compute the SAINT scores we need to indicate the control (e.g., IgG, isotype, mock-IP) ID from one of the columns of the metadata and the bait (the immunoprecipitation target; i.e. AR). Of note, multiple baits can be provided, and if the `bait` argument is left blank (`NULL`), all the non-control groups are tested against the same control.<br>
+The result is an object of class `DEprot.SAINTq` containing 4 slots:
+
++---------------+--------------------------------------------------------------------------------------------+
+| Slot          | Description                                                                                |
++===============+============================================================================================+
+| `scores`      | A named list (one element per bait) of data frames holding the SAINTq scoring tables. Each |
+|               | table reports one row per bait–prey pair, with the following columns:                      |
+|               |                                                                                            |
+|               | - `Bait`: name of the bait group (a value of the `metadata.column`) scored in this table;  |
+|               |   constant within each per-bait element of the list.                                       |
+|               | - `Control`: name of the control group (a value of the `metadata.column`).                 |
+|               | - `Prey`: identifier of the prey protein (the row name of the LFQ count matrix).           |
+|               | - `n.rep`: number of bait replicates in which the prey was quantified (i.e. non-missing    |
+|               |   values).                                                                                 |
+|               | - `AvgP`: *average probability*, the main SAINTq score. It is the posterior probability of |
+|               |   a true (bait-specific) interaction averaged across the bait replicates. It ranges in     |
+|               |   $[0,1]$; higher values indicate higher confidence.                                       |
+|               | - `MaxP`: the maximum per-replicate posterior probability across the bait replicates (the  |
+|               |   score of the single best replicate).                                                     |
+|               | - `log2.FoldChange_bait.vs.control`: enrichment of the prey in the bait over the control,  |
+|               |   on the log2 scale, computed as `log2(avg.bait) - log2(avg.ctrl)`.                        |
+|               | - `avg.bait`: mean `log2` intensity of the prey across the bait replicates.                |
+|               | - `avg.ctrl`: mean `log2` intensity of the prey across the control run (the background     |
+|               |   mean $\mu_F$ of the model; replaced by the global `background` value for preys never     |
+|               |   detected in the control).                                                                |
+|               | - `bFDR`: Bayesian false discovery rate of the interaction, derived from the `AvgP` values |
+|               |   as the cumulative mean of `(1 - AvgP)` down the probability-ranked list. Lower values    |
+|               |   indicate higher confidence.                                                              |
++---------------+--------------------------------------------------------------------------------------------+
+| `volcanoes`   | A named list (one element per bait) of `ggplot` objects. Each is a volcano-style plot of   |
+|               | the interactions for that bait, showing `log2(FoldChange)` on the x-axis against           |
+|               | `-log10(bFDR)` on the y-axis, with the size and color of the points encoding the `AvgP`    |
+|               | score.                                                                                     |
++---------------+--------------------------------------------------------------------------------------------+
+| `parameters`  | A list recording the settings and fitted quantities used for the scoring:                  |
+|               |                                                                                            |
+|               | - `prior.pi`: prior probability of a true interaction ($\pi_T$); either estimated by       |
+|               |   expectation-maximization or fixed by the user.                                           |
+|               | - `fold`: fold change separating the true component from the background, such that         |
+|               |   `mu_T = mu_F + log2(fold)`.                                                              |
+|               | - `delta.log2`: `log2(fold)`, i.e. the additive shift (in `log2` units) applied to the     |
+|               |   background mean to define the mean of the true component.                                |
+|               | - `sd.scale`: scaling factor of the true-component standard deviation relative to the      |
+|               |   background one (`sigma_T = sd.scale * sigma_F`).                                         |
+|               | - `min.sd`: lower bound applied to the per-prey background standard deviation, preventing  |
+|               |   over-confident scores from preys with near-constant control intensities.                 |
+|               | - `sigma.global`: global background standard deviation (median of the per-prey control     |
+|               |   standard deviations), used as a fallback for preys with too few control measurements.    |
+|               | - `background`: `log2` background intensity assigned to preys never detected in any        |
+|               |   control run.                                                                             |
+|               | - `which.data`: the DEprot count matrix that was scored, one of `"imputed"`,               |
+|               |   `"randomized"`, `"normalized"` or `"raw"`.                                               |
+|               | - `control`: name of the control group used as the background.                             |
+|               | - `baits`: name(s) of the bait group(s) that were scored.                                  |
+|               | - `best.n.rep`: number of top-scoring bait replicates used when averaging the per-         |
+|               |   replicate posterior probabilities into `AvgP` (the "best R replicates" option of         |
+|               |   SAINTexpress). `NULL` means that all replicates of each bait were used.                  |
++---------------+--------------------------------------------------------------------------------------------+
+
+
+```{r run_saint, fig.width = 8, fig.height=5}
+saint_deprot <- SAINTq(DEprot.object = DEprot::rime.dpo,
+                       metadata.column = "group",
+                       control = "LNCaP_TRIM33-5#MC-C2_FBS_IgG",
+                       bait = "LNCaP_TRIM33-5#MC-C2_FBS_AR",
+                       which.data = "imputed",
+                       fold = 5)
+saint_deprot
+```
+
+
+```{r show_saint_results, eval = F}
+head(summary(saint_deprot))
+```
+
+```{r display_saint_tb_head, echo=FALSE}
+knitr::kable(saint_deprot@scores$`LNCaP_TRIM33-5#MC-C2_FBS_AR`[1:5,], row.names = FALSE, caption = "**SAINTq results**")
+```
+
+<br>
+
+## Benchamrk against the original `SAINTq` tool
+We analyzed the same data using the original `SAINTq` (results stored in DEprot as `rime.saintq`) and compared the scores obtained between the two methods.
+
+```{r compare_saintq_to_deprot, fig.height=5, fig.width=6}
+sq_combo = dplyr::left_join(x = saint_deprot@scores$`LNCaP_TRIM33-5#MC-C2_FBS_AR`,
+                            y = DEprot::rime.saintq, # original tool
+                            by = "Prey")
+
+ggpubr::ggscatter(data = sq_combo,
+                  x = "AvgP.x",
+                  y = "AvgP.y",
+                  alpha = 0.5,
+                  stroke = NA,
+                  xlab = "DEprot-computed SAINT",
+                  ylab = "SAINTq",
+                  title = "SAINT score computation benchmarking") +
+  geom_smooth(formula = y ~ x, method = "lm", color = "steelblue", fill = "steelblue") +
+  ggpubr::stat_cor(method = "pearson", r.digits = 3) +
+  geom_vline(xintercept = 0.95, color = 'gray', linetype = 2) +
+  geom_hline(yintercept = 0.95, color = 'gray', linetype = 2) +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  theme(aspect.ratio = 1,
+        axis.line = element_blank(),
+        plot.title = ggtext::element_markdown(hjust = 0.5),
+        panel.border = element_rect(fill = NA, colour = "black"))
+```
+
+
+<br>
+
 
 -----------------
 

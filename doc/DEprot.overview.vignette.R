@@ -21,6 +21,7 @@ if (Sys.info()[["sysname"]] == "Darwin") {
 require(DEprot)
 require(dplyr)
 require(legendry)
+require(ggpubr)
 
 ## ----citation, message=FALSE, warning=FALSE-----------------------------------
 citation("DEprot")
@@ -557,6 +558,45 @@ upset.plot  # or upset.plot@upset
 
 ## ----upset_tb, echo=FALSE-----------------------------------------------------
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
+
+## ----run_saint, fig.width = 8, fig.height=5-----------------------------------
+saint_deprot <- SAINTq(DEprot.object = DEprot::rime.dpo,
+                       metadata.column = "group",
+                       control = "LNCaP_TRIM33-5#MC-C2_FBS_IgG",
+                       bait = "LNCaP_TRIM33-5#MC-C2_FBS_AR",
+                       which.data = "imputed",
+                       fold = 5)
+saint_deprot
+
+## ----show_saint_results, eval = F---------------------------------------------
+# head(summary(saint_deprot))
+
+## ----display_saint_tb_head, echo=FALSE----------------------------------------
+knitr::kable(saint_deprot@scores$`LNCaP_TRIM33-5#MC-C2_FBS_AR`[1:5,], row.names = FALSE, caption = "**SAINTq results**")
+
+## ----compare_saintq_to_deprot, fig.height=5, fig.width=6----------------------
+sq_combo = dplyr::left_join(x = saint_deprot@scores$`LNCaP_TRIM33-5#MC-C2_FBS_AR`,
+                            y = DEprot::rime.saintq, # original tool
+                            by = "Prey")
+
+ggpubr::ggscatter(data = sq_combo,
+                  x = "AvgP.x",
+                  y = "AvgP.y",
+                  alpha = 0.5,
+                  stroke = NA,
+                  xlab = "DEprot-computed SAINT",
+                  ylab = "SAINTq",
+                  title = "SAINT score computation benchmarking") +
+  geom_smooth(formula = y ~ x, method = "lm", color = "steelblue", fill = "steelblue") +
+  ggpubr::stat_cor(method = "pearson", r.digits = 3) +
+  geom_vline(xintercept = 0.95, color = 'gray', linetype = 2) +
+  geom_hline(yintercept = 0.95, color = 'gray', linetype = 2) +
+  scale_x_continuous(expand = c(0,0)) +
+  scale_y_continuous(expand = c(0,0)) +
+  theme(aspect.ratio = 1,
+        axis.line = element_blank(),
+        plot.title = ggtext::element_markdown(hjust = 0.5),
+        panel.border = element_rect(fill = NA, colour = "black"))
 
 ## ----protein_summary, fig.height=3, fig.width=10------------------------------
 protein.counts <-

@@ -7,10 +7,13 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
-#### [v1.0.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.0) - May 28<sup>th</sup> 2026
-- Added the function `plot.PC.biplot`
+#### [v1.0.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.1) - May 31<sup>st</sup> 2026
+- Added the function `plot.PC.biplot`.
+- Added the function `SAINTq` and the `rime.dpo` and `rime.saintq` datasets.
 - Updated `plot.PC.scatter` to allow for the separate plotting of x and y zero-lines.
+- Updated the vignette to include the new functions.
 
+<br>
 
 #### [v1.0.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.0) - May 23<sup>rd</sup> 2026
 - The result from `randomize.missing.values` is now included in a separate slot. Also the a new `boxplot.random` and `randomization.method` slots for the randomized scores have been added.
