@@ -93,7 +93,7 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 29<sup>th</sup>
+            <h4 data-toc-skip class="date">Last update: 31<sup>th</sup>
 May, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
@@ -853,14 +853,14 @@ simulating distribution and proportion of the original data.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; corkNN                corkNN 0.5135173         0.9851722            1.76    1
-&gt; tkNN                    tkNN 0.5135173         0.9851722            1.81    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          141.00    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.65    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.81    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.57    6
-&gt; missForest        missForest 0.5664830         0.9813784           33.01    7
-&gt; LLS                      LLS 0.6326730         0.9684621            3.45    8</code></pre>
+&gt; corkNN                corkNN 0.5135173         0.9851722            2.06    1
+&gt; tkNN                    tkNN 0.5135173         0.9851722            2.09    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672          120.60    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.25    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.83    5
+&gt; SVD                      SVD 0.5442393         0.9791497            2.80    6
+&gt; missForest        missForest 0.5664830         0.9813784           30.57    7
+&gt; LLS                      LLS 0.6326730         0.9684621            4.16    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -1988,6 +1988,295 @@ least one condition are shown.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="saint-score-significance-analysis-of-interactome">
+<strong>SAINT score (Significance Analysis of
+INTeractome)</strong><a class="anchor" aria-label="anchor" href="#saint-score-significance-analysis-of-interactome"></a>
+</h2>
+<p>SAINT, developed by <a href="https://doi.org/10.1126/science.1176495" class="external-link">Breitkreutz <em>et
+al.</em> (Science, 2010)</a>, is a methods that assigns the number of
+identified peptides for each interactor to a probability distribution,
+which is then exploited to estimate the likelihood of a true interaction
+(typically SAINT score ≥0.95).<br> The original methods use the spectral
+data, however <a href="https://doi.org/10.1002/pmic.201500499" class="external-link">Teo
+<em>et al.</em> (Proteomics, 2016)</a> developed a method for the
+computation of the SAINT scores on LFQ data named <code>SAINTq</code>.
+The latter is developed in C++ languange, we here implemented the
+original algorithm in the function <code>SAINTq</code>.</p>
+<blockquote>
+<p>DISCLAIMER: This is an independent re-implementation of the published
+model, not a re-wrapping of the C++ program. It returns scores with the
+same definitions and behavior, but exact numbers can differ from the
+official binary because of low-level differences (parameter estimation,
+missing-value and control-compression heuristics).</p>
+</blockquote>
+<p>We benchmarked our re-implementation with the original
+<code>SAINTq</code> using a subset of the data from <a href="https://doi.org/10.1038/s42003-025-08449-2" class="external-link">Eickhoff <em>et
+al.</em> (Commun Biol, 2025)</a> that have been reanalyzed in <a href="https://doi.org/10.1093/nargab/lqag015" class="external-link">Eickhoff <em>et al.</em>
+(NAR Genom Bioinform, 2026)</a>.</p>
+<p>To compute the SAINT scores we need to indicate the control (e.g.,
+IgG, isotype, mock-IP) ID from one of the columns of the metadata and
+the bait (the immunoprecipitation target; i.e. AR). Of note, multiple
+baits can be provided, and if the <code>bait</code> argument is left
+blank (<code>NULL</code>), all the non-control groups are tested against
+the same control.<br> The result is an object of class
+<code>DEprot.SAINTq</code> containing 4 slots:</p>
+<table class="table">
+<colgroup>
+<col width="14%">
+<col width="85%">
+</colgroup>
+<thead><tr class="header">
+<th>Slot</th>
+<th>Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>scores</code></td>
+<td>
+<p>A named list (one element per bait) of data frames holding the
+SAINTq scoring tables. Each table reports one row per bait–prey pair,
+with the following columns:</p>
+<ul>
+<li>
+<code>Bait</code>: name of the bait group (a value of the
+<code>metadata.column</code>) scored in this table; constant within each
+per-bait element of the list.</li>
+<li>
+<code>Control</code>: name of the control group (a value of the
+<code>metadata.column</code>).</li>
+<li>
+<code>Prey</code>: identifier of the prey protein (the row name of
+the LFQ count matrix).</li>
+<li>
+<code>n.rep</code>: number of bait replicates in which the prey was
+quantified (i.e. non-missing values).</li>
+<li>
+<code>AvgP</code>: <em>average probability</em>, the main SAINTq
+score. It is the posterior probability of a true (bait-specific)
+interaction averaged across the bait replicates. It ranges in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">[</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">[0,1]</annotation></semantics></math>;
+higher values indicate higher confidence.</li>
+<li>
+<code>MaxP</code>: the maximum per-replicate posterior probability
+across the bait replicates (the score of the single best
+replicate).</li>
+<li>
+<code>log2.FoldChange_bait.vs.control</code>: enrichment of the prey
+in the bait over the control, on the log2 scale, computed as
+<code>log2(avg.bait) - log2(avg.ctrl)</code>.</li>
+<li>
+<code>avg.bait</code>: mean <code>log2</code> intensity of the prey
+across the bait replicates.</li>
+<li>
+<code>avg.ctrl</code>: mean <code>log2</code> intensity of the prey
+across the control run (the background mean
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>μ</mi><mi>F</mi></msub><annotation encoding="application/x-tex">\mu_F</annotation></semantics></math>
+of the model; replaced by the global <code>background</code> value for
+preys never detected in the control).</li>
+<li>
+<code>bFDR</code>: Bayesian false discovery rate of the interaction,
+derived from the <code>AvgP</code> values as the cumulative mean of
+<code>(1 - AvgP)</code> down the probability-ranked list. Lower values
+indicate higher confidence.</li>
+</ul>
+</td>
+</tr>
+<tr class="even">
+<td><code>volcanoes</code></td>
+<td>A named list (one element per bait) of <code>ggplot</code> objects.
+Each is a volcano-style plot of the interactions for that bait, showing
+<code>log2(FoldChange)</code> on the x-axis against
+<code>-log10(bFDR)</code> on the y-axis, with the size and color of the
+points encoding the <code>AvgP</code> score.</td>
+</tr>
+<tr class="odd">
+<td><code>parameters</code></td>
+<td>
+<p>A list recording the settings and fitted quantities used for the
+scoring:</p>
+<ul>
+<li>
+<code>prior.pi</code>: prior probability of a true interaction
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>π</mi><mi>T</mi></msub><annotation encoding="application/x-tex">\pi_T</annotation></semantics></math>);
+either estimated by expectation-maximization or fixed by the user.</li>
+<li>
+<code>fold</code>: fold change separating the true component from
+the background, such that <code>mu_T = mu_F + log2(fold)</code>.</li>
+<li>
+<code>delta.log2</code>: <code>log2(fold)</code>, i.e. the additive
+shift (in <code>log2</code> units) applied to the background mean to
+define the mean of the true component.</li>
+<li>
+<code>sd.scale</code>: scaling factor of the true-component standard
+deviation relative to the background one
+(<code>sigma_T = sd.scale * sigma_F</code>).</li>
+<li>
+<code>min.sd</code>: lower bound applied to the per-prey background
+standard deviation, preventing over-confident scores from preys with
+near-constant control intensities.</li>
+<li>
+<code>sigma.global</code>: global background standard deviation
+(median of the per-prey control standard deviations), used as a fallback
+for preys with too few control measurements.</li>
+<li>
+<code>background</code>: <code>log2</code> background intensity
+assigned to preys never detected in any control run.</li>
+<li>
+<code>which.data</code>: the DEprot count matrix that was scored,
+one of <code>"imputed"</code>, <code>"randomized"</code>,
+<code>"normalized"</code> or <code>"raw"</code>.</li>
+<li>
+<code>control</code>: name of the control group used as the
+background.</li>
+<li>
+<code>baits</code>: name(s) of the bait group(s) that were
+scored.</li>
+<li>
+<code>best.n.rep</code>: number of top-scoring bait replicates used
+when averaging the per- replicate posterior probabilities into
+<code>AvgP</code> (the “best R replicates” option of SAINTexpress).
+<code>NULL</code> means that all replicates of each bait were used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">saint_deprot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SAINTq.html">SAINTq</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="../reference/rime.dpo.html">rime.dpo</a></span>,</span>
+<span>                       metadata.column <span class="op">=</span> <span class="st">"group"</span>,</span>
+<span>                       control <span class="op">=</span> <span class="st">"LNCaP_TRIM33-5#MC-C2_FBS_IgG"</span>,</span>
+<span>                       bait <span class="op">=</span> <span class="st">"LNCaP_TRIM33-5#MC-C2_FBS_AR"</span>,</span>
+<span>                       which.data <span class="op">=</span> <span class="st">"imputed"</span>,</span>
+<span>                       fold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="va">saint_deprot</span></span></code></pre></div>
+<p><img src="DEprot.overview.vignette_files/figure-html/run_saint-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">saint_deprot</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<caption><strong>SAINTq results</strong></caption>
+<colgroup>
+<col width="20%">
+<col width="21%">
+<col width="5%">
+<col width="4%">
+<col width="3%">
+<col width="3%">
+<col width="23%">
+<col width="6%">
+<col width="6%">
+<col width="3%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Bait</th>
+<th align="left">Control</th>
+<th align="left">Prey</th>
+<th align="right">n.rep</th>
+<th align="right">AvgP</th>
+<th align="right">MaxP</th>
+<th align="right">log2.FoldChange_bait.vs.control</th>
+<th align="right">avg.bait</th>
+<th align="right">avg.ctrl</th>
+<th align="right">bFDR</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_AR</td>
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_IgG</td>
+<td align="left">ZNF316</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3.269246</td>
+<td align="right">25.45752</td>
+<td align="right">22.18827</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_AR</td>
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_IgG</td>
+<td align="left">AKR7A2</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">2.256096</td>
+<td align="right">25.15814</td>
+<td align="right">22.90205</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_AR</td>
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_IgG</td>
+<td align="left">UBR5</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3.221221</td>
+<td align="right">25.92005</td>
+<td align="right">22.69882</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_AR</td>
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_IgG</td>
+<td align="left">ASS1</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3.509069</td>
+<td align="right">26.14952</td>
+<td align="right">22.64045</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_AR</td>
+<td align="left">LNCaP_TRIM33-5#MC-C2_FBS_IgG</td>
+<td align="left">ESRRA</td>
+<td align="right">4</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">3.023876</td>
+<td align="right">25.87275</td>
+<td align="right">22.84887</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<div class="section level3">
+<h3 id="benchamrk-against-the-original-saintq-tool">Benchamrk against the original <code>SAINTq</code> tool<a class="anchor" aria-label="anchor" href="#benchamrk-against-the-original-saintq-tool"></a>
+</h3>
+<p>We analyzed the same data using the original <code>SAINTq</code>
+(results stored in DEprot as <code>rime.saintq</code>) and compared the
+scores obtained between the two methods.</p>
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sq_combo</span> <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">saint_deprot</span><span class="op">@</span><span class="va">scores</span><span class="op">$</span><span class="va">`LNCaP_TRIM33-5#MC-C2_FBS_AR`</span>,</span>
+<span>                            y <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="../reference/rime.saintq.html">rime.saintq</a></span>, <span class="co"># original tool</span></span>
+<span>                            by <span class="op">=</span> <span class="st">"Prey"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/ggscatter.html" class="external-link">ggscatter</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sq_combo</span>,</span>
+<span>                  x <span class="op">=</span> <span class="st">"AvgP.x"</span>,</span>
+<span>                  y <span class="op">=</span> <span class="st">"AvgP.y"</span>,</span>
+<span>                  alpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>                  stroke <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>                  xlab <span class="op">=</span> <span class="st">"DEprot-computed SAINT"</span>,</span>
+<span>                  ylab <span class="op">=</span> <span class="st">"SAINTq"</span>,</span>
+<span>                  title <span class="op">=</span> <span class="st">"SAINT score computation benchmarking"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_smooth.html" class="external-link">geom_smooth</a></span><span class="op">(</span>formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="va">x</span>, method <span class="op">=</span> <span class="st">"lm"</span>, color <span class="op">=</span> <span class="st">"steelblue"</span>, fill <span class="op">=</span> <span class="st">"steelblue"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggpubr</span><span class="fu">::</span><span class="fu"><a href="https://rpkgs.datanovia.com/ggpubr/reference/stat_cor.html" class="external-link">stat_cor</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"pearson"</span>, r.digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0.95</span>, color <span class="op">=</span> <span class="st">'gray'</span>, linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_hline</a></span><span class="op">(</span>yintercept <span class="op">=</span> <span class="fl">0.95</span>, color <span class="op">=</span> <span class="st">'gray'</span>, linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>expand <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>aspect.ratio <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>        axis.line <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>        plot.title <span class="op">=</span> <span class="fu">ggtext</span><span class="fu">::</span><span class="fu"><a href="https://wilkelab.org/ggtext/reference/element_markdown.html" class="external-link">element_markdown</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>,</span>
+<span>        panel.border <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_rect</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="cn">NA</span>, colour <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="DEprot.overview.vignette_files/figure-html/compare_saintq_to_deprot-1.png" class="r-plt" alt="" width="576" style="display: block; margin: auto;"></p>
+<p><br></p>
+<hr>
+</div>
+</div>
+<div class="section level2">
 <h2 id="other-tools">
 <strong>Other tools</strong><a class="anchor" aria-label="anchor" href="#other-tools"></a>
 </h2>
@@ -2004,7 +2293,7 @@ must belong to either <code>DEprot</code> or
 unimputed normalized data. Indeed, estimation of missing values is not
 possible on the imputed tables.</p>
 </blockquote>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  n.labels <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -2019,7 +2308,7 @@ possible on the imputed tables.</p>
 groups. A group can be defined using any column of the metadata table.
 In the output stacked bar plot, each color will show how many proteins
 in how many samples within a group were detected.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts.byCondition</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  group.column <span class="op">=</span> <span class="st">"condition"</span>,</span>
@@ -2041,7 +2330,7 @@ expression can be grouped by a column of the metadata using the
 <code>group.by.metadata.column</code> parameter. Furthermore it is
 possible to scale the values using Z-scores (parameter
 <code>scale.expression = TRUE</code>).</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### raw expression</span></span>
 <span><span class="va">protein.1733_raw</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/expression.boxplot.html">expression.boxplot</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
@@ -2106,7 +2395,7 @@ include the packages <code>AnnotationDbi</code> and
 </blockquote>
 <p><br></p>
 <p><strong>KEEP NUCLEAR PROTEINS</strong></p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nucleus</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span><span class="fu">org.Hs.eg.db</span><span class="fu">::</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>                                 keytype <span class="op">=</span> <span class="st">"GOALL"</span>,</span>
 <span>                                 keys <span class="op">=</span> <span class="st">"GO:0005634"</span>, <span class="co">#nucleus</span></span>
@@ -2117,7 +2406,7 @@ include the packages <code>AnnotationDbi</code> and
 <span>                                        mode <span class="op">=</span> <span class="st">"keep"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p><strong>REMOVE CYTOPLASMIC PROTEINS</strong></p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cytoplasm</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span><span class="fu">org.Hs.eg.db</span><span class="fu">::</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>                                   keytype <span class="op">=</span> <span class="st">"GOALL"</span>,</span>
 <span>                                   keys <span class="op">=</span> <span class="st">"GO:0005737"</span>, <span class="co">#cytoplasm</span></span>
@@ -2140,35 +2429,35 @@ differentials from the beginning, the function
 <code>reapply.thresholds</code> can be used to re-compute the
 differential status, re-plot volcanos and MA-plots, and the n.diff
 summary table.</p>
-<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">=</span></span>
-<span id="cb56-2"><a href="#cb56-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
-<span id="cb56-3"><a href="#cb56-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
-<span id="cb56-4"><a href="#cb56-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
-<span id="cb56-5"><a href="#cb56-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
-<span id="cb56-6"><a href="#cb56-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
-<span id="cb56-7"><a href="#cb56-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
-<span id="cb56-8"><a href="#cb56-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
-<span id="cb56-9"><a href="#cb56-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
-<span id="cb56-10"><a href="#cb56-10" tabindex="-1"></a></span>
-<span id="cb56-11"><a href="#cb56-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
-<span id="cb56-12"><a href="#cb56-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
-<span id="cb56-13"><a href="#cb56-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb56-14"><a href="#cb56-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb56-15"><a href="#cb56-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb56-16"><a href="#cb56-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb56-17"><a href="#cb56-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb56-18"><a href="#cb56-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb56-19"><a href="#cb56-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb56-20"><a href="#cb56-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb56-21"><a href="#cb56-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
-<span id="cb56-22"><a href="#cb56-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb56-23"><a href="#cb56-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb56-24"><a href="#cb56-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8486</span>       <span class="fl">0.004313803</span></span>
-<span id="cb56-25"><a href="#cb56-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4458</span>       <span class="fl">0.150214925</span></span>
-<span id="cb56-26"><a href="#cb56-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">832</span>      <span class="sc">-</span><span class="fl">0.826587688</span></span>
-<span id="cb56-27"><a href="#cb56-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">732</span>       <span class="fl">0.922028515</span></span>
-<span id="cb56-28"><a href="#cb56-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2330</span>      <span class="sc">-</span><span class="fl">0.012852350</span></span>
-<span id="cb56-29"><a href="#cb56-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9050</span>      <span class="sc">-</span><span class="fl">0.181689350</span></span></code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">=</span></span>
+<span id="cb59-2"><a href="#cb59-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
+<span id="cb59-3"><a href="#cb59-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
+<span id="cb59-4"><a href="#cb59-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
+<span id="cb59-5"><a href="#cb59-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
+<span id="cb59-6"><a href="#cb59-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
+<span id="cb59-7"><a href="#cb59-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb59-8"><a href="#cb59-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
+<span id="cb59-9"><a href="#cb59-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
+<span id="cb59-10"><a href="#cb59-10" tabindex="-1"></a></span>
+<span id="cb59-11"><a href="#cb59-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
+<span id="cb59-12"><a href="#cb59-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
+<span id="cb59-13"><a href="#cb59-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb59-14"><a href="#cb59-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb59-15"><a href="#cb59-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb59-16"><a href="#cb59-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb59-17"><a href="#cb59-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb59-18"><a href="#cb59-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb59-19"><a href="#cb59-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb59-20"><a href="#cb59-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb59-21"><a href="#cb59-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
+<span id="cb59-22"><a href="#cb59-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb59-23"><a href="#cb59-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb59-24"><a href="#cb59-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8486</span>       <span class="fl">0.004313803</span></span>
+<span id="cb59-25"><a href="#cb59-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4458</span>       <span class="fl">0.150214925</span></span>
+<span id="cb59-26"><a href="#cb59-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">832</span>      <span class="sc">-</span><span class="fl">0.826587688</span></span>
+<span id="cb59-27"><a href="#cb59-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">732</span>       <span class="fl">0.922028515</span></span>
+<span id="cb59-28"><a href="#cb59-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2330</span>      <span class="sc">-</span><span class="fl">0.012852350</span></span>
+<span id="cb59-29"><a href="#cb59-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9050</span>      <span class="sc">-</span><span class="fl">0.181689350</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -2195,7 +2484,7 @@ from the CORUM data and use it for GSEA and ORA analyses.</p>
 <div class="section level4">
 <h4 id="define-geneset">Define geneSet<a class="anchor" aria-label="anchor" href="#define-geneset"></a>
 </h4>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## GeneSet Enrichment Analyses</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"corum_v5.0"</span>, package <span class="op">=</span> <span class="st">"DEprot"</span><span class="op">)</span></span>
 <span></span>
@@ -2271,7 +2560,7 @@ the two groups. Depending on the sample size, this two methods can lead
 to different ranking. To compare the two methods it is possible to plot
 the correlation of the two ranks and scores using
 <code>compare.ranking</code>:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare.ranking.html">compare.ranking</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                contrast <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/compare_ranking-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
@@ -2280,7 +2569,7 @@ the correlation of the two ranks and scores using
 <div class="section level5">
 <h5 id="geneset-enrichment-analyses-gsea">GeneSet Enrichment Analyses (GSEA)<a class="anchor" aria-label="anchor" href="#geneset-enrichment-analyses-gsea"></a>
 </h5>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GSEA.results</span> <span class="op">=</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -2296,7 +2585,7 @@ the correlation of the two ranks and scores using
 <div class="section level5">
 <h5 id="overrepresentation-analyses-ora">OverRepresentation Analyses (ORA)<a class="anchor" aria-label="anchor" href="#overrepresentation-analyses-ora"></a>
 </h5>
-<div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ORA.results</span> <span class="op">=</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>

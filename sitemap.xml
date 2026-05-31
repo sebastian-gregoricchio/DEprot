@@ -11,6 +11,7 @@
 <url><loc>/reference/DEprot-options.html</loc></url>
 <url><loc>/reference/DEprot.PCA-class.html</loc></url>
 <url><loc>/reference/DEprot.RMSE-class.html</loc></url>
+<url><loc>/reference/DEprot.SAINTq-class.html</loc></url>
 <url><loc>/reference/DEprot.analyses-class.html</loc></url>
 <url><loc>/reference/DEprot.contrast.heatmap-class.html</loc></url>
 <url><loc>/reference/DEprot.correlation-class.html</loc></url>
@@ -20,6 +21,7 @@
 <url><loc>/reference/DEprot.pvalues-class.html</loc></url>
 <url><loc>/reference/DEprot.upset-class.html</loc></url>
 <url><loc>/reference/NES.plot.html</loc></url>
+<url><loc>/reference/SAINTq.html</loc></url>
 <url><loc>/reference/affinity.propagation.html</loc></url>
 <url><loc>/reference/check.normality.html</loc></url>
 <url><loc>/reference/check.pvalues.html</loc></url>
@@ -66,10 +68,13 @@
 <url><loc>/reference/remove.undetected.proteins.html</loc></url>
 <url><loc>/reference/rename.samples.html</loc></url>
 <url><loc>/reference/rescale.bait.html</loc></url>
+<url><loc>/reference/rime.dpo.html</loc></url>
+<url><loc>/reference/rime.saintq.html</loc></url>
 <url><loc>/reference/sample.config.html</loc></url>
 <url><loc>/reference/show-DEprot-method.html</loc></url>
 <url><loc>/reference/show-DEprot.PCA-method.html</loc></url>
 <url><loc>/reference/show-DEprot.RMSE-method.html</loc></url>
+<url><loc>/reference/show-DEprot.SAINTq-method.html</loc></url>
 <url><loc>/reference/show-DEprot.analyses-method.html</loc></url>
 <url><loc>/reference/show-DEprot.contrast.heatmap-method.html</loc></url>
 <url><loc>/reference/show-DEprot.correlation-method.html</loc></url>
@@ -80,6 +85,7 @@
 <url><loc>/reference/show-DEprot.upset-method.html</loc></url>
 <url><loc>/reference/simplify.enrichment.html</loc></url>
 <url><loc>/reference/summary-DEprot.RMSE-method.html</loc></url>
+<url><loc>/reference/summary-DEprot.SAINTq-method.html</loc></url>
 <url><loc>/reference/summary-DEprot.analyses-method.html</loc></url>
 <url><loc>/reference/test.toolbox.html</loc></url>
 <url><loc>/reference/unimputed.counts.html</loc></url>
