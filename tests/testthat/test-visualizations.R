@@ -73,6 +73,10 @@ test_that("plot.volcano works ", {
   expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1))
 })
 
+test_that("plot.volcano works with uncorrected pvalue", {
+  expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, use.uncorrected.pvalue = TRUE))
+})
+
 test_that("plot.volcano works (label in box)", {
   expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, dot.labels = "protein.19", labels.in.boxes = TRUE))
 })
