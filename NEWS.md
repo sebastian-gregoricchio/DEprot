@@ -7,7 +7,7 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
-#### [v1.0.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.1) - May 31<sup>st</sup> 2026
+#### [v1.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.0) - May 31<sup>st</sup> 2026
 - Added the function `plot.PC.biplot`.
 - Added the function `SAINTq` and the `rime.dpo` and `rime.saintq` datasets.
 - Updated `plot.PC.scatter` to allow for the separate plotting of x and y zero-lines.
