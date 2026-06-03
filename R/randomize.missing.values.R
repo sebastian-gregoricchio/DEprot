@@ -60,8 +60,8 @@ randomize.missing.values =
         counts = DEprot.object@norm.counts
       }
     } else if (tolower(which.data) %in% c("raw", "r")) {
-      if (is.null(raw.counts)) {
-        stop("The 'DEprot' does not contain raw counts.")
+      if (is.null(DEprot.object@raw.counts)) {
+        stop("The 'DEprot' object does not contain raw counts.")
       } else {
         counts = DEprot.object@random.counts
       }
