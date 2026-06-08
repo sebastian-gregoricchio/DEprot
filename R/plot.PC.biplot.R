@@ -135,9 +135,9 @@ plot.PC.biplot =
     pc.object = DEprot.PCA.object@prcomp
 
     if ("prcomp" %in% class(pc.object)) {
-      # prcomp case: mat = proteins x samples
-      # pc$x = protein projections (proteins x PCs)
-      loadings.mat = data.frame(pc.object$x)
+      # prcomp case: t(mat) = samples x proteins
+      # pc$rotation = protein loadings (proteins x PCs)
+      loadings.mat = data.frame(pc.object$rotation)
     } else if ("pcaRes" %in% class(pc.object)) {
       # pcaMethods case: t(mat) = samples x proteins
       # pc@loadings = protein loadings (proteins x PCs)

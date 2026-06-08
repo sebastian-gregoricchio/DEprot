@@ -1,7 +1,7 @@
 Package: DEprot
 Type: Package
 Title: Differential Expression for (LFQ) Proteomics
-Version: 1.1.0
+Version: 1.1.1
 Authors@R: person("Sebastian", "Gregoricchio", email = "s.regoricchio@nki.nl", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9209-5403"))
 Maintainer: Sebastian Gregoricchio <s.gregoricchio@nki.nl>
 Description:

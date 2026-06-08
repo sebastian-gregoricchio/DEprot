@@ -120,13 +120,14 @@ perform.PCA =
     # -----------------------------
     # Data without NAs (e.g., imputed data)
     if (!(TRUE %in% is.na(mat))) {
-      pc = prcomp(mat, center = center.data, scale. = scale.data)
+      t_mat = t(mat)
+      pc = prcomp(t_mat, center = center.data, scale. = scale.data)
       pc.summary = summary(pc)
 
 
       ### Combine PCA with metadata
-      combo.tb = dplyr::left_join(dplyr::mutate(data.frame(pc.summary$rotation),
-                                                column.id = rownames(data.frame(pc.summary$rotation))),
+      combo.tb = dplyr::left_join(dplyr::mutate(data.frame(pc$x),
+                                                column.id = rownames(data.frame(pc$x))),
                                   PCA.meta,
                                   by = "column.id")
 

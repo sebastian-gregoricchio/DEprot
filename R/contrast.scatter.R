@@ -69,11 +69,12 @@ contrast.scatter =
 
     ### collect the fc table
     fc.x = DEprot.analyses.object@analyses.result.list[[contrast.x]]$results
-    fc.x = fc.x[,c(1,5)]
+    fc.x = fc.x[, c("prot.id", grep("^log2[.]Fold", colnames(fc.x), value = TRUE))]
     colnames(fc.x)[2] = "contrast.x"
 
+
     fc.y = DEprot.analyses.object@analyses.result.list[[contrast.y]]$results
-    fc.y = fc.y[,c(1,5)]
+    fc.y = fc.y[, c("prot.id", grep("^log2[.]Fold", colnames(fc.y), value = TRUE))]
     colnames(fc.y)[2] = "contrast.y"
 
     fc.tb = dplyr::full_join(x = fc.x, y = fc.y, by = "prot.id")
@@ -114,8 +115,8 @@ contrast.scatter =
                        cor.coef.name = dplyr::case_when(tolower(correlation.method) == "pearson" ~ "R",
                                                         tolower(correlation.method) == "spearman" ~ "rho",
                                                         tolower(correlation.method) == "kendall" ~ "tau")) +
-      xlab(paste0("log<sub>2</sub>(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.1,"</sup>&frasl;<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.2,"</sub></sub>)")) +
-      ylab(paste0("log<sub>2</sub>(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.1,"</sup>&frasl;<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.2,"</sub></sub>)")) +
+      xlab(paste0("log<sub>2</sub>(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.1,"</sup>/<sub>",DEprot.analyses.object@contrasts[[contrast.x]]$var.2,"</sub></sub>)")) +
+      ylab(paste0("log<sub>2</sub>(Fold Change<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.1,"</sup>/<sub>",DEprot.analyses.object@contrasts[[contrast.y]]$var.2,"</sub></sub>)")) +
       theme_classic() +
       theme(axis.title.x = ggtext::element_markdown(color = "black"),
             axis.title.y = ggtext::element_markdown(color = "black"),

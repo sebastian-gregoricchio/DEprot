@@ -7,6 +7,12 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+
+#### [v1.1.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.1) - June 8<sup>th</sup> 2026
+- Bug fixed in the PCA calculation, functions/objects concerned: `perform.PCA`, `diff.analyses*`, `plot.PC.buplot` and the `test.toolbox`, as well as the vignette and manual.
+
+<br>
+
 #### [v1.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.0) - May 31<sup>st</sup> 2026
 - Added the function `plot.PC.biplot`.
 - Added the function `SAINTq` and the `rime.dpo` and `rime.saintq` datasets.
