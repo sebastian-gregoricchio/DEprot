@@ -8,6 +8,12 @@ title: "changeLog"
 
 
 
+#### [v1.1.2](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.2) - June 16<sup>th</sup> 2026
+- Update labeling of groups for `NES.plot` function
+- Bug fixing for heatmap function for showing the dendrogram in the plots
+
+<br>
+
 #### [v1.1.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.1) - June 8<sup>th</sup> 2026
 - Bug fixed in the PCA calculation, functions/objects concerned: `perform.PCA`, `diff.analyses*`, `plot.PC.buplot` and the `test.toolbox`, as well as the vignette and manual.
 

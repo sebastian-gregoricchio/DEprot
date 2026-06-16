@@ -384,7 +384,7 @@ heatmap.counts =
       ggtitle(title) +
       theme_classic() +
       theme(axis.line = element_blank(),
-            axis.ticks = element_blank(),
+            #axis.ticks = element_blank(),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             panel.border = element_rect(fill = NA, color = "black", linewidth = 1),
             legend.title = ggtext::element_markdown(color = "black"),
@@ -401,7 +401,7 @@ heatmap.counts =
       heatmap = heatmap + legendry::scale_y_dendro(clust = row.clust, name = "Protein ID", expand = c(0,0))
     } else {
       row.clust = NULL
-      heatmap = heatmap + scale_y_discrete(name = "Protein ID", expand = c(0,0))
+      heatmap = heatmap + scale_y_discrete(name = "Protein ID", expand = c(0,0)) + theme(axis.ticks.y = element_blank())
     }
 
 
@@ -419,7 +419,8 @@ heatmap.counts =
       heatmap =
         heatmap +
         scale_x_discrete(name = "Sample ID", expand = c(0,0), position = "top") +
-        theme(axis.text.x = ggtext::element_markdown(color = "black", angle = 30, hjust = 0))
+        theme(axis.text.x = ggtext::element_markdown(color = "black", angle = 30, hjust = 0),
+              axis.ticks.x = element_blank())
     }
 
 

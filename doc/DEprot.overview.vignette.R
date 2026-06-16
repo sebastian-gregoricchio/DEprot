@@ -253,7 +253,7 @@ PC.fbs.e2_1.2 <-
                   color.column = "condition",
                   shape.column = "replicate",
                   label.column = NULL,
-                  plot.zero.line.x = FALSE,
+                  plot.zero.line.x = TRUE,
                   plot.zero.line.y = TRUE) +
   theme(legend.position = "none")
   
