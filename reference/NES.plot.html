@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.2</span>
       </span>
     </div>
 
@@ -54,7 +54,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>NES.plot</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.1.1/R/NES.plot.R" class="external-link"><code>R/NES.plot.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/R/NES.plot.R" class="external-link"><code>R/NES.plot.R</code></a></small>
     <div class="hidden name"><code>NES.plot.Rd</code></div>
     </div>
 
@@ -65,8 +65,8 @@
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">NES.plot</span><span class="op">(</span></span>
 <span>  <span class="va">enrichResult</span>,</span>
-<span>  pos.NES.label <span class="op">=</span> <span class="st">"+NES"</span>,</span>
-<span>  neg.NES.label <span class="op">=</span> <span class="st">"-NES"</span>,</span>
+<span>  pos.NES.label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  neg.NES.label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pos.NES.color <span class="op">=</span> <span class="st">"steelblue"</span>,</span>
 <span>  neg.NES.color <span class="op">=</span> <span class="st">"orange"</span>,</span>
 <span>  string.pattern.to.remove <span class="op">=</span> <span class="st">"HALLMARK|GOBP"</span>,</span>
@@ -87,11 +87,11 @@
 
 
 <dt id="arg-pos-nes-label">pos.NES.label<a class="anchor" aria-label="anchor" href="#arg-pos-nes-label"></a></dt>
-<dd><p>String for the label of sets enriched in the group with positive ranking feature scores. Default: <code>"+NES"</code>.</p></dd>
+<dd><p>String for the label of sets enriched in the group with positive ranking feature scores. Default: <code>NULL</code>, automatic value retrieved in the <code>DEprot.enrichResult</code> object otherwise <code>"+NES"</code>.</p></dd>
 
 
 <dt id="arg-neg-nes-label">neg.NES.label<a class="anchor" aria-label="anchor" href="#arg-neg-nes-label"></a></dt>
-<dd><p>String for the label of sets enriched in the group with negative ranking feature scores. Default: <code>"-NES"</code>.</p></dd>
+<dd><p>String for the label of sets enriched in the group with negative ranking feature scores. Default: <code>NULL</code>, automatic value retrieved in the <code>DEprot.enrichResult</code> object otherwise <code>"-NES"</code>.</p></dd>
 
 
 <dt id="arg-pos-nes-color">pos.NES.color<a class="anchor" aria-label="anchor" href="#arg-pos-nes-color"></a></dt>
