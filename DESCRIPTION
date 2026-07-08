@@ -1,7 +1,7 @@
 Package: DEprot
 Type: Package
 Title: Differential Expression for (LFQ) Proteomics
-Version: 1.1.2
+Version: 1.1.3
 Authors@R: person("Sebastian", "Gregoricchio", email = "s.regoricchio@nki.nl", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9209-5403"))
 Maintainer: Sebastian Gregoricchio <s.gregoricchio@nki.nl>
 Description:
@@ -85,7 +85,7 @@ Remotes:
 Encoding: UTF-8
 LazyData: true
 LazyDataCompression: xz
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Config/testthat/edition: 3
 VignetteBuilder: knitr
 URL:

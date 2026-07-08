@@ -98,6 +98,12 @@ new_meta
 #                          batch.column = "batch",
 #                          cores = 1)
 
+## ----eval = FALSE-------------------------------------------------------------
+# dpo <- harmonize.batches(DEprot.object = dpo,
+#                          batch.column = "batch",
+#                          algorithm = "limma",
+#                          cores = 1)
+
 ## ----randomize_data-----------------------------------------------------------
 dpo <- randomize.missing.values(DEprot.object = dpo,
                                 group.column = "combined.id",

@@ -7,6 +7,12 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+#### [v1.1.3](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.3) - July 8<sup>th</sup> 2026
+- `harmonize.batches()`: added `algorithm` (ComBat/limma), `ComBat.mode`, and `block`; limma helps on sparse designs where ComBat hits a singular matrix
+- `harmonize.batches()`: drop uncorrectable proteins with a warning, error on an empty result, and fix the `algorithm`/`block` defaults
+- updated manual and vignette accordingly to take into account for these exceptions
+
+<br>
 
 #### [v1.1.2](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.2) - June 16<sup>th</sup> 2026
 - Update labeling of groups for `NES.plot` function

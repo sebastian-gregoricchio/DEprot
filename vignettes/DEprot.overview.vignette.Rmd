@@ -295,6 +295,23 @@ dpo <- harmonize.batches(DEprot.object = dpo,
                          cores = 1)
 ```
 
+>NOTE: By default `harmonize.batches` uses `ComBat`. If your batch design is sparse (i.e., a batch with a single sample, or proteins measured only once in a batch) ComBat can fail with a singular-matrix error; see next paragraph to know out to fix it using `limma` instead.
+
+
+<br>
+
+### When to use `limma` instead of `ComBat`
+The function `harmonize.batches` runs `ComBat` by default. ComBat adjusts each batch for both its mean and its variance, which is the right model when batches differ in spread as well as in level. The catch is that estimating a per-batch variance needs at least 2 values per batch. When a batch has a single sample, or a protein is measured only once within a batch, the sub-matrix ComBat tries to solve becomes singular and the run stops with an error such as `Lapack routine dgesv: system is exactly singular`.
+
+For these cases, set `algorithm = "limma"`. `limma`'s `removeBatchEffect` corrects the batch means only, so it handles sparse and small batches that ComBat cannot. The trade-off is that real variance differences between batches stay in the data, so keep ComBat as the default and switch to limma when your batch design is too sparse for it.
+
+```{r, eval = FALSE}
+dpo <- harmonize.batches(DEprot.object = dpo,
+                         batch.column = "batch",
+                         algorithm = "limma",
+                         cores = 1)
+```
+
 
 <br>
 
