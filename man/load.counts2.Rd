@@ -20,9 +20,9 @@ load.counts2(
 
 \item{metadata}{A data.frame containing at least one column called \code{column.id} which corresponds to the colnames of \code{counts}. Any other column can be added and will correspond to a "feature"of each sample.}
 
-\item{data.type}{String indicating the type of data that are loaded. One among: 'raw', 'normalized', 'imputed'.}
+\item{data.type}{String indicating the type of data that are loaded. One among: 'raw', 'normalized', 'randomized', 'imputed'.}
 
-\item{log.base}{Number indicating the base of the log used to transform the counts. If none transformation is applied, indicate the base \code{1}.}
+\item{log.base}{Number indicating the base of the log used to transform the counts. If none transformation is applied, indicate the base \code{1}. By default, the output data are always transformed in log2 base.}
 
 \item{normalization.method}{String or list indicating the normalization method used. If none, use the default value \code{NA}.}
 

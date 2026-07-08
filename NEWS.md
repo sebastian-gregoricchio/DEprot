@@ -11,6 +11,7 @@ title: "changeLog"
 - `harmonize.batches()`: added `algorithm` (ComBat/limma), `ComBat.mode`, and `block`; limma helps on sparse designs where ComBat hits a singular matrix
 - `harmonize.batches()`: drop uncorrectable proteins with a warning, error on an empty result, and fix the `algorithm`/`block` defaults
 - updated manual and vignette accordingly to take into account for these exceptions
+- `load.counts2` automatically converts the counts into log2 transformed.
 
 <br>
 

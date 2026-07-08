@@ -4,8 +4,8 @@
 #'
 #' @param counts A data.frame or a matrix in which the rownames are the proteins and the columns the samples.
 #' @param metadata A data.frame containing at least one column called \code{column.id} which corresponds to the colnames of \code{counts}. Any other column can be added and will correspond to a "feature"of each sample.
-#' @param data.type String indicating the type of data that are loaded. One among: 'raw', 'normalized', 'imputed'.
-#' @param log.base Number indicating the base of the log used to transform the counts. If none transformation is applied, indicate the base \code{1}.
+#' @param data.type String indicating the type of data that are loaded. One among: 'raw', 'normalized', 'randomized', 'imputed'.
+#' @param log.base Number indicating the base of the log used to transform the counts. If none transformation is applied, indicate the base \code{1}. By default, the output data are always transformed in log2 base.
 #' @param normalization.method String or list indicating the normalization method used. If none, use the default value \code{NA}.
 #' @param randomization.method String or list indicating the randomization method used. If none, use the default value \code{NA}.
 #' @param imputation.method A string indicating the imputation method used. If none, use the default value \code{NA}.
@@ -104,6 +104,31 @@ load.counts2 =
 
 
 
+    ### Standardize all counts to a log2 scale
+    if (is.null(log.base) || is.na(log.base) || log.base <= 1) {
+      # linear data: force log2 with a +1 pseudocount so that 0 -> log2(1) = 0
+      if (any(cnt < 0, na.rm = TRUE)) {
+        warning("Some linear counts are negative: log2(count + 1) is undefined for values < 0 and will return NaN. Check the input.", call. = FALSE)
+      }
+      message("Linear (non-log) counts have been log2(count + 1)-transformed.")
+      cnt = log2(cnt + 1)
+
+    } else if (log.base != 2) {
+      # log-transformed in another base: rescale to log2
+      message(paste0("Counts provided in log base ",
+                     ifelse(log.base == exp(1), yes = "e (natural log)", no = log.base),
+                     " have been converted to log2 (scaling factor: log2(",
+                     ifelse(log.base == exp(1), "e", log.base), ") = ",
+                     signif(log2(log.base), 5), ")."))
+      cnt = cnt * log2(log.base)
+    }
+
+    # after standardization the data are always on a log2 scale
+    log.transformed = TRUE
+    log.base = 2
+
+
+
     ### Check metadata
     if ("data.frame" %in% class(metadata) | "matrix" %in% class(metadata)) {
       meta = as.data.frame(metadata)
@@ -111,7 +136,6 @@ load.counts2 =
       meta = data.table::fread(metadata, data.table = FALSE)
     } else {
       stop("The 'metadata' table must be either a matrix/data.frame or a string path. At least one column ('column.id') should contain the column names of the counts table.")
-      #return()
     }
 
     # check that column.id is present in metadata
@@ -123,7 +147,6 @@ load.counts2 =
                   column.id,"' of the metadata table:\n",
                   "- counts IDs:\n", paste0(colnames(cnt), collapse = ", "), "\n\n",
                   "- metadata IDs ('",column.id,"'):\n", paste0(meta[,column.id], collapse = ", ")))
-      #return()
     }
 
 
@@ -204,11 +227,7 @@ load.counts2 =
                 color = "steelblue",
                 linetype = 2,
                 inherit.aes = FALSE) +
-      ylab(ifelse(is.na(log.base),
-                  yes = "Intensity",
-                  no = paste0(ifelse(log.base == exp(1),
-                                     yes = "ln", no = paste0("log<sub>",log.base,"</sub>")),
-                              "(Intensity)"))) +
+      ylab(paste0("log<sub>",log.base,"</sub>(Intensity)")) +
       ggtitle(plot.title) +
       xlab("Sample") +
       theme_classic() +
@@ -291,11 +310,13 @@ load.counts2 =
           random.counts = random.counts,
           imputed.counts = imputed.counts,
           log.base = log.base,
-          log.transformed = ifelse(is.null(log.base), yes = FALSE, no = TRUE),
+          log.transformed = log.transformed,
           imputed = imputed,
           imputation.method = imputation.method,
           normalized = normalized,
           normalization.method = normalization.method,
+          randomized = randomized,
+          randomization.method = randomization.method,
           boxplot.raw = boxplot.raw,
           boxplot.norm = boxplot.norm,
           boxplot.random = boxplot.random,
