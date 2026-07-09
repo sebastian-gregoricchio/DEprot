@@ -67,3 +67,13 @@ test_that("the function load.counts.2 is working with randomized data", {
                                log.base = 2))
 
 })
+
+
+
+test_that("the function load.counts.2 is working with linear data", {
+  expect_no_error(suppressMessages(load.counts2(counts = DEprot::unimputed.counts,
+                                                metadata = DEprot::sample.config,
+                                                data.type = "randomized",
+                                                log.base = 1)))
+
+})
