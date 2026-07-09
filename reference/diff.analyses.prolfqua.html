@@ -146,6 +146,16 @@
     <h2>Value</h2>
     <p>An object of class <code>DEprot.analyses</code></p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The <code>results</code> table reports, for each group, the standard deviation (<code>sd.&lt;group&gt;</code>) and the standard
+error of the mean (<code>sem.&lt;group&gt;</code>) of the log2 expression values, together with <code>lfcSE</code>, the standard error of
+the log2(FoldChange). When <code>moderate.variance = FALSE</code>, <code>lfcSE</code> is the standard error of the contrast estimate
+computed by <code>prolfqua</code>; when <code>moderate.variance = TRUE</code> it is the moderated standard error, consistent with the
+moderated t-statistic reported in the <code>statistic</code> column. In both cases
+<code>statistic = log2(FoldChange) / lfcSE</code>. Note that, when imputed counts are used, the imputation compresses the
+variance and <code>sd</code>, <code>sem</code> and <code>lfcSE</code> are consequently under-estimated.</p>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>Sebastian Gregoricchio</p>
