@@ -17,6 +17,14 @@
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
+#' @details The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+#' error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the standard error of
+#' the log2(FoldChange). When \code{moderate.variance = FALSE}, \code{lfcSE} is the standard error of the contrast estimate
+#' computed by \code{prolfqua}; when \code{moderate.variance = TRUE} it is the moderated standard error, consistent with the
+#' moderated t-statistic reported in the \code{statistic} column. In both cases
+#' \code{statistic = log2(FoldChange) / lfcSE}. Note that, when imputed counts are used, the imputation compresses the
+#' variance and \code{sd}, \code{sem} and \code{lfcSE} are consequently under-estimated.
+#'
 #' @import dplyr
 #' @import ggplot2
 #' @import patchwork
@@ -27,6 +35,7 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices colorRampPalette
 #' @importFrom reshape2 melt
+#' @importFrom stats sd
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -384,6 +393,47 @@ diff.analyses.prolfqua =
                                                       "null")))
 
       diff.tb$diff.status[is.na(diff.tb$diff.status)] = "null"
+
+
+      ## Compute per-group dispersion (standard deviation and standard error of the mean)
+      ## and append it, together with the standard error of the log2 Fold Change, at the end of the table.
+      ## Sample sizes are computed per protein (on non-NA values) so that the values remain
+      ## correct also when non-imputed counts are used.
+      mat.log2.group1 = mat.log2[,contrasts.info[[i]]$group.1, drop = FALSE]
+      mat.log2.group2 = mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE]
+
+      sd.group1 = apply(X = mat.log2.group1, MARGIN = 1, FUN = function(x){sd(x, na.rm = TRUE)})
+      sd.group2 = apply(X = mat.log2.group2, MARGIN = 1, FUN = function(x){sd(x, na.rm = TRUE)})
+
+      n.samples.group1 = rowSums(!is.na(mat.log2.group1))
+      n.samples.group2 = rowSums(!is.na(mat.log2.group2))
+
+      sem.group1 = ifelse(n.samples.group1 > 0, sd.group1 / sqrt(n.samples.group1), NA_real_)
+      sem.group2 = ifelse(n.samples.group2 > 0, sd.group2 / sqrt(n.samples.group2), NA_real_)
+
+      ## Standard error of the log2 Fold Change (equivalent of the 'lfcSE' column of DESeq2::results()).
+      ## When 'moderate.variance = FALSE', prolfqua reports the standard error of the contrast
+      ## estimate in the 'std.error' column (statistic = diff / std.error), which is used directly.
+      ## When 'moderate.variance = TRUE', the 'statistic' returned is the moderated t-statistic,
+      ## while 'std.error' is left un-moderated. The moderated standard error is therefore recovered
+      ## from the identity t = estimate/SE, so that 'lfcSE' stays consistent with the reported
+      ## 'statistic' and 'df' (and thus with the p-values) in both modes.
+      if (moderate.variance == FALSE & "std.error" %in% colnames(contrdf)) {
+        lfcSE = contrdf$std.error[match(diff.tb$prot.id, contrdf$protein_Id)]
+      } else {
+        lfcSE = diff.tb$log2.Fold_group1.vs.group2 / diff.tb$statistic
+        lfcSE[!is.finite(lfcSE)] = NA_real_
+      }
+
+      ## Values are matched on the protein IDs rather than relying on the row order of the table,
+      ## which results from a join and could therefore differ from the one of the counts matrix.
+      row.idx = match(diff.tb$prot.id, rownames(mat.log2))
+
+      diff.tb$sd.group1 = unname(sd.group1[row.idx])
+      diff.tb$sem.group1 = unname(sem.group1[row.idx])
+      diff.tb$sd.group2 = unname(sd.group2[row.idx])
+      diff.tb$sem.group2 = unname(sem.group2[row.idx])
+      diff.tb$lfcSE = unname(lfcSE)
 
       # -----------------------------------------------------------------------------------
 

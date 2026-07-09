@@ -59,6 +59,17 @@ An object of class \code{DEprot.analyses}
 \description{
 Allows for the computation of differential analyses using multiple t/Wilcox tests. Includes means, Fold Changes, and p-values.
 }
+\details{
+The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the standard error of
+the log2(FoldChange). When \code{stat.test = "t.test"}, \code{lfcSE} is the standard error used by the test itself, so that
+\code{statistic = log2(FoldChange) / lfcSE}: for unpaired tests it corresponds to the Welch standard error
+(\code{sqrt(sem.groupA^2 + sem.groupB^2)}), while for paired tests it is the standard error of the per-replicate
+differences and that identity does not hold. When \code{stat.test = "wilcoxon"} the test is rank-based and no standard
+error is associated to the fold change: \code{lfcSE} is \code{NA}. Confidence intervals can be obtained as
+\code{log2(FoldChange) +/- qt(0.975, df) * lfcSE}. Note that, when imputed counts are used, the imputation compresses
+the variance and \code{sd}, \code{sem} and \code{lfcSE} are consequently under-estimated.
+}
 \examples{
 # Basic Differential analyses with unpaired analyses
 dpo <- diff.analyses(DEprot.object = DEprot::test.toolbox$dpo.imp,

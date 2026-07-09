@@ -10,8 +10,9 @@ title: "changeLog"
 #### [v1.1.3](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.3) - July 8<sup>th</sup> 2026
 - `harmonize.batches()`: added `algorithm` (ComBat/limma), `ComBat.mode`, and `block`; limma helps on sparse designs where ComBat hits a singular matrix
 - `harmonize.batches()`: drop uncorrectable proteins with a warning, error on an empty result, and fix the `algorithm`/`block` defaults
-- updated manual and vignette accordingly to take into account for these exceptions
 - `load.counts2` automatically converts the counts into log2 transformed.
+- `diff.analyses`, `diff.analyses.limma` and `diff.analyses.prolfqua` now return, for each group, the standard deviation (`sd.<group>`) and standard error of the mean (`sem.<group>`) of the log2 expression values, plus `lfcSE`, the standard error of the log2(FoldChange). The new columns are appended at the end of the `results` table. `lfcSE` is `NA` when `stat.test = "wilcoxon"`
+- updated manual and vignette accordingly to take into account for these exceptions and modifications
 
 <br>
 

@@ -18,6 +18,17 @@
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
+#' @details The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+#' error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the moderated
+#' (posterior) standard error of the contrast coefficient estimated by limma (\code{stdev.unscaled * sqrt(s2.post)}).
+#' This is the denominator of the moderated t-statistic reported in the \code{statistic} column and it is the direct
+#' equivalent of the \code{lfcSE} column returned by \code{DESeq2::results()}. The log2(FoldChange) column is computed as
+#' the difference between the group means, which coincides with the limma contrast coefficient for a least-squares fit of a
+#' \code{~ 0 + group} design, but not when \code{include.rep.model = TRUE} (generalized least squares) or when
+#' \code{fitting.method = "robust"}: in those cases \code{statistic} may differ slightly from \code{log2(FoldChange)/lfcSE}.
+#' Note that, when imputed counts are used, the imputation compresses the variance and \code{sd}, \code{sem} and
+#' \code{lfcSE} are consequently under-estimated.
+#'
 #' @import dplyr
 #' @import ggplot2
 #' @import limma
@@ -27,7 +38,7 @@
 #' @import progress
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices colorRampPalette
-#' @importFrom stats model.matrix
+#' @importFrom stats model.matrix sd
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -306,6 +317,41 @@ diff.analyses.limma =
                                                       "null")))
 
       diff.tb$diff.status[is.na(diff.tb$diff.status)] = "null"
+
+
+      ## Compute per-group dispersion (standard deviation and standard error of the mean)
+      ## and append it, together with the standard error of the log2 Fold Change, at the end of the table.
+      ## Sample sizes are computed per protein (on non-NA values) so that the values remain
+      ## correct also when non-imputed counts are used.
+      mat.log2.group1 = mat.log2[,contrasts.info[[i]]$group.1, drop = FALSE]
+      mat.log2.group2 = mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE]
+
+      sd.group1 = apply(X = mat.log2.group1, MARGIN = 1, FUN = function(x){sd(x, na.rm = TRUE)})
+      sd.group2 = apply(X = mat.log2.group2, MARGIN = 1, FUN = function(x){sd(x, na.rm = TRUE)})
+
+      n.samples.group1 = rowSums(!is.na(mat.log2.group1))
+      n.samples.group2 = rowSums(!is.na(mat.log2.group2))
+
+      sem.group1 = ifelse(n.samples.group1 > 0, sd.group1 / sqrt(n.samples.group1), NA_real_)
+      sem.group2 = ifelse(n.samples.group2 > 0, sd.group2 / sqrt(n.samples.group2), NA_real_)
+
+      ## Standard error of the log2 Fold Change: this is the moderated (posterior) standard error
+      ## of the contrast coefficient estimated by limma, i.e. stdev.unscaled * sqrt(s2.post).
+      ## It corresponds to the denominator of the moderated t-statistic reported in the
+      ## 'statistic' column (t = logFC / lfcSE) and it is the direct equivalent of the
+      ## 'lfcSE' column returned by DESeq2::results().
+      ## The unmoderated version would be obtained using 'fitted.data$sigma' instead of 'sqrt(fitted.data$s2.post)'.
+      lfcSE = (fitted.data$stdev.unscaled[,1] * sqrt(fitted.data$s2.post))[match(diff.tb$prot.id, rownames(fitted.data$t))]
+
+      ## Values are matched on the protein IDs rather than relying on the row order of the table,
+      ## which results from a join and could therefore differ from the one of the counts matrix.
+      row.idx = match(diff.tb$prot.id, rownames(mat.log2))
+
+      diff.tb$sd.group1 = unname(sd.group1[row.idx])
+      diff.tb$sem.group1 = unname(sem.group1[row.idx])
+      diff.tb$sd.group2 = unname(sd.group2[row.idx])
+      diff.tb$sem.group2 = unname(sem.group2[row.idx])
+      diff.tb$lfcSE = unname(lfcSE)
 
 
       ## Run PCA

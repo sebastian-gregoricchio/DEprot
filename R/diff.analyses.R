@@ -18,6 +18,16 @@
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
+#' @details The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+#' error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the standard error of
+#' the log2(FoldChange). When \code{stat.test = "t.test"}, \code{lfcSE} is the standard error used by the test itself, so that
+#' \code{statistic = log2(FoldChange) / lfcSE}: for unpaired tests it corresponds to the Welch standard error
+#' (\code{sqrt(sem.groupA^2 + sem.groupB^2)}), while for paired tests it is the standard error of the per-replicate
+#' differences and that identity does not hold. When \code{stat.test = "wilcoxon"} the test is rank-based and no standard
+#' error is associated to the fold change: \code{lfcSE} is \code{NA}. Confidence intervals can be obtained as
+#' \code{log2(FoldChange) +/- qt(0.975, df) * lfcSE}. Note that, when imputed counts are used, the imputation compresses
+#' the variance and \code{sd}, \code{sem} and \code{lfcSE} are consequently under-estimated.
+#'
 #' @import dplyr
 #' @import ggplot2
 #' @import patchwork
@@ -25,7 +35,7 @@
 #' @importFrom purrr pmap
 #' @import ggtext
 #' @importFrom grDevices colorRampPalette
-#' @importFrom stats t.test wilcox.test p.adjust t.test wilcox.test
+#' @importFrom stats t.test wilcox.test p.adjust t.test wilcox.test sd
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -268,6 +278,7 @@ diff.analyses =
       pval.list = c()
       stat.list = c()
       df.list = c()
+      lfcSE.list = c()
 
       if (tolower(stat.test) %in% c("t.test", "ttest", "t-test", "t", "student")) {
         for (k in 1:nrow(mat.log2)){
@@ -275,11 +286,17 @@ diff.analyses =
                                                          y = as.vector(mat.log2[k,contrasts.info[[i]]$group.2]),
                                                          paired = contrasts.info[[i]]$paired.test,
                                                          exact = TRUE)),
-                                 error = function(e) {list(statistic = c("t" = NA), p.value = NA, parameter = c("df" = NA))})
+                                 error = function(e) {list(statistic = c("t" = NA), p.value = NA, parameter = c("df" = NA), stderr = NA)})
 
           pval.list[k] = unname(test.result$p.value)
           stat.list[k] = unname(test.result$statistic["t"])
           df.list[k] = unname(test.result$parameter["df"])
+
+          ## Standard error of the log2 Fold Change (= standard error of the mean difference):
+          ## taken directly from the test object so that it matches the test actually performed
+          ## (Welch correction when unpaired, SE of the paired differences when paired).
+          ## Note: 'stderr' is available in the output of stats::t.test since R >= 3.6.0.
+          lfcSE.list[k] = if (is.null(test.result$stderr)) {NA_real_} else {unname(test.result$stderr)}
         }
 
         ### Using wilcoxon instead
@@ -293,6 +310,10 @@ diff.analyses =
 
           pval.list[k] = unname(test.result$p.value)
           stat.list[k] = unname(test.result$statistic["W"])
+
+          ## The Wilcoxon test is rank-based: no standard error is associated to the fold change.
+          ## 'lfcSE' is therefore left as NA when stat.test = "wilcoxon".
+          lfcSE.list[k] = NA_real_
 
           ## Compute df like value
           x = as.vector(mat.log2[k, contrasts.info[[i]]$group.1])
@@ -346,6 +367,29 @@ diff.analyses =
                                                       "null")))
 
       diff.tb$diff.status[is.na(diff.tb$diff.status)] = "null"
+
+
+      ## Compute per-group dispersion (standard deviation and standard error of the mean)
+      ## and append it, together with the standard error of the log2 Fold Change, at the end of the table.
+      ## Sample sizes are computed per protein (on non-NA values) so that the values remain
+      ## correct also when non-imputed counts are used.
+      mat.log2.group1 = mat.log2[,contrasts.info[[i]]$group.1, drop = FALSE]
+      mat.log2.group2 = mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE]
+
+      sd.group1 = apply(X = mat.log2.group1, MARGIN = 1, FUN = function(x){sd(x, na.rm = TRUE)})
+      sd.group2 = apply(X = mat.log2.group2, MARGIN = 1, FUN = function(x){sd(x, na.rm = TRUE)})
+
+      n.samples.group1 = rowSums(!is.na(mat.log2.group1))
+      n.samples.group2 = rowSums(!is.na(mat.log2.group2))
+
+      sem.group1 = ifelse(n.samples.group1 > 0, sd.group1 / sqrt(n.samples.group1), NA_real_)
+      sem.group2 = ifelse(n.samples.group2 > 0, sd.group2 / sqrt(n.samples.group2), NA_real_)
+
+      diff.tb$sd.group1 = unname(sd.group1)
+      diff.tb$sem.group1 = unname(sem.group1)
+      diff.tb$sd.group2 = unname(sd.group2)
+      diff.tb$sem.group2 = unname(sem.group2)
+      diff.tb$lfcSE = lfcSE.list
 
 
       ## Run PCA

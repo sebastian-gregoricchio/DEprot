@@ -59,6 +59,18 @@ An object of class \code{DEprot.analyses}
 \description{
 Allows for the computation of differential analyses using \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}. Includes means, Fold Changes, and p-values.
 }
+\details{
+The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the moderated
+(posterior) standard error of the contrast coefficient estimated by limma (\code{stdev.unscaled * sqrt(s2.post)}).
+This is the denominator of the moderated t-statistic reported in the \code{statistic} column and it is the direct
+equivalent of the \code{lfcSE} column returned by \code{DESeq2::results()}. The log2(FoldChange) column is computed as
+the difference between the group means, which coincides with the limma contrast coefficient for a least-squares fit of a
+\code{~ 0 + group} design, but not when \code{include.rep.model = TRUE} (generalized least squares) or when
+\code{fitting.method = "robust"}: in those cases \code{statistic} may differ slightly from \code{log2(FoldChange)/lfcSE}.
+Note that, when imputed counts are used, the imputation compresses the variance and \code{sd}, \code{sem} and
+\code{lfcSE} are consequently under-estimated.
+}
 \examples{
 # Basic differential analyses including replicate model
 dpo <- diff.analyses.limma(DEprot.object = DEprot::test.toolbox$dpo.imp,

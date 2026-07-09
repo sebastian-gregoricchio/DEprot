@@ -378,9 +378,6 @@ dpo_analyses
 ## ----analyses_summary, eval=F-------------------------------------------------
 # diff.analyses_summary = summary(dpo)
 
-## ----export_analyses, eval = F------------------------------------------------
-# export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
-
 ## ----get_results, eval = F----------------------------------------------------
 # ## Direct access
 # results = dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results
@@ -392,6 +389,16 @@ dpo_analyses
 
 ## ----get_results2, echo=FALSE-------------------------------------------------
 knitr::kable(get.results(dpo_analyses, contrast = 1)[1:6,], row.names = F)
+
+## ----eval = FALSE-------------------------------------------------------------
+# res <- get.results(dpo, contrast = 1)
+# 
+# confidence <- 0.95
+# alpha <- 1 - confidence
+# t.crit <- qt(1 - alpha/2, df = res$df)   # upper-tail critical value, per protein
+# 
+# res$CI.lower <- res$log2.Fold_FBS.vs.6h.DMSO - t.crit * res$lfcSE
+# res$CI.upper <- res$log2.Fold_FBS.vs.6h.DMSO + t.crit * res$lfcSE
 
 ## ----DE_PCA_scatters, fig.width=8, eval=F-------------------------------------
 # dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$PCA.plots
@@ -564,6 +571,9 @@ upset.plot  # or upset.plot@upset
 
 ## ----upset_tb, echo=FALSE-----------------------------------------------------
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
+
+## ----export_analyses, eval = F------------------------------------------------
+# export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
 
 ## ----run_saint, fig.width = 8, fig.height=5-----------------------------------
 saint_deprot <- SAINTq(DEprot.object = DEprot::rime.dpo,

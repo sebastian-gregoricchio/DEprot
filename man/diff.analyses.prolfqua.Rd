@@ -56,6 +56,15 @@ An object of class \code{DEprot.analyses}
 \description{
 Allows for the computation of differential analyses using \href{https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00441}{\code{prolfqua}} (J Proteome Research, 2023). Includes means, Fold Changes, and p-values.
 }
+\details{
+The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the standard error of
+the log2(FoldChange). When \code{moderate.variance = FALSE}, \code{lfcSE} is the standard error of the contrast estimate
+computed by \code{prolfqua}; when \code{moderate.variance = TRUE} it is the moderated standard error, consistent with the
+moderated t-statistic reported in the \code{statistic} column. In both cases
+\code{statistic = log2(FoldChange) / lfcSE}. Note that, when imputed counts are used, the imputation compresses the
+variance and \code{sd}, \code{sem} and \code{lfcSE} are consequently under-estimated.
+}
 \examples{
 dpo <- diff.analyses.prolfqua(DEprot.object = DEprot::test.toolbox$dpo.imp,
                               contrast.list = list(c("condition", "FBS", "6h.DMSO"),

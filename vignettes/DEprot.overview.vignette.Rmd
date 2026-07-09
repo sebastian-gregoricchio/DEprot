@@ -780,7 +780,7 @@ The `analyses.result.list`, for each contrast, stores a list with the following 
 
 | Element        | Description                                                                                                        |
 | -------------: | :----------------------------------------------------------------------------------------------------------------- |
-| *results*      | a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, test statistic, degrees of freedom and differential.status |
+| *results*      | a data.frame with one row per protein; the columns are described in the table below                               |
 | *n.diff*       | a summary table showing the number of proteins in each differential expression status (up/down/unresponsive, null) |
 | *PCA.data*     | output of `perform.PCA` for the subset of samples analyzed in a specific contrast                                  |
 | *PCA.plots*    | combination of 3 plots: scatter PC1-vs-PC2, scatter PC2-vs-PC3, and cumulative bar plot                            |
@@ -789,21 +789,12 @@ The `analyses.result.list`, for each contrast, stores a list with the following 
 | *MA.plot*      | MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using `plot.MA` |
 | *statistic.distribution* | A list containing the best-fitting distribution name (one among: 't', 'norm', 'f', 'chisq', NA), an AIC/BIC comparison table, the fitted model objects, and a Kolmogorov-Smirnov goodness-of-fit test for the best candidate. |
 
-
 If the function `diff.analyses.limma` was used, an additional slot called `limma.fit` will be available and will contain the results of `limma::contrasts.fit`.
 
 <br>
 
-The full object can be automatically exported - including tables, PCA, correlations, volcano and MA-plots, etc. - using the built-in function `export.analyses`:
 
-```{r export_analyses, eval = F}
-export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
-```
-
-
-<br>
-
-### DE table
+### DE **results** table
 The table with the results of the differential analyses can be retrieved directly from the list in the `DEprot.analyses` object (`dpo_analyses@analyses.result.list$contrast.id$results`) or using the `get.results` function.
 
 ```{r get_results, eval = F}
@@ -819,6 +810,51 @@ head(results)
 ```{r get_results2, echo=FALSE}
 knitr::kable(get.results(dpo_analyses, contrast = 1)[1:6,], row.names = F)
 ```
+
+<br>
+
+#### Columns of the *results* table
+The three differential functions (`diff.analyses`, `diff.analyses.limma`, `diff.analyses.prolfqua`) all return the same columns, in the same order. `<groupA>` and `<groupB>` stand for the two variables of the contrast.
+
+| Column | Description |
+| -----: | :---------- |
+| `prot.id` | protein identifier (row names of the counts table) |
+| `basemean.log2` | mean of the log2 expression values over all the samples of both groups |
+| `log2.mean.<groupA>` | mean of the log2 expression values in group A |
+| `log2.mean.<groupB>` | mean of the log2 expression values in group B |
+| `log2.Fold_<groupA>.vs.<groupB>` | log2(FoldChange) of group A over group B |
+| `p.value` | p-value of the statistical test |
+| `padj`/`FDR` | p-value corrected for multiple testing using the method indicated by `padj.method`; named `FDR` in the output of `diff.analyses.prolfqua` |
+| `statistic` | test statistic: *t* for the t-test, *W* for the Wilcoxon test, moderated *t* for `limma` and for `prolfqua` |
+| `df` | degrees of freedom associated to the test |
+| `diff.status` | differential status of the protein: name of the enriched group, `unresponsive`, or `null` |
+| `sd.<groupA>`, `sd.<groupB>` | standard deviation of the log2 expression values within each group |
+| `sem.<groupA>`, `sem.<groupB>` | standard error of the mean of the log2 expression values within each group, computed as *sd*/sqrt(*n*), where *n* is the number of non-missing values |
+| `lfcSE` | standard error of the log2(FoldChange); equivalent of the `lfcSE` column returned by `DESeq2::results()` |
+
+<br>
+
+#### Notes on `lfcSE`
+What `lfcSE` measures depends on the function used, although in every case it is the denominator of the reported `statistic`.
+
+`diff.analyses` returns the standard error used by the t-test itself, so `statistic = log2(FoldChange) / lfcSE`. For unpaired tests this is the Welch standard error and equals `sqrt(sem.<groupA>^2 + sem.<groupB>^2)`; for paired tests it is the standard error of the per-replicate differences, and the two do not coincide. The Wilcoxon test ranks the values instead of modelling them, and no standard error is attached to the fold change: `lfcSE` is `NA` whenever `stat.test = "wilcoxon"`.
+
+`diff.analyses.limma` returns the moderated (posterior) standard error of the contrast coefficient, the same quantity that limma uses as denominator of its moderated *t*. `diff.analyses.prolfqua` returns the standard error of the contrast estimate, moderated when `moderate.variance = TRUE`.
+
+Together with `df`, `lfcSE` gives confidence intervals (CI) on the fold change:
+
+```{r, eval = FALSE}
+res <- get.results(dpo, contrast = 1)
+
+confidence <- 0.95
+alpha <- 1 - confidence
+t.crit <- qt(1 - alpha/2, df = res$df)   # upper-tail critical value, per protein
+
+res$CI.lower <- res$log2.Fold_FBS.vs.6h.DMSO - t.crit * res$lfcSE
+res$CI.upper <- res$log2.Fold_FBS.vs.6h.DMSO + t.crit * res$lfcSE
+```
+
+>One caveat: imputation replaces missing values with conditional estimates that carry no residual noise. Run on imputed counts, `sd`, `sem` and `lfcSE` are all biased downwards, and intervals built from them are narrower than they should be.
 
 <br>
 
@@ -1095,6 +1131,16 @@ upset.plot@obs.matrix
 ```{r upset_tb, echo=FALSE}
 knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset observations matrix**")
 ```
+
+<br>
+
+### Exporting results
+The full object can be automatically exported - including tables, PCA, correlations, volcano and MA-plots, etc. - using the built-in function `export.analyses`:
+
+```{r export_analyses, eval = F}
+export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
+```
+
 
 <br>
 
