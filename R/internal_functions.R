@@ -4,7 +4,7 @@
 
 # ----------------------------------------------------------------------------------------
 
-#' @title .corum.reshape
+#' @title corum.reshape
 #'
 #' @description
 #' Reshapes the CORUM database downloads files for gene entrenchment analyses
@@ -19,7 +19,7 @@
 #' @keywords internal
 
 
-.corum.reshape =
+corum.reshape =
   function(corum_table) {
 
     ## import annotations
@@ -40,7 +40,7 @@
 
     return(corum_list)
 
-  } # END .corum.reshape
+  } # END corum.reshape
 
 
 # ----------------------------------------------------------------------------------------
