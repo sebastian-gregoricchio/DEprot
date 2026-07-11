@@ -8,6 +8,7 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/DEprot-class.html</loc></url>
+<url><loc>/reference/DEprot-dollar.html</loc></url>
 <url><loc>/reference/DEprot-options.html</loc></url>
 <url><loc>/reference/DEprot.PCA-class.html</loc></url>
 <url><loc>/reference/DEprot.RMSE-class.html</loc></url>
@@ -53,6 +54,9 @@
 <url><loc>/reference/load.counts2.html</loc></url>
 <url><loc>/reference/normalize.counts.html</loc></url>
 <url><loc>/reference/perform.PCA.html</loc></url>
+<url><loc>/reference/plot-DEprot-ANY-method.html</loc></url>
+<url><loc>/reference/plot-DEprot.analyses-ANY-method.html</loc></url>
+<url><loc>/reference/plot-DEprot.normality-ANY-method.html</loc></url>
 <url><loc>/reference/plot.GSEA.html</loc></url>
 <url><loc>/reference/plot.MA.html</loc></url>
 <url><loc>/reference/plot.PC.biplot.html</loc></url>

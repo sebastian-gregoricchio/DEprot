@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
       </span>
     </div>
 
@@ -93,7 +93,7 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 10<sup>th</sup>
+            <h4 data-toc-skip class="date">Last update: 11<sup>th</sup>
 July, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
@@ -680,7 +680,7 @@ downstream analyses.</p>
 <p>Also in this case a box/violin plot with the corresponding normalized
 LFQ values per each sample is generated and stored in a vector slot.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.raw</span>, <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.norm</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dpo</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/plot_norm-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <p><br></p>
 <div class="section level3">
@@ -885,13 +885,13 @@ simulating distribution and proportion of the original data.</p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
 &gt; corkNN                corkNN 0.5135173         0.9851722            1.98    1
-&gt; tkNN                    tkNN 0.5135173         0.9851722            2.06    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          117.00    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.23    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.84    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.18    6
+&gt; tkNN                    tkNN 0.5135173         0.9851722            2.01    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672          112.80    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.04    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.85    5
+&gt; SVD                      SVD 0.5442393         0.9791497            3.19    6
 &gt; missForest        missForest 0.5664830         0.9813784           29.16    7
-&gt; LLS                      LLS 0.6326730         0.9684621            4.14    8</code></pre>
+&gt; LLS                      LLS 0.6326730         0.9684621            4.11    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -964,9 +964,7 @@ method to impute the data:</p>
 <p>Also in this case a box/violin plot with the corresponding imputed
 LFQ values per each sample is generated and stored in a vector slot.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.raw</span>, <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.norm</span>,</span>
-<span>                      <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.random</span>, <span class="va">dpo</span><span class="op">@</span><span class="va">boxplot.imputed</span>,</span>
-<span>                      ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">dpo</span>, ncol <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/plot_imputed-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
 <p><br></p>
 <hr>
@@ -1350,11 +1348,11 @@ skewed, bimodal or uniform distributions).</p>
 <div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a>normality <span class="ot">&lt;-</span> <span class="fu">check.normality</span>(<span class="at">DEprot.object =</span> dpo,</span>
 <span id="cb32-2"><a href="#cb32-2" tabindex="-1"></a>                             <span class="at">p.threshold =</span> <span class="fl">0.05</span>,</span>
 <span id="cb32-3"><a href="#cb32-3" tabindex="-1"></a>                             <span class="at">which.data =</span> <span class="st">"imputed"</span>,</span>
-<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>                             <span class="at">verbose =</span> T)</span>
+<span id="cb32-4"><a href="#cb32-4" tabindex="-1"></a>                             <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb32-5"><a href="#cb32-5" tabindex="-1"></a><span class="sc">&gt;</span> The following samples do not display a normal distribution<span class="sc">:</span> BCa_FBS_rep1, BCa_6h.DMSO_rep1, BCa_6h<span class="fl">.10</span>nM.E2_rep1, BCa_FBS_rep2, BCa_6h.DMSO_rep2, BCa_6h<span class="fl">.10</span>nM.E2_rep2, BCa_FBS_rep3, BCa_6h.DMSO_rep3, BCa_6h<span class="fl">.10</span>nM.E2_rep3, BCa_FBS_rep4, BCa_6h.DMSO_rep4, BCa_6h<span class="fl">.10</span>nM.E2_rep4.</span></code></pre></div>
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## example of Q-Q and density plots</span></span>
-<span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">normality</span><span class="op">@</span><span class="va">qqplots</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="va">normality</span><span class="op">@</span><span class="va">densities</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">normality</span>, n.samples <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/normality_test_plots-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
@@ -1383,6 +1381,35 @@ skewed, bimodal or uniform distributions).</p>
 <span>                                    padj.method <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>                                    fitting.method <span class="op">=</span> <span class="st">"ls"</span>,</span>
 <span>                                    which.data <span class="op">=</span> <span class="st">"imputed"</span><span class="op">)</span></span></code></pre></div>
+<blockquote>
+<p><strong>NOTE</strong>: Alongside the usual
+<code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">stats::p.adjust</a></code> methods, <code><a href="../reference/diff.analyses.limma.html">diff.analyses.limma()</a></code>
+accepts <code>padj.method = "fdrtool"</code>. When you set it, the
+moderated <em>t</em>-statistics from limma are passed to
+<code><a href="https://rdrr.io/pkg/fdrtool/man/fdrtool.html" class="external-link">fdrtool::fdrtool()</a></code> as normal deviates, and its tail-area
+q-values go into the <code>padj</code> column in place of the
+Benjamini-Hochberg values (the per-protein local FDR is kept alongside
+in <code>lfdr</code>). Everything downstream — the volcano, the MA plot,
+the <code>diff.status</code> calls — still reads from <code>padj</code>,
+so changing the method doesn’t change how you use the result.<br> The
+reason to reach for it is the empirical null. BH assumes the null is
+exactly the theoretical one; fdrtool instead estimates how many proteins
+are genuinely null and refits the null distribution from the data
+itself. That matters most with imputed counts, where imputation shrinks
+the variance and pushes the statistic distribution away from the
+textbook null; the case where a fixed-null correction tends to be
+miscalibrated.<br> It isn’t always the right call. fdrtool needs a fair
+number of statistics to fit anything sensible: below 200 proteins the
+function falls back to BH for that contrast and warns you, and even a
+few hundred proteins give a shaky fit. Treat it as a method for
+full-proteome comparisons, not small targeted panels. And when the
+statistic distribution already looks well behaved, plain BH is the more
+conventional choice and easier to reproduce or compare against other
+tools.<br> As a rule of thumb: thousands of proteins on imputed data,
+<code>fdrtool</code> is worth trying and often better calibrated; a
+small protein set, or a case where you just want a standard correction,
+stay with BH.</p>
+</blockquote>
 <p><br></p>
 </div>
 </div>
@@ -1446,7 +1473,7 @@ skewed, bimodal or uniform distributions).</p>
 <p>The summary can be collected by using the generic function
 <code>summary</code>:</p>
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">diff.analyses_summary</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">diff.analyses_summary</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 </div>
 </div>
@@ -2508,7 +2535,7 @@ possible on the imputed tables.</p>
 <code class="sourceCode R"><span><span class="va">protein.counts</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  n.labels <span class="op">=</span> <span class="st">"counts"</span>,</span>
-<span>                  show.frequency <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>                  show.frequency <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>                  colors <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gray"</span>, <span class="st">"steelblue4"</span><span class="op">)</span>,</span>
 <span>                  title <span class="op">=</span> <span class="st">"**# Proteins identified in each sample**"</span><span class="op">)</span></span>
 <span></span>
@@ -2524,7 +2551,7 @@ in how many samples within a group were detected.</p>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  group.column <span class="op">=</span> <span class="st">"condition"</span>,</span>
 <span>                  n.labels <span class="op">=</span> <span class="st">"percentage"</span>,</span>
-<span>                  show.frequency <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                  show.frequency <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                  x.label.angle <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>                  title <span class="op">=</span> <span class="st">"**# Proteins identified per _Condition_**"</span><span class="op">)</span></span>
 <span></span>
@@ -2565,8 +2592,28 @@ possible to scale the values using Z-scores (parameter
 <span>                     scale.expression <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                     x.label.angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">protein.1733_raw</span>, <span class="va">protein.1733_scaled</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DEprot.overview.vignette_files/figure-html/expression_boxplot-1.png" class="r-plt" alt="" width="672" style="display: block; margin: auto;"></p>
+<span></span>
+<span><span class="co">### scaled expression + p-values</span></span>
+<span><span class="va">protein.1733_scaled_pairwise</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/expression.boxplot.html">expression.boxplot</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
+<span>                     protein.id <span class="op">=</span> <span class="st">"protein.1733"</span>,</span>
+<span>                     which.data <span class="op">=</span> <span class="st">"imputed"</span>,</span>
+<span>                     shape.column <span class="op">=</span> <span class="st">"replicate"</span>,</span>
+<span>                     group.by.metadata.column <span class="op">=</span> <span class="st">"condition"</span>,</span>
+<span>                     group.levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"6h.DMSO"</span>, <span class="st">"6h.10nM.E2"</span>, <span class="st">"FBS"</span><span class="op">)</span>,</span>
+<span>                     scale.expression <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     x.label.angle <span class="op">=</span> <span class="fl">90</span>,</span>
+<span>                     pairwise.comparisons <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>                     pairwise.test.type <span class="op">=</span> <span class="st">"wilcox"</span>,</span>
+<span>                     pairwise.p.label <span class="op">=</span> <span class="st">"p.value"</span>,</span>
+<span>                     pairwise.p.decimals <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>                     pairwise.include.ns <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">protein.1733_raw</span>,</span>
+<span>                      <span class="va">protein.1733_scaled</span>,</span>
+<span>                      <span class="va">protein.1733_scaled_pairwise</span>,</span>
+<span>                      nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="DEprot.overview.vignette_files/figure-html/expression_boxplot-1.png" class="r-plt" alt="" width="1008" style="display: block; margin: auto;"></p>
 <p><br></p>
 </div>
 <div class="section level3">
