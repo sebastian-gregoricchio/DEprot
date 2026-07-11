@@ -505,6 +505,55 @@ setMethod(f = "summary",
 
 
 
+#' @title DEprot.analyses plot-method
+#' @param x Object of class \code{DEprot.analyses}
+#' @param y Not used.
+#' @param ... Not used.
+#' @keywords internal
+#' @importFrom patchwork wrap_plots
+#' @export
+setMethod(f = "plot",
+          signature = "DEprot.analyses",
+          definition =
+            function(x, y, ..., plot.type = "volcano", ncol = NULL, nrow = NULL) {
+
+              if (tolower(plot.type) %in% c("v", "volcano", "volcanos")) {
+                plots = lapply(seq_along(x$analyses.result.list),
+                               function(i) {
+                                 x$analyses.result.list[[i]]$volcano
+                               }) }
+
+              else if (tolower(plot.type) %in% c("m", "ma", "mas")) {
+                plots = lapply(seq_along(x$analyses.result.list),
+                               function(i) {
+                                 x$analyses.result.list[[i]]$MA.plot
+                               }) }
+
+              else if (tolower(plot.type) %in% c("c", "cor", "corr", "cors", "corrs", "correlation", "correlations")) {
+                plots = lapply(seq_along(x$analyses.result.list),
+                               function(i) {
+                                 x$analyses.result.list[[i]]$correlations
+                               }) }
+
+              else if (tolower(plot.type) %in% c("p", "pc", "pcs", "pca", "pcas")) {
+                plots = lapply(seq_along(x$analyses.result.list),
+                               function(i) {
+                                 x$analyses.result.list[[i]]$PCA.plots
+                               }) }
+
+
+              if (length(plots) > 1) {
+                p = patchwork::wrap_plots(plots, ncol = ncol, nrow = nrow)
+                print(p)
+                invisible(p) }
+              else {
+                print(plots[[1]])
+                invisible(plots[[1]])
+              }
+            })
+
+
+
 #' @title DEprot.PCA show-method
 #' @param object Object of class \code{DEprot.PCA}
 #' @export
@@ -601,6 +650,7 @@ setMethod(f = "show",
 #' @param x Object of class \code{DEprot.normality}
 #' @param y Not used.
 #' @param ... Not used.
+#' @keywords internal
 #' @importFrom patchwork wrap_plots
 #' @export
 setMethod(f = "plot",
@@ -616,6 +666,7 @@ setMethod(f = "plot",
 
               plot = patchwork::wrap_plots(c(x@qqplots[1:n], x@densities[1:n]), byrow = FALSE, ncol = 2)
               print(plot)
+              invisible(plot)
             })
 
 
@@ -630,6 +681,7 @@ setMethod(f = "show",
             function(object) {
               plot = patchwork::wrap_plots(object@correlation.plots)
               print(plot)
+              invisible(plot)
             })
 
 
