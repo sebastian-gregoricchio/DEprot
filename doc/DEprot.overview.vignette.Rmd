@@ -254,7 +254,7 @@ head(dpo@raw.counts[,1:6])
 Also in this case a box/violin plot with the corresponding normalized LFQ values per each sample is generated and stored in a vector slot.
 
 ```{r plot_norm, fig.width=8}
-patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
+plot(dpo, nrow = 1)
 ```
 
 <br>
@@ -427,9 +427,7 @@ knitr::kable(data.frame(dpo@imputation.method[-3]), row.names = F)
 Also in this case a box/violin plot with the corresponding imputed LFQ values per each sample is generated and stored in a vector slot.
 
 ```{r plot_imputed, fig.width=7, fig.height=8, fig.align='center'}
-patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm,
-                      dpo@boxplot.random, dpo@boxplot.imputed,
-                      ncol = 2)
+plot(dpo, ncol = 2)
 ```
 
 <br>
@@ -676,12 +674,12 @@ The main assumption to run `limma` is that the data are normally distributed. Fo
 normality <- check.normality(DEprot.object = dpo,
                              p.threshold = 0.05,
                              which.data = "imputed",
-                             verbose = T)
+                             verbose = TRUE)
 ```
 
 ```{r normality_test_plots}
 ## example of Q-Q and density plots
-patchwork::wrap_plots(normality@qqplots[[1]], normality@densities[[1]])
+plot(normality, n.samples = 1)
 ```
 
 <br>
@@ -710,6 +708,30 @@ dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
                                     fitting.method = "ls",
                                     which.data = "imputed")
 ```
+
+
+>**NOTE**: Alongside the usual `stats::p.adjust` methods, `diff.analyses.limma()` accepts
+`padj.method = "fdrtool"`. When you set it, the moderated *t*-statistics from limma
+are passed to `fdrtool::fdrtool()` as normal deviates, and its tail-area q-values go
+into the `padj` column in place of the Benjamini-Hochberg values (the per-protein
+local FDR is kept alongside in `lfdr`). Everything downstream — the volcano, the
+MA plot, the `diff.status` calls — still reads from `padj`, so changing the method
+doesn't change how you use the result.<br>
+The reason to reach for it is the empirical null. BH assumes the null is exactly the
+theoretical one; fdrtool instead estimates how many proteins are genuinely null and
+refits the null distribution from the data itself. That matters most with imputed
+counts, where imputation shrinks the variance and pushes the statistic distribution
+away from the textbook null; the case where a fixed-null correction tends to be
+miscalibrated.<br>
+It isn't always the right call. fdrtool needs a fair number of statistics to fit
+anything sensible: below 200 proteins the function falls back to BH for that contrast
+and warns you, and even a few hundred proteins give a shaky fit. Treat it as a method
+for full-proteome comparisons, not small targeted panels. And when the statistic
+distribution already looks well behaved, plain BH is the more conventional choice and
+easier to reproduce or compare against other tools.<br>
+As a rule of thumb: thousands of proteins on imputed data, `fdrtool` is worth trying
+and often better calibrated; a small protein set, or a case where you just want a
+standard correction, stay with BH.
 
 
 <br>
@@ -762,7 +784,7 @@ dpo_analyses
 The summary can be collected by using the generic function `summary`:
 
 ```{r analyses_summary, eval=F}
-diff.analyses_summary = summary(dpo)
+diff.analyses_summary <- summary(dpo)
 ```
 
 <br>
@@ -1280,7 +1302,7 @@ In order to know how many proteins have been detected in each sample, it is poss
 protein.counts <-
   protein.summary(DEprot.object = dpo_analyses,
                   n.labels = "counts",
-                  show.frequency = F,
+                  show.frequency = FALSE,
                   colors = c("gray", "steelblue4"),
                   title = "**# Proteins identified in each sample**")
 
@@ -1296,7 +1318,7 @@ protein.counts.byCondition <-
   protein.summary(DEprot.object = dpo_analyses,
                   group.column = "condition",
                   n.labels = "percentage",
-                  show.frequency = T,
+                  show.frequency = TRUE,
                   x.label.angle = 0,
                   title = "**# Proteins identified per _Condition_**")
 
@@ -1309,7 +1331,7 @@ protein.counts.byCondition
 Using the function `expression.boxplot` is possible to generate boxplots of the expression of individual proteins.<br></br>
 The expression can be grouped by a column of the metadata using the `group.by.metadata.column` parameter. Furthermore it is possible to scale the values using Z-scores (parameter `scale.expression = TRUE`).
 
-```{r expression_boxplot, fig.width=7, fig.height=3.5}
+```{r expression_boxplot, fig.width=10.5, fig.height=4}
 ### raw expression
 protein.1733_raw <-
   expression.boxplot(DEprot.object = dpo,
@@ -1333,7 +1355,27 @@ protein.1733_scaled <-
                      scale.expression = TRUE,
                      x.label.angle = 90)
 
-patchwork::wrap_plots(protein.1733_raw, protein.1733_scaled, nrow = 1)
+
+### scaled expression + p-values
+protein.1733_scaled_pairwise <-
+  expression.boxplot(DEprot.object = dpo,
+                     protein.id = "protein.1733",
+                     which.data = "imputed",
+                     shape.column = "replicate",
+                     group.by.metadata.column = "condition",
+                     group.levels = c("6h.DMSO", "6h.10nM.E2", "FBS"),
+                     scale.expression = TRUE,
+                     x.label.angle = 90,
+                     pairwise.comparisons = TRUE,
+                     pairwise.test.type = "wilcox",
+                     pairwise.p.label = "p.value",
+                     pairwise.p.decimals = 3,
+                     pairwise.include.ns = FALSE)
+
+patchwork::wrap_plots(protein.1733_raw,
+                      protein.1733_scaled,
+                      protein.1733_scaled_pairwise,
+                      nrow = 1)
 ```
 
 

@@ -79,7 +79,7 @@ dpo@normalization.method
 head(dpo@raw.counts[,1:6])
 
 ## ----plot_norm, fig.width=8---------------------------------------------------
-patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm, nrow = 1)
+plot(dpo, nrow = 1)
 
 ## ----eval = F-----------------------------------------------------------------
 # ## Adding batch column to the metadata table
@@ -166,9 +166,7 @@ head(error)
 knitr::kable(data.frame(dpo@imputation.method[-3]), row.names = F)
 
 ## ----plot_imputed, fig.width=7, fig.height=8, fig.align='center'--------------
-patchwork::wrap_plots(dpo@boxplot.raw, dpo@boxplot.norm,
-                      dpo@boxplot.random, dpo@boxplot.imputed,
-                      ncol = 2)
+plot(dpo, ncol = 2)
 
 ## ----make_PCA, fig.width=8----------------------------------------------------
 ## Perform the analyses (DEprot.PCA object)
@@ -306,11 +304,11 @@ corr.ERa.active
 normality <- check.normality(DEprot.object = dpo,
                              p.threshold = 0.05,
                              which.data = "imputed",
-                             verbose = T)
+                             verbose = TRUE)
 
 ## ----normality_test_plots-----------------------------------------------------
 ## example of Q-Q and density plots
-patchwork::wrap_plots(normality@qqplots[[1]], normality@densities[[1]])
+plot(normality, n.samples = 1)
 
 ## ----compute_diff_exp_examples_limma, eval=F----------------------------------
 # ## Unpaired test
@@ -376,7 +374,7 @@ dpo_analyses <- diff.analyses(DEprot.object = dpo,
 dpo_analyses
 
 ## ----analyses_summary, eval=F-------------------------------------------------
-# diff.analyses_summary = summary(dpo)
+# diff.analyses_summary <- summary(dpo)
 
 ## ----get_results, eval = F----------------------------------------------------
 # ## Direct access
@@ -618,7 +616,7 @@ ggpubr::ggscatter(data = sq_combo,
 protein.counts <-
   protein.summary(DEprot.object = dpo_analyses,
                   n.labels = "counts",
-                  show.frequency = F,
+                  show.frequency = FALSE,
                   colors = c("gray", "steelblue4"),
                   title = "**# Proteins identified in each sample**")
 
@@ -629,13 +627,13 @@ protein.counts.byCondition <-
   protein.summary(DEprot.object = dpo_analyses,
                   group.column = "condition",
                   n.labels = "percentage",
-                  show.frequency = T,
+                  show.frequency = TRUE,
                   x.label.angle = 0,
                   title = "**# Proteins identified per _Condition_**")
 
 protein.counts.byCondition
 
-## ----expression_boxplot, fig.width=7, fig.height=3.5--------------------------
+## ----expression_boxplot, fig.width=10.5, fig.height=4-------------------------
 ### raw expression
 protein.1733_raw <-
   expression.boxplot(DEprot.object = dpo,
@@ -659,7 +657,27 @@ protein.1733_scaled <-
                      scale.expression = TRUE,
                      x.label.angle = 90)
 
-patchwork::wrap_plots(protein.1733_raw, protein.1733_scaled, nrow = 1)
+
+### scaled expression + p-values
+protein.1733_scaled_pairwise <-
+  expression.boxplot(DEprot.object = dpo,
+                     protein.id = "protein.1733",
+                     which.data = "imputed",
+                     shape.column = "replicate",
+                     group.by.metadata.column = "condition",
+                     group.levels = c("6h.DMSO", "6h.10nM.E2", "FBS"),
+                     scale.expression = TRUE,
+                     x.label.angle = 90,
+                     pairwise.comparisons = TRUE,
+                     pairwise.test.type = "wilcox",
+                     pairwise.p.label = "p.value",
+                     pairwise.p.decimals = 3,
+                     pairwise.include.ns = FALSE)
+
+patchwork::wrap_plots(protein.1733_raw,
+                      protein.1733_scaled,
+                      protein.1733_scaled_pairwise,
+                      nrow = 1)
 
 ## ----keep_nuclear_prot, eval = F----------------------------------------------
 # nucleus <- AnnotationDbi::select(org.Hs.eg.db::org.Hs.eg.db,
