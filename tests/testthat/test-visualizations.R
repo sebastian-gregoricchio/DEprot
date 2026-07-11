@@ -18,6 +18,14 @@ test_that("expression.boxplot works (Z-score)", {
 })
 
 
+test_that("expression.boxplot works (with pairwise)", {
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", shape.column = "replicate", pairwise.comparisons = TRUE))
+})
+
+
+
+
+
 test_that("heatmap.contrasts works", {
   expect_no_error(heatmap.contrasts(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5))
 })

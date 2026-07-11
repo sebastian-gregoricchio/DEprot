@@ -1,6 +1,9 @@
 #' @title diff.analyses.limma
 #'
-#' @description Allows for the computation of differential analyses using \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}. Includes means, Fold Changes, and p-values.
+#' @description
+#' Allows for the computation of differential analyses using
+#' \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}.
+#' Includes means, Fold Changes, and p-values.
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
@@ -9,7 +12,7 @@
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
 #' @param padj.th Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: \code{0.05}.
-#' @param padj.method String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{BH}.
+#' @param padj.method String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none", "fdrtool". Default: \code{BH}.
 #' @param fitting.method String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. Default: \code{"ls"} (least squares).
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
@@ -18,7 +21,8 @@
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random', 'imputed', 'imp'. Default: \code{"imputed"}.
 #' @param overwrite.analyses Logical value to indicate whether overwrite analyses already generated. Default: \code{FALSE}.
 #'
-#' @details The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
+#' @details
+#' The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
 #' error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the moderated
 #' (posterior) standard error of the contrast coefficient estimated by limma (\code{stdev.unscaled * sqrt(s2.post)}).
 #' This is the denominator of the moderated t-statistic reported in the \code{statistic} column and it is the direct
@@ -29,6 +33,12 @@
 #' Note that, when imputed counts are used, the imputation compresses the variance and \code{sd}, \code{sem} and
 #' \code{lfcSE} are consequently under-estimated.
 #'
+#' When set to \code{"fdrtool"}, the moderated t-statistics returned by limma are passed to \code{fdrtool::fdrtool}
+#' (as normal deviates, \code{statistic = "normal"}), which estimates the proportion of null features and an empirical
+#' null: the resulting tail-area-based q-values are stored in the \code{padj} column, while the local false discovery rate
+#' (\code{lfdr}) is added as an extra column of the results table. If fewer than 200 proteins with a finite statistic are
+#' available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised).
+#'
 #' @import dplyr
 #' @import ggplot2
 #' @import limma
@@ -38,7 +48,8 @@
 #' @import progress
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices colorRampPalette
-#' @importFrom stats model.matrix sd
+#' @importFrom stats model.matrix sd p.adjust
+#' @importFrom fdrtool fdrtool
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -73,7 +84,7 @@ diff.analyses.limma =
            linear.FC.th = 2,
            linear.FC.unresp.range = c(1/1.1, 1.1),
            padj.th = 0.05,
-           padj.method = "BH", # c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none")
+           padj.method = "BH", # c("holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none", "fdrtool")
            fitting.method = "ls",
            up.color = "indianred",
            down.color = "steelblue",
@@ -274,7 +285,11 @@ diff.analyses.limma =
 
 
       ## Extract results
-      results.limma = limma::topTable(fit = fitted.data, adjust = padj.method, number = Inf)
+      ## When padj.method = "fdrtool" the correction cannot be delegated to limma::topTable()
+      ## (fdrtool is not one of stats::p.adjust.methods): the p-values are extracted unadjusted
+      ## and the FDR is estimated downstream with fdrtool::fdrtool().
+      topTable.adjust = ifelse(tolower(padj.method) == "fdrtool", "none", padj.method)
+      results.limma = limma::topTable(fit = fitted.data, adjust = topTable.adjust, number = Inf)
       results.limma$prot.id = rownames(results.limma)
 
       ## Combine results with diff.tb
@@ -287,6 +302,42 @@ diff.analyses.limma =
                       statistic = t)
 
       diff.tb$df = (fitted.data$df.prior + fitted.data$df.residual)[match(diff.tb$prot.id, rownames(fitted.data$t))]
+
+
+      ## FDR estimation via fdrtool (Strimmer)
+      ## The moderated t-statistics are passed to fdrtool as normal deviates
+      ## (statistic = "normal"): fdrtool estimates the proportion of null features and an
+      ## empirical null, and returns tail-area-based q-values that are used here as adjusted
+      ## p-values ('padj'), together with the per-protein local FDR ('lfdr'). This mirrors the
+      ## strategy adopted by the DEP package. Since imputation compresses the variance and can
+      ## bias the statistic distribution, the empirical-null fit of fdrtool is often preferable
+      ## to a fixed-null p.adjust() correction on this type of data.
+      if (tolower(padj.method) == "fdrtool") {
+        stat.values = diff.tb$statistic
+        finite.idx = which(is.finite(stat.values))
+
+        fdr.fit =
+          tryCatch(expr = {
+            if (length(finite.idx) < 200) {stop("too_few_features")}
+            fdrtool::fdrtool(x = stat.values[finite.idx],
+                             statistic = "normal",
+                             plot = FALSE,
+                             verbose = FALSE)
+          },
+          error = function(e){NULL})
+
+        if (!is.null(fdr.fit)) {
+          diff.tb$padj[finite.idx] = fdr.fit$qval
+        } else {
+          ## Not enough features (or degenerate statistic distribution) for a reliable
+          ## fdrtool fit: fall back to Benjamini-Hochberg for this contrast.
+          warning("fdrtool could not provide a reliable FDR estimation for the contrast '",
+                  names(contrasts.info)[i],
+                  "' (fewer than 200 proteins with a finite statistic or degenerate distribution): ",
+                  "Benjamini-Hochberg correction has been applied instead for this contrast.")
+          diff.tb$padj = stats::p.adjust(diff.tb$p.value, method = "BH")
+        }
+      }
 
 
       ## Define signif status

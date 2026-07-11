@@ -377,42 +377,65 @@ setClass(Class = "DEprot.SAINTq",
 #' @title DEprot show-method
 #' @param object Object of class \code{DEprot}
 #' @export
-setMethod(f = "show",
-          signature = "DEprot",
-          definition =
-            function(object) {
-              if (!is.null(object@raw.counts)) {
-                tb = object@raw.counts
-                tb.type.raw = "raw"
-              } else {tb.type.raw = NULL}
+setMethod(
+  f = "show",
+  signature = "DEprot",
+  definition = function(object) {
 
-              if (!is.null(object@norm.counts)) {
-                tb = object@norm.counts
-                tb.type.norm = "normalized"
-              } else {tb.type.norm = NULL}
+    # slot -> label, in display order
+    count.slots <- c(raw.counts     = "raw",
+                     norm.counts    = "normalized",
+                     random.counts  = "randomized",
+                     imputed.counts = "imputed")
 
-              if (!is.null(object@random.counts)) {
-                tb = object@random.counts
-                tb.type.random = "randomized"
-              } else {tb.type.random = NULL}
+    available <- count.slots[!vapply(
+      names(count.slots),
+      function(s) .deprot_slot_is_empty(methods::slot(object, s)),
+      logical(1)
+    )]
 
-              if (!is.null(object@imputed.counts)) {
-                tb = object@imputed.counts
-                tb.type.imputed = "imputed"
-              } else {tb.type.imputed = NULL}
+    # every populated table shares the same dimensions; use the first available
+    tb <- if (length(available)) methods::slot(object, names(available)[1]) else NULL
 
-              cnt.avilable = c(tb.type.raw, tb.type.norm, tb.type.random, tb.type.imputed)
-              cnt.avilable = cnt.avilable[!is.null(cnt.avilable)]
+    log.txt <- if (is.na(object@log.base)) "none (linear)" else paste0("log", object@log.base)
+
+    cat("DEprot object:")
+    cat("\n           Samples: ", if (is.null(tb)) 0L else ncol(tb))
+    cat("\n          Proteins: ", if (is.null(tb)) 0L else nrow(tb))
+    cat("\n  Counts available: ", paste(available, collapse = ", "))
+    cat("\nLog transformation: ", log.txt)
+    cat("\n  Metadata columns: ", paste(colnames(object@metadata), collapse = ", "), "\n")
+  }
+)
 
 
-              cat("DEprot object:")
-              cat("\n           Samples: ", ncol(tb))
-              cat("\n          Proteins: ", nrow(tb))
-              cat("\n  Counts available: ", paste(cnt.avilable, collapse = ", "))
-              cat("\nLog transformation: ", ifelse(is.na(object@log.base), yes = "none (linear)", no = paste0("log", object@log.base)))
-              cat("\n  Metadata columns: ", paste(colnames(object@metadata), collapse = ", "), "\n")
-            }#end definition
-) #end method
+#' @title DEprot plot-method
+#' @param x Object of class \code{DEprot}.
+#' @param y Not used.
+#' @param ... Not used.
+#' @keywords internal
+#' @importFrom patchwork wrap_plots
+#' @export
+setMethod(
+  f = "plot",
+  signature = "DEprot",
+  definition = function(x, y, ..., ncol = NULL, nrow = NULL) {
+    boxplot.slots <- c("boxplot.raw", "boxplot.norm",
+                       "boxplot.random", "boxplot.imputed")
+
+    plot.list <- lapply(boxplot.slots, function(s) methods::slot(x, s))
+    plot.list <- Filter(Negate(.deprot_slot_is_empty), plot.list)
+
+    if (length(plot.list) == 0L) {
+      message("No boxplots are available in this DEprot object.")
+      return(invisible(NULL))
+    }
+
+    p <- patchwork::wrap_plots(plot.list, ncol = ncol, nrow = nrow)
+    print(p)
+    invisible(p)
+  }
+)
 
 
 
@@ -574,6 +597,29 @@ setMethod(f = "show",
 
 
 
+#' @title DEprot.normality plot-method
+#' @param x Object of class \code{DEprot.normality}
+#' @param y Not used.
+#' @param ... Not used.
+#' @importFrom patchwork wrap_plots
+#' @export
+setMethod(f = "plot",
+          signature = "DEprot.normality",
+          definition =
+            function(x, y, ..., n.samples = NULL) {
+
+              if (!is.null(n.samples)) {
+                n = min(c(length(x@densities), n.samples))
+              } else {
+                n = length(x@densities)
+              }
+
+              plot = patchwork::wrap_plots(c(x@qqplots[1:n], x@densities[1:n]), byrow = FALSE, ncol = 2)
+              print(plot)
+            })
+
+
+
 #' @title DEprot.RMSE show-method
 #' @param object Object of class \code{DEprot.RMSE}
 #' @importFrom patchwork wrap_plots
@@ -624,3 +670,51 @@ setMethod(f = "summary",
 
 
 
+
+## ================================================================= ##
+##  Instance-aware slot completion for all DEprot S4 classes.
+##  Only slots holding a real value (not NULL / not NA / not empty)
+##  are offered after `$` and `@`.
+## ================================================================= ##
+
+# All DEprot S4 classes
+.deprot_classes <- c("DEprot", "DEprot.analyses", "DEprot.PCA",
+                     "DEprot.correlation", "DEprot.upset",
+                     "DEprot.contrast.heatmap", "DEprot.counts.heatmap",
+                     "DEprot.enrichResult", "DEprot.pvalues",
+                     "DEprot.normality", "DEprot.RMSE", "DEprot.SAINTq")
+
+# A slot counts as "empty" if it is NULL, zero-length, or a single NA.
+# Logical flags holding FALSE (e.g. `normalized`) are NOT empty and stay visible.
+.deprot_slot_is_empty <- function(v) {
+  is.null(v) ||
+    length(v) == 0L ||
+    (is.atomic(v) && length(v) == 1L && is.na(v))
+}
+
+# Completion worker shared by $ and @ (signature matches .DollarNames/.AtNames)
+.deprot_complete_slots <- function(x, pattern = "") {
+  sn <- methods::slotNames(x)
+  full <- sn[!vapply(sn,
+                     function(s) .deprot_slot_is_empty(methods::slot(x, s)),
+                     logical(1))]
+  grep(pattern, full, value = TRUE)
+}
+
+# S4 has no `$` by default, so define it (plus `$<-`) for every class,
+# otherwise the `$` completions would error the moment they are evaluated.
+for (.cls in .deprot_classes) {
+  setMethod("$", .cls, function(x, name) methods::slot(x, name))
+  setMethod("$<-", .cls, function(x, name, value) {
+    methods::slot(x, name) <- value
+    x
+  })
+}
+rm(.cls)
+
+#' Dollar-style access for DEprot objects
+#' @name DEprot-dollar
+#' @keywords internal
+#' @exportMethod $
+#' @exportMethod $<-
+NULL

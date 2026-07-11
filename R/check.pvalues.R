@@ -35,13 +35,10 @@ check.pvalues =
 
     ### check object
     if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
-      stop("The input must be an object of class 'DEprot.analyses'.")
-      #return(invisible())
-
-      # identify whether the analyses have been performed using prolfqua
-    } else if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
-      stop("The analyses have been performed using `prolfqua`. P-adjusted values are not available.")
-    }
+      stop("The input must be an object of class 'DEprot.analyses'.") }
+    # else if ("strategy" %in% names(DEprot.analyses.object@differential.analyses.params)) {
+    #   stop("The analyses have been performed using `prolfqua`. P-adjusted values are not available.")
+    # }
 
     ### check and collect contrast
     if (is.numeric(contrast)) {
@@ -60,6 +57,19 @@ check.pvalues =
     } else {
       stop("The 'contrast' must be a numeric value.")
       #return(invisible())
+    }
+
+
+    ## Adapt to prolfqua tables
+    if ("FDR" %in% colnames(data)) {
+      data = data %>% dplyr::rename(padj = FDR)
+      hist_xlab = "FDR"
+      hist_subtitle = "FDR distribution<br>(adjust method: prolfqua)"
+
+    } else {
+      hist_xlab = "*P*<sub>adjusted</sub>"
+      hist_subtitle = paste0("*P*<sub>adjusted</sub> distribution<br>(adjust method: ",
+                             DEprot.analyses.object@differential.analyses.params$padj.method,")")
     }
 
 
@@ -106,11 +116,10 @@ check.pvalues =
       geom_vline(xintercept = padj_th, linetype = 3, color = "black") +
       scale_x_continuous(expand = c(0.01,0)) +
       scale_y_continuous(expand = c(0,0)) +
-      xlab("*P*<sub>adjusted</sub>") +
+      xlab(hist_xlab) +
       ylab("Count") +
       ggtitle(label = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"),
-              subtitle = paste0("*P*<sub>adjusted</sub> distribution<br>(adjust method: ",
-                                DEprot.analyses.object@differential.analyses.params$padj.method,")")) +
+              subtitle = hist_subtitle) +
       theme_classic() +
       theme(axis.text = element_text(color = "black"),
             axis.title.x = ggtext::element_markdown(),

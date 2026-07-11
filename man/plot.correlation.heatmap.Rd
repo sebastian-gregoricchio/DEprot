@@ -4,7 +4,7 @@
 \alias{plot.correlation.heatmap}
 \title{plot.correlation.heatmap}
 \usage{
-\method{plot}{correlation.heatmap}(
+plot.correlation.heatmap(
   DEprot.object,
   correlation.method = "pearson",
   sample.subset = NULL,

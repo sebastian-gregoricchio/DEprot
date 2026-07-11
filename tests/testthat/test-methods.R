@@ -71,6 +71,33 @@ test_that("method-summary for class DEprot.RMSE works", {
 
 
 
+test_that("method-plot for class DEprot works", {
+  expect_no_error(invisible(plot(DEprot::test.toolbox$dpo.imp)))
+})
+
+
+test_that("method-plot for class DEprot.analyses works (volcano)", {
+  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "volcano")))
+})
+
+test_that("method-plot for class DEprot.analyses works (MA)", {
+  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "MA")))
+})
+
+test_that("method-plot for class DEprot.analyses works (correlation)", {
+  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "cor")))
+})
+
+test_that("method-plot for class DEprot.analyses works (PCA)", {
+  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "PCA")))
+})
+
+
+test_that("method-plot for class DEprot.normality works", {
+  expect_no_error(invisible(plot(check.normality(DEprot.object = DEprot::test.toolbox$dpo.imp), n.samples = 1)))
+})
+
+
 
 
 

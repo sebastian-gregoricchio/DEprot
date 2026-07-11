@@ -13,7 +13,12 @@ expression.boxplot(
   group.by.metadata.column = "column.id",
   group.levels = NULL,
   scale.expression = FALSE,
-  x.label.angle = 30
+  x.label.angle = 30,
+  pairwise.comparisons = FALSE,
+  pairwise.test.type = "wilcox.test",
+  pairwise.include.ns = TRUE,
+  pairwise.p.label = "p.signif",
+  pairwise.p.decimals = 2
 )
 }
 \arguments{
@@ -34,31 +39,59 @@ expression.boxplot(
 \item{scale.expression}{Logic value indicating whether Z-scores should be computed. Default: \code{FALSE} (no scaling).}
 
 \item{x.label.angle}{Numeric value indicating the rotation angle to use for the x-axis labels. Default: \code{30}.}
+
+\item{pairwise.comparisons}{Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}. Default: \code{FALSE}.}
+
+\item{pairwise.test.type}{String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). Default: \code{"wilcox.test"}.}
+
+\item{pairwise.include.ns}{Logical value indicating whether the non-significant comparisons (p > 0.05) should be displayed. If \code{FALSE}, only the significant comparisons are shown. Default: \code{TRUE}.}
+
+\item{pairwise.p.label}{String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}, \code{*}, \code{**}, \code{***}, \code{****}) drawn directly by \code{ggpubr::stat_compare_means}, or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. Default: \code{"p.signif"}.}
+
+\item{pairwise.p.decimals}{Numeric value indicating the number of decimals used to approximate the numeric p-values (used only when \code{pairwise.p.label} shows the numeric value). Values below 0.1 are rendered in scientific notation with a superscript exponent, e.g. 3.20\out{&times;10<sup>-2</sup>}. The actual (real) p-value is always displayed, so the uninformative \code{p < 2.2e-16} is never shown. Default: \code{2}.}
 }
 \value{
 A boxplot of class ggplot2.
 }
 \description{
-Plots a boxplot of the expression of a specific protein. Samples can be groups depending on a metadata column.
+Plots a boxplot of the expression of a specific protein. Samples can be groups depending on a metadata column. Optionally, the p-values of all the pairwise (2-by-2) comparisons between groups can be added on top of the plot.
 }
 \examples{
-# Expression for all samples of protein 'protein.14'
+# Expression for all samples of protein 'protein.44'
 expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
-                   protein.id = "protein.14",
+                   protein.id = "protein.44",
                    shape.column = "replicate")
 
 
-# Expression of protein 'protein.14' grouped by condition (combined.id)
+# Expression of protein 'protein.44' grouped by condition (combined.id)
 expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
-                   protein.id = "protein.14",
+                   protein.id = "protein.44",
                    group.by.metadata.column = "combined.id")
 
 
-# Expression of protein 'protein.14' grouped by condition (combined.id) and Z-scored
+# Expression of protein 'protein.44' grouped by condition (combined.id) and Z-scored
 expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
-                   protein.id = "protein.14",
+                   protein.id = "protein.44",
                    group.by.metadata.column = "combined.id",
                    scale.expression = TRUE)
+
+
+# Pairwise comparisons between conditions (significance symbols, Wilcoxon test)
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = "protein.44",
+                   group.by.metadata.column = "combined.id",
+                   pairwise.comparisons = TRUE)
+
+
+# Pairwise comparisons showing the exact numeric p-value
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = "protein.44",
+                   group.by.metadata.column = "combined.id",
+                   pairwise.comparisons = TRUE,
+                   pairwise.test.type = "t.test",
+                   pairwise.p.label = "p.value",
+                   pairwise.p.decimals = 3,
+                   pairwise.include.ns = FALSE)
 
 
 }

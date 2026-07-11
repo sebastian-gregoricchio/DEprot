@@ -4,7 +4,7 @@
 \alias{plot.MA}
 \title{plot.MA}
 \usage{
-\method{plot}{MA}(
+plot.MA(
   DEprot.analyses.object,
   contrast = 1,
   up.color = "indianred",

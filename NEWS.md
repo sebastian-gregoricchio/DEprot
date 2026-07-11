@@ -7,6 +7,16 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+#### [v1.2.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0) - July 11<sup>th</sup> 2026
+- `expression.boxplot` function can now show pair-wise comparisons
+- `diff.analyses.limma` can use `fdrtool` to adjust the p-values
+- added `plot` method for objects of class `DEprot`, `DEprot.analyses`, `DEprot.normality`
+- bug-fixed in `check.pvalues` when prolfqua tables are provided
+- updated vignette and manual accordingly
+
+
+<br>
+
 #### [v1.1.3](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.3) - July 8<sup>th</sup> 2026
 - `harmonize.batches()`: added `algorithm` (ComBat/limma), `ComBat.mode`, and `block`; limma helps on sparse designs where ComBat hits a singular matrix
 - `harmonize.batches()`: drop uncorrectable proteins with a warning, error on an empty result, and fix the `algorithm`/`block` defaults

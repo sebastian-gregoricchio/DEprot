@@ -4,7 +4,7 @@
 \alias{plot.PC.biplot}
 \title{plot.PC.biplot}
 \usage{
-\method{plot}{PC.biplot}(
+plot.PC.biplot(
   DEprot.PCA.object,
   PC.x = 2,
   PC.y = 1,

@@ -4,7 +4,7 @@
 \alias{plot.volcano}
 \title{plot.volcano}
 \usage{
-\method{plot}{volcano}(
+plot.volcano(
   DEprot.analyses.object,
   contrast = 1,
   up.color = "indianred",

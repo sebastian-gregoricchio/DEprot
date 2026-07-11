@@ -4,7 +4,7 @@
 \alias{plot.GSEA}
 \title{plot.GSEA}
 \usage{
-\method{plot}{GSEA}(
+plot.GSEA(
   gsea.results,
   geneset.id = NULL,
   enrichment.geom = "line",

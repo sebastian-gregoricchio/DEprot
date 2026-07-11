@@ -36,3 +36,18 @@
       }
     }
   }
+
+
+
+
+.onLoad = function(libname, pkgname) {
+  # Register instance-aware completion for $ and @ on every DEprot class.
+  # registerS3method works whether or not utils exports .AtNames, so this
+  # sidesteps the export-status question entirely.
+  for (cls in .deprot_classes) {
+    registerS3method(".DollarNames", cls, .deprot_complete_slots,
+                     envir = asNamespace("utils"))
+    registerS3method(".AtNames", cls, .deprot_complete_slots,
+                     envir = asNamespace("utils"))
+  }
+}

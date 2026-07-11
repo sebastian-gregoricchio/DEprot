@@ -37,7 +37,7 @@
 
 \item{padj.th}{Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: \code{0.05}.}
 
-\item{padj.method}{String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{BH}.}
+\item{padj.method}{String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none", "fdrtool". Default: \code{BH}.}
 
 \item{fitting.method}{String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. Default: \code{"ls"} (least squares).}
 
@@ -57,7 +57,9 @@
 An object of class \code{DEprot.analyses}
 }
 \description{
-Allows for the computation of differential analyses using \href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}. Includes means, Fold Changes, and p-values.
+Allows for the computation of differential analyses using
+\href{https://bioconductor.org/packages/release/bioc/html/limma.html}{\code{limma}}.
+Includes means, Fold Changes, and p-values.
 }
 \details{
 The \code{results} table reports, for each group, the standard deviation (\code{sd.<group>}) and the standard
@@ -70,6 +72,12 @@ the difference between the group means, which coincides with the limma contrast 
 \code{fitting.method = "robust"}: in those cases \code{statistic} may differ slightly from \code{log2(FoldChange)/lfcSE}.
 Note that, when imputed counts are used, the imputation compresses the variance and \code{sd}, \code{sem} and
 \code{lfcSE} are consequently under-estimated.
+
+When set to \code{"fdrtool"}, the moderated t-statistics returned by limma are passed to \code{fdrtool::fdrtool}
+(as normal deviates, \code{statistic = "normal"}), which estimates the proportion of null features and an empirical
+null: the resulting tail-area-based q-values are stored in the \code{padj} column, while the local false discovery rate
+(\code{lfdr}) is added as an extra column of the results table. If fewer than 200 proteins with a finite statistic are
+available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised).
 }
 \examples{
 # Basic differential analyses including replicate model
