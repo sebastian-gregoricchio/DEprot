@@ -699,8 +699,14 @@ patchwork::wrap_plots(protein.1733_raw,
 #                                         proteins = cytoplasm$SYMBOL,
 #                                         mode = "remove")
 
+## ----filter_samples, eval = FALSE---------------------------------------------
+# dpo.clean <- filter.samples(DEprot.object = dpo.imputed,
+#                             samples = c("Sample_A", "Sample_B"),
+#                             mode = "remove",
+#                             verbose = TRUE)
+
 ## -----------------------------------------------------------------------------
-dpo_analyses_fc1.5 =
+dpo_analyses_fc1.5 <-
   reapply.thresholds(dpo_analyses,
                      linear.FC = 1.5,
                      p.adjusted = 0.05,
@@ -716,7 +722,7 @@ summary(dpo_analyses_fc1.5)
 # ## GeneSet Enrichment Analyses
 # data("corum_v5.0", package = "DEprot")
 # 
-# corum_geneSet =
+# corum_geneSet <-
 #   corum_v5.0 %>%
 #   dplyr::filter(organism == "Human") %>%
 #   dplyr::rename(gs_name = complex.name,
@@ -728,21 +734,21 @@ summary(dpo_analyses_fc1.5)
 ## ----print_corum_geneset, echo=FALSE------------------------------------------
 data("corum_v5.0", package = "DEprot")
 
-corum_geneSet =
+corum_geneSet <-
   corum_v5.0 %>%
   dplyr::filter(organism == "Human") %>%
   dplyr::rename(gs_name = complex.name,
                 gene_symbol = protein.members) %>%
   dplyr::select(gs_name, gene_symbol)
 
-knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
+knitr::kable(corum_geneSet[1:10,], row.names = FALSE, caption = "**CORUM protein complexes (v5.0)**")
 
 ## ----compare_ranking, fig.width=15, fig.height=10-----------------------------
 compare.ranking(DEprot.analyses.object = dpo_analyses,
                 contrast = 2)
 
 ## ----GSEA, eval = F-----------------------------------------------------------
-# GSEA.results =
+# GSEA.results <-
 #   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
 #                      contrast = 1,
 #                      TERM2GENE = corum_geneSet,
@@ -753,8 +759,8 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 #                      pAdjustMethod = "BH",
 #                      dotplot.n = 10)
 
-## ----ORA, eval = F------------------------------------------------------------
-# ORA.results =
+## ----ORA, eval = FALSE--------------------------------------------------------
+# ORA.results <-
 #   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
 #                      contrast = 1,
 #                      TERM2GENE = corum_geneSet,
@@ -765,4 +771,8 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 #                      pAdjustMethod = "BH",
 #                      diff.status.category = "6h.10nM.E2",
 #                      dotplot.n = 10)
+
+## ----simplify_enrichment, eval = FALSE----------------------------------------
+# GSEA.results.simplified <- simplify.enrichment(GSEA.results)
+# ORA.results.simplified <- simplify.enrichment(ORA.results)
 

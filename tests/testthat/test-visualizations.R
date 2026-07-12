@@ -1,31 +1,47 @@
+######## contrast.scatter
 test_that("contrast.scatter works", {
   expect_no_error(contrast.scatter(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast.x = 1, contrast.y = 2))
 })
 
 
+
+######### expression.boxplot
 test_that("expression.boxplot works", {
   expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", shape.column = "replicate"))
 })
-
 
 test_that("expression.boxplot works (grouped)", {
   expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", group.by.metadata.column = "combined.id"))
 })
 
-
 test_that("expression.boxplot works (Z-score)", {
   expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp, protein.id = "protein.14", scale.expression = TRUE))
 })
 
+test_that("expression.boxplot works (raw data)", {
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp, protein.id = "protein.14", scale.expression = TRUE, which.data = "raw"))
+})
+
+test_that("expression.boxplot works (randomized data)", {
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp, protein.id = "protein.14", scale.expression = TRUE, which.data = "random"))
+})
+
+test_that("expression.boxplot works (normalized data)", {
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp, protein.id = "protein.14", scale.expression = TRUE, which.data = "norm"))
+})
 
 test_that("expression.boxplot works (with pairwise)", {
   expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", shape.column = "replicate", pairwise.comparisons = TRUE))
 })
 
+test_that("expression.boxplot works (with pairwise, stars)", {
+  expect_no_error(expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,protein.id = "protein.14", shape.column = "replicate", pairwise.comparisons = TRUE, pairwise.p.label = "stars"))
+})
 
 
 
 
+####### Hetamaps
 test_that("heatmap.contrasts works", {
   expect_no_error(heatmap.contrasts(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, top.n = 5))
 })
@@ -61,7 +77,7 @@ test_that("heatmap.counts works for differential analyses (average groups)", {
 
 
 
-
+### MA plot
 test_that("plot.MA works ", {
   expect_no_error(plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1))
 })

@@ -404,7 +404,7 @@ geneset.enrichment =
                             qvalueCutoff = qvalueCutoff,
                             pAdjustMethod = pAdjustMethod,
                             dotplot.n = dotplot.n),
-          affinity.propagation = FALSE)
+          affinity.propagation = NULL)
 
     return(DEprot.enrichResult.object)
   } #END function

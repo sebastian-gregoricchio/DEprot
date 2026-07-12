@@ -7,10 +7,11 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
-#### [v1.2.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0) - July 11<sup>th</sup> 2026
+#### [v1.2.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0) - July 12<sup>th</sup> 2026
 - `expression.boxplot` function can now show pair-wise comparisons
 - `diff.analyses.limma` can use `fdrtool` to adjust the p-values
 - added `plot` method for objects of class `DEprot`, `DEprot.analyses`, `DEprot.normality`
+- added function `filter.samples`
 - bug-fixed in `check.pvalues` when prolfqua tables are provided
 - updated vignette and manual accordingly
 

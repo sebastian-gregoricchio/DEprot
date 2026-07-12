@@ -4,6 +4,22 @@ test_that("filter.proteins works", {
 
 
 
+
+
+test_that("filter.samples: errors are returned if the object is not of class DEprot or Deprot.analyses", {
+  expect_error(filter.samples(DEprot.object = DEprot::unimputed.counts))
+})
+
+test_that("filter.samples: function works on DEprot.analyses objects", {
+  expect_no_error(filter.samples(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
+                                 samples = c("Sample_A", "Sample_D", "Sample_G", "Sample_J")))
+})
+
+
+
+
+
+
 test_that("get.metadata works from DEprot", {
   expect_no_error(get.metadata(DEprot::test.toolbox$dpo.raw))
 })

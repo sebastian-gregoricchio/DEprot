@@ -1429,11 +1429,25 @@ dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
 <br>
 
 
+## Filter samples
+Sometimes you need to drop a few samples (e.g., a failed run, or an outlier) after you have already normalized, randomized and imputed. Because imputation depends on the group structure, you cannot just delete columns; the whole pipeline has to be redone on what is left. The function `filter.samples` does that for you: it reads the settings off the object and replays each step on the retained samples.
+
+It works  with object of class `DEprot` and `DEprot.analyses`. In the case of the latter, also the differential analyses are re-performed using the same parameters (if possible).
+
+```{r filter_samples, eval = FALSE}
+dpo.clean <- filter.samples(DEprot.object = dpo.imputed,
+                            samples = c("Sample_A", "Sample_B"),
+                            mode = "remove",
+                            verbose = TRUE)
+```
+
+<br>
+
 ## Re-apply thresholds to `DEprot.analyses` object
 In certain cases, when several contrasts are defined, the differential analysis computation can be time consuming. On the other hand, one might want to change the thresholds used to define the differential status of the proteins. To avoid the re-computation of the differentials from the beginning, the function `reapply.thresholds` can be used to re-compute the differential status, re-plot volcanos and MA-plots, and the n.diff summary table.
 
 ```{r}
-dpo_analyses_fc1.5 =
+dpo_analyses_fc1.5 <-
   reapply.thresholds(dpo_analyses,
                      linear.FC = 1.5,
                      p.adjusted = 0.05,
@@ -1467,7 +1481,7 @@ In the following example we will show how to create a geneSet table from the COR
 ## GeneSet Enrichment Analyses
 data("corum_v5.0", package = "DEprot")
 
-corum_geneSet =
+corum_geneSet <-
   corum_v5.0 %>%
   dplyr::filter(organism == "Human") %>%
   dplyr::rename(gs_name = complex.name,
@@ -1479,14 +1493,14 @@ corum_geneSet
 ```{r print_corum_geneset, echo=FALSE}
 data("corum_v5.0", package = "DEprot")
 
-corum_geneSet =
+corum_geneSet <-
   corum_v5.0 %>%
   dplyr::filter(organism == "Human") %>%
   dplyr::rename(gs_name = complex.name,
                 gene_symbol = protein.members) %>%
   dplyr::select(gs_name, gene_symbol)
 
-knitr::kable(corum_geneSet[1:10,], row.names = F, caption = "**CORUM protein complexes (v5.0)**")
+knitr::kable(corum_geneSet[1:10,], row.names = FALSE, caption = "**CORUM protein complexes (v5.0)**")
 ```
 
 
@@ -1507,7 +1521,7 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 
 #### GeneSet Enrichment Analyses (GSEA)
 ```{r GSEA, eval = F}
-GSEA.results =
+GSEA.results <-
   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
                      contrast = 1,
                      TERM2GENE = corum_geneSet,
@@ -1519,11 +1533,14 @@ GSEA.results =
                      dotplot.n = 10)
 ```
 
+Results can be visualized using `plot.NES` and `plot.GSEA`.<br>Other plots can be found in the output object (slots: `protein.network`, `pathway.network`, `NES.plot`, `dotplot_gene.ratio`); have a look to the `DEprot::test.toolbox$gsea.results` dummy example.
+
+
 <br>
 
 #### OverRepresentation Analyses (ORA)
-```{r ORA, eval = F}
-ORA.results =
+```{r ORA, eval = FALSE}
+ORA.results <-
   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
                      contrast = 1,
                      TERM2GENE = corum_geneSet,
@@ -1536,6 +1553,7 @@ ORA.results =
                      dotplot.n = 10)
 ```
 
+Some plots can be found in the output object slot. (slots: `protein.network`, `pathway.network`, `dotplot_gene.ratio`, `dotplot_fold.enrichment`); have a look to the `DEprot::test.toolbox$ora.results` dummy example.
 
 <br>
 
@@ -1551,6 +1569,18 @@ The output is an object of class `DEprot.enrichResult`:
 | *dotplot_gene.ratio*                 | a dotplot showing the geneRatios for each significantly enriched geneSet                        |
 | *dotplot_fold.enrichment* (ORA only) | a dotplot showing the foldEnrichment for each significantly enriched geneSet                    |
 | *parameters*                         | a list containing the parameters used to run the analyses                                       |
+| *affinity.propagation*               | if affinity propagation was applied via `simplify.enrichments`, here can be found the results   |
+
+<br>
+
+#### Reduce size of the enrichment by affinity propagation
+The function `simplify.enrichments` applies the affinity propagation method developed by [Elizarraras *et al.*](https://doi.org/10.1093/nar/gkae456) and implemented in [WebGestalt](https://www.webgestalt.org/) online toolkit.<br>
+This reduces the size of redundant enrichment discoveries.
+
+```{r simplify_enrichment, eval = FALSE}
+GSEA.results.simplified <- simplify.enrichment(GSEA.results)
+ORA.results.simplified <- simplify.enrichment(ORA.results)
+```
 
 <br>
 
