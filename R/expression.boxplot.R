@@ -61,7 +61,7 @@
 #'                    group.by.metadata.column = "combined.id",
 #'                    pairwise.comparisons = TRUE,
 #'                    pairwise.test.type = "t.test",
-#'                    pairwise.p.label = "p.value",
+#'                    pairwise.p.label = "stars",
 #'                    pairwise.p.decimals = 3,
 #'                    pairwise.include.ns = FALSE)
 #'
@@ -86,11 +86,6 @@ expression.boxplot =
            pairwise.include.ns = TRUE,
            pairwise.p.label = "p.signif",
            pairwise.p.decimals = 2) {
-
-
-    # ### Libraries
-    # require(dplyr)
-    # require(ggplot2)
 
 
     ### Internal functions
@@ -144,7 +139,6 @@ expression.boxplot =
       } else {
         stop(paste0("Use of RAW counts was required, but not available.\n",
                     "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
-        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("norm", "normalized", "normal")) {
       if (!is.null(DEprot.object@norm.counts)) {
@@ -153,7 +147,6 @@ expression.boxplot =
       } else {
         stop(paste0("Use of NORMALIZED counts was required, but not available.\n",
                     "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
-        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("imputed", "imp", "impute")) {
       if (!is.null(DEprot.object@imputed.counts)) {
@@ -162,7 +155,6 @@ expression.boxplot =
       } else {
         stop(paste0("Use of IMPUTED counts was required, but not available.\n",
                     "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
-        #return(DEprot.object)
       }
     } else if (tolower(which.data) %in% c("randomized", "random")) {
       if (!is.null(DEprot.object@random.counts)) {
@@ -171,19 +163,17 @@ expression.boxplot =
       } else {
         stop(paste0("Use of RANDOMIZED counts was required, but not available.\n",
                     "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
-        #return(DEprot.object)
       }
     } else {
       stop(paste0("The 'which.data' value is not recognized.\n",
                   "       Please indicated a count type among 'raw', 'normalized', 'randomized', 'imputed', using the option 'which.data'."))
-      #return(DEprot.object)
     }
 
 
 
     ### Filter table of counts (samples and protein)
     if (!is.null(sample.subset)) {
-      mat.filtered = mat[,which(colnames(mat) %in% sample.subset), drop=F]
+      mat.filtered = mat[,which(colnames(mat) %in% sample.subset), drop=FALSE]
     } else {
       mat.filtered = mat
     }
@@ -191,10 +181,9 @@ expression.boxplot =
 
 
     if (protein.id %in% rownames(mat.filtered)) {
-      mat.filtered = mat.filtered[rownames(mat.filtered) == protein.id,,drop=F]
+      mat.filtered = mat.filtered[rownames(mat.filtered) == protein.id,,drop=FALSE]
     } else {
       stop(paste0("The protein '", protein.id,"' is not present in the dataset."))
-      #return(invisible())
     }
 
 
