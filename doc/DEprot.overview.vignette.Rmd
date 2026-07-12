@@ -816,7 +816,7 @@ If the function `diff.analyses.limma` was used, an additional slot called `limma
 <br>
 
 
-### DE **results** table
+### DE *results* table
 The table with the results of the differential analyses can be retrieved directly from the list in the `DEprot.analyses` object (`dpo_analyses@analyses.result.list$contrast.id$results`) or using the `get.results` function.
 
 ```{r get_results, eval = F}
@@ -1162,6 +1162,20 @@ The full object can be automatically exported - including tables, PCA, correlati
 ```{r export_analyses, eval = F}
 export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
 ```
+
+
+It is also possible to generate a quality control report in html format automatically from a `DEprot`/`DEprot.analyses` object:
+
+```{r export_qc_report, eval = F}
+export.report(DEprot.object = dpo_analyses,
+              output.file = "QC_report.html",
+              report.title = "QC Report",
+              author.name = "Your Name",
+              protein.summary.group.column = "combined.id",
+              PCA.color.column = "combined.id",
+              PCA.shape.column = "replicate")
+```
+
 
 
 <br>

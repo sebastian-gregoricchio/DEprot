@@ -12,6 +12,7 @@ title: "changeLog"
 - `diff.analyses.limma` can use `fdrtool` to adjust the p-values
 - added `plot` method for objects of class `DEprot`, `DEprot.analyses`, `DEprot.normality`
 - added function `filter.samples`
+- added function `export.report` to export an HTML QC-report
 - bug-fixed in `check.pvalues` when prolfqua tables are provided
 - updated vignette and manual accordingly
 

@@ -573,6 +573,15 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 ## ----export_analyses, eval = F------------------------------------------------
 # export.analyses(DEprot.analyses.object = dpo_analyses, output.folder = "./export")
 
+## ----export_qc_report, eval = F-----------------------------------------------
+# export.report(DEprot.object = dpo_analyses,
+#               output.file = "QC_report.html",
+#               report.title = "QC Report",
+#               author.name = "Your Name",
+#               protein.summary.group.column = "combined.id",
+#               PCA.color.column = "combined.id",
+#               PCA.shape.column = "replicate")
+
 ## ----run_saint, fig.width = 8, fig.height=5-----------------------------------
 saint_deprot <- SAINTq(DEprot.object = DEprot::rime.dpo,
                        metadata.column = "group",
