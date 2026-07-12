@@ -134,10 +134,14 @@ harmonize.batches =
 
     batch.corrected.DEprot@norm.counts = as.matrix(batch.corrected.counts)
     batch.corrected.DEprot@normalized = TRUE
-    batch.corrected.DEprot@normalization.method = paste0("HarmonizR (",
-                                                         ifelse(test = tolower(algorithm) == "limma",
-                                                                yes = "limma)",
-                                                                no = paste0("ComBat, mode: ", ComBat.mode, ")")))
+    batch.corrected.DEprot@normalization.method =
+      data.frame(param = c("package", "batch.column", "algorithm", "ComBat.mode", "block", "cores"),
+                 value = c("HarmonizR", batch.column, algorithm, ComBat.mode, block, cores))
+
+    boxplot.subtitle = paste0("HarmonizR (",
+                              ifelse(test = tolower(algorithm) == "limma",
+                                     yes = "limma)",
+                                     no = paste0("ComBat, mode: ", ComBat.mode, ")")))
 
     batch.corrected.DEprot@boxplot.norm =
       DEprot::plot.counts(DEprot.object = batch.corrected.DEprot,
@@ -145,7 +149,7 @@ harmonize.batches =
                           violin.color = "purple",
                           convert.log2 = TRUE,
                           title = "**Normalized**",
-                          subtitle = paste0("*",batch.corrected.DEprot@normalization.method,"*"))
+                          subtitle = paste0("*",boxplot.subtitle,"*"))
 
 
     ### Check whether HarmonizR dropped any protein
