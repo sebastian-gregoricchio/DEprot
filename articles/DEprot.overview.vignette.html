@@ -884,14 +884,14 @@ simulating distribution and proportion of the original data.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; corkNN                corkNN 0.5135173         0.9851722            2.00    1
-&gt; tkNN                    tkNN 0.5135173         0.9851722            2.02    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          121.20    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.22    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.85    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.93    6
-&gt; missForest        missForest 0.5664830         0.9813784           29.80    7
-&gt; LLS                      LLS 0.6326730         0.9684621            3.66    8</code></pre>
+&gt; corkNN                corkNN 0.5135173         0.9851722            1.96    1
+&gt; tkNN                    tkNN 0.5135173         0.9851722            2.00    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672          114.00    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.98    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.84    5
+&gt; SVD                      SVD 0.5442393         0.9791497            3.89    6
+&gt; missForest        missForest 0.5664830         0.9813784           29.07    7
+&gt; LLS                      LLS 0.6326730         0.9684621            3.46    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -2677,6 +2677,27 @@ include the packages <code>AnnotationDbi</code> and
 </div>
 </div>
 <div class="section level3">
+<h3 id="filter-samples">Filter samples<a class="anchor" aria-label="anchor" href="#filter-samples"></a>
+</h3>
+<p>Sometimes you need to drop a few samples (e.g., a failed run, or an
+outlier) after you have already normalized, randomized and imputed.
+Because imputation depends on the group structure, you cannot just
+delete columns; the whole pipeline has to be redone on what is left. The
+function <code>filter.samples</code> does that for you: it reads the
+settings off the object and replays each step on the retained
+samples.</p>
+<p>It works with object of class <code>DEprot</code> and
+<code>DEprot.analyses</code>. In the case of the latter, also the
+differential analyses are re-performed using the same parameters (if
+possible).</p>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dpo.clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter.samples.html">filter.samples</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo.imputed</span>,</span>
+<span>                            samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sample_A"</span>, <span class="st">"Sample_B"</span><span class="op">)</span>,</span>
+<span>                            mode <span class="op">=</span> <span class="st">"remove"</span>,</span>
+<span>                            verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+</div>
+<div class="section level3">
 <h3 id="re-apply-thresholds-to-deprot-analyses-object">Re-apply thresholds to <code>DEprot.analyses</code> object<a class="anchor" aria-label="anchor" href="#re-apply-thresholds-to-deprot-analyses-object"></a>
 </h3>
 <p>In certain cases, when several contrasts are defined, the
@@ -2687,35 +2708,35 @@ differentials from the beginning, the function
 <code>reapply.thresholds</code> can be used to re-compute the
 differential status, re-plot volcanos and MA-plots, and the n.diff
 summary table.</p>
-<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">=</span></span>
-<span id="cb61-2"><a href="#cb61-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
-<span id="cb61-3"><a href="#cb61-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
-<span id="cb61-4"><a href="#cb61-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
-<span id="cb61-5"><a href="#cb61-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
-<span id="cb61-6"><a href="#cb61-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
-<span id="cb61-7"><a href="#cb61-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
-<span id="cb61-8"><a href="#cb61-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
-<span id="cb61-9"><a href="#cb61-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
-<span id="cb61-10"><a href="#cb61-10" tabindex="-1"></a></span>
-<span id="cb61-11"><a href="#cb61-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
-<span id="cb61-12"><a href="#cb61-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
-<span id="cb61-13"><a href="#cb61-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb61-14"><a href="#cb61-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb61-15"><a href="#cb61-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb61-16"><a href="#cb61-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb61-17"><a href="#cb61-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb61-18"><a href="#cb61-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb61-19"><a href="#cb61-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb61-20"><a href="#cb61-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb61-21"><a href="#cb61-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
-<span id="cb61-22"><a href="#cb61-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb61-23"><a href="#cb61-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb61-24"><a href="#cb61-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8486</span>       <span class="fl">0.004313803</span></span>
-<span id="cb61-25"><a href="#cb61-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4458</span>       <span class="fl">0.150214925</span></span>
-<span id="cb61-26"><a href="#cb61-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">832</span>      <span class="sc">-</span><span class="fl">0.826587688</span></span>
-<span id="cb61-27"><a href="#cb61-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">732</span>       <span class="fl">0.922028515</span></span>
-<span id="cb61-28"><a href="#cb61-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2330</span>      <span class="sc">-</span><span class="fl">0.012852350</span></span>
-<span id="cb61-29"><a href="#cb61-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9050</span>      <span class="sc">-</span><span class="fl">0.181689350</span></span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">&lt;-</span></span>
+<span id="cb62-2"><a href="#cb62-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
+<span id="cb62-3"><a href="#cb62-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
+<span id="cb62-4"><a href="#cb62-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
+<span id="cb62-5"><a href="#cb62-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
+<span id="cb62-6"><a href="#cb62-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
+<span id="cb62-7"><a href="#cb62-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb62-8"><a href="#cb62-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
+<span id="cb62-9"><a href="#cb62-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
+<span id="cb62-10"><a href="#cb62-10" tabindex="-1"></a></span>
+<span id="cb62-11"><a href="#cb62-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
+<span id="cb62-12"><a href="#cb62-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
+<span id="cb62-13"><a href="#cb62-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb62-14"><a href="#cb62-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb62-15"><a href="#cb62-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb62-16"><a href="#cb62-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb62-17"><a href="#cb62-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb62-18"><a href="#cb62-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb62-19"><a href="#cb62-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb62-20"><a href="#cb62-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb62-21"><a href="#cb62-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
+<span id="cb62-22"><a href="#cb62-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb62-23"><a href="#cb62-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb62-24"><a href="#cb62-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8486</span>       <span class="fl">0.004313803</span></span>
+<span id="cb62-25"><a href="#cb62-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4458</span>       <span class="fl">0.150214925</span></span>
+<span id="cb62-26"><a href="#cb62-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">832</span>      <span class="sc">-</span><span class="fl">0.826587688</span></span>
+<span id="cb62-27"><a href="#cb62-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">732</span>       <span class="fl">0.922028515</span></span>
+<span id="cb62-28"><a href="#cb62-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2330</span>      <span class="sc">-</span><span class="fl">0.012852350</span></span>
+<span id="cb62-29"><a href="#cb62-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9050</span>      <span class="sc">-</span><span class="fl">0.181689350</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -2742,11 +2763,11 @@ from the CORUM data and use it for GSEA and ORA analyses.</p>
 <div class="section level4">
 <h4 id="define-geneset">Define geneSet<a class="anchor" aria-label="anchor" href="#define-geneset"></a>
 </h4>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## GeneSet Enrichment Analyses</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"corum_v5.0"</span>, package <span class="op">=</span> <span class="st">"DEprot"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">corum_geneSet</span> <span class="op">=</span></span>
+<span><span class="va">corum_geneSet</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">corum_v5.0</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">organism</span> <span class="op">==</span> <span class="st">"Human"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>gs_name <span class="op">=</span> <span class="va">complex.name</span>,</span>
@@ -2818,7 +2839,7 @@ the two groups. Depending on the sample size, this two methods can lead
 to different ranking. To compare the two methods it is possible to plot
 the correlation of the two ranks and scores using
 <code>compare.ranking</code>:</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare.ranking.html">compare.ranking</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                contrast <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/compare_ranking-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
@@ -2827,8 +2848,8 @@ the correlation of the two ranks and scores using
 <div class="section level5">
 <h5 id="geneset-enrichment-analyses-gsea">GeneSet Enrichment Analyses (GSEA)<a class="anchor" aria-label="anchor" href="#geneset-enrichment-analyses-gsea"></a>
 </h5>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">GSEA.results</span> <span class="op">=</span></span>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">GSEA.results</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                     TERM2GENE <span class="op">=</span> <span class="va">corum_geneSet</span>,</span>
@@ -2838,13 +2859,18 @@ the correlation of the two ranks and scores using
 <span>                     pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                     pAdjustMethod <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>                     dotplot.n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p>Results can be visualized using <code>plot.NES</code> and
+<code>plot.GSEA</code>.<br>Other plots can be found in the output object
+(slots: <code>protein.network</code>, <code>pathway.network</code>,
+<code>NES.plot</code>, <code>dotplot_gene.ratio</code>); have a look to
+the <code>DEprot::test.toolbox$gsea.results</code> dummy example.</p>
 <p><br></p>
 </div>
 <div class="section level5">
 <h5 id="overrepresentation-analyses-ora">OverRepresentation Analyses (ORA)<a class="anchor" aria-label="anchor" href="#overrepresentation-analyses-ora"></a>
 </h5>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ORA.results</span> <span class="op">=</span></span>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ORA.results</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>                     TERM2GENE <span class="op">=</span> <span class="va">corum_geneSet</span>,</span>
@@ -2855,6 +2881,11 @@ the correlation of the two ranks and scores using
 <span>                     pAdjustMethod <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>                     diff.status.category <span class="op">=</span> <span class="st">"6h.10nM.E2"</span>,</span>
 <span>                     dotplot.n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p>Some plots can be found in the output object slot. (slots:
+<code>protein.network</code>, <code>pathway.network</code>,
+<code>dotplot_gene.ratio</code>, <code>dotplot_fold.enrichment</code>);
+have a look to the <code>DEprot::test.toolbox$ora.results</code> dummy
+example.</p>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -2910,8 +2941,25 @@ significantly enriched geneSet</td>
 <td align="left">a list containing the parameters used to run the
 analyses</td>
 </tr>
+<tr class="even">
+<td align="right"><em>affinity.propagation</em></td>
+<td align="left">if affinity propagation was applied via
+<code>simplify.enrichments</code>, here can be found the results</td>
+</tr>
 </tbody>
 </table>
+<p><br></p>
+</div>
+<div class="section level5">
+<h5 id="reduce-size-of-the-enrichment-by-affinity-propagation">Reduce size of the enrichment by affinity propagation<a class="anchor" aria-label="anchor" href="#reduce-size-of-the-enrichment-by-affinity-propagation"></a>
+</h5>
+<p>The function <code>simplify.enrichments</code> applies the affinity
+propagation method developed by <a href="https://doi.org/10.1093/nar/gkae456" class="external-link">Elizarraras <em>et
+al.</em></a> and implemented in <a href="https://www.webgestalt.org/" class="external-link">WebGestalt</a> online toolkit.<br>
+This reduces the size of redundant enrichment discoveries.</p>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">GSEA.results.simplified</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simplify.enrichment.html">simplify.enrichment</a></span><span class="op">(</span><span class="va">GSEA.results</span><span class="op">)</span></span>
+<span><span class="va">ORA.results.simplified</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simplify.enrichment.html">simplify.enrichment</a></span><span class="op">(</span><span class="va">ORA.results</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <hr>
 </div>
