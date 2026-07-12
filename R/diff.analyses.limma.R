@@ -600,7 +600,11 @@ diff.analyses.limma =
                                               linear.FC.unresp.range = linear.FC.unresp.range,
                                               padj.th = padj.th,
                                               padj.method = padj.method,
-                                              counts.used = data.used))
+                                              counts.used = data.used,
+                                              stat.test = "limma",
+                                              rep.model = include.rep.model,
+                                              replicate.column = replicate.column,
+                                              fitting.method = fitting.method))
 
     return(DEprot.object.analyses)
   } # END function

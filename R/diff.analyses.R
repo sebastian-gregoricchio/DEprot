@@ -585,7 +585,9 @@ diff.analyses =
                                               linear.FC.unresp.range = linear.FC.unresp.range,
                                               padj.th = padj.th,
                                               padj.method = padj.method,
-                                              counts.used = data.used))
+                                              counts.used = data.used,
+                                              stat.test = stat.test,
+                                              paired.test = paired.test))
 
     return(DEprot.object.analyses)
   } # END function

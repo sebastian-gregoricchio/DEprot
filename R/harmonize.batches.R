@@ -136,7 +136,7 @@ harmonize.batches =
     batch.corrected.DEprot@normalized = TRUE
     batch.corrected.DEprot@normalization.method =
       data.frame(param = c("package", "batch.column", "algorithm", "ComBat.mode", "block", "cores"),
-                 value = c("HarmonizR", batch.column, algorithm, ComBat.mode, block, cores))
+                 value = c("HarmonizR", batch.column, algorithm, ComBat.mode, ifelse(is.null(block), "null", block), cores))
 
     boxplot.subtitle = paste0("HarmonizR (",
                               ifelse(test = tolower(algorithm) == "limma",

@@ -85,7 +85,6 @@ impute.counts =
       if (overwrite.imputation == FALSE) {
         stop(paste0("The 'DEprot' object contains already an imputed table.\n",
                     "       If you wish to overwrite the imputation, set the parameter `overwrite.imputation = TRUE`."))
-        #return(DEprot.object)
       }
     }
 
@@ -94,9 +93,9 @@ impute.counts =
     if (tolower(which.data) %in% c("normalized", "norm", "n")) {
       if (is.null(DEprot.object@norm.counts)) {
         stop("You asked to use normalized data for the imputation, but normalized data are not available.\n")
-        #return(DEprot.object)
       } else {
         cnt = DEprot.object@norm.counts
+        data.used = "normalized"
       }
     } else if (tolower(which.data) %in% c("random", "randomized")) {
       if (is.null(DEprot.object@random.counts)) {
@@ -104,9 +103,11 @@ impute.counts =
         #return(DEprot.object)
       } else {
         cnt = DEprot.object@random.counts
+        data.used = "randomized"
       }
     } else {
       cnt = DEprot.object@raw.counts
+      data.used = "raw"
     }
 
 
@@ -553,9 +554,12 @@ impute.counts =
       imputation = list(method = "missForest",
                         max.iterations = missForest.max.iterations,
                         OOBerror = imputed.cnt$OOBerror,
+                        variable.wise.OOBerror = missForest.variable.wise.OOBerror,
                         parallelization.mode = ifelse(cores <=1, yes = "none", no = missForest.parallel.mode),
                         cores = cores,
+                        parallel.mode = missForest.parallel.mode,
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        data.used = data.used,
                         seed = seed)
 
       imputed.cnt = imputed.cnt$ximp
@@ -576,6 +580,7 @@ impute.counts =
                         aggregating.function = "weighted mean",
                         n.nearest.neighbours = kNN.n.nearest.neighbours,
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        data.used = data.used,
                         seed = seed)
 
       ####################################################################################
@@ -594,6 +599,7 @@ impute.counts =
                         cluster.size = LLS.k,
                         correlation.type = "pearson",
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        data.used = data.used,
                         seed = seed)
 
       #########################################################################################
@@ -611,6 +617,8 @@ impute.counts =
       imputation = list(method = "SVD",
                         PC.estimation = PC.estimation,
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        PCs.tested = pcaMethods.nPCs.to.test,
+                        data.used = data.used,
                         seed = seed)
 
       #########################################################################################
@@ -627,6 +635,7 @@ impute.counts =
       imputation = list(method = "tkNN",
                         n.nearest.neighbours = ceiling(nrow(cnt)*0.05),
                         processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        data.used = data.used,
                         seed = seed)
 
       #########################################################################################
@@ -645,6 +654,8 @@ impute.counts =
         imputation = list(method = "BPCA",
                           PC.estimation = PC.estimation,
                           processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          PCs.tested = pcaMethods.nPCs.to.test,
+                          data.used = data.used,
                           seed = seed)
 
 
@@ -664,6 +675,8 @@ impute.counts =
         imputation = list(method = "PPCA",
                           PC.estimation = PC.estimation,
                           processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          PCs.tested = pcaMethods.nPCs.to.test,
+                          data.used = data.used,
                           seed = seed)
 
         #########################################################################################
@@ -683,6 +696,7 @@ impute.counts =
                                             maxiter_RegImpute = RegImpute.max.iterations,
                                             conv_nrmse = 1e-6),
                           processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          data.used = data.used,
                           seed = seed)
 
         #########################################################################################
@@ -700,6 +714,7 @@ impute.counts =
         imputation = list(method = "corkNN",
                           n.nearest.neighbours = ceiling(nrow(cnt)*0.05),
                           processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                          data.used = data.used,
                           seed = seed)
       }
 
