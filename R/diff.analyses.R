@@ -587,6 +587,7 @@ diff.analyses =
                                               padj.method = padj.method,
                                               counts.used = data.used,
                                               stat.test = stat.test,
+                                              replicate.column = replicate.column,
                                               paired.test = paired.test))
 
     return(DEprot.object.analyses)

@@ -638,6 +638,7 @@ diff.analyses.prolfqua =
                                               padj.method = "effective FDR",
                                               counts.used = data.used,
                                               stat.test = "prolfqua",
+                                              replicate.column = replicate.column,
                                               strategy = list(strategy.id = strategy,
                                                               model.function = modelFunction),
                                               moderate.variance = moderate.variance))
