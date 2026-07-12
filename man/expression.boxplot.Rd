@@ -89,7 +89,7 @@ expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
                    group.by.metadata.column = "combined.id",
                    pairwise.comparisons = TRUE,
                    pairwise.test.type = "t.test",
-                   pairwise.p.label = "p.value",
+                   pairwise.p.label = "stars",
                    pairwise.p.decimals = 3,
                    pairwise.include.ns = FALSE)
 
