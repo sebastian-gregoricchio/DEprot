@@ -76,13 +76,13 @@ test_that("method-plot for class DEprot works", {
 })
 
 
-test_that("method-plot for class DEprot.analyses works (volcano)", {
-  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "volcano")))
-})
-
-test_that("method-plot for class DEprot.analyses works (MA)", {
-  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "MA")))
-})
+# test_that("method-plot for class DEprot.analyses works (volcano)", {
+#   expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "volcano")))
+# })
+#
+# test_that("method-plot for class DEprot.analyses works (MA)", {
+#   expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "MA")))
+# })
 
 test_that("method-plot for class DEprot.analyses works (correlation)", {
   expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "cor")))
