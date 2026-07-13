@@ -7,6 +7,14 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+#### [v1.2.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.1) - July 13<sup>th</sup> 2026
+- `plot.volcano` can automatically plot the top N differential proteins
+- `export.report` will plot the top.n proteins in the volcano
+- updated vignette and manual accordingly
+
+
+<br>
+
 #### [v1.2.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0) - July 12<sup>th</sup> 2026
 - `expression.boxplot` function can now show pair-wise comparisons
 - `diff.analyses.limma` can use `fdrtool` to adjust the p-values

@@ -633,16 +633,14 @@ for (i in seq_along(res.list)) {
   rl <- res.list[[i]]
   cat(sprintf("\n\n### %s\n\n", contrast_label(i)))
 
-  ## Volcano plot
+  ## Volcano plot. Generated via plot.volcano() (rather than reusing the stored
+  ## plot) so the top-N labels requested here are applied.
   cat("\n#### Volcano plot\n\n")
-  volc <- rl$volcano
-  if (!isTRUE(cfg$volcano.use.uncorrected.pvalue) && !is.null(volc) && is_plot(volc)) {
-    safe_print(volc, what = "volcano plot")
-  } else {
-    safe_print(plot.volcano(DEprot.analyses.object = dpo, contrast = i,
-                            use.uncorrected.pvalue = isTRUE(cfg$volcano.use.uncorrected.pvalue)),
-               what = "volcano plot")
-  }
+  safe_print(plot.volcano(DEprot.analyses.object = dpo, contrast = i,
+                          use.uncorrected.pvalue = isTRUE(cfg$volcano.use.uncorrected.pvalue),
+                          label.top.n = cfg$top.n.proteins,
+                          label.font.size = 3),
+             what = "volcano plot")
   cat("\n\n")
 
   ## MA-plot
