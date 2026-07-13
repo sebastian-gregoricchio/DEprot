@@ -21,7 +21,8 @@ plot.volcano(
   labels.in.boxes = FALSE,
   label.font.size = 2,
   label.max.overlaps = 100,
-  min.segment.length.labels = 0
+  min.segment.length.labels = 0,
+  label.top.n = NULL
 )
 }
 \arguments{
@@ -58,6 +59,8 @@ plot.volcano(
 \item{label.max.overlaps}{Numeric value indicating the maximum number of overlaps allowed between labels. Default: \code{100}.}
 
 \item{min.segment.length.labels}{Numeric value indicating the minimal length of the segments that connect the labels to the points. Default: \code{0} (segment always shown).}
+
+\item{label.top.n}{Single integer value (or \code{NULL}) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by \code{-log10(padj) * abs(log2FC)} and the top \code{N} are labeled; if fewer than \code{N} differential proteins are available, all of them are labeled. When \code{use.uncorrected.pvalue = TRUE}, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through \code{dot.labels} are added to the automatically selected ones. The \code{protein.names.pattern}, \code{labels.in.boxes} and other label aesthetics are applied to these labels as well. Default: \code{NULL} (no automatic labels).}
 }
 \value{
 A ggplot object.
@@ -66,9 +69,19 @@ A ggplot object.
 Plots a volcano plot log2(FoldChange) x -log10(p.adjusted) of differential expression results
 }
 \examples{
+# With specific-labels
 plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
              contrast = 1,
              dot.labels = "protein.19",
+             labels.in.boxes = FALSE) +
+  ggplot2::xlab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
+
+
+# Labeling top-10 proteins
+plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+             contrast = 1,
+             dot.labels = "protein.19",
+             label.top.n = 10,
              labels.in.boxes = FALSE) +
   ggplot2::xlab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 

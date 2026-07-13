@@ -420,8 +420,15 @@ pval.distribution <- check.pvalues(DEprot.analyses.object = dpo_analyses,
 pval.distribution
 
 ## ----DE_volcano_MA, fig.width=9-----------------------------------------------
-volcano = plot.volcano(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
-MAplot = plot.MA(dpo_analyses, contrast = 1, use.uncorrected.pvalue = TRUE)
+volcano <- plot.volcano(dpo_analyses,
+                        contrast = 1,
+                        label.top.n = 10,
+                        label.font.size = 4,
+                        use.uncorrected.pvalue = TRUE)
+
+MAplot <- plot.MA(dpo_analyses,
+                  contrast = 1,
+                  use.uncorrected.pvalue = TRUE)
 
 patchwork::wrap_plots(volcano, MAplot)
 

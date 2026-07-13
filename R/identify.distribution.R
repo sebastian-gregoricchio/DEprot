@@ -17,6 +17,8 @@
 #'
 #' @import fitdistrplus
 #'
+#' @name identify.distribution
+#'
 #' @author Sebastian Gregoricchio
 #'
 #' @examples

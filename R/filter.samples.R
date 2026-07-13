@@ -105,6 +105,8 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @name filter.samples
+#'
 #' @examples
 #' \dontrun{
 #' # Remove two samples from an imputed DEprot object

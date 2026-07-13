@@ -14,6 +14,7 @@
 #' @param use.uncorrected.pvalue Logical value indicating whether it should be used the normal p-value instead of the adjusted one (differential proteins numbers are recomputed). Default: \code{FALSE}, padj is used.
 #' @param symmetric.x Logical values indicating whether the x-axis scale should be symmetric or not. Default: \code{TRUE}.
 #' @param dot.labels String vector indicating labels to show on the plot that should correspond to \code{prot.id} column values. Default: \code{NULL} (no labels shown).
+#' @param label.top.n Single integer value (or \code{NULL}) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by \code{-log10(padj) * abs(log2FC)} and the top \code{N} are labeled; if fewer than \code{N} differential proteins are available, all of them are labeled. When \code{use.uncorrected.pvalue = TRUE}, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through \code{dot.labels} are added to the automatically selected ones. The \code{protein.names.pattern}, \code{labels.in.boxes} and other label aesthetics are applied to these labels as well. Default: \code{NULL} (no automatic labels).
 #' @param protein.names.pattern Character indicating a regular expression to remove from the protein IDs. Default: \code{""}, no alterations in the protein IDs.
 #' @param labels.in.boxes Logical value indicating whether the labels should be visualized as boxes. Default: \code{FALSE}.
 #' @param label.font.size Numeric value indicating the size to use for the dot labels. Default: \code{2}.
@@ -33,9 +34,19 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
+#' # With specific-labels
 #' plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
 #'              contrast = 1,
 #'              dot.labels = "protein.19",
+#'              labels.in.boxes = FALSE) +
+#'   ggplot2::xlab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
+#'
+#'
+#' # Labeling top-10 proteins
+#' plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+#'              contrast = 1,
+#'              dot.labels = "protein.19",
+#'              label.top.n = 10,
 #'              labels.in.boxes = FALSE) +
 #'   ggplot2::xlab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 #'
@@ -58,11 +69,21 @@ plot.volcano =
            labels.in.boxes = FALSE,
            label.font.size = 2,
            label.max.overlaps = 100,
-           min.segment.length.labels = 0) {
+           min.segment.length.labels = 0,
+           label.top.n = NULL) {
 
     # ### Libraries
     # require(dplyr)
     # require(ggplot2)
+
+
+    ### check label.top.n
+    if (!is.null(label.top.n)) {
+      if (!is.numeric(label.top.n) || length(label.top.n) != 1 || is.na(label.top.n) || label.top.n < 0) {
+        stop("'label.top.n' must be a single non-negative integer or NULL.")
+      }
+      label.top.n = floor(label.top.n)
+    }
 
 
     ### check object
@@ -174,8 +195,32 @@ plot.volcano =
 
 
     # add labels if required
-    if (!is.null(dot.labels)) {
-      filt.tb = dplyr::filter(.data = diff.tb, prot.id %in% dot.labels)
+    ## Collect the protein IDs to label: top-N differentially expressed + user-provided (dot.labels)
+    labels.to.show = dot.labels
+
+    if (!is.null(label.top.n)) {
+      if (label.top.n >= 1) {
+        # keep only differentially expressed proteins (up- or down-regulated) and rank them
+        top.diff.tb =
+          diff.tb %>%
+          dplyr::filter(diff.status %in% c(contrasts.info$var.1, contrasts.info$var.2)) %>%
+          dplyr::mutate(ranking.score = -log10(padj) * abs(log2.Fold_group1.vs.group2)) %>%
+          dplyr::filter(!is.na(ranking.score)) %>%
+          dplyr::arrange(dplyr::desc(ranking.score))
+
+        # take the top N (or all available differential proteins if fewer than N)
+        if (nrow(top.diff.tb) > 0) {
+          labels.to.show = c(labels.to.show,
+                             top.diff.tb$prot.id[1:min(label.top.n, nrow(top.diff.tb))])
+        }
+      }
+    }
+
+    labels.to.show = unique(labels.to.show)
+
+
+    if (!is.null(labels.to.show)) {
+      filt.tb = dplyr::filter(.data = diff.tb, prot.id %in% labels.to.show)
 
       if (nrow(filt.tb) > 0) {
         if (labels.in.boxes == TRUE) {
@@ -228,4 +273,3 @@ plot.volcano =
     ### Export plot
     return(volcano)
   } # END of function
-
