@@ -26,6 +26,7 @@
 #'   'imputed'/'imp'. Default: \code{NULL}, in which case the best available data
 #'   are chosen automatically (imputed > normalized > randomized > raw).
 #' @param correlation.method Character vector with the correlation method(s) to display in the QC section. Any of 'pearson', 'spearman', 'kendall'. Default: \code{c("pearson", "spearman")}.
+#' @param correlation.display.values Logical; whether the correlation coefficient is printed inside each cell of the sample-correlation heatmaps. Default: \code{TRUE}.
 #' @param PCA.color.column String with the metadata column used to color the PCA points. Default: \code{"column.id"} (one color per sample).
 #' @param PCA.shape.column String with the metadata column used for the PCA point shapes. Default: \code{NULL}.
 #' @param PCA.label.column String with the metadata column used to label the PCA points. Default: \code{NULL}.
@@ -33,7 +34,7 @@
 #' @param volcano.use.uncorrected.pvalue Logical; if \code{TRUE} the volcano plots are regenerated using the uncorrected p-value. Default: \code{FALSE}.
 #' @param show.MA.plot Logical; whether to include the MA-plot for each contrast. Default: \code{TRUE}.
 #' @param include.contrast.qc Logical indicating whether to additionally include the per-contrast PCA and correlation plots stored in the object. Default: \code{TRUE}.
-#' @param top.n.proteins Integer; number of top proteins (ranked by adjusted p-value) shown in the per-contrast results table. Default: \code{25}.
+#' @param top.n.proteins Integer; number of top proteins shown in the per-contrast results table, ranked by a combined score \code{-log10(padj) * abs(log2FC)} (the score itself is not shown). Default: \code{25}.
 #' @param plot.width,plot.height Numeric; default figure width and height (in inches) used in the report. Default: \code{8} and \code{5.5}.
 #' @param self.contained Logical indicating whether the HTML embeds all resources into a single portable file. Default: \code{TRUE}.
 #' @param keep.Rmd Logical; if \code{TRUE} the intermediate \code{.Rmd} source is copied next to the output file. Default: \code{FALSE}.
@@ -76,6 +77,7 @@ export.report <- function(DEprot.object,
                           author.name = "DEprot",
                           which.data = NULL,
                           correlation.method = c("pearson", "spearman"),
+                          correlation.display.values = TRUE,
                           PCA.color.column = "column.id",
                           PCA.shape.column = NULL,
                           PCA.label.column = NULL,
@@ -163,6 +165,7 @@ export.report <- function(DEprot.object,
     which.data     = which.data,
     primary.slot   = primary.slot,
     correlation.method = tolower(as.character(correlation.method)),
+    correlation.display.values = isTRUE(correlation.display.values),
     PCA.color.column   = PCA.color.column,
     PCA.shape.column   = PCA.shape.column,
     PCA.label.column   = PCA.label.column,
@@ -400,7 +403,6 @@ cat("This report was generated with **DEprot**",
 ## Blocks are shown in processing order: raw -> normalization -> randomization -> imputation.
 ## For the normalization/imputation methods only the parameters actually passed to the
 ## corresponding DEprot function are kept (diagnostic/timing outputs are dropped).
-diagnostic.fields <- c("OOBerror", "variable.wise.OOBerror", "processing.time")
 
 ## --- Raw data ---
 cat("**Raw data**\n\n")
@@ -436,7 +438,27 @@ if (isTRUE(dpo@randomized) && !is.null(dpo@randomization.method) && length(dpo@r
 cat("\n**Imputation**\n\n")
 if (isTRUE(dpo@imputed) && !is.null(dpo@imputation.method) && length(dpo@imputation.method) > 0) {
   im <- dpo@imputation.method
-  if (is.list(im)) im <- im[setdiff(names(im), diagnostic.fields)]
+  if (is.list(im)) {
+    m <- tolower(as.character(if (!is.null(im[["method"]])) im[["method"]] else ""))
+    ## RegImpute (regimpute-dreamAI) keeps its knobs one level down in $parameters;
+    ## lift them up so they sit alongside seed/data.used/etc.
+    if (m %in% c("regimpute", "regimpute-dreamai") && is.list(im[["parameters"]])) {
+      flat <- list()
+      for (nm in names(im)) {
+        if (identical(nm, "parameters")) {
+          for (pn in names(im[["parameters"]])) flat[[pn]] <- im[["parameters"]][[pn]]
+        } else flat[[nm]] <- im[[nm]]
+      }
+      im <- flat
+    }
+    ## Drop outputs/diagnostics that aren't parameters. This is method-dependent
+    ## (missForest -> OOBerror; SVD/BPCA/PPCA -> PC.estimation); processing.time
+    ## and everything else are kept.
+    drop.fields <- character(0)
+    if (m == "missforest")               drop.fields <- c(drop.fields, "OOBerror")
+    if (m %in% c("svd", "bpca", "ppca")) drop.fields <- c(drop.fields, "PC.estimation")
+    if (length(drop.fields)) im <- im[setdiff(names(im), drop.fields)]
+  }
   kv_table(im)
 } else {
   cat("<p class='note'>Data were not imputed.</p>\n")
@@ -468,8 +490,7 @@ for (lab in names(box.slots)) {
 if (!any.box) cat("<p class='note'>No distribution plots are stored in this object.</p>\n")
 ```
 
-## Protein counts per sample
-
+## Protein presence summary
 ```{r protein-summary, results='asis', fig.width=9, fig.height=5}
 ## Grouped by the chosen metadata column and shown as absolute counts (show.frequency = FALSE).
 ps <- tryCatch(
@@ -529,6 +550,7 @@ for (method in methods.vec) {
     plot.correlation.heatmap(DEprot.object = dpo,
                              correlation.method = method,
                              which.data = cfg$which.data,
+                             display.values = cfg$correlation.display.values,
                              correlation.scale.limits = c(NA, 1)),
     error = function(e) e)
   if (inherits(corr, "error")) {
@@ -637,9 +659,24 @@ for (i in seq_along(res.list)) {
   r <- rl$results
   if (!is.null(r) && nrow(r) > 0) {
     r <- as.data.frame(r, check.names = FALSE)
-    ord.col <- intersect(c("padj", "p.adj", "p_adj", "padjusted", "adj.pvalue",
-                           "pvalue", "p.value", "p_value"), names(r))
-    if (length(ord.col) > 0) r <- r[order(r[[ord.col[1]]]), , drop = FALSE]
+    ## Rank by a combined score = -log10(padj) * |log2FC| (larger = more
+    ## differential). The score is only used for ordering and is not displayed.
+    padj.col <- intersect(c("padj", "adj.P.Val", "p.adj", "p_adj", "padjusted",
+                            "adj.pvalue", "qvalue"), names(r))
+    fc.col   <- grep("^log2[._]?Fold", names(r), ignore.case = TRUE, value = TRUE)
+    if (!length(fc.col)) {
+      fc.col <- grep("log2.*fold|log2FC|logFC|foldchange", names(r),
+                     ignore.case = TRUE, value = TRUE)
+    }
+    if (length(padj.col) && length(fc.col)) {
+      padj.v <- suppressWarnings(as.numeric(r[[padj.col[1]]]))
+      fc.v   <- suppressWarnings(as.numeric(r[[fc.col[1]]]))
+      score  <- -log10(padj.v) * abs(fc.v)           # Inf (padj==0) sorts first
+      r <- r[order(score, decreasing = TRUE, na.last = TRUE), , drop = FALSE]
+    } else if (length(padj.col)) {                    # fallback: padj only
+      r <- r[order(suppressWarnings(as.numeric(r[[padj.col[1]]])),
+                   na.last = TRUE), , drop = FALSE]
+    }
     show_table(round_df(r, 3), max_rows = cfg$top.n.proteins)
     cat("<p class='note'>The complete results table can be exported with ",
         "<code>DEprot::export.analyses()</code> or <code>DEprot::get.results()</code>.</p>\n")

@@ -11,6 +11,7 @@ export.report(
   author.name = "DEprot",
   which.data = NULL,
   correlation.method = c("pearson", "spearman"),
+  correlation.display.values = TRUE,
   PCA.color.column = "column.id",
   PCA.shape.column = NULL,
   PCA.label.column = NULL,
@@ -42,6 +43,8 @@ are chosen automatically (imputed > normalized > randomized > raw).}
 
 \item{correlation.method}{Character vector with the correlation method(s) to display in the QC section. Any of 'pearson', 'spearman', 'kendall'. Default: \code{c("pearson", "spearman")}.}
 
+\item{correlation.display.values}{Logical; whether the correlation coefficient is printed inside each cell of the sample-correlation heatmaps. Default: \code{TRUE}.}
+
 \item{PCA.color.column}{String with the metadata column used to color the PCA points. Default: \code{"column.id"} (one color per sample).}
 
 \item{PCA.shape.column}{String with the metadata column used for the PCA point shapes. Default: \code{NULL}.}
@@ -56,7 +59,7 @@ are chosen automatically (imputed > normalized > randomized > raw).}
 
 \item{include.contrast.qc}{Logical indicating whether to additionally include the per-contrast PCA and correlation plots stored in the object. Default: \code{TRUE}.}
 
-\item{top.n.proteins}{Integer; number of top proteins (ranked by adjusted p-value) shown in the per-contrast results table. Default: \code{25}.}
+\item{top.n.proteins}{Integer; number of top proteins shown in the per-contrast results table, ranked by a combined score \code{-log10(padj) * abs(log2FC)} (the score itself is not shown). Default: \code{25}.}
 
 \item{plot.width, plot.height}{Numeric; default figure width and height (in inches) used in the report. Default: \code{8} and \code{5.5}.}
 
