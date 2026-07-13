@@ -643,12 +643,14 @@ for (i in seq_along(res.list)) {
              what = "volcano plot")
   cat("\n\n")
 
-  ## MA-plot
+  ## MA-plot. Generated via plot.MA() (rather than reusing the stored plot) so
+  ## the top-N protein labels requested here are applied.
   if (isTRUE(cfg$show.MA.plot)) {
     cat("\n#### MA-plot\n\n")
-    ma <- rl$MA.plot
-    if (!is.null(ma) && is_plot(ma)) safe_print(ma, what = "MA-plot")
-    else safe_print(plot.MA(DEprot.analyses.object = dpo, contrast = i), what = "MA-plot")
+    safe_print(plot.MA(DEprot.analyses.object = dpo, contrast = i,
+                       label.top.n = cfg$top.n.proteins,
+                       label.font.size = 3),
+               what = "MA-plot")
     cat("\n\n")
   }
 

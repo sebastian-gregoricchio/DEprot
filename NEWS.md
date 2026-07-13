@@ -8,7 +8,7 @@ title: "changeLog"
 
 
 #### [v1.2.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.1) - July 13<sup>th</sup> 2026
-- `plot.volcano` can automatically plot the top N differential proteins
+- `plot.volcano` and `plot.MA` can automatically plot the top N differential proteins
 - `export.report` will plot the top.n proteins in the volcano
 - updated vignette and manual accordingly
 

@@ -16,10 +16,12 @@ plot.MA(
   use.uncorrected.pvalue = FALSE,
   symmetric.y = TRUE,
   dot.labels = NULL,
+  protein.names.pattern = "",
   labels.in.boxes = FALSE,
   label.font.size = 2,
   label.max.overlaps = 100,
-  min.segment.length.labels = 0
+  min.segment.length.labels = 0,
+  label.top.n = NULL
 )
 }
 \arguments{
@@ -45,6 +47,8 @@ plot.MA(
 
 \item{dot.labels}{String vector indicating labels to show on the plot that should correspond to \code{prot.id} column values. Default: \code{NULL} (no labels shown).}
 
+\item{protein.names.pattern}{Character indicating a regular expression to remove from the protein IDs. Default: \code{""}, no alterations in the protein IDs.}
+
 \item{labels.in.boxes}{Logical value indicating whether the labels should be visualized as boxes. Default: \code{FALSE}.}
 
 \item{label.font.size}{Numeric value indicating the size to use for the dot labels. Default: \code{2}.}
@@ -52,6 +56,8 @@ plot.MA(
 \item{label.max.overlaps}{Numeric value indicating the maximum number of overlaps allowed between labels. Default: \code{100}.}
 
 \item{min.segment.length.labels}{Numeric value indicating the minimal length of the segments that connect the labels to the points. Default: \code{0} (segment always shown).}
+
+\item{label.top.n}{Single integer value (or \code{NULL}) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by \code{-log10(padj) * abs(log2FC)} and the top \code{N} are labeled; if fewer than \code{N} differential proteins are available, all of them are labeled. When \code{use.uncorrected.pvalue = TRUE}, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through \code{dot.labels} are added to the automatically selected ones, and \code{labels.in.boxes} together with the other label aesthetics apply to them as well. Default: \code{NULL} (no automatic labels).}
 }
 \value{
 A ggplot object.
@@ -60,7 +66,13 @@ A ggplot object.
 Plots a MA plot log2(basemean) x log2(FoldChange) of differential expression results
 }
 \examples{
-plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1) +
+plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+        contrast = 1) +
+  ggplot2::ylab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
+
+plot.MA(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+        contrast = 1,
+        label.top.n = 10) +
   ggplot2::ylab("log<sub>2</sub>(Fold Change FBS/6h.DMSO)")
 
 
