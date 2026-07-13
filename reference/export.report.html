@@ -96,6 +96,7 @@ the native DEprot plotting functions (<code><a href="perform.PCA.html">perform.P
 <span>  author.name <span class="op">=</span> <span class="st">"DEprot"</span>,</span>
 <span>  which.data <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  correlation.method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"pearson"</span>, <span class="st">"spearman"</span><span class="op">)</span>,</span>
+<span>  correlation.display.values <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  PCA.color.column <span class="op">=</span> <span class="st">"column.id"</span>,</span>
 <span>  PCA.shape.column <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  PCA.label.column <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -143,6 +144,10 @@ are chosen automatically (imputed &gt; normalized &gt; randomized &gt; raw).</p>
 <dd><p>Character vector with the correlation method(s) to display in the QC section. Any of 'pearson', 'spearman', 'kendall'. Default: <code>c("pearson", "spearman")</code>.</p></dd>
 
 
+<dt id="arg-correlation-display-values">correlation.display.values<a class="anchor" aria-label="anchor" href="#arg-correlation-display-values"></a></dt>
+<dd><p>Logical; whether the correlation coefficient is printed inside each cell of the sample-correlation heatmaps. Default: <code>TRUE</code>.</p></dd>
+
+
 <dt id="arg-pca-color-column">PCA.color.column<a class="anchor" aria-label="anchor" href="#arg-pca-color-column"></a></dt>
 <dd><p>String with the metadata column used to color the PCA points. Default: <code>"column.id"</code> (one color per sample).</p></dd>
 
@@ -172,7 +177,7 @@ are chosen automatically (imputed &gt; normalized &gt; randomized &gt; raw).</p>
 
 
 <dt id="arg-top-n-proteins">top.n.proteins<a class="anchor" aria-label="anchor" href="#arg-top-n-proteins"></a></dt>
-<dd><p>Integer; number of top proteins (ranked by adjusted p-value) shown in the per-contrast results table. Default: <code>25</code>.</p></dd>
+<dd><p>Integer; number of top proteins shown in the per-contrast results table, ranked by a combined score <code>-log10(padj) * abs(log2FC)</code> (the score itself is not shown). Default: <code>25</code>.</p></dd>
 
 
 <dt id="arg-plot-width-plot-height">plot.width, plot.height<a class="anchor" aria-label="anchor" href="#arg-plot-width-plot-height"></a></dt>
