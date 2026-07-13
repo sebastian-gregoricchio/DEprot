@@ -96,7 +96,7 @@ Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eic
             <h4 data-toc-skip class="date">Last update: 13<sup>th</sup>
 July, 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.2.0/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
       <div class="hidden name"><code>DEprot.overview.vignette.Rmd</code></div>
 
     </div>
@@ -884,14 +884,14 @@ simulating distribution and proportion of the original data.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; tkNN                    tkNN 0.5135173         0.9851722            2.02    1
-&gt; corkNN                corkNN 0.5135173         0.9851722            2.03    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          123.00    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.46    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.85    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.93    6
-&gt; missForest        missForest 0.5664830         0.9813784           32.10    7
-&gt; LLS                      LLS 0.6326730         0.9684621            3.58    8</code></pre>
+&gt; tkNN                    tkNN 0.5135173         0.9851722            1.76    1
+&gt; corkNN                corkNN 0.5135173         0.9851722            1.76    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672          126.60    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.25    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.77    5
+&gt; SVD                      SVD 0.5442393         0.9791497            3.65    6
+&gt; missForest        missForest 0.5664830         0.9813784           29.92    7
+&gt; LLS                      LLS 0.6326730         0.9684621            3.56    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -1909,8 +1909,15 @@ FoldChange and p-value thresholds are collected from the
 differential status of the proteins.</p>
 </blockquote>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">volcano</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot.volcano.html">plot.volcano</a></span><span class="op">(</span><span class="va">dpo_analyses</span>, contrast <span class="op">=</span> <span class="fl">1</span>, use.uncorrected.pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">MAplot</span> <span class="op">=</span> <span class="fu"><a href="../reference/plot.MA.html">plot.MA</a></span><span class="op">(</span><span class="va">dpo_analyses</span>, contrast <span class="op">=</span> <span class="fl">1</span>, use.uncorrected.pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">volcano</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot.volcano.html">plot.volcano</a></span><span class="op">(</span><span class="va">dpo_analyses</span>,</span>
+<span>                        contrast <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                        label.top.n <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>                        label.font.size <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                        use.uncorrected.pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">MAplot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot.MA.html">plot.MA</a></span><span class="op">(</span><span class="va">dpo_analyses</span>,</span>
+<span>                  contrast <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                  use.uncorrected.pvalue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">volcano</span>, <span class="va">MAplot</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/DE_volcano_MA-1.png" class="r-plt" alt="" width="864" style="display: block; margin: auto;"></p>
