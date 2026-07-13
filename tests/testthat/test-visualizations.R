@@ -107,7 +107,7 @@ test_that("plot.volcano works (label in box)", {
 
 
 test_that("plot.volcano works (label as text)", {
-  expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, dot.labels = "protein.19", labels.in.boxes = FALSE))
+  expect_no_error(plot.volcano(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma, contrast = 1, dot.labels = "protein.19", labels.in.boxes = FALSE, label.top.n = 1, use.uncorrected.pvalue = TRUE))
 })
 
 
