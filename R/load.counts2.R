@@ -59,6 +59,9 @@ load.counts2 =
         ### Check if the matrix has rownames
         if (is.null(rownames(x))) {
           stop("The count matrix has no protein row names.", call. = FALSE)}
+        else if (.row_names_info(x) < 0) {
+          stop("The count matrix has no protein row names.", call. = FALSE)
+        }
 
         ### Check if "" (empty names) are present
         if ("" %in% rownames(x) | NA %in% rownames(x)) {
@@ -66,7 +69,7 @@ load.counts2 =
           #return(return())
           ### Check if rownames are duplicated
         } else if (TRUE %in% duplicated(rownames(counts))) {
-          message("One or more rownames in the counts tables are duplicated. Only unique values are allowed.\nThe `make.unique` function is applied on counts rownames using a '.' as separator.")
+          warning("One or more rownames in the counts tables are duplicated. Only unique values are allowed.\nThe `make.unique` function is applied on counts rownames using a '.' as separator.")
           rownames(x) = make.unique(names = rownames(x), sep = ".")
           return(x)
         } else {
