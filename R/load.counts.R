@@ -19,6 +19,8 @@
 #'
 #' @author Sebastian Gregoricchio
 #'
+#' @keywords internal
+#'
 #' @examples
 #' # Raw counts
 #' dpo <- load.counts(counts = DEprot::unimputed.counts,

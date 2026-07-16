@@ -56,3 +56,4 @@ dpo <- load.counts(counts = DEprot::unimputed.counts,
 \author{
 Sebastian Gregoricchio
 }
+\keyword{internal}

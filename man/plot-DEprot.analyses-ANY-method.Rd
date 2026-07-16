@@ -4,7 +4,15 @@
 \alias{plot,DEprot.analyses,ANY-method}
 \title{DEprot.analyses plot-method}
 \usage{
-\S4method{plot}{DEprot.analyses,ANY}(x, y, ..., plot.type = "volcano", ncol = NULL, nrow = NULL)
+\S4method{plot}{DEprot.analyses,ANY}(
+  x,
+  y,
+  ...,
+  plot.type = "volcano",
+  label.top.n = NULL,
+  ncol = NULL,
+  nrow = NULL
+)
 }
 \arguments{
 \item{x}{Object of class \code{DEprot.analyses}}
@@ -12,6 +20,12 @@
 \item{y}{Not used.}
 
 \item{...}{Not used.}
+
+\item{plot.type}{String indicating which plots need to be summarized: 'volcano', 'MA', 'correlation', 'PCA'. Default: \code{"volcano"}.}
+
+\item{label.top.n}{Single integer value (or \code{NULL}) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by \code{-log10(padj) * abs(log2FC)} and the top \code{N} are labeled; if fewer than \code{N} differential proteins are available, all of them are labeled. When \code{use.uncorrected.pvalue = TRUE}, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through \code{dot.labels} are added to the automatically selected ones, and \code{labels.in.boxes} together with the other label aesthetics apply to them as well. Default: \code{NULL} (no automatic labels).}
+
+\item{ncol, nrow}{The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.}
 }
 \description{
 DEprot.analyses plot-method

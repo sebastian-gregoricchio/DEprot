@@ -413,6 +413,7 @@ setMethod(
 #' @param x Object of class \code{DEprot}.
 #' @param y Not used.
 #' @param ... Not used.
+#' @param ncol,nrow The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.
 #' @keywords internal
 #' @importFrom patchwork wrap_plots
 #' @export
@@ -509,24 +510,27 @@ setMethod(f = "summary",
 #' @param x Object of class \code{DEprot.analyses}
 #' @param y Not used.
 #' @param ... Not used.
+#' @param plot.type String indicating which plots need to be summarized: 'volcano', 'MA', 'correlation', 'PCA'. Default: \code{"volcano"}.
+#' @param label.top.n Single integer value (or \code{NULL}) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by \code{-log10(padj) * abs(log2FC)} and the top \code{N} are labeled; if fewer than \code{N} differential proteins are available, all of them are labeled. When \code{use.uncorrected.pvalue = TRUE}, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through \code{dot.labels} are added to the automatically selected ones, and \code{labels.in.boxes} together with the other label aesthetics apply to them as well. Default: \code{NULL} (no automatic labels).
+#' @param ncol,nrow The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.
 #' @keywords internal
 #' @importFrom patchwork wrap_plots
 #' @export
 setMethod(f = "plot",
           signature = "DEprot.analyses",
           definition =
-            function(x, y, ..., plot.type = "volcano", ncol = NULL, nrow = NULL) {
+            function(x, y, ..., plot.type = "volcano", label.top.n = NULL, ncol = NULL, nrow = NULL) {
 
               if (tolower(plot.type) %in% c("v", "volcano", "volcanos")) {
                 plots = lapply(seq_along(x$analyses.result.list),
                                function(i) {
-                                 x$analyses.result.list[[i]]$volcano
+                                 plot.volcano(DEprot.analyses.object = x, contrast = i, label.top.n = label.top.n)
                                }) }
 
               else if (tolower(plot.type) %in% c("m", "ma", "mas")) {
                 plots = lapply(seq_along(x$analyses.result.list),
                                function(i) {
-                                 x$analyses.result.list[[i]]$MA.plot
+                                 plot.MA(DEprot.analyses.object = x, contrast = i, label.top.n = label.top.n)
                                }) }
 
               else if (tolower(plot.type) %in% c("c", "cor", "corr", "cors", "corrs", "correlation", "correlations")) {

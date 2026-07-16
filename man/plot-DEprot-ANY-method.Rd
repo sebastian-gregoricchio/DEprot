@@ -12,6 +12,8 @@
 \item{y}{Not used.}
 
 \item{...}{Not used.}
+
+\item{ncol, nrow}{The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.}
 }
 \description{
 DEprot plot-method
