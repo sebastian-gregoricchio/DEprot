@@ -64,7 +64,15 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S4 method for class 'DEprot.analyses,ANY'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span>, plot.type <span class="op">=</span> <span class="st">"volcano"</span>, ncol <span class="op">=</span> <span class="cn">NULL</span>, nrow <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  plot.type <span class="op">=</span> <span class="st">"volcano"</span>,</span>
+<span>  label.top.n <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ncol <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nrow <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,6 +89,18 @@
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Not used.</p></dd>
+
+
+<dt id="arg-plot-type">plot.type<a class="anchor" aria-label="anchor" href="#arg-plot-type"></a></dt>
+<dd><p>String indicating which plots need to be summarized: 'volcano', 'MA', 'correlation', 'PCA'. Default: <code>"volcano"</code>.</p></dd>
+
+
+<dt id="arg-label-top-n">label.top.n<a class="anchor" aria-label="anchor" href="#arg-label-top-n"></a></dt>
+<dd><p>Single integer value (or <code>NULL</code>) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by <code>-log10(padj) * abs(log2FC)</code> and the top <code>N</code> are labeled; if fewer than <code>N</code> differential proteins are available, all of them are labeled. When <code>use.uncorrected.pvalue = TRUE</code>, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through <code>dot.labels</code> are added to the automatically selected ones, and <code>labels.in.boxes</code> together with the other label aesthetics apply to them as well. Default: <code>NULL</code> (no automatic labels).</p></dd>
+
+
+<dt id="arg-ncol-nrow">ncol, nrow<a class="anchor" aria-label="anchor" href="#arg-ncol-nrow"></a></dt>
+<dd><p>The dimensions of the grid to create - if both are NULL (default) it will use the same logic as <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap()</a></code> to set the dimensions.</p></dd>
 
 </dl></div>
 
