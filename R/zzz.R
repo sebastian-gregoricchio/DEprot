@@ -9,18 +9,22 @@
 
     update_check <- .get_option("update_check", TRUE)
 
-    if (update_check == TRUE) {
+    if (isTRUE(update_check) && nzchar(system.file(package = "R.utils"))) {
 
       # Check internet connection
-      if (isFALSE(curl::has_internet())) {return(invisible(NULL))}
+      if (!isTRUE(tryCatch(curl::has_internet(), error = function(e) FALSE))) return(invisible(NULL))
 
       # Store package versions
-      check = suppressMessages(rvcheck::check_github(paste0("sebastian-gregoricchio/",pkgname)))
-      # When up-to-date == NA it means that it is a developmental version higher then the last release
-      if (is.na(check$up_to_date)) {return(invisible(NULL))}
+      check = tryCatch(suppressMessages(R.utils::withTimeout(rvcheck::check_github(paste0("sebastian-gregoricchio/", pkgname)),
+                                                             timeout = 5, onTimeout = "silent")),
+                       error = function(e) NULL)
+
+       # When up-to-date == NA it means that it is a developmental version higher then the last release
+      if (is.null(check) || is.null(check$up_to_date) || is.na(check$up_to_date)) {
+        return(invisible(NULL))}
 
       # Check if package is up-to-date and print a message if not up-to-date
-      if (check$up_to_date == F) {
+      if (isFALSE(check$up_to_date)) {
         message = paste("| The `",pkgname,"` package is not up-to-date. Installed version v",
                         check$installed_version, " --> v", check$latest_version,
                         " available.", sep="")
