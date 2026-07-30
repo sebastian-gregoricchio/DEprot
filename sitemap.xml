@@ -11,6 +11,7 @@
 <url><loc>/reference/DEprot-dollar.html</loc></url>
 <url><loc>/reference/DEprot-options.html</loc></url>
 <url><loc>/reference/DEprot.PCA-class.html</loc></url>
+<url><loc>/reference/DEprot.PCoA-class.html</loc></url>
 <url><loc>/reference/DEprot.RMSE-class.html</loc></url>
 <url><loc>/reference/DEprot.SAINTq-class.html</loc></url>
 <url><loc>/reference/DEprot.analyses-class.html</loc></url>
@@ -36,6 +37,17 @@
 <url><loc>/reference/diff.analyses.html</loc></url>
 <url><loc>/reference/diff.analyses.limma.html</loc></url>
 <url><loc>/reference/diff.analyses.prolfqua.html</loc></url>
+<url><loc>/reference/dot-PCoA.axis.loadings.html</loc></url>
+<url><loc>/reference/dot-check.aes.columns.html</loc></url>
+<url><loc>/reference/dot-check.ordination.axes.html</loc></url>
+<url><loc>/reference/dot-corum.reshape.html</loc></url>
+<url><loc>/reference/dot-cumulative.plot.html</loc></url>
+<url><loc>/reference/dot-lingoes.correction.html</loc></url>
+<url><loc>/reference/dot-loading.layers.html</loc></url>
+<url><loc>/reference/dot-ordination.scatter.123.html</loc></url>
+<url><loc>/reference/dot-ordination.scatter.html</loc></url>
+<url><loc>/reference/dot-ordination.slots.html</loc></url>
+<url><loc>/reference/dot-scale.loadings.html</loc></url>
 <url><loc>/reference/dpo.imputed.counts.html</loc></url>
 <url><loc>/reference/export.analyses.html</loc></url>
 <url><loc>/reference/export.report.html</loc></url>
@@ -56,6 +68,7 @@
 <url><loc>/reference/load.counts2.html</loc></url>
 <url><loc>/reference/normalize.counts.html</loc></url>
 <url><loc>/reference/perform.PCA.html</loc></url>
+<url><loc>/reference/perform.PCoA.html</loc></url>
 <url><loc>/reference/plot-DEprot-ANY-method.html</loc></url>
 <url><loc>/reference/plot-DEprot.analyses-ANY-method.html</loc></url>
 <url><loc>/reference/plot-DEprot.normality-ANY-method.html</loc></url>
@@ -65,6 +78,10 @@
 <url><loc>/reference/plot.PC.cumulative.html</loc></url>
 <url><loc>/reference/plot.PC.scatter.123.html</loc></url>
 <url><loc>/reference/plot.PC.scatter.html</loc></url>
+<url><loc>/reference/plot.PCoA.biplot.html</loc></url>
+<url><loc>/reference/plot.PCoA.cumulative.html</loc></url>
+<url><loc>/reference/plot.PCoA.scatter.123.html</loc></url>
+<url><loc>/reference/plot.PCoA.scatter.html</loc></url>
 <url><loc>/reference/plot.correlation.heatmap.html</loc></url>
 <url><loc>/reference/plot.counts.html</loc></url>
 <url><loc>/reference/plot.upset.html</loc></url>
@@ -80,6 +97,7 @@
 <url><loc>/reference/sample.config.html</loc></url>
 <url><loc>/reference/show-DEprot-method.html</loc></url>
 <url><loc>/reference/show-DEprot.PCA-method.html</loc></url>
+<url><loc>/reference/show-DEprot.PCoA-method.html</loc></url>
 <url><loc>/reference/show-DEprot.RMSE-method.html</loc></url>
 <url><loc>/reference/show-DEprot.SAINTq-method.html</loc></url>
 <url><loc>/reference/show-DEprot.analyses-method.html</loc></url>
