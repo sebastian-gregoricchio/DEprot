@@ -192,7 +192,7 @@ heatmap.contrasts =
       ggtitle(title) +
       theme_classic() +
       theme(axis.line = element_blank(),
-            #axis.ticks = element_blank(),
+            axis.ticks.x = element_blank(),
             axis.text.x = ggtext::element_markdown(color = "black", angle = 30, hjust = 0),
             plot.title = ggtext::element_markdown(color = "black", hjust = 0.5),
             panel.border = element_rect(fill = NA, color = "black", linewidth = 1),

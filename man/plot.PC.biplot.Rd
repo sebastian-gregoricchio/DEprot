@@ -4,7 +4,7 @@
 \alias{plot.PC.biplot}
 \title{plot.PC.biplot}
 \usage{
-plot.PC.biplot(
+\method{plot}{PC.biplot}(
   DEprot.PCA.object,
   PC.x = 2,
   PC.y = 1,
@@ -61,12 +61,15 @@ proteins contribute most to the separation of samples along the selected princip
 \details{
 The function extracts protein loadings from the PCA object stored in the \code{prcomp} slot.
 When the PCA was computed using \code{stats::prcomp} (no missing values), the protein projections
-from \code{prcomp$x} are used. When the PCA was computed using \code{pcaMethods::pca} (missing values
+from \code{prcomp$rotation} are used. When the PCA was computed using \code{pcaMethods::pca} (missing values
 present), the protein loadings from the \code{loadings} slot are used.\cr
 In both cases, the loadings are scaled so that the arrows fit visually within the range of the
 sample scores. Only the top \code{n.loadings} proteins (by Euclidean distance from origin in the
 selected PC plane) are displayed to keep the plot readable.\cr
-Gene/protein names are extracted from the row names of the loadings matrix.
+Gene/protein names are extracted from the row names of the loadings matrix.\cr\cr
+\strong{Note.} The arrows of a PCA biplot are the rotation coefficients, i.e. the exact linear map between
+the proteins and the components. They are conceptually different from the arrows displayed by
+\link{plot.PCoA.biplot}, which are an a-posteriori projection.
 }
 \examples{
 # Perform Principal Component Analyses (PCA)
@@ -88,7 +91,7 @@ plot.PC.biplot(DEprot.PCA.object = pca,
 
 }
 \seealso{
-\link{perform.PCA}, \link{plot.PC.scatter}
+\link{perform.PCA}, \link{plot.PC.scatter}, \link{plot.PCoA.biplot}
 }
 \author{
 Sebastian Gregoricchio

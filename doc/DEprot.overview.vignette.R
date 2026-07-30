@@ -300,6 +300,43 @@ corr.ERa.active <-
 
 corr.ERa.active
 
+## ----pcoa.compute-------------------------------------------------------------
+## Perform the analyses (DEprot.PCoA object)
+PCoA.ERa.active <- perform.PCoA(DEprot.correlation.object = corr.ERa.active,
+                                DEprot.object = dpo) # needed only for the biplot
+
+## ----pcoa.shepard-------------------------------------------------------------
+PCoA.ERa.active@shepard.plot
+
+## ----pcoa.cumulative----------------------------------------------------------
+## Plot cumulative variance of all PCos
+#### equivalent to `PCoA.ERa.active@cumulative.PCo.plot`
+plot.PCoA.cumulative(DEprot.PCoA.object = PCoA.ERa.active,
+                     bar.color = "indianred",
+                     line.color = "firebrick4",
+                     title = "**Only ERa active**")
+
+## ----pcoa.scatter-------------------------------------------------------------
+## Combined PCo1-vs-PCo2 and PCo3-vs-PCo2 scatters
+#### equivalent to `PCoA.ERa.active@scatter.plot.123`
+plot.PCoA.scatter.123(DEprot.PCoA.object = PCoA.ERa.active,
+                      color.column = "condition",
+                      shape.column = "replicate",
+                      label.column = "replicate",
+                      dot.colors = c("6h.10nM.E2" = "indianred",
+                                     "FBS" = "forestgreen"))
+
+## ----pcoa.biplot--------------------------------------------------------------
+## Top proteins associated with the separation (projection onto the PCos)
+PCoA_biplot_1.2 <- plot.PCoA.biplot(DEprot.PCoA.object = PCoA.ERa.active,
+                                    PCo.x = 1,
+                                    PCo.y = 2,
+                                    color.column = "condition",
+                                    shape.column = "replicate",
+                                    label.column = NULL,
+                                    n.loadings = 5)
+PCoA_biplot_1.2
+
 ## ----normality_test, message=T, fig.width=10, fig.height=10-------------------
 normality <- check.normality(DEprot.object = dpo,
                              p.threshold = 0.05,

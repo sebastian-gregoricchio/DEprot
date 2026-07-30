@@ -274,7 +274,8 @@ plot.correlation.heatmap =
           corr.metadata = corr.meta,
           corr.matrix = corr.mat,
           distance = distance,
-          cluster = corr_clust)
+          cluster = corr_clust,
+          method = correlation.method)
 
     return(DEprot.corr.object)
   } # END function

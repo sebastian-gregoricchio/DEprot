@@ -7,10 +7,14 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
-#### [v1.2.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.1) - July 13<sup>th</sup> 2026
+#### [v1.3.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.0) - July 30<sup>th</sup> 2026
 - `plot.volcano` and `plot.MA` can automatically plot the top N differential proteins
 - `export.report` will plot the top.n proteins in the volcano
 - updated vignette and manual accordingly
+- added Principal Coordinate Analysis: `perform.PCoA()` with `plot.PCoA.scatter()`, `plot.PCoA.scatter.123()`, `plot.PCoA.cumulative()` and `plot.PCoA.biplot()`, computed from a `DEprot.correlation` object
+- updated correlation class, now contains also a slot with the correlation method used
+- re-arrangement of internal functions
+- update vignette and manual
 
 
 <br>

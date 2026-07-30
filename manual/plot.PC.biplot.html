@@ -19,7 +19,7 @@ proteins contribute most to the separation of samples along the selected princip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.2.1</span>
       </span>
     </div>
 
@@ -67,7 +67,8 @@ proteins contribute most to the separation of samples along the selected princip
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot.PC.biplot</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'PC.biplot'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
 <span>  <span class="va">DEprot.PCA.object</span>,</span>
 <span>  PC.x <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  PC.y <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -153,16 +154,18 @@ proteins contribute most to the separation of samples along the selected princip
     <h2>Details</h2>
     <p>The function extracts protein loadings from the PCA object stored in the <code>prcomp</code> slot.
 When the PCA was computed using <code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">stats::prcomp</a></code> (no missing values), the protein projections
-from <code>prcomp$x</code> are used. When the PCA was computed using <code><a href="https://rdrr.io/pkg/pcaMethods/man/pca.html" class="external-link">pcaMethods::pca</a></code> (missing values
+from <code>prcomp$rotation</code> are used. When the PCA was computed using <code><a href="https://rdrr.io/pkg/pcaMethods/man/pca.html" class="external-link">pcaMethods::pca</a></code> (missing values
 present), the protein loadings from the <code>loadings</code> slot are used.<br>
 In both cases, the loadings are scaled so that the arrows fit visually within the range of the
 sample scores. Only the top <code>n.loadings</code> proteins (by Euclidean distance from origin in the
 selected PC plane) are displayed to keep the plot readable.<br>
-Gene/protein names are extracted from the row names of the loadings matrix.</p>
+Gene/protein names are extracted from the row names of the loadings matrix.<br><br><strong>Note.</strong> The arrows of a PCA biplot are the rotation coefficients, i.e. the exact linear map between
+the proteins and the components. They are conceptually different from the arrows displayed by
+<a href="plot.PCoA.biplot.html">plot.PCoA.biplot</a>, which are an a-posteriori projection.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><a href="perform.PCA.html">perform.PCA</a>, <a href="plot.PC.scatter.html">plot.PC.scatter</a></p></div>
+    <div class="dont-index"><p><a href="perform.PCA.html">perform.PCA</a>, <a href="plot.PC.scatter.html">plot.PC.scatter</a>, <a href="plot.PCoA.biplot.html">plot.PCoA.biplot</a></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>

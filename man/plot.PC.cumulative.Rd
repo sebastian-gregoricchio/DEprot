@@ -4,7 +4,7 @@
 \alias{plot.PC.cumulative}
 \title{plot.PC.cumulative}
 \usage{
-plot.PC.cumulative(
+\method{plot}{PC.cumulative}(
   DEprot.PCA.object,
   bar.color = "steelblue",
   line.color = "navyblue",
@@ -33,6 +33,9 @@ pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
 # Plot cumulative variance barplot
 plot.PC.cumulative(pca)
 
+}
+\seealso{
+\link{perform.PCA}, \link{plot.PCoA.cumulative}
 }
 \author{
 Sebastian Gregoricchio

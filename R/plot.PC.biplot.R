@@ -24,14 +24,17 @@
 #' @details
 #' The function extracts protein loadings from the PCA object stored in the \code{prcomp} slot.
 #' When the PCA was computed using \code{stats::prcomp} (no missing values), the protein projections
-#' from \code{prcomp$x} are used. When the PCA was computed using \code{pcaMethods::pca} (missing values
+#' from \code{prcomp$rotation} are used. When the PCA was computed using \code{pcaMethods::pca} (missing values
 #' present), the protein loadings from the \code{loadings} slot are used.\cr
 #' In both cases, the loadings are scaled so that the arrows fit visually within the range of the
 #' sample scores. Only the top \code{n.loadings} proteins (by Euclidean distance from origin in the
 #' selected PC plane) are displayed to keep the plot readable.\cr
-#' Gene/protein names are extracted from the row names of the loadings matrix.
+#' Gene/protein names are extracted from the row names of the loadings matrix.\cr\cr
+#' \strong{Note.} The arrows of a PCA biplot are the rotation coefficients, i.e. the exact linear map between
+#' the proteins and the components. They are conceptually different from the arrows displayed by
+#' \link{plot.PCoA.biplot}, which are an a-posteriori projection.
 #'
-#' @seealso \link{perform.PCA}, \link{plot.PC.scatter}
+#' @seealso \link{perform.PCA}, \link{plot.PC.scatter}, \link{plot.PCoA.biplot}
 #'
 #' @name plot.PC.biplot
 #'
@@ -83,50 +86,8 @@ plot.PC.biplot =
       stop("The input must be an object of class 'DEprot.PCA'.")
     }
 
-
-    ### check feature/aes column
-    if (!(color.column %in% colnames(DEprot.PCA.object@PCs))) {
-      stop(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
-                  "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                collapse = ", ")))
-    }
-
-
-    if (!is.null(shape.column)) {
-      if (!(shape.column %in% colnames(DEprot.PCA.object@PCs))) {
-        stop(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
-                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                         collapse = ", ")))
-      } else {
-        shape.scores = DEprot.PCA.object@PCs[,shape.column]
-        shape.label = guide_legend(title = stringr::str_to_title(shape.column))
-      }
-    } else {
-      shape.scores = "Samples"
-      shape.label = "none"
-    }
-
-
-    if (!is.null(label.column)) {
-      if (!(label.column %in% colnames(DEprot.PCA.object@PCs))) {
-        stop(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
-                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                         collapse = ", ")))
-      } else {
-        show.labels = TRUE
-      }
-    } else {
-      label.column = color.column
-      show.labels = FALSE
-    }
-
-
-    ### Build table for plot (sample scores)
-    tb = data.frame(PC.x = DEprot.PCA.object@PCs[,paste0("PC",PC.x)],
-                    PC.y = DEprot.PCA.object@PCs[,paste0("PC",PC.y)],
-                    color = factor(DEprot.PCA.object@PCs[,color.column]),
-                    shape = factor(shape.scores),
-                    label = DEprot.PCA.object@PCs[,label.column])
+    ### harmonized access to the ordination slots
+    ord = .ordination.slots(DEprot.PCA.object)
 
 
     ### -----------------------------------------------
@@ -159,113 +120,39 @@ plot.PC.biplot =
 
 
     ### Build loadings data.frame
-    loadings.df = data.frame(
-      variable = rownames(loadings.mat),
-      loading.x = loadings.mat[, pc.x.col],
-      loading.y = loadings.mat[, pc.y.col]
-    )
-
-    # Compute Euclidean distance from origin for ranking
-    loadings.df$distance = sqrt(loadings.df$loading.x^2 + loadings.df$loading.y^2)
+    loadings.df = data.frame(variable = rownames(loadings.mat),
+                             loading.x = loadings.mat[, pc.x.col],
+                             loading.y = loadings.mat[, pc.y.col])
 
 
-    ### Scale loadings to fit within the score range
-    # The scaling maps the loadings range to the scores range so that arrows are visually comparable
-    score.range = max(abs(c(tb$PC.x, tb$PC.y)), na.rm = TRUE)
-    loading.range = max(abs(c(loadings.df$loading.x, loadings.df$loading.y)), na.rm = TRUE)
-
-    if (loading.range > 0) {
-      scale.factor = (score.range / loading.range) * loading.scale
-    } else {
-      scale.factor = 1
-    }
-
-    loadings.df$loading.x.scaled = loadings.df$loading.x * scale.factor
-    loadings.df$loading.y.scaled = loadings.df$loading.y * scale.factor
-
-
-    ### Select top N loadings
-    n.loadings = min(n.loadings, nrow(loadings.df))
-    loadings.top = loadings.df[order(loadings.df$distance, decreasing = TRUE),][seq_len(n.loadings),]
-
+    ### Rank and rescale the loadings (shared with plot.PCoA.biplot)
+    scaled = .scale.loadings(loadings.df = loadings.df,
+                             scores.x = ord$coordinates[,pc.x.col],
+                             scores.y = ord$coordinates[,pc.y.col],
+                             n.loadings = n.loadings,
+                             loading.scale = loading.scale)
 
 
     ### -----------------------------------------------
-    ### Build the biplot
+    ### Build the biplot (arrows are inserted below the points)
     ### -----------------------------------------------
     biplot =
-      ggplot(data = tb,
-             aes(x = PC.x,
-                 y = PC.y,
-                 shape = shape,
-                 color = color,
-                 label = label))
-
-    if (plot.zero.line.x == TRUE) {
-      biplot =
-        biplot +
-        geom_vline(xintercept = 0, color = "gray", linetype = 2)
-    }
-
-    if (plot.zero.line.y == TRUE) {
-      biplot =
-        biplot +
-        geom_hline(yintercept = 0, color = "gray", linetype = 2)
-    }
-
-
-    ## Add loading arrows (behind points)
-    biplot =
-      biplot +
-      geom_segment(data = loadings.top,
-                   aes(x = 0, y = 0,
-                       xend = loading.x.scaled,
-                       yend = loading.y.scaled),
-                   inherit.aes = FALSE,
-                   arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
-                   color = loading.color,
-                   linewidth = loading.arrow.size,
-                   alpha = loading.alpha) +
-      ggrepel::geom_text_repel(data = loadings.top,
-                               aes(x = loading.x.scaled,
-                                   y = loading.y.scaled,
-                                   label = variable),
-                               inherit.aes = FALSE,
-                               color = loading.color,
-                               size = loading.label.size,
-                               alpha = loading.alpha,
-                               fontface = "italic",
-                               max.overlaps = 100,
-                               segment.color = loading.color,
-                               segment.alpha = loading.alpha * 0.5,
-                               segment.size = 0.3)
-
-
-    ## Add sample points (on top of arrows)
-    biplot =
-      biplot +
-      geom_point(size = 3) +
-      theme_classic() +
-      xlab(paste0("PC", PC.x, " (", round(DEprot.PCA.object@importance$Percentage.of.Variance[PC.x],1), "%)")) +
-      ylab(paste0("PC", PC.y, " (", round(DEprot.PCA.object@importance$Percentage.of.Variance[PC.y],1), "%)")) +
-      theme(aspect.ratio = 1,
-            axis.line = element_blank(),
-            axis.ticks = element_line(color = "black"),
-            axis.text = element_text(color = "black"),
-            panel.border = element_rect(color = "black", fill = NA))
-
-
-    ## Add sample labels
-    if (show.labels == TRUE) {
-      biplot = biplot + ggrepel::geom_text_repel(max.overlaps = 100,
-                                                 show.legend = FALSE)
-    }
-
-    biplot =
-      biplot +
-      guides(color = guide_legend(title = ifelse(color.column == "column.id", yes = "Samples", no = stringr::str_to_title(color.column))),
-             shape = shape.label)
-
+      .ordination.scatter(coordinates = ord$coordinates,
+                          importance = ord$importance,
+                          axis.prefix = ord$axis.prefix,
+                          axis.x = PC.x,
+                          axis.y = PC.y,
+                          color.column = color.column,
+                          shape.column = shape.column,
+                          label.column = label.column,
+                          plot.zero.line.x = plot.zero.line.x,
+                          plot.zero.line.y = plot.zero.line.y,
+                          positive.axis = ord$positive.axis,
+                          extra.layers = .loading.layers(loadings.top = scaled$top,
+                                                         loading.color = loading.color,
+                                                         loading.arrow.size = loading.arrow.size,
+                                                         loading.label.size = loading.label.size,
+                                                         loading.alpha = loading.alpha))
 
     return(biplot)
-  }
+  } # END function

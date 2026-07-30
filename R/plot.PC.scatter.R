@@ -10,11 +10,10 @@
 #' @param label.column String indicating the name of the column in the \code{metadata} to use as label of the dots. Default: \code{NULL} (no labeling).
 #' @param plot.zero.line.x Logical value to indicate whether to plot two gray dashed line in correspondence of x=0. Default: \code{TRUE}.
 #' @param plot.zero.line.y Logical value to indicate whether to plot two gray dashed line in correspondence of y=0. Default: \code{TRUE}.
-
 #'
 #' @return A ggplot object.
 #'
-#' @seealso \link{perform.PCA}
+#' @seealso \link{perform.PCA}, \link{plot.PC.scatter.123}, \link{plot.PCoA.scatter}
 #'
 #' @name plot.PC.scatter
 #'
@@ -62,97 +61,23 @@ plot.PC.scatter =
       stop("The input must be an object of class 'DEprot.PCA'.")
     }
 
-
-    ### check feature/aes column
-    if (!(color.column %in% colnames(DEprot.PCA.object@PCs))) {
-      stop(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
-                  "Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                collapse = ", ")))
-    }
+    ### harmonized access to the ordination slots
+    ord = .ordination.slots(DEprot.PCA.object)
 
 
-    if (!is.null(shape.column)) {
-      if (!(shape.column %in% colnames(DEprot.PCA.object@PCs))) {
-        stop(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
-                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                         collapse = ", ")))
-      } else {
-        shape.scores = DEprot.PCA.object@PCs[,shape.column]
-        shape.label = guide_legend(title = stringr::str_to_title(shape.column))
-      }
-    } else {
-      shape.scores = "Samples"
-      shape.label = "none"
-    }
-
-
-    if (!is.null(label.column)) {
-      if (!(label.column %in% colnames(DEprot.PCA.object@PCs))) {
-        stop(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
-                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                         collapse = ", ")))
-      } else {
-        show.labels = TRUE
-      }
-    } else {
-      label.column = color.column
-      show.labels = FALSE
-    }
-
-
-    ### Build table for plot
-    tb = data.frame(PC.x = DEprot.PCA.object@PCs[,paste0("PC",PC.x)],
-                    PC.y = DEprot.PCA.object@PCs[,paste0("PC",PC.y)],
-                    color = factor(DEprot.PCA.object@PCs[,color.column]),
-                    shape = factor(shape.scores),
-                    label = DEprot.PCA.object@PCs[,label.column])
-
-
-    ### Make basic plot
+    ### Generate the plot (shared body with plot.PCoA.scatter)
     PCA.plot =
-      ggplot(data = tb,
-             aes(x = PC.x,
-                 y = PC.y,
-                 shape = shape,
-                 color = color,
-                 label = label))
-
-    if (plot.zero.line.x == TRUE) {
-      PCA.plot =
-        PCA.plot +
-        geom_vline(xintercept = 0, color = "gray", linetype = 2)
-    }
-
-    if (plot.zero.line.y == TRUE) {
-      PCA.plot =
-        PCA.plot +
-        geom_hline(yintercept = 0, color = "gray", linetype = 2)
-    }
-
-    PCA.plot =
-      PCA.plot +
-      geom_point(size = 3) +
-      theme_classic() +
-      xlab(paste0("PC", PC.x, " (", round(DEprot.PCA.object@importance$Percentage.of.Variance[PC.x],1), "%)")) +
-      ylab(paste0("PC", PC.y, " (", round(DEprot.PCA.object@importance$Percentage.of.Variance[PC.y],1), "%)")) +
-      theme(aspect.ratio = 1,
-            axis.line = element_blank(),
-            axis.ticks = element_line(color = "black"),
-            axis.text = element_text(color = "black"),
-            panel.border = element_rect(color = "black", fill = NA))
-
-
-    ## Add labels
-    if (show.labels == TRUE) {
-      PCA.plot = PCA.plot + ggrepel::geom_text_repel(max.overlaps = 100,
-                                                     show.legend = F)
-    }
-
-    PCA.plot =
-      PCA.plot +
-      guides(color = guide_legend(title = ifelse(color.column == "column.id", yes = "Samples", no = stringr::str_to_title(color.column))),
-             shape = shape.label)
-
+      .ordination.scatter(coordinates = ord$coordinates,
+                          importance = ord$importance,
+                          axis.prefix = ord$axis.prefix,
+                          axis.x = PC.x,
+                          axis.y = PC.y,
+                          color.column = color.column,
+                          shape.column = shape.column,
+                          label.column = label.column,
+                          plot.zero.line.x = plot.zero.line.x,
+                          plot.zero.line.y = plot.zero.line.y,
+                          positive.axis = ord$positive.axis)
 
     return(PCA.plot)
-  }
+  } # END function

@@ -15,7 +15,7 @@
 #'
 #' @return A patchwork object result of a combination of two ggplot objects.
 #'
-#' @seealso \link{perform.PCA} and \link{plot.PC.scatter}
+#' @seealso \link{perform.PCA}, \link{plot.PC.scatter}, \link{plot.PCoA.scatter.123}
 #'
 #' @name plot.PC.scatter.123
 #'
@@ -52,115 +52,31 @@ plot.PC.scatter.123 =
            plot.zero.line.x.23 = TRUE) {
 
 
-    # ### Libraries
-    # require(ggplot2)
-
-
     ### check object
     if (!("DEprot.PCA" %in% class(DEprot.PCA.object))) {
       stop("The input must be an object of class 'DEprot.PCA'.")
     }
 
-
-    ### check feature/aes column
-    if (!(color.column %in% colnames(DEprot.PCA.object@PCs))) {
-      stop(paste0("The color column '", color.column, "' is not present in the PC analyses table.\n",
-                  "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                       collapse = ", ")))
-    }
+    ### harmonized access to the ordination slots
+    ord = .ordination.slots(DEprot.PCA.object)
 
 
-    if (!is.null(shape.column)) {
-      if (!(shape.column %in% colnames(DEprot.PCA.object@PCs))) {
-        stop(paste0("The shape column '", shape.column, "' is not present in the PC analyses table.\n",
-                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                         collapse = ", ")))
-      } else {
-        shape.scores = DEprot.PCA.object@PCs[,shape.column]
-        shape.label = guide_legend(title = stringr::str_to_title(shape.column))
-      }
-    } else {
-      shape.scores = "Samples"
-      shape.label = "none"
-    }
-
-
-    if (!is.null(label.column)) {
-      if (!(label.column %in% colnames(DEprot.PCA.object@PCs))) {
-        stop(paste0("The label column '", label.column, "' is not present in the PC analyses table.\n",
-                    "       Available columns: ", paste0(colnames(DEprot.PCA.object@PCs)[!grepl("^PC", colnames(DEprot.PCA.object@PCs))],
-                                                         collapse = ", ")))
-      }
-    }
-
-
-
-    ### Define/check colors
-    # Get length and labels of colors
-    if (is.factor(DEprot.PCA.object@PCA.metadata[,color.column])) {
-      color.labels = levels(DEprot.PCA.object@PCA.metadata[,color.column])
-    } else {
-      color.labels = unique(DEprot.PCA.object@PCA.metadata[,color.column])
-    }
-
-    # assign/collect colors
-    if (is.null(dot.colors) | length(dot.colors) < length(color.labels)) {
-      if (!is.null(dot.colors)) {message(paste0("The number of 'dot.colors' provided is lower the required values (",length(color.labels),").\nValues will be assigned automatically."))}
-      scatter.colors = rainbow(n = length(color.labels), s = 0.5)
-    } else {
-      scatter.colors = dot.colors
-    }
-
-    # assign names to the colors if necessary
-    if (is.null(names(scatter.colors))) {
-      names(scatter.colors) = color.labels
-    }
-
-
-
-    ##### Generate plots
-    pca.1.2 =
-      DEprot::plot.PC.scatter(DEprot.PCA.object,
-                              PC.x = 1,
-                              PC.y = 2,
+    ### Generate the combined plot (shared body with plot.PCoA.scatter.123)
+    combined.plot =
+      .ordination.scatter.123(coordinates = ord$coordinates,
+                              metadata = ord$metadata,
+                              importance = ord$importance,
+                              axis.prefix = ord$axis.prefix,
                               color.column = color.column,
                               shape.column = shape.column,
                               label.column = label.column,
-                              plot.zero.line.x = FALSE,
-                              plot.zero.line.y = FALSE) +
-      scale_color_manual(values = scatter.colors) +
-      theme(legend.position = "none")
+                              dot.colors = dot.colors,
+                              title = title,
+                              plot.zero.line.y.12 = plot.zero.line.y.12,
+                              plot.zero.line.x.12 = plot.zero.line.x.12,
+                              plot.zero.line.y.23 = plot.zero.line.y.23,
+                              plot.zero.line.x.23 = plot.zero.line.x.23,
+                              positive.axis = ord$positive.axis)
 
-    pca.2.3 =
-      DEprot::plot.PC.scatter(DEprot.PCA.object,
-                              PC.x = 3,
-                              PC.y = 2,
-                              color.column = color.column,
-                              shape.column = shape.column,
-                              label.column = label.column,
-                              plot.zero.line.x = FALSE,
-                              plot.zero.line.y = FALSE) +
-      ylab(NULL) +
-      scale_color_manual(values = scatter.colors)
-
-
-
-    ## Add zero-lines
-    if (plot.zero.line.y.12 == TRUE) {pca.1.2 = pca.1.2 + geom_hline(yintercept = 0, linetype = 2, color = "gray")}
-    if (plot.zero.line.y.23 == TRUE) {pca.2.3 = pca.2.3 + geom_hline(yintercept = 0, linetype = 2, color = "gray")}
-
-    if (plot.zero.line.x.12 == TRUE) {pca.1.2 = pca.1.2 + geom_vline(xintercept = 0, linetype = 2, color = "gray")}
-    if (plot.zero.line.x.23 == TRUE) {pca.2.3 = pca.2.3 + geom_vline(xintercept = 0, linetype = 2, color = "gray")}
-
-
-    ### Export combined plot
-    if (is.null(title)) {
-      return(patchwork::wrap_plots(pca.1.2, pca.2.3, nrow = 1))
-    } else {
-      return(patchwork::wrap_plots(pca.1.2, pca.2.3, nrow = 1) +
-               patchwork::plot_annotation(title = title,
-                                          theme = theme(plot.title = ggtext::element_markdown(hjust = 0.5)))
-      )
-    }
-
+    return(combined.plot)
   } # END FUNCTION

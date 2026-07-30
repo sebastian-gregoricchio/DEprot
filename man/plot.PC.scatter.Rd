@@ -4,7 +4,7 @@
 \alias{plot.PC.scatter}
 \title{plot.PC.scatter}
 \usage{
-plot.PC.scatter(
+\method{plot}{PC.scatter}(
   DEprot.PCA.object,
   PC.x = 2,
   PC.y = 1,
@@ -60,7 +60,7 @@ plot.PC.scatter(DEprot.PCA.object = pca,
 
 }
 \seealso{
-\link{perform.PCA}
+\link{perform.PCA}, \link{plot.PC.scatter.123}, \link{plot.PCoA.scatter}
 }
 \author{
 Sebastian Gregoricchio
