@@ -16,6 +16,7 @@
 #' }
 #'
 #' @import fitdistrplus
+#' @importFrom stats dchisq df dt ks.test pchisq pf pt qchisq qf qt
 #'
 #' @name identify.distribution
 #'
