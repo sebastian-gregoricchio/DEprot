@@ -204,6 +204,7 @@
   }
 
 
+
 # ----------------------------------------------------------------------------------------
 
 
@@ -329,6 +330,7 @@
 
     return(ordination.plot)
   }
+
 
 
 # ----------------------------------------------------------------------------------------
@@ -512,14 +514,14 @@
     if (!(axis.prefix %in% colnames(tb))) {
       stop(paste0("The importance table does not contain the axis column '", axis.prefix, "'."))
     }
-    tb$axis = factor(as.character(tb[,axis.prefix]),
-                     levels = as.character(tb[,axis.prefix]))
+    tb$axis.id = factor(as.character(tb[,axis.prefix]),
+                        levels = as.character(tb[,axis.prefix]))
 
 
     ### Generate plot
     cumulative.plot =
       ggplot(data = tb,
-             aes(x = axis)) +
+             aes(x = axis.id)) +
       geom_bar(mapping = aes(y = Proportion.of.Variance),
                stat = "identity",
                fill = bar.color) +
@@ -671,5 +673,6 @@
                                   segment.alpha = loading.alpha * 0.5,
                                   segment.size = 0.3))
   }
+
 
 # ----------------------------------------------------------------------------------------
