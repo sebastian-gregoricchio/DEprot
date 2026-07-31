@@ -8,6 +8,7 @@
 <url><loc>/index.html</loc></url>
 <url><loc>/news/index.html</loc></url>
 <url><loc>/reference/DEprot-class.html</loc></url>
+<url><loc>/reference/DEprot-dollar-methods.html</loc></url>
 <url><loc>/reference/DEprot-dollar.html</loc></url>
 <url><loc>/reference/DEprot-options.html</loc></url>
 <url><loc>/reference/DEprot.PCA-class.html</loc></url>
@@ -31,7 +32,6 @@
 <url><loc>/reference/compare.ranking.html</loc></url>
 <url><loc>/reference/contrast.LFQ.html</loc></url>
 <url><loc>/reference/contrast.scatter.html</loc></url>
-<url><loc>/reference/corum.reshape.html</loc></url>
 <url><loc>/reference/corum_v4.1.html</loc></url>
 <url><loc>/reference/corum_v5.0.html</loc></url>
 <url><loc>/reference/diff.analyses.html</loc></url>
