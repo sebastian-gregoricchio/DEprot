@@ -845,8 +845,47 @@ setMethod(f = "summary",
   grep(pattern, full, value = TRUE)
 }
 
+
+
+
+
+
+
 # S4 has no `$` by default, so define it (plus `$<-`) for every class,
 # otherwise the `$` completions would error the moment they are evaluated.
+
+#' @title Slot access for DEprot classes
+#'
+#' @description Instance-aware slot access and replacement for all the DEprot S4 classes.
+#' These methods allow the slots of a DEprot object to be accessed and modified with the
+#' \code{$} operator (in addition to the standard \code{@} operator), enabling slot-name
+#' auto-completion in interactive sessions.
+#'
+#' @param x An object of one of the DEprot classes: \code{DEprot}, \code{DEprot.analyses},
+#' \code{DEprot.PCA}, \code{DEprot.PCoA}, \code{DEprot.correlation}, \code{DEprot.counts.heatmap},
+#' \code{DEprot.contrast.heatmap}, \code{DEprot.upset}, \code{DEprot.normality}, \code{DEprot.pvalues},
+#' \code{DEprot.enrichResult}, \code{DEprot.RMSE}, \code{DEprot.SAINTq}.
+#' @param name Name of the slot to access or replace.
+#' @param value The value to assign to the slot (only for \code{$<-}).
+#'
+#' @return For \code{$}, the content of the corresponding slot. For \code{$<-}, the object with the updated slot.
+#'
+#' @name DEprot-dollar-methods
+#' @rdname DEprot-dollar-methods
+#'
+#' @author Sebastian Gregoricchio
+NULL
+
+
+
+#' Dollar-style access for DEprot objects
+#' @name DEprot-dollar
+#' @keywords internal
+#' @exportMethod $
+#' @exportMethod $<-
+NULL
+
+
 for (.cls in .deprot_classes) {
   setMethod("$", .cls, function(x, name) methods::slot(x, name))
   setMethod("$<-", .cls, function(x, name, value) {
@@ -856,9 +895,4 @@ for (.cls in .deprot_classes) {
 }
 rm(.cls)
 
-#' Dollar-style access for DEprot objects
-#' @name DEprot-dollar
-#' @keywords internal
-#' @exportMethod $
-#' @exportMethod $<-
-NULL
+

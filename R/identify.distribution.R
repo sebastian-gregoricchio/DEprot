@@ -23,7 +23,8 @@
 #' @author Sebastian Gregoricchio
 #'
 #' @examples
-#' result <- identify.distribution(values = DEprot::test.toolbox$diff.exp.limma@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results$statistic)
+#' data <- DEprot::test.toolbox$diff.exp.limma@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO
+#' result <- identify.distribution(values = data$results$statistic)
 #'
 #' result$best
 #' result$comparison

@@ -174,7 +174,30 @@ impute.counts =
         return(ParamEstim)
       }
 
+    # -------------------
 
+    NewtonRaphsonLike <- function(lhood, p, tol = 1e-07, maxit = 100) {
+
+      cscore <- lhood$grad.tnorm(p)
+      if(sum(abs(cscore)) < tol)
+        return(list(estimate = p, value = lhood$ll.tnorm2(p), iter = 0))
+      cur <- p
+      for(i in 1:maxit) {
+        inverseHess <- solve(lhood$hessian.tnorm(cur))
+        cscore <- lhood$grad.tnorm(cur)
+        new <- cur - cscore %*% inverseHess
+        if (new[2] <= 0) stop("Sigma < 0")
+        cscore <- lhood$grad.tnorm(new)
+
+        if(((abs(lhood$ll.tnorm2(cur)- lhood$ll.tnorm2(new))/(lhood$ll.tnorm2(cur))) < tol))
+          return(list(estimate = new, value= lhood$ll.tnorm2(new), iter = i))
+        cur <- new
+      }
+
+      return(list(estimate = new, value= lhood$ll.tnorm2(new), iter = i))
+    }
+
+    # -------------------
 
     mklhood <- function(data, t, ...) {
 
@@ -217,6 +240,8 @@ impute.counts =
         -1*out
       }
 
+      # ------------------
+
       grad.tnorm<-function(p){
         g1 <- (-n*(integrate(psi.mu,t[1],t[2],mu=p[1],sigma=p[2], stop.on.error = FALSE)$value) /
                  (pnorm(max(t),p[1],p[2])-pnorm(min(t),p[1],p[2]))) - ((n*p[1]-sum(data))/p[2]^2)
@@ -225,6 +250,8 @@ impute.counts =
         out <- c(g1,g2)
         return(out)
       }
+
+      #-------------------
 
       hessian.tnorm<-function(p){
 

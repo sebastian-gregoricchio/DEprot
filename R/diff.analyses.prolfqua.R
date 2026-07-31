@@ -294,28 +294,34 @@ diff.analyses.prolfqua =
 
 
       # create TableAnnotation and AnalysisConfiguration
-      if ("AnalysisTableAnnotation" %in% names(asNamespace("prolfqua"))) {
-        # Old API (< 1.6.x)
-        atable = prolfqua::AnalysisTableAnnotation$new()
+      # if (!requireNamespace("prolfqua", quietly = TRUE)) {
+      #   stop("Package 'prolfqua' is required for this analysis. Please install it.")
+      # }
+
+      prolfqua.ns <- asNamespace("prolfqua")
+
+      if ("AnalysisTableAnnotation" %in% names(prolfqua.ns)) {
+        ## Old API (< 1.6.x)
+        ATA    = get("AnalysisTableAnnotation", envir = prolfqua.ns)
+        AConf  = get("AnalysisConfiguration",   envir = prolfqua.ns)
+
+        atable = ATA$new()
         atable$fileName = "Sample"
         atable$workIntensity = "Intensity"
         atable$hierarchy[["protein_Id"]] = "protein_Id"
         atable$factors[["Group"]] = "Group"
-        if (!is.null(replicate.column)) {
-          atable$factors[["rep"]] = "rep"
-        }
-        config = prolfqua::AnalysisConfiguration$new(atable)
+        if (!is.null(replicate.column)) {atable$factors[["rep"]] = "rep"}
+        config = AConf$new(atable)
 
       } else {
-        # New API (>= 1.6.x)
-        config = prolfqua::AnalysisConfiguration$new()
+        ## New API (>= 1.6.x)
+        AConf  = get("AnalysisConfiguration", envir = prolfqua.ns)
+        config = AConf$new()
         config$file_name = "Sample"
         config$work_intensity = "Intensity"
         config$hierarchy[["protein_Id"]] = "protein_Id"
         config$factors[["Group"]] = "Group"
-        if (!is.null(replicate.column)) {
-          config$factors[["rep"]] = "rep"
-        }
+        if (!is.null(replicate.column)) {config$factors[["rep"]] = "rep"}
       }
 
 

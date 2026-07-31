@@ -28,3 +28,4 @@
 ^google.*.html$
 ^cran-comments.md$
 ^citation.cff$
+^manual$
