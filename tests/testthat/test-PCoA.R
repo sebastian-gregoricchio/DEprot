@@ -1,27 +1,3 @@
-# =====================================================================
-#  Tests for the PCoA functionality of DEprot
-#
-#  Covered:
-#    - perform.PCoA()
-#    - plot.PCoA.scatter()
-#    - plot.PCoA.scatter.123()
-#    - plot.PCoA.cumulative()
-#    - plot.PCoA.biplot()
-#    - DEprot.PCoA S4 class and its show-method
-#    - internal helpers (.ordination.slots, .check.aes.columns,
-#      .scale.loadings, .lingoes.correction)
-#
-#  Most tests run on the real example object 'DEprot::test.toolbox$dpo.imp'.
-#  A handful of tests that require non-euclidean dissimilarities build a
-#  small synthetic 'DEprot.correlation' object so that the presence of
-#  negative eigenvalues is guaranteed and the behaviour is deterministic.
-# =====================================================================
-
-
-# ---------------------------------------------------------------------
-# Shared fixtures
-# ---------------------------------------------------------------------
-
 ## Real example object
 dpo <- DEprot::test.toolbox$dpo.imp
 
@@ -157,8 +133,16 @@ test_that("an unsupported correlation.method argument errors", {
 # perform.PCoA: number of axes and axis validation
 # ---------------------------------------------------------------------
 
-test_that("the default number of axes is n_samples - 1", {
-  expect_equal(pcoa@parameters$n.axes, n.samples - 1)
+test_that("by default all computable coordinates are returned", {
+  # with non-euclidean dissimilarities (1 - correlation) the ordination keeps only the
+  # coordinates that correspond to a positive eigenvalue, so their number can be lower
+  # than n_samples - 1; it can never exceed it.
+  expect_true(pcoa@parameters$n.axes <= n.samples - 1)
+  expect_true(pcoa@parameters$n.axes >= 2)
+
+  # the number of coordinate columns matches the reported number of axes
+  pco.cols <- grep("^PCo[0-9]+$", colnames(pcoa@PCos), value = TRUE)
+  expect_equal(length(pco.cols), pcoa@parameters$n.axes)
 })
 
 test_that("a custom number of axes is respected", {
@@ -240,8 +224,9 @@ test_that("the importance table is coherent", {
   pos <- imp$Positive.eigenvalue
   expect_equal(sum(imp$Proportion.of.Variance[pos]), 1, tolerance = 1e-8)
 
-  # cumulative proportion is monotonically non-decreasing
-  expect_true(all(diff(imp$Cumulative.Proportion) >= -1e-8))
+  # cumulative proportion is monotonically non-decreasing over the positive eigenvalues
+  # (with non-euclidean dissimilarities the negative eigenvalues make it decrease afterwards)
+  expect_true(all(diff(imp$Cumulative.Proportion[pos]) >= -1e-8))
 
   # eigenvalues are sorted in decreasing order
   expect_true(all(diff(imp$Eigenvalue) <= 1e-8))
