@@ -81,6 +81,10 @@ remotes::install_github("krassowski/complex-upset",
                         build_vignettes = FALSE)
 ```
 
+>**NOTE**: at everyload `DEprot` will attempt to check for updated versions of the package and will print a message if a new version is available (requires internet connection). To disable this option is sufficent to set `options(DEprot.update_check = FALSE)`.
+
+
+
 <br>
 
 #### renv

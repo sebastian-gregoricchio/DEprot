@@ -2,7 +2,7 @@
 # R CMD check does not flag them as "no visible binding for global variable".
 # This is a plain top-level call (not roxygen), so it does not affect NAMESPACE.
 
-utils::globalVariables(c(
+utils::globalVariables(unique(c(
   # --- PCoA plotting internals ---
   "axis.id", "Proportion.of.Variance", "Cumulative.Proportion", "Broken.stick",
   "loading.x.scaled", "loading.y.scaled", "variable", "shape", "color",
@@ -19,5 +19,6 @@ utils::globalVariables(c(
   "n.tot.NAs", "n.total", "p.value", "padj", "parameter", "percentage",
   "presence", "processing.time", "prot.id", "pval", "rank.cor", "rank.fc",
   "rank.stat", "ranking.score", "runningScore", "score", "setSize", "shared",
-  "statistic", "status", "value", "x", "xmax", "xmin", "y", "ymax", "ymin"
-))
+  "statistic", "status", "value", "x", "xmax", "xmin", "y", "ymax", "ymin",
+  "id", "sample"
+)))

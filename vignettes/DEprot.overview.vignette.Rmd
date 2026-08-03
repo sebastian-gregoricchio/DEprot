@@ -37,7 +37,7 @@ text-align: justify}
 # knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
 #                       warning = F, message = F, fig.align = "center",
 #                       rows.print=12)
-#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 if (Sys.info()[["sysname"]] == "Darwin") {
   knitr::opts_chunk$set(collapse = TRUE, comment = ">",
@@ -68,7 +68,7 @@ require(ggpubr)
 ----------------------------------------------------------
 
 # **Introduction** {#intro}
-The concept behind the *DEprot* (*D*ifferential *E*xpression *prot*eomics) is to provide a toolkit that allows for the normalization, imputation and analyses of the differential protein expression in proteomics data. The data are assumed to be LFQ (label-free quantitation) values.
+The concept behind *DEprot* (*D*ifferential *E*xpression *prot*eomics) is to provide a toolkit that allows for the normalization, imputation and analyses of the differential protein expression in proteomics data. The data are assumed to be LFQ (label-free quantitation) values.
 
 <br>
 
@@ -101,9 +101,9 @@ citation("DEprot")
 <br>
 
 ## General workflow
-Data can be loaded as raw values, pre-normalized unimputed LFQ values or, imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining LFQ unimputed tables and load this data as "raw" in order to perform a batch harmonization.
+Data can be loaded as raw values, pre-normalized unimputed LFQ values or imputed LFQ values. Further, if multiple batches are available, it is possible to perform batch corrections by combining unimputed LFQ tables and loading these data as "raw" in order to perform a batch harmonization.
 
-Using normalized and imputed data, `DEprot` will help you in the differential analyses as well in performing quality controls on your data (sample correlation, principal components analyses (PCA)).
+Using normalized and imputed data, `DEprot` will help you in the differential analyses as well as in performing quality controls on your data (sample correlation, principal components analyses (PCA)).
 
 <br>
 
@@ -117,10 +117,13 @@ Using normalized and imputed data, `DEprot` will help you in the differential an
 The package starting point is the building of a `DEprot` object. This class of objects is specific to this package and requires at least two elements:
 
 * *counts table*: this must be a matrix in which the column names represent the samples while the row names identify the proteins. The values in the matrix are assumed to be LFQ (label-free quantification) values, either in linear or log-transformed format.
-* *metadata*: this must be a data.frame containing at least one column names `column.id` which values correspond to the column names of the *counts_table*. Any other additional column can be added (cell lines, treatment, condition, timing, etc) and used to define groups for differential and quality control ([PCA](#PCA) and [correlation](#correlation)) analyses.
+* *metadata*: this must be a data.frame containing at least one column named `column.id`, whose values correspond to the column names of the *counts_table*. Any other additional column can be added (cell lines, treatment, condition, timing, etc) and used to define groups for differential and quality control ([PCA](#pca) and [correlation](#correlation)) analyses.
 
 
-In the next paragraph we will refer to a dataset (pre-loaded in `DEprot`), in which a breast cancer (BCa) cell line was cultured in either hormone-deprived media or in full media (FBS). If cultured in hormone-deprived condition, it was then treated for 6 hrs with either $\beta$-estradiol (E2) or vehicle (DMSO). 4 biological replicates have been analyzed. Hence, the datasets consists of 1 cell lines x 3 conditions x 4 replicates, for a total of 12 sample.\n
+>**NOTE**: the counts table does not need to be prepared by hand: the output of DIA-NN, Spectronaut, FragPipe or MaxQuant can be loaded directly with `import.external()` (see the [Import from external tools](#importexternal) paragraph).
+
+
+In the next paragraph we will refer to a dataset (pre-loaded in `DEprot`), in which a breast cancer (BCa) cell line was cultured in either hormone-deprived media or in full media (FBS). If cultured in hormone-deprived condition, it was then treated for 6 hrs with either $\beta$-estradiol (E2) or vehicle (DMSO). 4 biological replicates have been analyzed. Hence, the dataset consists of 1 cell line x 3 conditions x 4 replicates, for a total of 12 samples.<br></br>
 Proteins and samples have been "anonymized".
 
 <br>
@@ -154,12 +157,12 @@ knitr::kable(data.frame(head(unimputed.counts[,1:6])), row.names = T, caption = 
 <br>
 
 ## Build `DEprot` object {#deprotobject}
-Now we will combine the the counts and metadata to create a `DEprot` object (hereafter defined as *dpo*).<br></br>
-Notice that another import information is whether the data are log transformed, and if yes, which is the log base. Recommended transformation is the *log~2~(score + 1)*.
+Now we will combine the counts and metadata to create a `DEprot` object (hereafter defined as *dpo*).<br></br>
+Notice that another important point is whether the data are log transformed, and if so, which log base was used. Recommended transformation is the *log~2~(score + 1)*.
 
-If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameters `data.type` and any information about the method used that you would like to store in the object can be added using the corresponding parameters `normalization.method` and `imputation.method`.<br></br>
+If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameter `data.type`, and any information about the method used that you would like to store in the object can be added using the corresponding parameters `normalization.method` and `imputation.method`.<br></br>
 
-Ultimately, if the metadata table does not contain a `column.id` column corresponding to the row names of the `counts_table`, it is possible to indicate the name of another column that should be assumed as to be the `column.id`.
+Ultimately, if the metadata table does not contain a `column.id` column corresponding to the column names of the `counts_table`, it is possible to indicate the name of another column that should be assumed to be the `column.id`.
 
 ```{r make_dpo}
 dpo <- load.counts2(counts = unimputed.counts,
@@ -174,8 +177,7 @@ dpo
 <br>
 
 
-This object is an S4-vector of class `DEprot`. The S4-vectors are containers of slots that can be accessed using the symbol `@` (e.g., `object@slot.id`.<br></br>The structure of an object of class `DEprot` (and `DEprot.analyses`) is the following:
-</div>
+This object is an S4-vector of class `DEprot`. The S4-vectors are containers of slots that can be accessed using the symbol `@` (e.g., `object@slot.id`).<br></br>The structure of an object of class `DEprot` (and `DEprot.analyses`) is the following:
 
 | Slot                           | Description                                                                                               |
 | -----------------------------: | :-------------------------------------------------------------------------------------------------------- |
@@ -186,7 +188,7 @@ This object is an S4-vector of class `DEprot`. The S4-vectors are containers of 
 | *log.transformed*              | logical value indicating whether the data are log-transformed or not                                      |
 | *normalized*                   | logical value indicating whether the data are normalized or not                                           |
 | *normalization.method*         | a string indicating the type of normalization applied, if not available it will be `NA`                   |
-| *randomized*                   | logical value indicating whether the data have been randomizedor not                                      |
+| *randomized*                   | logical value indicating whether the data have been randomized or not                                     |
 | *randomization.method*         | a list indicating the type of randomization applied, if not available it will be `NA`                     |
 | *imputed*                      | logical value indicating whether the data are imputed or not                                              |
 | *imputation.method*            | discussed further in the [Imputation paragraph](#imputation)                                              |
@@ -201,8 +203,8 @@ This object is an S4-vector of class `DEprot`. The S4-vectors are containers of 
 <br>
 
 ## Rename sample columns {#rename}
-As in our example, sometimes the columns of the counts are not the actual ID of the samples, but rather an identifier. However, it is possible to rename the counts column names indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br></br>
-Notice that the renaming will applied to all counts table available.
+As in our example, sometimes the column names of the counts are not the actual names of the samples, but rather an internal identifier. However, it is possible to rename the counts columns by indicating any column of the metadata table (having unique values). The original identifiers are stored in a new column (`old.column.id`) of the metadata.<br></br>
+Notice that the renaming will be applied to all the counts tables available.
 
 ```{r rename_samples}
 dpo <- rename.samples(DEprot.object = dpo,
@@ -230,7 +232,7 @@ dpo@boxplot.raw
 
 
 
-In this package we apply the Modified Balanced Quantile Normalization (MBQN) from the [`MBQN`](https://www.bioconductor.org/packages/release/bioc/html/MBQN.html) package and developed by [E.Brombacher *et al.* (*Proteomics*, 2020)](https://doi.org/10.1002/pmic.202000068). The modification balances the median (or mean) intensity of features (rows) which are rank invariant (RI) or nearly rank invariant (NRI) across samples (columns) before quantile normalization. This prevents an over-correction of the intensity profiles of RI and NRI features by classical quantile normalization and therefore supports the reduction of systematics in downstream analyses.
+In this package we apply the Modified Balanced Quantile Normalization (MBQN) from the [`MBQN`](https://www.bioconductor.org/packages/release/bioc/html/MBQN.html) package, developed by [E.Brombacher *et al.* (*Proteomics*, 2020)](https://doi.org/10.1002/pmic.202000068). The modification balances the median (or mean) intensity of features (rows) which are rank invariant (RI) or nearly rank invariant (NRI) across samples (columns) before quantile normalization. This prevents an over-correction of the intensity profiles of RI and NRI features by classical quantile normalization and therefore supports the reduction of systematics in downstream analyses.
 
 ```{r normalize}
 dpo <- normalize.counts(DEprot.object = dpo,
@@ -261,12 +263,12 @@ plot(dpo, nrow = 1)
 
 
 ## Batch effect correction
-Proteomics is highly susceptible to batch effects. Hereafter we use the package [`HarmonizR`](https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html) package, developed by [H.Voß & S.Schlumbohm (*Nat.Commun.*, 2022)](https://doi.org/10.1038/s41467-022-31007-x). This tool besides handling multiple experiments, allows for the batch correction of data derived by the combination of both DIA (Data-Independent Acquisition) and DDA (Data-Dependent Acquisition).
+Proteomics is highly susceptible to batch effects. Hereafter we use the [`HarmonizR`](https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html) package, developed by [H.Voß & S.Schlumbohm (*Nat.Commun.*, 2022)](https://doi.org/10.1038/s41467-022-31007-x). This tool, besides handling multiple experiments, allows for the batch correction of data derived from the combination of both DIA (Data-Independent Acquisition) and DDA (Data-Dependent Acquisition).
 
 > `HarmonizR` is not a required dependency, therefore if this function is used and `HarmonizR` is not already installed, a warning will indicate the required installation. The package can be installed by: `BiocManager::install("HarmonizR")`, or alternatively `devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")`.
 
 
-To use the `harmonize.batches` is sufficient to provide a `DEprot` object containing a combined table of multiple experiments and indicate the identifier of a column in the metadata table which corresponds to the batch annotation. The result is a DEprot object with the same structure described in the previous paragraph. <br>
+To use `harmonize.batches` it is sufficient to provide a `DEprot` object containing a combined table of multiple experiments and indicate the identifier of a column in the metadata table which corresponds to the batch annotation. The result is a `DEprot` object with the same structure described in the previous paragraph. <br>
 Here, for simplicity, we will add manually a column to the metadata table with "dummy" batches.
 
 > Batch harmonization replaces the normalization: so data can be loaded as 'raw' and "normalized" using `harmonize.batches`. Do not apply additional MBQN normalization.
@@ -295,7 +297,7 @@ dpo <- harmonize.batches(DEprot.object = dpo,
                          cores = 1)
 ```
 
->NOTE: By default `harmonize.batches` uses `ComBat`. If your batch design is sparse (i.e., a batch with a single sample, or proteins measured only once in a batch) ComBat can fail with a singular-matrix error; see next paragraph to know out to fix it using `limma` instead.
+>NOTE: By default `harmonize.batches` uses `ComBat`. If your batch design is sparse (i.e., a batch with a single sample, or proteins measured only once in a batch) ComBat can fail with a singular-matrix error; see next paragraph to know how to fix it using `limma` instead.
 
 
 <br>
@@ -318,11 +320,11 @@ dpo <- harmonize.batches(DEprot.object = dpo,
 -----------------------------------------
 
 # **Data imputation** {#imputation}
-Often many `NA`/`NaN` values are present in the LFQ tables due to the technical limitations of the protein detection by Mass Spectrometry (MS) experiments.
+Often many `NA`/`NaN` values are present in the LFQ tables due to the technical limitations of the protein detection in Mass Spectrometry (MS) experiments.
 
-Here we provide the possibility to use 9 different methods for the imputation the data:
+Here we provide the possibility to use 9 different methods for the imputation of the data:
 
-* [`missForest`](https://www.rdocumentation.org/packages/missForest/): developed by [DJ.Stekhoven & P.Buehlmann (*Bioinformatics*, 2012)](https://doi.org/10.1093/bioinformatics/btr597), this tool will impute the NaN and assign and estimated value. It also yields an out-of-bag (OOB) imputation error estimate (general, or per each sample). Moreover, it can be run parallel to save computation time (both examples reported here after).
+* [`missForest`](https://www.rdocumentation.org/packages/missForest/): developed by [DJ.Stekhoven & P.Buehlmann (*Bioinformatics*, 2012)](https://doi.org/10.1093/bioinformatics/btr597), this tool will impute the NaNs and assign an estimated value. It also yields an out-of-bag (OOB) imputation error estimate (general, or for each sample). Moreover, it can be run in parallel to save computation time (both examples reported hereafter).
 * k-Nearest Neighbors (kNN) algorithm
 * correlation-Nearest Neighbors (corkNN) algorithm
 * truncated-Nearest Neighbors (tkNN) algorithm
@@ -334,8 +336,8 @@ Here we provide the possibility to use 9 different methods for the imputation th
 
 <br>
 
-Of note, there are cases in which the missing data are not due to the random but rather consequent to real biological effects (i.e., knock-down, knock-out, degron systems and PROTACs, etc.). This may lead to the issue that a protein completely missing in all the replicates of an individual condition will be imputed with relatively high numbers. This would ultimately lead to the incorrect definition of the differential status of this protein.
-To overcome this possibility, it is possible to use the function `randomize.missing.values` to assign random values from the bottom distribution of the full dataset. The user can define a percentage threshold of minimal missing values within the group; for instance if the threshold is 75% and in each group there are 4 samples, it means that only proteins with at least 3 out of 4 missing values will be imputed. It will be sufficient to indicate the ID of a column belonging to the metadata which indicates the groups/conditions and the percentage of distribution from which select random numbers ("tail.percentage").
+Of note, there are cases in which the missing data are not random but rather the consequence of real biological effects (i.e., knock-down, knock-out, degron systems and PROTACs, etc.). This may lead to the issue that a protein completely missing in all the replicates of an individual condition will be imputed with relatively high numbers. This would ultimately lead to the incorrect definition of the differential status of this protein.
+To overcome this, it is possible to use the function `randomize.missing.values` to assign random values from the bottom distribution of the full dataset. The user can define a percentage threshold of minimal missing values within the group; for instance if the threshold is 75% and in each group there are 4 samples, it means that only proteins with at least 3 out of 4 missing values will be imputed. It will be sufficient to indicate the ID of a column belonging to the metadata which indicates the groups/conditions and the percentage of distribution from which to select random numbers ("tail.percentage").
 
 
 ```{r randomize_data}
@@ -352,7 +354,7 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
 <br>
 
 ## Choice of the imputation method
-We implemented the function `compare.imp.methods` to compare the different imputation methods and choose the best one for your data type. Indeed, your dataset is subset and NAs are introduce simulating distribution and proportion of the original data.
+We implemented the function `compare.imp.methods` to compare the different imputation methods and choose the best one for your data type. Indeed, your dataset is subsampled and NAs are introduced simulating the distribution and the proportion of the original data.
 
 
 ```{r choice_of_imp, fig.width = 15, fig.height = 12, message=FALSE, warning=FALSE}
@@ -436,8 +438,8 @@ plot(dpo, ncol = 2)
 
 # **Sample similarities** {#pcacorrelation}
 ## Principal Component Analyses (PCA) {#pca}
-PCA can be performed in order to perform a dimensional reduction and determine which factor explains the variability of the samples.<br></br>
-`DEprot` includes function dedicated to this aim and specifically build to work with `DEprot` objects.
+PCA can be used to perform a dimensionality reduction and determine which factor explains the variability of the samples.<br></br>
+`DEprot` includes functions dedicated to this aim and specifically built to work with `DEprot` objects.
 
 Notice that, even if the data are not log-transformed, `perform.PCA` will do it before performing the analyses.
 
@@ -459,7 +461,7 @@ The `DEprot.PCA` object contains the following slots:
 | *prcomp*             | object of class `prcomp` corresponding to the full PCA output                                           |
 | *PCs*                | `data.frame` combining the PC scores and the metadata table, useful for replotting                      |
 | *importance*         | statistical summary table for the PCA analyses per each PC                                              |
-| *cumulative.PC.plot* | `ggplot` object corresponding to out put of `plot.PC.cumulative` for this object                        |
+| *cumulative.PC.plot* | `ggplot` object corresponding to the output of `plot.PC.cumulative` for this object                     |
 
 
 <br>
@@ -541,8 +543,8 @@ PC_biplot_1.2
 <br>
 
 ### Analyze PCs on a sample subset
-These analyses can also be performed for a subset of samples by indicated the sample names of interest.<br></br>
-In the example below we will use only the sample in which the estrogen receptor is active (E2 and FBS conditions).
+These analyses can also be performed for a subset of samples by indicating the sample names of interest.<br></br>
+In the example below we will use only the samples in which the estrogen receptor is active (E2 and FBS conditions).
 
 ```{r make_PCA_subset, fig.width=8}
 ## Perform the analyses (DEprot.PCA object)
@@ -591,8 +593,8 @@ patchwork::wrap_plots(PC.fbs.e2_1.2, PC.fbs.e2_2.3, nrow = 1)
 <br>
 
 
-## Correlations {#correlataion}
-Another method to define the sample clustering/groups, is the overall correlation between the samples.<br></br>
+## Correlations {#correlation}
+Another method to define the sample clustering/groups is the overall correlation between the samples.<br></br>
 Hierarchical clustering is performed using the `1 - correlation` values, since the hierarchical clustering algorithm is based on dissimilarities while the correlations are an index of similarity.
 
 ```{r make_correlation_all, fig.width=9}
@@ -628,7 +630,7 @@ corr.ERa.active
 
 
 
-The `DEprot.correlation` correlation object contains the following slots:
+The `DEprot.correlation` object contains the following slots:
 
 | Slot               | Description                                                                                             |
 | -----------------: | :------------------------------------------------------------------------------------------------------ |
@@ -636,16 +638,16 @@ The `DEprot.correlation` correlation object contains the following slots:
 | *corr.metadata*    | metadata of the samples used in the correlation (subset of the original `DEprot@metadata`)              |
 | *sample.subset*    | vector containing the list of samples analyzed                                                          |
 | *data.used*        | vector indicating the type of counts used (imputed, normalized, raw)                                    |
-| *corr.matrix*      | the correlation matrix on which the heatmap is base on                                                  |
+| *corr.matrix*      | the correlation matrix on which the heatmap is based                                                    |
 | *distance*         | object of class `dist` corresponding to the output of `as.dist(1 - correlation.matrix)`                 |
 | *cluster*          | `hclust` object generated by `hclust(d = as.dist(1 - correlation.matrix), method = clustering.method)`  |
-| *method*           | String indicating the correlation method used (one among: pearson, spearman, kendal)                    |
+| *method*           | String indicating the correlation method used (one among: pearson, spearman, kendall)                   |
 
 
 <br>
 
-## Principal Coordinate Analyses (PCoA) {#PCoA}
-The same correlation object can be used as input for a Principal Coordinate Analysis (PCoA, or classical multidimensional scaling). Differently from the PCA, which relies on the euclidean distances between samples, PCoA ordinates the `1 - correlation` dissimilarity already stored in the `DEprot.correlation` object - a distance that on LFQ data is often more robust, since it looks at how the samples co-vary rather than at their absolute intensities. The `perform.PCoA` function reads the correlation object directly; the original `dpo` object is required only to compute the protein projections shown in the biplot.
+## Principal Coordinate Analyses (PCoA) {#pcoa}
+The same correlation object can be used as input for a Principal Coordinate Analysis (PCoA, or classical multidimensional scaling). Differently from the PCA, which relies on the Euclidean distances between samples, PCoA ordinates the `1 - correlation` dissimilarity already stored in the `DEprot.correlation` object - a distance that on LFQ data is often more robust, since it looks at how the samples co-vary rather than at their absolute intensities. The `perform.PCoA` function reads the correlation object directly; the original `dpo` object is required only to compute the protein projections shown in the biplot.
 
 ```{r pcoa.compute}
 ## Perform the analyses (DEprot.PCoA object)
@@ -717,7 +719,7 @@ PCoA_biplot_1.2 <- plot.PCoA.biplot(DEprot.PCoA.object = PCoA.ERa.active,
 PCoA_biplot_1.2
 ```
 
-Unlike the PCA biplot, these arrows are the a-posteriori correlation between each protein and the coordinates (not the `prcomp` rotation coefficients), so they indicate the direction a protein follows in the ordination rather than an exact loading.
+Unlike the PCA biplot, these arrows represent the a-posteriori correlation between each protein and the coordinates (not the `prcomp` rotation coefficients), so they indicate the direction a protein follows in the ordination rather than an exact loading.
 
 
 <br>
@@ -725,11 +727,11 @@ Unlike the PCA biplot, these arrows are the a-posteriori correlation between eac
 -----------------------------------------
 
 # **Differential Expression (DE) analyses** {#diffexp}
-Differential expression analyses between two conditions can be performed employing two different methods using the functions `diff.analyses` and `diff.analyses.limma`. With the first (`diff.analyses`) the conditions will be compared two-by-two (individual t-/Wilcox tests), while with the second (`diff.analyses.limma`) the `limma` package is used to fit the data on a linear model.
+Differential expression analyses between two conditions can be performed employing two different methods using the functions `diff.analyses` and `diff.analyses.limma`. With the first (`diff.analyses`) the conditions will be compared two-by-two (individual t-/Wilcox tests), while with the second (`diff.analyses.limma`) the `limma` package is used to fit the data to a linear model.
 
-In both cases, it is sufficient to provide a list of 3-elements vectors. The latter, should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
+In both cases, it is sufficient to provide a list of three-element vectors. The latter should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
 
-When a replicate column is available, it is possible to run the analyses in *paired* mode. When using `diff.analyses`, it is sufficient to indicate the column from the metadata table that corresponds to the replicate identifiers (in our example `replicate.column = "replicate"`) and set `paired.test = TRUE`. For each contrast it will be verified that replicate identifiers are not repeated within a group and, that replicate number and identifiers coincide between the two groups. By the default analyses ignore the replicates. <br>
+When a replicate column is available, it is possible to run the analyses in *paired* mode. When using `diff.analyses`, it is sufficient to indicate the column from the metadata table that corresponds to the replicate identifiers (in our example `replicate.column = "replicate"`) and set `paired.test = TRUE`. For each contrast it will be verified that replicate identifiers are not repeated within a group and that replicate number and identifiers coincide between the two groups. By default, analyses ignore the replicates. <br>
 If `diff.analyses.limma` is used instead, the correlation between replicates will be estimated and incorporated in the fitting model. In this case indicate the replicate column identifier (in our example `replicate.column = "replicate"`) and set `include.rep.model = TRUE`.
 
 > In the following example we will compare *6h.10nM.E2* vs *6h.DMSO*, and *6h.10nM.E2* vs *FBS*. Both paired and unpaired examples are shown, but further analyses are based on the paired results only (multi t-test mode).
@@ -740,12 +742,12 @@ If `diff.analyses.limma` is used instead, the correlation between replicates wil
 ## Differential analyses algorithms
 ### `limma` mode
 #### Verify normality of the data
-The main assumption to run `limma` is that the data are normally distributed. For this reason is good practice verify that the data are normally distributed for each sample. This can be accomplished using the function `check.normality`. It will return a S4 vector composed by:
+The main assumption to run `limma` is that the data are normally distributed. For this reason it is good practice to verify that the data are normally distributed for each sample. This can be accomplished using the function `check.normality`. It will return an S4 vector composed of:
 
 * `norm.statement`: logical value indicating whether all the samples are normally distributed (TRUE) or not (FALSE);
-* `norm.AD.tests`: list of Anderson-Darling normality test outputs (statistics, p-value, etc;
-* `qqplots`: a list of Q-Q plots (ggplot objects) showing the "correlation" between the distribution of your data and the theoretical normal distribution
-* `densities`: a list of density curves (ggplot objects) depicted the distribution of your data and the overlay with the theoretical normal distribution.
+* `norm.AD.tests`: list of Anderson-Darling normality test outputs (statistics, p-value, etc.);
+* `qqplots`: a list of Q-Q plots (ggplot objects) showing the "correlation" between the distribution of your data and the theoretical normal distribution;
+* `densities`: a list of density curves (ggplot objects) depicting the distribution of your data and the overlay with the theoretical normal distribution.
 
 > When a sample is not normally distributed (p-value of the AD normality test < p.threshold) the plot will be red instead of black/blue. Furthermore, a message will tell if all samples are normally distributed; and if not, which ones are not normally distributed.<br>However, due to the large number of data used for the normality-test, the p-value can easily lead to the rejection of the null hypothesis (H<sub>0</sub>: distribution is normal). What we suggest is to visually inspect the distribution of the data and identify large/extreme deviations from the theoretical normal distribution (e.g., skewed, bimodal or uniform distributions).
 
@@ -815,7 +817,7 @@ standard correction, stay with BH.
 
 <br>
 
-### Multiple t-test mode 
+### Multiple t-test mode
 > Next paragraphs use these results, in paired mode
 
 ```{r compute_diff_exp_examples_Ttest, eval=F}
@@ -1044,7 +1046,7 @@ contrast.scatter
 
 
 #### Scatter between average-LFQ values for one contrast
-Using the function `contrast.LFQ` it is possible to plot a scatter of the average LFQ values for the two conditions involved in a specific contrast. dots will be colored by log~2~(Fold Change), while the size corresponds to the P-value adjusted (or FRD is `prolfqua` is used).
+Using the function `contrast.LFQ` it is possible to plot a scatter of the average LFQ values for the two conditions involved in a specific contrast. Dots will be colored by log~2~(Fold Change), while the size corresponds to the adjusted P-value (or FDR if `prolfqua` is used).
 
 ```{r contrast_LFQ, fig.width=5, fig.height=5}
 contrast_LFQ <-
@@ -1068,7 +1070,7 @@ To plot results heatmaps there are two functions available:
 <br>
 
 ##### Counts
-With the `heatmap.counts` function it is possible to generate an heatmap for the raw/normalized/imputed counts. It is possible to select only specific proteins and/or subset samples (from `column.id` column in metadata table). If the object provided is a `DEprot.analyses` object, it is also possible to indicate to plot only differential proteins (or top.n differential proteins) from a specific contrast. <br></br>
+With the `heatmap.counts` function it is possible to generate a heatmap for the raw/normalized/imputed counts. It is possible to select only specific proteins and/or subset samples (from the `column.id` column in the metadata table). If the object provided is a `DEprot.analyses` object, it is also possible to indicate to plot only differential proteins (or top.n differential proteins) from a specific contrast. <br></br>
 The protein ranking definition is based on the differential score, computed as: `abs(log2(fold change)) * -log10(Padj)`.
 
 The resulting object is of class `DEprot.counts.heatmap`, and contains the ggplot-heatmap, the row cluster and the column cluster.
@@ -1158,9 +1160,9 @@ patchwork::wrap_plots(imputed_counts_heatmap_diffProteins_rowScaled@heatmap,
 
 <br>
 
-Ultimately, With this function is also possible to group data based on the values of a metadata's column. In this way it is possible to average the values by the values of the defined column (e.g., the replicates of a condition).
+Ultimately, with this function it is also possible to group data based on the values of a metadata column. In this way it is possible to average the values by the values of the defined column (e.g., the replicates of a condition).
 
-In the next example we will average the replicates of each condition using the `combined.id` column form the metadata of the `dpo_analyses` object.
+In the next example we will average the replicates of each condition using the `combined.id` column from the metadata of the `dpo_analyses` object.
 
 ```{r heatmap_counts_groups, fig.width = 4, fig.height = 6}
 imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition <- 
@@ -1186,7 +1188,7 @@ imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition@heatmap
 
 ##### Fold changes
 Instead of counts, it is possible to plot the fold changes of one or multiple contrasts using the function `heatmap.contrasts`. Only differential proteins are shown.<br></br>
-Also in this case it is possible to show only the top *N* differential proteins. However the top *N* of each contrast will be shown. This means than *N* proteins might be shown.
+Also in this case it is possible to show only the top *N* differential proteins. However the top *N* of each contrast will be shown. This means that more than *N* proteins might be displayed.
 
 ```{r heatmap_foldchanges, fig.width = 4, fig.height = 6}
 FC_heatmap <-
@@ -1210,7 +1212,7 @@ FC_heatmap@heatmap
 
 
 #### Upset-plot
-To identify which differential proteins are common among multiple comparisons, it is possible to generate an upset plot using the function `plot.upset`. With this function all the intersections between all the contrasts including in the provided object can be visualized by co-occurrence. It is also possible to subset only specific contrasts indicating a numeric vector in the flag `sort.intersections`.
+To identify which differential proteins are common among multiple comparisons, it is possible to generate an upset plot using the function `plot.upset`. With this function all the intersections between all the contrasts included in the provided object can be visualized by co-occurrence. It is also possible to subset only specific contrasts indicating a numeric vector in the flag `contrast.subset`.
 
 ```{r upset_plot, message=F, warning=F}
 upset.plot <- plot.upset(DEprot.analyses.object = dpo_analyses,
@@ -1269,15 +1271,15 @@ export.report(DEprot.object = dpo_analyses,
 -----------------
 
 # **SAINT score (Significance Analysis of INTeractome)**
-SAINT, developed by [Breitkreutz *et al.* (Science, 2010)](https://doi.org/10.1126/science.1176495), is a methods that assigns the number of identified peptides for each interactor to a probability distribution, which is then exploited to estimate the likelihood of a true interaction (typically SAINT score &#8805;0.95).<br>
-The original methods use the spectral data, however [Teo *et al.* (Proteomics, 2016)](https://doi.org/10.1002/pmic.201500499) developed a method for the computation of the SAINT scores on LFQ data named `SAINTq`. The latter is developed in C++ languange, we here implemented the original algorithm in the function `SAINTq`.
+SAINT, developed by [Breitkreutz *et al.* (Science, 2010)](https://doi.org/10.1126/science.1176495), is a method that assigns the number of identified peptides for each interactor to a probability distribution, which is then exploited to estimate the likelihood of a true interaction (typically SAINT score &#8805;0.95).<br>
+The original method uses the spectral data, however [Teo *et al.* (Proteomics, 2016)](https://doi.org/10.1002/pmic.201500499) developed a method for the computation of the SAINT scores on LFQ data named `SAINTq`. The latter is developed in C++ language; here we implemented the original algorithm in the function `SAINTq`.
 
->DISCLAIMER: This is an independent re-implementation of the published model, not a re-wrapping of the C++ program. It returns scores with the same definitions and behavior, but exact numbers can differ from the official \code{SAINTq} binary because of low-level differences (parameter estimation, missing-value and control-compression heuristics).
+>DISCLAIMER: This is an independent re-implementation of the published model, not a re-wrapping of the C++ program. It returns scores with the same definitions and behavior, but exact numbers can differ from the official `SAINTq` binary because of low-level differences (parameter estimation, missing-value and control-compression heuristics).
 
-We benchmarked our re-implementation with the original `SAINTq` using a subset of the data from [Eickhoff *et al.* (Commun Biol, 2025)](https://doi.org/10.1038/s42003-025-08449-2) that have been reanalyzed in [Eickhoff *et al.* (NAR Genom Bioinform, 2026)](https://doi.org/10.1093/nargab/lqag015).
+We benchmarked our re-implementation against the original `SAINTq` using a subset of the data from [Eickhoff *et al.* (Commun Biol, 2025)](https://doi.org/10.1038/s42003-025-08449-2) that have been reanalyzed in [Eickhoff *et al.* (NAR Genom Bioinform, 2026)](https://doi.org/10.1093/nargab/lqag015).
 
 To compute the SAINT scores we need to indicate the control (e.g., IgG, isotype, mock-IP) ID from one of the columns of the metadata and the bait (the immunoprecipitation target; i.e. AR). Of note, multiple baits can be provided, and if the `bait` argument is left blank (`NULL`), all the non-control groups are tested against the same control.<br>
-The result is an object of class `DEprot.SAINTq` containing 4 slots:
+The result is an object of class `DEprot.SAINTq` containing 3 slots:
 
 +---------------+--------------------------------------------------------------------------------------------+
 | Slot          | Description                                                                                |
@@ -1338,12 +1340,13 @@ The result is an object of class `DEprot.SAINTq` containing 4 slots:
 
 
 ```{r run_saint, fig.width = 8, fig.height=5}
-saint_deprot <- SAINTq(DEprot.object = DEprot::rime.dpo,
-                       metadata.column = "group",
-                       control = "LNCaP_TRIM33-5#MC-C2_FBS_IgG",
-                       bait = "LNCaP_TRIM33-5#MC-C2_FBS_AR",
-                       which.data = "imputed",
-                       fold = 5)
+saint_deprot <-
+  SAINTq(DEprot.object = DEprot::rime.dpo,
+         metadata.column = "group",
+         control = "LNCaP_TRIM33-5#MC-C2_FBS_IgG",
+         bait = "LNCaP_TRIM33-5#MC-C2_FBS_AR",
+         which.data = "imputed", # use 'raw' to be closer to the original SAINTq
+         fold = 5)
 saint_deprot
 ```
 
@@ -1358,7 +1361,7 @@ knitr::kable(saint_deprot@scores$`LNCaP_TRIM33-5#MC-C2_FBS_AR`[1:5,], row.names 
 
 <br>
 
-## Benchamrk against the original `SAINTq` tool
+## Benchmark against the original `SAINTq` tool
 We analyzed the same data using the original `SAINTq` (results stored in DEprot as `rime.saintq`) and compared the scores obtained between the two methods.
 
 ```{r compare_saintq_to_deprot, fig.height=5, fig.width=6}
@@ -1392,7 +1395,7 @@ ggpubr::ggscatter(data = sq_combo,
 
 -----------------
 
-# **Other tools**
+# **Other tools** {#othertools}
 ## Count detected proteins
 In order to know how many proteins have been detected in each sample, it is possible to use the function `protein.summary`. A stacked bar plot will be generated per each sample. The input object must belong to either `DEprot` or `DEprot.analyses` classes.
 
@@ -1428,7 +1431,7 @@ protein.counts.byCondition
 <br>
 
 ## Individual protein expression
-Using the function `expression.boxplot` is possible to generate boxplots of the expression of individual proteins.<br></br>
+Using the function `expression.boxplot` it is possible to generate boxplots of the expression of individual proteins.<br></br>
 The expression can be grouped by a column of the metadata using the `group.by.metadata.column` parameter. Furthermore it is possible to scale the values using Z-scores (parameter `scale.expression = TRUE`).
 
 ```{r expression_boxplot, fig.width=10.5, fig.height=4}
@@ -1482,12 +1485,12 @@ patchwork::wrap_plots(protein.1733_raw,
 <br>
 
 ## Filter proteins
-For certain analyses it might be necessary to filter-out/keep only certain specific protein (e.g., keep only nuclear proteins).<br></br>
-With the function `filter.proteins` is possible to indicate a vector containing the protein IDs (it must correspond to the row.names of the counts table) and chose whether to `"keep"` or `"remove"` these proteins.
+For certain analyses it might be necessary to filter-out/keep only certain specific proteins (e.g., keep only nuclear proteins).<br></br>
+With the function `filter.proteins` it is possible to indicate a vector containing the protein IDs (it must correspond to the row names of the counts table) and choose whether to `"keep"` or `"remove"` these proteins.
 
-This function works for both `DEprot` and `DEprot.analyses` classes. The output will look exactly as the original, however counts tables (raw, normalized, imputed), count boxplots, PCAs, correlations, differential tables, differential protein counts, violin and MA-plot will be recomputed.
+This function works for both `DEprot` and `DEprot.analyses` classes. The output will look exactly like the original, however counts tables (raw, normalized, imputed), count boxplots, PCAs, correlations, differential tables, differential protein counts, volcano and MA-plot will be recomputed.
 
-> **NOTE**: we discourage the filtering before normalization/batch correction and imputation, as well as before limma-base differential analyses. In all these methods are based on the assumption that the proteins 'available' are 'all' the proteins available, which is not the case.
+> **NOTE**: we discourage the filtering before normalization/batch correction and imputation, as well as before limma-based differential analyses. All these methods are based on the assumption that the proteins 'available' are 'all' the proteins available, which is not the case.
 
 <br>
 
@@ -1495,7 +1498,7 @@ This function works for both `DEprot` and `DEprot.analyses` classes. The output 
 ### Filtering examples
 Hereafter are shown two examples for keeping nuclear proteins or removing cytoplasmic proteins.
 
->Notice that this is only an example and, since the protein IDs are randomized, it would not applicable for the example dataset available with `DEprot`. Furthermore `DEprot` does not include the packages `AnnotationDbi` and `org.Hs.eg.db`, which can be installed through the `Bioconductor` portal.
+>Notice that this is only an example and, since the protein IDs are randomized, it would not be applicable to the example dataset available with `DEprot`. Furthermore `DEprot` does not include the packages `AnnotationDbi` and `org.Hs.eg.db`, which can be installed through the `Bioconductor` portal.
 
 <br>
 
@@ -1532,7 +1535,7 @@ dpo_analyses_nuclear <- filter.proteins(DEprot.object = dpo_analyses,
 ## Filter samples
 Sometimes you need to drop a few samples (e.g., a failed run, or an outlier) after you have already normalized, randomized and imputed. Because imputation depends on the group structure, you cannot just delete columns; the whole pipeline has to be redone on what is left. The function `filter.samples` does that for you: it reads the settings off the object and replays each step on the retained samples.
 
-It works  with object of class `DEprot` and `DEprot.analyses`. In the case of the latter, also the differential analyses are re-performed using the same parameters (if possible).
+It works with objects of class `DEprot` and `DEprot.analyses`. In the case of the latter, also the differential analyses are re-performed using the same parameters (if possible).
 
 ```{r filter_samples, eval = FALSE}
 dpo.clean <- filter.samples(DEprot.object = dpo.imputed,
@@ -1544,7 +1547,7 @@ dpo.clean <- filter.samples(DEprot.object = dpo.imputed,
 <br>
 
 ## Re-apply thresholds to `DEprot.analyses` object
-In certain cases, when several contrasts are defined, the differential analysis computation can be time consuming. On the other hand, one might want to change the thresholds used to define the differential status of the proteins. To avoid the re-computation of the differentials from the beginning, the function `reapply.thresholds` can be used to re-compute the differential status, re-plot volcanos and MA-plots, and the n.diff summary table.
+In certain cases, when several contrasts are defined, the differential analysis computation can be time consuming. On the other hand, one might want to change the thresholds used to define the differential status of the proteins. To avoid the re-computation of the differentials from the beginning, the function `reapply.thresholds` can be used to re-compute the differential status, re-plot volcanoes and MA-plots, and re-compute the `n.diff` summary table.
 
 ```{r}
 dpo_analyses_fc1.5 <-
@@ -1567,9 +1570,9 @@ summary(dpo_analyses_fc1.5)
 Enrichment analyses can be performed on a full contrast of a `DEprot.analyses` object (GSEA) or on the subset of proteins that belong to a specific category of `diff.status` in the results table of the given contrast (ORA).
 
 For these analyses a geneSet table will be required as "reference". The latter must be a data.frame with two columns: "gs_name" (geneSet name) and "gene_symbol" (corresponding to the protein id).<br>
-In `DEprot` we provide a ready-to-use list of protein complexes obtained by the [CORUM](https://mips.helmholtz-muenchen.de/corum/) database.
+In `DEprot` we provide a ready-to-use list of protein complexes obtained from the [CORUM](https://mips.helmholtz-muenchen.de/corum/) database.
 
-> Notice that the "gene_symbol" values must match the "prot.id" in the result tables. To this goal, the `geneset.enrichment` function contains the parameter `gsub.pattern.prot.id` that will be used to remove a pattern from the "prot.id"s.
+> Notice that the "gene_symbol" values must match the "prot.id" in the result tables. To this end, the `geneset.enrichment` function contains the parameter `gsub.pattern.prot.id` that will be used to remove a pattern from the "prot.id"s.
 
 <br>
 
@@ -1608,7 +1611,7 @@ knitr::kable(corum_geneSet[1:10,], row.names = FALSE, caption = "**CORUM protein
 
 ### Perform enrichment analyses
 #### Compare ranking methods for GSEA
-For GSEA analyses the genes in the differential table of the provided contrast can be ranked either by using the log~2~(Fold Change) [default] or the Spearman's correlation of the imputed counts between the two groups. Depending on the sample size, this two methods can lead to different ranking. To compare the two methods it is possible to plot the correlation of the two ranks and scores using `compare.ranking`:
+For GSEA analyses the genes in the differential table of the provided contrast can be ranked either by using the log~2~(Fold Change) [default] or the Spearman's correlation of the imputed counts between the two groups. Depending on the sample size, these two methods can lead to different rankings. To compare the two methods it is possible to plot the correlation of the two ranks and scores using `compare.ranking`:
 
 
 ```{r compare_ranking, fig.width=15, fig.height=10}
@@ -1633,7 +1636,7 @@ GSEA.results <-
                      dotplot.n = 10)
 ```
 
-Results can be visualized using `plot.NES` and `plot.GSEA`.<br>Other plots can be found in the output object (slots: `protein.network`, `pathway.network`, `NES.plot`, `dotplot_gene.ratio`); have a look to the `DEprot::test.toolbox$gsea.results` dummy example.
+Results can be visualized using `NES.plot` and `plot.GSEA`.<br>Other plots can be found in the output object (slots: `protein.network`, `pathway.network`, `NES.plot`, `dotplot_gene.ratio`); have a look at the `DEprot::test.toolbox$gsea.results` dummy example.
 
 
 <br>
@@ -1653,7 +1656,7 @@ ORA.results <-
                      dotplot.n = 10)
 ```
 
-Some plots can be found in the output object slot. (slots: `protein.network`, `pathway.network`, `dotplot_gene.ratio`, `dotplot_fold.enrichment`); have a look to the `DEprot::test.toolbox$ora.results` dummy example.
+Some plots can be found in the output object (slots: `protein.network`, `pathway.network`, `dotplot_gene.ratio`, `dotplot_fold.enrichment`); have a look at the `DEprot::test.toolbox$ora.results` dummy example.
 
 <br>
 
@@ -1669,12 +1672,12 @@ The output is an object of class `DEprot.enrichResult`:
 | *dotplot_gene.ratio*                 | a dotplot showing the geneRatios for each significantly enriched geneSet                        |
 | *dotplot_fold.enrichment* (ORA only) | a dotplot showing the foldEnrichment for each significantly enriched geneSet                    |
 | *parameters*                         | a list containing the parameters used to run the analyses                                       |
-| *affinity.propagation*               | if affinity propagation was applied via `simplify.enrichments`, here can be found the results   |
+| *affinity.propagation*               | if affinity propagation was applied via `simplify.enrichment`, here can be found the results    |
 
 <br>
 
 #### Reduce size of the enrichment by affinity propagation
-The function `simplify.enrichments` applies the affinity propagation method developed by [Elizarraras *et al.*](https://doi.org/10.1093/nar/gkae456) and implemented in [WebGestalt](https://www.webgestalt.org/) online toolkit.<br>
+The function `simplify.enrichment` applies the affinity propagation method developed by [Elizarraras *et al.*](https://doi.org/10.1093/nar/gkae456) and implemented in [WebGestalt](https://www.webgestalt.org/) online toolkit.<br>
 This reduces the size of redundant enrichment discoveries.
 
 ```{r simplify_enrichment, eval = FALSE}
@@ -1684,23 +1687,145 @@ ORA.results.simplified <- simplify.enrichment(ORA.results)
 
 <br>
 
+------------------
+
+# **Import from external tools** {#importexternal}
+Assembling the counts matrix by hand is not always necessary. The function `import.external()` reads the output of the most common search engines and returns directly a `DEprot` object: long reports are pivoted into a proteins x samples matrix, contaminants and decoys are dropped, q-value cutoffs are applied and the sample names are extracted from the raw-file paths. The object itself is then built internally by `load.counts2()`, hence the result is equivalent to a manual loading.
+
+```{r import_external, eval=F}
+dpo <- import.external(file = "report.pg_matrix.tsv",
+                       metadata = sample.config,
+                       source = "diann.matrix")
+```
+
+<br>
+
+The parameter `source` can be left to its default value `"auto"`: in that case the tool of origin is inferred from the column names of the file.
+
+| `source`              | Expected file                                                                   |
+| --------------------: | :------------------------------------------------------------------------------ |
+| *diann*               | DIA-NN main report (`report.tsv`, `report.parquet`)                             |
+| *diann.matrix*        | DIA-NN matrices (`report.pg_matrix.tsv`, `gg_`, `pr_`, `unique_genes_`)         |
+| *spectronaut*         | Spectronaut long-format export                                                  |
+| *spectronaut.pivot*   | Spectronaut pivot export (one column per run)                                   |
+| *fragpipe*            | FragPipe `combined_protein.tsv` / `combined_peptide.tsv`                        |
+| *maxquant*            | MaxQuant `proteinGroups.txt`                                                    |
+| *proteome.discoverer* | Proteome Discoverer protein-level export (R-friendly headers)                   |
+| *generic*             | any wide table, indicating the parameters `id.column` and `sample.columns`      |
+
+<br>
+
+Precursor-level reports (DIA-NN, Spectronaut) must be summarized to the protein level, and the parameter `summarization` defines how. The default, `"maxlfq"`, applies the MaxLFQ algorithm to the precursor intensities through the [`iq`](https://cran.r-project.org/package=iq) package; `"sum"` and `"median"` collapse the precursors of each protein group; `"none"` takes the protein-level column already present in the report (`PG.MaxLFQ` for DIA-NN, `PG.Quantity` for Spectronaut) without recomputing anything.
+
+```{r import_diann_maxlfq, eval=F}
+dpo <- import.external(file = "report.parquet",
+                       metadata = sample.config,
+                       source = "diann",
+                       summarization = "maxlfq",
+                       q.value = 0.01,
+                       pg.q.value = 0.01)
+```
+
+<br>
+
+Notice that the `data.type` is inferred from the quantity that has been used: values that already come out of a MaxLFQ/QuantUMS step (`PG.MaxLFQ`, `LFQ intensity`, `MaxLFQ Intensity`) are loaded as `"normalized"` and the method is stored in the `normalization.method` slot, while raw precursor intensities and spectral counts are loaded as `"raw"`. This can always be overwritten by setting `data.type` explicitly.<br></br>
+Zero values are converted to `NA` before the loading, since in proteomics a zero indicates a missing measurement and not an absence of signal.
+
+Sample names are cleaned from the directory path and from the raw-file extension (`.raw`, `.d`, `.mzML`, etc.), so that they can be matched to the `column.id` column of the metadata. Samples present in the report but absent from the metadata are discarded (`subset.to.metadata = TRUE`), which is convenient to exclude QC runs from the analyses. If instead the metadata already contains the complete raw-file names, set `clean.sample.names = FALSE`.
+
+<br>
+
+Two packages used by this function are not installed together with `DEprot`: [`iq`](https://cran.r-project.org/package=iq) for the MaxLFQ summarization and [`nanoparquet`](https://cran.r-project.org/package=nanoparquet) for the `.parquet` reports of DIA-NN 1.9 and above. They are requested only when actually needed, and the installation is never performed without an explicit confirmation.
+
+```{r import_install, eval=F}
+# install.missing: "ask" (default), "always" or "never"
+dpo <- import.external(file = "report.parquet",
+                       metadata = sample.config,
+                       install.missing = "ask")
+```
+
+In a non-interactive session (`R CMD check`, CI, vignette knitting) nothing is ever installed: the function stops and reports the command to run.
+
+<br>
+
+For the most frequent cases a set of shortcuts is available. `read.diann()`, `read.diann.matrix()`, `read.spectronaut()`, `read.fragpipe()` and `read.maxquant()` simply call `import.external()` with the corresponding `source`.
+
+```{r import_shortcut, eval=F}
+dpo <- read.fragpipe(file = "combined_protein.tsv",
+                     metadata = sample.config,
+                     quantity = "MaxLFQ Intensity")
+```
+
+<br>
+
+## Import from `MSstats` objects {#importmsstats}
+The [`MSstats`](https://www.bioconductor.org/packages/release/bioc/html/MSstats.html) package, developed by [M.Choi *et al.* (*Bioinformatics*, 2014)](https://doi.org/10.1093/bioinformatics/btu305), and its isobaric counterpart [`MSstatsTMT`](https://www.bioconductor.org/packages/release/bioc/html/MSstatsTMT.html), by [T.Huang *et al.* (*Mol.Cell.Proteomics*, 2020)](https://doi.org/10.1074/mcp.RA120.002105), do not write a report on disk: their summarization functions return an R object. Hence these results are handled by a dedicated function, `import.msstats()`, which takes the object itself rather than a file path.
+
+```{r import_msstats, eval=F}
+# label-free
+summarized <- MSstats::dataProcess(raw)
+dpo <- import.msstats(object = summarized)
+
+# isobaric labelling (TMT)
+summarized.tmt <- MSstatsTMT::proteinSummarization(input.pd)
+dpo <- import.msstats(object = summarized.tmt)
+```
+
+<br>
+
+The parameter `type` distinguishes the two flavours and, left to its default `"auto"`, is deduced from the presence of the columns `Channel` and `Mixture`.
+
+| `type` | Summarization function                    | Sample defined by      |
+| -----: | :---------------------------------------- | :--------------------- |
+| *lfq*  | `MSstats::dataProcess()`                  | `originalRUN`          |
+| *tmt*  | `MSstatsTMT::proteinSummarization()`      | `Run` + `Channel`      |
+
+<br>
+
+For TMT data the sample is the combination of MS run and labelling channel, and not the mixture: two technical replicates of the same mixture share the `Mixture` value but occupy different runs. A different key can be imposed through `sample.id`, for instance `sample.id = "BioReplicate"` when the annotation is already unambiguous.<br></br>
+Besides the complete list returned by the summarization functions, the function accepts the `ProteinLevelData` table alone, the legacy `RunlevelData` of the older `MSstats` versions, and the path to an `.rds` file containing any of them. `MSstatsPTM` objects are unwrapped from their `$PROTEIN` element. Notice that neither `MSstats` nor `MSstatsTMT` needs to be installed to perform the import, since these objects are ordinary data frames.
+
+<br>
+
+Contrary to the search-engine reports, an MSstats object already carries its own experimental annotation. When `metadata` is left to `NULL` the sample table is therefore reconstructed from it, keeping the columns that are constant within each sample: `GROUP` and `SUBJECT` for label-free data, `Condition`, `BioReplicate`, `Mixture` and `TechRepMixture` for TMT. The result is a usable metadata table and not a simple list of sample names.
+
+```{r import_msstats_metadata, eval=F}
+dpo <- import.msstats(object = summarized.tmt)
+get.metadata(dpo)
+```
+
+Two more points deserve attention. MSstats abundances are already log-transformed, and the base is assumed to be 2: set `log.base = 10` if `dataProcess()` was run with `logTrans = 10`. Further, with `data.type = "auto"` label-free data are loaded as *imputed* whenever the column `NumImputedFeature` is present and contains non-zero values, because `dataProcess()` writes that column only when run with `MBimpute = TRUE`. The protein-level table of `MSstatsTMT` carries no equivalent indicator, so TMT data are always loaded as *normalized*; indicate `data.type = "imputed"` explicitly if the imputation was applied.
+
+<br>
+
+### A note on isobaric data
+`DEprot` has been designed for label-free quantification. TMT data can be loaded and analysed, but several assumptions behind the package do not hold: missing values are structured by mixture rather than by sample, the fold changes are compressed by the co-isolation of the precursors, and the abundances have already been normalized within and between plexes by `proteinSummarization()`. A second round of `normalize.counts()` or `impute.counts()` is therefore discouraged. The mixture effect, on the contrary, is a genuine batch effect and can be corrected with `harmonize.batches()` using the `Mixture` column of the generated metadata.
+
+```{r import_msstats_harmonize, eval=F}
+dpo <- harmonize.batches(DEprot.object = dpo,
+                         batch.column = "Mixture")
+```
+
+<br>
+
 -----------------
+
 # **Package information** {#info}
 ## Documentation
-With the package a detailed [web manual](https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html) with details for each function and respective parameters is available.
+Together with the package, a detailed [web manual](https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html) describing each function and its parameters is available.
 
-The R-package have been published on [GitHub](https://github.com/sebastian-gregoricchio/DEprot) and a [git-pages website](https://sebastian-gregoricchio.github.io/DEprot) is available as well. At both these sites it is possible to find the installation procedure, required dependencies, and the links for changeLog, manual and vignette.
+The R-package has been published on [GitHub](https://github.com/sebastian-gregoricchio/DEprot) and a [git-pages website](https://sebastian-gregoricchio.github.io/DEprot) is available as well. At both sites it is possible to find the installation procedure, required dependencies, and the links for changeLog, manual and vignette.
 
 <br>
 
 ## Package history and releases
-A list of all releases and respective description of changes applied could be found [here](https://sebastian-gregoricchio.github.io/DEprot/NEWS).
+A list of all releases and the respective description of the changes applied can be found [here](https://sebastian-gregoricchio.github.io/DEprot/NEWS).
 
 
 <br>
 
 ## Contact
-For any suggestion, bug fixing, commentary please contact fill an [Issues](https://github.com/sebastian-gregoricchio/DEprot/issues)/[Pull requests](https://github.com/sebastian-gregoricchio/DEprot/pulls) form on the `DEprot` github page.
+For any suggestion, bug fixing or commentary please fill an [Issues](https://github.com/sebastian-gregoricchio/DEprot/issues)/[Pull requests](https://github.com/sebastian-gregoricchio/DEprot/pulls) form on the `DEprot` github page.
 
 ![](https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&padding=5&bots=true)
 

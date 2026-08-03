@@ -2,7 +2,7 @@
 # knitr::opts_chunk$set(collapse = TRUE, comment = ">", dev = "svg",
 #                       warning = F, message = F, fig.align = "center",
 #                       rows.print=12)
-#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_
+#knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 
 if (Sys.info()[["sysname"]] == "Darwin") {
   knitr::opts_chunk$set(collapse = TRUE, comment = ">",
@@ -627,12 +627,13 @@ knitr::kable(upset.plot@obs.matrix[1:5,], row.names = F, caption = "**Upset obse
 #               PCA.shape.column = "replicate")
 
 ## ----run_saint, fig.width = 8, fig.height=5-----------------------------------
-saint_deprot <- SAINTq(DEprot.object = DEprot::rime.dpo,
-                       metadata.column = "group",
-                       control = "LNCaP_TRIM33-5#MC-C2_FBS_IgG",
-                       bait = "LNCaP_TRIM33-5#MC-C2_FBS_AR",
-                       which.data = "imputed",
-                       fold = 5)
+saint_deprot <-
+  SAINTq(DEprot.object = DEprot::rime.dpo,
+         metadata.column = "group",
+         control = "LNCaP_TRIM33-5#MC-C2_FBS_IgG",
+         bait = "LNCaP_TRIM33-5#MC-C2_FBS_AR",
+         which.data = "imputed", # use 'raw' to be closer to the original SAINTq
+         fold = 5)
 saint_deprot
 
 ## ----show_saint_results, eval = F---------------------------------------------
@@ -828,4 +829,45 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 ## ----simplify_enrichment, eval = FALSE----------------------------------------
 # GSEA.results.simplified <- simplify.enrichment(GSEA.results)
 # ORA.results.simplified <- simplify.enrichment(ORA.results)
+
+## ----import_external, eval=F--------------------------------------------------
+# dpo <- import.external(file = "report.pg_matrix.tsv",
+#                        metadata = sample.config,
+#                        source = "diann.matrix")
+
+## ----import_diann_maxlfq, eval=F----------------------------------------------
+# dpo <- import.external(file = "report.parquet",
+#                        metadata = sample.config,
+#                        source = "diann",
+#                        summarization = "maxlfq",
+#                        q.value = 0.01,
+#                        pg.q.value = 0.01)
+
+## ----import_install, eval=F---------------------------------------------------
+# # install.missing: "ask" (default), "always" or "never"
+# dpo <- import.external(file = "report.parquet",
+#                        metadata = sample.config,
+#                        install.missing = "ask")
+
+## ----import_shortcut, eval=F--------------------------------------------------
+# dpo <- read.fragpipe(file = "combined_protein.tsv",
+#                      metadata = sample.config,
+#                      quantity = "MaxLFQ Intensity")
+
+## ----import_msstats, eval=F---------------------------------------------------
+# # label-free
+# summarized <- MSstats::dataProcess(raw)
+# dpo <- import.msstats(object = summarized)
+# 
+# # isobaric labelling (TMT)
+# summarized.tmt <- MSstatsTMT::proteinSummarization(input.pd)
+# dpo <- import.msstats(object = summarized.tmt)
+
+## ----import_msstats_metadata, eval=F------------------------------------------
+# dpo <- import.msstats(object = summarized.tmt)
+# get.metadata(dpo)
+
+## ----import_msstats_harmonize, eval=F-----------------------------------------
+# dpo <- harmonize.batches(DEprot.object = dpo,
+#                          batch.column = "Mixture")
 

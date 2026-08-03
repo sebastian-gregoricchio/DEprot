@@ -7,6 +7,15 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+#### [v1.3.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.1) - August 3<sup>rd</sup> 2026
+- added `import.external()`: builds a `DEprot` object directly from DIA-NN, Spectronaut, FragPipe, MaxQuant and Proteome Discoverer reports, with the shortcuts `read.diann()`, `read.diann.matrix()`, `read.spectronaut()`, `read.fragpipe()` and `read.maxquant()`
+- added `import.msstats()` for the summarized objects of `MSstats` (label-free) and `MSstatsTMT` (isobaric); the metadata are reconstructed from the object annotation when not provided
+- `iq` (MaxLFQ summarization) and `nanoparquet` (DIA-NN `.parquet` reports) are optional dependencies: they are requested only when needed and never installed without confirmation
+- updated vignette and manual accordingly
+
+
+<br>
+
 #### [v1.3.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.0) - July 30<sup>th</sup> 2026
 - `plot.volcano` and `plot.MA` can automatically plot the top N differential proteins
 - `export.report` will plot the top.n proteins in the volcano
