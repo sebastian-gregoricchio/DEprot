@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -93,10 +93,10 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 31<sup>th</sup>
-July, 2026</h4>
+            <h4 data-toc-skip class="date">Last update: 03<sup>th</sup>
+August, 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.3.0/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
       <div class="hidden name"><code>DEprot.overview.vignette.Rmd</code></div>
 
     </div>
@@ -114,7 +114,7 @@ text-align: justify}
 <h2 id="intro">
 <strong>Introduction</strong><a class="anchor" aria-label="anchor" href="#intro"></a>
 </h2>
-<p>The concept behind the <em>DEprot</em> (<em>D</em>ifferential
+<p>The concept behind <em>DEprot</em> (<em>D</em>ifferential
 <em>E</em>xpression <em>prot</em>eomics) is to provide a toolkit that
 allows for the normalization, imputation and analyses of the
 differential protein expression in proteomics data. The data are assumed
@@ -166,13 +166,14 @@ Genomics and Bioinformatics</i> (2026)<br> doi:
 <h3 id="general-workflow">General workflow<a class="anchor" aria-label="anchor" href="#general-workflow"></a>
 </h3>
 <p>Data can be loaded as raw values, pre-normalized unimputed LFQ values
-or, imputed LFQ values. Further, if multiple batches are available, it
-is possible to perform batch corrections by combining LFQ unimputed
-tables and load this data as “raw” in order to perform a batch
+or imputed LFQ values. Further, if multiple batches are available, it is
+possible to perform batch corrections by combining unimputed LFQ tables
+and loading these data as “raw” in order to perform a batch
 harmonization.</p>
 <p>Using normalized and imputed data, <code>DEprot</code> will help you
-in the differential analyses as well in performing quality controls on
-your data (sample correlation, principal components analyses (PCA)).</p>
+in the differential analyses as well as in performing quality controls
+on your data (sample correlation, principal components analyses
+(PCA)).</p>
 <p><br></p>
 <p><img src="https://sebastian-gregoricchio.github.io/DEprot/resources/DEprot_workflow.png"></p>
 <p><br></p>
@@ -194,12 +195,17 @@ The values in the matrix are assumed to be LFQ (label-free
 quantification) values, either in linear or log-transformed format.</li>
 <li>
 <em>metadata</em>: this must be a data.frame containing at least one
-column names <code>column.id</code> which values correspond to the
+column named <code>column.id</code>, whose values correspond to the
 column names of the <em>counts_table</em>. Any other additional column
 can be added (cell lines, treatment, condition, timing, etc) and used to
-define groups for differential and quality control (<a href="#PCA">PCA</a> and <a href="#correlation">correlation</a>)
+define groups for differential and quality control (<a href="#pca">PCA</a> and <a href="#correlation">correlation</a>)
 analyses.</li>
 </ul>
+<blockquote>
+<p><strong>NOTE</strong>: the counts table does not need to be prepared
+by hand: the output of DIA-NN, Spectronaut, FragPipe or MaxQuant can be
+loaded directly with <code><a href="../reference/import.external.html">import.external()</a></code> (see the <a href="#importexternal">Import from external tools</a> paragraph).</p>
+</blockquote>
 <p>In the next paragraph we will refer to a dataset (pre-loaded in
 <code>DEprot</code>), in which a breast cancer (BCa) cell line was
 cultured in either hormone-deprived media or in full media (FBS). If
@@ -207,9 +213,9 @@ cultured in hormone-deprived condition, it was then treated for 6 hrs
 with either
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>-estradiol
 (E2) or vehicle (DMSO). 4 biological replicates have been analyzed.
-Hence, the datasets consists of 1 cell lines x 3 conditions x 4
-replicates, for a total of 12 sample. Proteins and samples have been
-“anonymized”.</p>
+Hence, the dataset consists of 1 cell line x 3 conditions x 4
+replicates, for a total of 12 samples.<br> Proteins and samples
+have been “anonymized”.</p>
 <p><br></p>
 <div class="section level3">
 <h3 id="preloadeddata">Collect pre-loaded data<a class="anchor" aria-label="anchor" href="#preloadeddata"></a>
@@ -415,21 +421,21 @@ not-imputed.</p>
 <div class="section level3">
 <h3 id="deprotobject">Build <code>DEprot</code> object<a class="anchor" aria-label="anchor" href="#deprotobject"></a>
 </h3>
-<p>Now we will combine the the counts and metadata to create a
+<p>Now we will combine the counts and metadata to create a
 <code>DEprot</code> object (hereafter defined as <em>dpo</em>).<br>
-Notice that another import information is whether the data are log
-transformed, and if yes, which is the log base. Recommended
+Notice that another important point is whether the data are log
+transformed, and if so, which log base was used. Recommended
 transformation is the <em>log<sub>2</sub>(score + 1)</em>.</p>
 <p>If data are pre-normalized and/or pre-imputed, it can be indicated
-with the corresponding parameters <code>data.type</code> and any
+with the corresponding parameter <code>data.type</code>, and any
 information about the method used that you would like to store in the
 object can be added using the corresponding parameters
 <code>normalization.method</code> and
 <code>imputation.method</code>.<br></p>
 <p>Ultimately, if the metadata table does not contain a
-<code>column.id</code> column corresponding to the row names of the
+<code>column.id</code> column corresponding to the column names of the
 <code>counts_table</code>, it is possible to indicate the name of
-another column that should be assumed as to be the
+another column that should be assumed to be the
 <code>column.id</code>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>dpo <span class="ot">&lt;-</span> <span class="fu">load.counts2</span>(<span class="at">counts =</span> unimputed.counts,</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>                    <span class="at">metadata =</span> sample.config,</span>
@@ -445,12 +451,11 @@ another column that should be assumed as to be the
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="sc">&gt;</span> Log transformation<span class="sc">:</span>  log2</span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="sc">&gt;</span>   Metadata columns<span class="sc">:</span>  column.id, sample.id, cell, condition, combined.id, replicate</span></code></pre></div>
 <p><br></p>
-This object is an S4-vector of class <code>DEprot</code>. The S4-vectors
-are containers of slots that can be accessed using the symbol
-<code>@</code> (e.g., <code>object@slot.id</code>.<br>The structure
-of an object of class <code>DEprot</code> (and
-<code>DEprot.analyses</code>) is the following:
-</div>
+<p>This object is an S4-vector of class <code>DEprot</code>. The
+S4-vectors are containers of slots that can be accessed using the symbol
+<code>@</code> (e.g., <code>object@slot.id</code>).<br>The
+structure of an object of class <code>DEprot</code> (and
+<code>DEprot.analyses</code>) is the following:</p>
 <table class="table">
 <colgroup>
 <col width="22%">
@@ -504,7 +509,7 @@ if not available it will be <code>NA</code>
 <tr class="even">
 <td align="right"><em>randomized</em></td>
 <td align="left">logical value indicating whether the data have been
-randomizedor not</td>
+randomized or not</td>
 </tr>
 <tr class="odd">
 <td align="right"><em>randomization.method</em></td>
@@ -564,13 +569,13 @@ intensities per sample obtained from the imputed counts</td>
 <div class="section level3">
 <h3 id="rename">Rename sample columns<a class="anchor" aria-label="anchor" href="#rename"></a>
 </h3>
-<p>As in our example, sometimes the columns of the counts are not the
-actual ID of the samples, but rather an identifier. However, it is
-possible to rename the counts column names indicating any column of the
-metadata table (having unique values). The original identifiers are
-stored in a new column (<code>old.column.id</code>) of the
-metadata.<br> Notice that the renaming will applied to all counts
-table available.</p>
+<p>As in our example, sometimes the column names of the counts are not
+the actual names of the samples, but rather an internal identifier.
+However, it is possible to rename the counts columns by indicating any
+column of the metadata table (having unique values). The original
+identifiers are stored in a new column (<code>old.column.id</code>) of
+the metadata.<br> Notice that the renaming will be applied to all
+the counts tables available.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>dpo <span class="ot">&lt;-</span> <span class="fu">rename.samples</span>(<span class="at">DEprot.object =</span> dpo,</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>                      <span class="at">metadata.column =</span> <span class="st">"sample.id"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a></span>
@@ -635,7 +640,7 @@ and minimum LFQ value for each sample.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/display_boxplot_raw-1.png" class="r-plt" alt="" width="480" style="display: block; margin: auto;"></p>
 <p>In this package we apply the Modified Balanced Quantile Normalization
 (MBQN) from the <a href="https://www.bioconductor.org/packages/release/bioc/html/MBQN.html" class="external-link"><code>MBQN</code></a>
-package and developed by <a href="https://doi.org/10.1002/pmic.202000068" class="external-link">E.Brombacher <em>et
+package, developed by <a href="https://doi.org/10.1002/pmic.202000068" class="external-link">E.Brombacher <em>et
 al.</em> (<em>Proteomics</em>, 2020)</a>. The modification balances the
 median (or mean) intensity of features (rows) which are rank invariant
 (RI) or nearly rank invariant (NRI) across samples (columns) before
@@ -687,11 +692,11 @@ LFQ values per each sample is generated and stored in a vector slot.</p>
 <h3 id="batch-effect-correction">Batch effect correction<a class="anchor" aria-label="anchor" href="#batch-effect-correction"></a>
 </h3>
 <p>Proteomics is highly susceptible to batch effects. Hereafter we use
-the package <a href="https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html" class="external-link"><code>HarmonizR</code></a>
+the <a href="https://www.bioconductor.org/packages/release/bioc/html/HarmonizR.html" class="external-link"><code>HarmonizR</code></a>
 package, developed by <a href="https://doi.org/10.1038/s41467-022-31007-x" class="external-link">H.Voß &amp;
-S.Schlumbohm (<em>Nat.Commun.</em>, 2022)</a>. This tool besides
+S.Schlumbohm (<em>Nat.Commun.</em>, 2022)</a>. This tool, besides
 handling multiple experiments, allows for the batch correction of data
-derived by the combination of both DIA (Data-Independent Acquisition)
+derived from the combination of both DIA (Data-Independent Acquisition)
 and DDA (Data-Dependent Acquisition).</p>
 <blockquote>
 <p><code>HarmonizR</code> is not a required dependency, therefore if
@@ -701,13 +706,13 @@ package can be installed by:
 <code>BiocManager::install("HarmonizR")</code>, or alternatively
 <code>devtools::install_github("https://github.com/SimonSchlumbohm/HarmonizR/", subdir = "HarmonizR")</code>.</p>
 </blockquote>
-<p>To use the <code>harmonize.batches</code> is sufficient to provide a
+<p>To use <code>harmonize.batches</code> it is sufficient to provide a
 <code>DEprot</code> object containing a combined table of multiple
 experiments and indicate the identifier of a column in the metadata
-table which corresponds to the batch annotation. The result is a DEprot
-object with the same structure described in the previous paragraph. <br>
-Here, for simplicity, we will add manually a column to the metadata
-table with “dummy” batches.</p>
+table which corresponds to the batch annotation. The result is a
+<code>DEprot</code> object with the same structure described in the
+previous paragraph. <br> Here, for simplicity, we will add manually a
+column to the metadata table with “dummy” batches.</p>
 <blockquote>
 <p>Batch harmonization replaces the normalization: so data can be loaded
 as ‘raw’ and “normalized” using <code>harmonize.batches</code>. Do not
@@ -755,7 +760,7 @@ apply additional MBQN normalization.</p>
 <p>NOTE: By default <code>harmonize.batches</code> uses
 <code>ComBat</code>. If your batch design is sparse (i.e., a batch with
 a single sample, or proteins measured only once in a batch) ComBat can
-fail with a singular-matrix error; see next paragraph to know out to fix
+fail with a singular-matrix error; see next paragraph to know how to fix
 it using <code>limma</code> instead.</p>
 </blockquote>
 <p><br></p>
@@ -791,19 +796,19 @@ batch design is too sparse for it.</p>
 <strong>Data imputation</strong><a class="anchor" aria-label="anchor" href="#imputation"></a>
 </h2>
 <p>Often many <code>NA</code>/<code>NaN</code> values are present in the
-LFQ tables due to the technical limitations of the protein detection by
+LFQ tables due to the technical limitations of the protein detection in
 Mass Spectrometry (MS) experiments.</p>
 <p>Here we provide the possibility to use 9 different methods for the
-imputation the data:</p>
+imputation of the data:</p>
 <ul>
 <li>
 <a href="https://www.rdocumentation.org/packages/missForest/" class="external-link"><code>missForest</code></a>:
 developed by <a href="https://doi.org/10.1093/bioinformatics/btr597" class="external-link">DJ.Stekhoven &amp;
 P.Buehlmann (<em>Bioinformatics</em>, 2012)</a>, this tool will impute
-the NaN and assign and estimated value. It also yields an out-of-bag
-(OOB) imputation error estimate (general, or per each sample). Moreover,
-it can be run parallel to save computation time (both examples reported
-here after).</li>
+the NaNs and assign an estimated value. It also yields an out-of-bag
+(OOB) imputation error estimate (general, or for each sample). Moreover,
+it can be run in parallel to save computation time (both examples
+reported hereafter).</li>
 <li>k-Nearest Neighbors (kNN) algorithm</li>
 <li>correlation-Nearest Neighbors (corkNN) algorithm</li>
 <li>truncated-Nearest Neighbors (tkNN) algorithm</li>
@@ -815,22 +820,22 @@ coefficient</li>
 <li>Bayesian Principal Component Analysis (BPCA)</li>
 </ul>
 <p><br></p>
-<p>Of note, there are cases in which the missing data are not due to the
-random but rather consequent to real biological effects (i.e.,
-knock-down, knock-out, degron systems and PROTACs, etc.). This may lead
-to the issue that a protein completely missing in all the replicates of
-an individual condition will be imputed with relatively high numbers.
-This would ultimately lead to the incorrect definition of the
-differential status of this protein. To overcome this possibility, it is
-possible to use the function <code>randomize.missing.values</code> to
-assign random values from the bottom distribution of the full dataset.
-The user can define a percentage threshold of minimal missing values
-within the group; for instance if the threshold is 75% and in each group
-there are 4 samples, it means that only proteins with at least 3 out of
-4 missing values will be imputed. It will be sufficient to indicate the
-ID of a column belonging to the metadata which indicates the
-groups/conditions and the percentage of distribution from which select
-random numbers (“tail.percentage”).</p>
+<p>Of note, there are cases in which the missing data are not random but
+rather the consequence of real biological effects (i.e., knock-down,
+knock-out, degron systems and PROTACs, etc.). This may lead to the issue
+that a protein completely missing in all the replicates of an individual
+condition will be imputed with relatively high numbers. This would
+ultimately lead to the incorrect definition of the differential status
+of this protein. To overcome this, it is possible to use the function
+<code>randomize.missing.values</code> to assign random values from the
+bottom distribution of the full dataset. The user can define a
+percentage threshold of minimal missing values within the group; for
+instance if the threshold is 75% and in each group there are 4 samples,
+it means that only proteins with at least 3 out of 4 missing values will
+be imputed. It will be sufficient to indicate the ID of a column
+belonging to the metadata which indicates the groups/conditions and the
+percentage of distribution from which to select random numbers
+(“tail.percentage”).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/randomize.missing.values.html">randomize.missing.values</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
 <span>                                group.column <span class="op">=</span> <span class="st">"combined.id"</span>,</span>
@@ -848,8 +853,9 @@ equivalent to impute all the data with this method.</p>
 </h3>
 <p>We implemented the function <code>compare.imp.methods</code> to
 compare the different imputation methods and choose the best one for
-your data type. Indeed, your dataset is subset and NAs are introduce
-simulating distribution and proportion of the original data.</p>
+your data type. Indeed, your dataset is subsampled and NAs are
+introduced simulating the distribution and the proportion of the
+original data.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>imp.comparison <span class="ot">&lt;-</span> <span class="fu">compare.imp.methods</span>(<span class="at">DEprot.object =</span> dpo,</span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>                                      <span class="at">percentage.test =</span> <span class="dv">30</span>,</span>
 <span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>                                      <span class="at">sample.group.column =</span> <span class="st">"combined.id"</span>,</span>
@@ -884,14 +890,14 @@ simulating distribution and proportion of the original data.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; tkNN                    tkNN 0.5132982         0.9852705            2.01    1
-&gt; corkNN                corkNN 0.5135173         0.9851722            1.98    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          119.40    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.27    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.86    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.33    6
-&gt; missForest        missForest 0.5664830         0.9813784           30.48    7
-&gt; LLS                      LLS 0.6326730         0.9684621            4.15    8</code></pre>
+&gt; tkNN                    tkNN 0.5132982         0.9852705            2.02    1
+&gt; corkNN                corkNN 0.5135173         0.9851722            1.94    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672          112.80    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            8.88    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.83    5
+&gt; SVD                      SVD 0.5442393         0.9791497            3.26    6
+&gt; missForest        missForest 0.5664830         0.9813784           29.06    7
+&gt; LLS                      LLS 0.6326730         0.9684621            4.04    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -977,9 +983,9 @@ LFQ values per each sample is generated and stored in a vector slot.</p>
 <div class="section level3">
 <h3 id="pca">Principal Component Analyses (PCA)<a class="anchor" aria-label="anchor" href="#pca"></a>
 </h3>
-<p>PCA can be performed in order to perform a dimensional reduction and
-determine which factor explains the variability of the samples.<br><code>DEprot</code> includes function dedicated to this aim and
-specifically build to work with <code>DEprot</code> objects.</p>
+<p>PCA can be used to perform a dimensionality reduction and determine
+which factor explains the variability of the samples.<br><code>DEprot</code> includes functions dedicated to this aim and
+specifically built to work with <code>DEprot</code> objects.</p>
 <p>Notice that, even if the data are not log-transformed,
 <code>perform.PCA</code> will do it before performing the analyses.</p>
 <div class="section level4">
@@ -1033,8 +1039,8 @@ PC</td>
 <tr class="odd">
 <td align="right"><em>cumulative.PC.plot</em></td>
 <td align="left">
-<code>ggplot</code> object corresponding to out put of
-<code>plot.PC.cumulative</code> for this object</td>
+<code>ggplot</code> object corresponding to the output
+of <code>plot.PC.cumulative</code> for this object</td>
 </tr>
 </tbody>
 </table>
@@ -1124,9 +1130,9 @@ how many top contributing proteins should be displayed.</p>
 <h4 id="analyze-pcs-on-a-sample-subset">Analyze PCs on a sample subset<a class="anchor" aria-label="anchor" href="#analyze-pcs-on-a-sample-subset"></a>
 </h4>
 <p>These analyses can also be performed for a subset of samples by
-indicated the sample names of interest.<br> In the example below we
-will use only the sample in which the estrogen receptor is active (E2
-and FBS conditions).</p>
+indicating the sample names of interest.<br> In the example below
+we will use only the samples in which the estrogen receptor is active
+(E2 and FBS conditions).</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Perform the analyses (DEprot.PCA object)</span></span>
 <span><span class="va">PCA.fbs.e2</span> <span class="op">&lt;-</span></span>
@@ -1172,9 +1178,9 @@ and FBS conditions).</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="correlataion">Correlations<a class="anchor" aria-label="anchor" href="#correlataion"></a>
+<h3 id="correlation">Correlations<a class="anchor" aria-label="anchor" href="#correlation"></a>
 </h3>
-<p>Another method to define the sample clustering/groups, is the overall
+<p>Another method to define the sample clustering/groups is the overall
 correlation between the samples.<br> Hierarchical clustering is
 performed using the <code>1 - correlation</code> values, since the
 hierarchical clustering algorithm is based on dissimilarities while the
@@ -1207,8 +1213,8 @@ of samples as shown before for the <a href="#pca">PCAs</a>.</p>
 <span></span>
 <span><span class="va">corr.ERa.active</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/make_correlation_subset-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
-<p>The <code>DEprot.correlation</code> correlation object contains the
-following slots:</p>
+<p>The <code>DEprot.correlation</code> object contains the following
+slots:</p>
 <table class="table">
 <colgroup>
 <col width="14%">
@@ -1241,8 +1247,8 @@ normalized, raw)</td>
 </tr>
 <tr class="odd">
 <td align="right"><em>corr.matrix</em></td>
-<td align="left">the correlation matrix on which the heatmap is base
-on</td>
+<td align="left">the correlation matrix on which the heatmap is
+based</td>
 </tr>
 <tr class="even">
 <td align="right"><em>distance</em></td>
@@ -1260,18 +1266,18 @@ output of <code>as.dist(1 - correlation.matrix)</code>
 <tr class="even">
 <td align="right"><em>method</em></td>
 <td align="left">String indicating the correlation method used (one
-among: pearson, spearman, kendal)</td>
+among: pearson, spearman, kendall)</td>
 </tr>
 </tbody>
 </table>
 <p><br></p>
 </div>
 <div class="section level3">
-<h3 id="PCoA">Principal Coordinate Analyses (PCoA)<a class="anchor" aria-label="anchor" href="#PCoA"></a>
+<h3 id="pcoa">Principal Coordinate Analyses (PCoA)<a class="anchor" aria-label="anchor" href="#pcoa"></a>
 </h3>
 <p>The same correlation object can be used as input for a Principal
 Coordinate Analysis (PCoA, or classical multidimensional scaling).
-Differently from the PCA, which relies on the euclidean distances
+Differently from the PCA, which relies on the Euclidean distances
 between samples, PCoA ordinates the <code>1 - correlation</code>
 dissimilarity already stored in the <code>DEprot.correlation</code>
 object - a distance that on LFQ data is often more robust, since it
@@ -1405,10 +1411,11 @@ in a single value.</p>
 <span>                                    n.loadings <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">PCoA_biplot_1.2</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/pcoa.biplot-1.png" class="r-plt" alt="" width="700" style="display: block; margin: auto;"></p>
-<p>Unlike the PCA biplot, these arrows are the a-posteriori correlation
-between each protein and the coordinates (not the <code>prcomp</code>
-rotation coefficients), so they indicate the direction a protein follows
-in the ordination rather than an exact loading.</p>
+<p>Unlike the PCA biplot, these arrows represent the a-posteriori
+correlation between each protein and the coordinates (not the
+<code>prcomp</code> rotation coefficients), so they indicate the
+direction a protein follows in the ordination rather than an exact
+loading.</p>
 <p><br></p>
 <hr>
 </div>
@@ -1423,9 +1430,9 @@ performed employing two different methods using the functions
 the first (<code>diff.analyses</code>) the conditions will be compared
 two-by-two (individual t-/Wilcox tests), while with the second
 (<code>diff.analyses.limma</code>) the <code>limma</code> package is
-used to fit the data on a linear model.</p>
-<p>In both cases, it is sufficient to provide a list of 3-elements
-vectors. The latter, should indicate any column of the metadata table
+used to fit the data to a linear model.</p>
+<p>In both cases, it is sufficient to provide a list of three-element
+vectors. The latter should indicate any column of the metadata table
 (grouping factor) and two values (groups) to compare within this column.
 The first variable will be numerator and the second the denominator of
 the fold change:
@@ -1437,9 +1444,9 @@ it is sufficient to indicate the column from the metadata table that
 corresponds to the replicate identifiers (in our example
 <code>replicate.column = "replicate"</code>) and set
 <code>paired.test = TRUE</code>. For each contrast it will be verified
-that replicate identifiers are not repeated within a group and, that
-replicate number and identifiers coincide between the two groups. By the
-default analyses ignore the replicates. <br> If
+that replicate identifiers are not repeated within a group and that
+replicate number and identifiers coincide between the two groups. By
+default, analyses ignore the replicates. <br> If
 <code>diff.analyses.limma</code> is used instead, the correlation
 between replicates will be estimated and incorporated in the fitting
 model. In this case indicate the replicate column identifier (in our
@@ -1463,24 +1470,24 @@ paired results only (multi t-test mode).</p>
 <h5 id="verify-normality-of-the-data">Verify normality of the data<a class="anchor" aria-label="anchor" href="#verify-normality-of-the-data"></a>
 </h5>
 <p>The main assumption to run <code>limma</code> is that the data are
-normally distributed. For this reason is good practice verify that the
-data are normally distributed for each sample. This can be accomplished
-using the function <code>check.normality</code>. It will return a S4
-vector composed by:</p>
+normally distributed. For this reason it is good practice to verify that
+the data are normally distributed for each sample. This can be
+accomplished using the function <code>check.normality</code>. It will
+return an S4 vector composed of:</p>
 <ul>
 <li>
 <code>norm.statement</code>: logical value indicating whether all
 the samples are normally distributed (TRUE) or not (FALSE);</li>
 <li>
 <code>norm.AD.tests</code>: list of Anderson-Darling normality test
-outputs (statistics, p-value, etc;</li>
+outputs (statistics, p-value, etc.);</li>
 <li>
 <code>qqplots</code>: a list of Q-Q plots (ggplot objects) showing
 the “correlation” between the distribution of your data and the
-theoretical normal distribution</li>
+theoretical normal distribution;</li>
 <li>
 <code>densities</code>: a list of density curves (ggplot objects)
-depicted the distribution of your data and the overlay with the
+depicting the distribution of your data and the overlay with the
 theoretical normal distribution.</li>
 </ul>
 <blockquote>
@@ -2098,8 +2105,8 @@ contrasts of a differential expression analyses object.</p>
 </h5>
 <p>Using the function <code>contrast.LFQ</code> it is possible to plot a
 scatter of the average LFQ values for the two conditions involved in a
-specific contrast. dots will be colored by log<sub>2</sub>(Fold Change),
-while the size corresponds to the P-value adjusted (or FRD is
+specific contrast. Dots will be colored by log<sub>2</sub>(Fold Change),
+while the size corresponds to the adjusted P-value (or FDR if
 <code>prolfqua</code> is used).</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">contrast_LFQ</span> <span class="op">&lt;-</span></span>
@@ -2128,11 +2135,11 @@ log<sub>2</sub>(FoldChange) values.</li>
 <h6 id="counts">Counts<a class="anchor" aria-label="anchor" href="#counts"></a>
 </h6>
 <p>With the <code>heatmap.counts</code> function it is possible to
-generate an heatmap for the raw/normalized/imputed counts. It is
-possible to select only specific proteins and/or subset samples (from
-<code>column.id</code> column in metadata table). If the object provided
-is a <code>DEprot.analyses</code> object, it is also possible to
-indicate to plot only differential proteins (or top.n differential
+generate a heatmap for the raw/normalized/imputed counts. It is possible
+to select only specific proteins and/or subset samples (from the
+<code>column.id</code> column in the metadata table). If the object
+provided is a <code>DEprot.analyses</code> object, it is also possible
+to indicate to plot only differential proteins (or top.n differential
 proteins) from a specific contrast. <br> The protein ranking
 definition is based on the differential score, computed as:
 <code>abs(log2(fold change)) * -log10(Padj)</code>.</p>
@@ -2220,12 +2227,12 @@ previous example.</p>
 <span>                      <span class="va">imputed_counts_heatmap_diffProteins_columnScaled</span><span class="op">@</span><span class="va">heatmap</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/heatmap_counts_zscores-1.png" class="r-plt" alt="" width="960" style="display: block; margin: auto;"></p>
 <p><br></p>
-<p>Ultimately, With this function is also possible to group data based
-on the values of a metadata’s column. In this way it is possible to
+<p>Ultimately, with this function it is also possible to group data
+based on the values of a metadata column. In this way it is possible to
 average the values by the values of the defined column (e.g., the
 replicates of a condition).</p>
 <p>In the next example we will average the replicates of each condition
-using the <code>combined.id</code> column form the metadata of the
+using the <code>combined.id</code> column from the metadata of the
 <code>dpo_analyses</code> object.</p>
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition</span> <span class="op">&lt;-</span> </span>
@@ -2253,8 +2260,8 @@ using the <code>combined.id</code> column form the metadata of the
 multiple contrasts using the function <code>heatmap.contrasts</code>.
 Only differential proteins are shown.<br> Also in this case it is
 possible to show only the top <em>N</em> differential proteins. However
-the top <em>N</em> of each contrast will be shown. This means than
-<em>N</em> proteins might be shown.</p>
+the top <em>N</em> of each contrast will be shown. This means that more
+than <em>N</em> proteins might be displayed.</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">FC_heatmap</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/heatmap.contrasts.html">heatmap.contrasts</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
@@ -2278,10 +2285,10 @@ the top <em>N</em> of each contrast will be shown. This means than
 <p>To identify which differential proteins are common among multiple
 comparisons, it is possible to generate an upset plot using the function
 <code>plot.upset</code>. With this function all the intersections
-between all the contrasts including in the provided object can be
+between all the contrasts included in the provided object can be
 visualized by co-occurrence. It is also possible to subset only specific
 contrasts indicating a numeric vector in the flag
-<code>sort.intersections</code>.</p>
+<code>contrast.subset</code>.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">upset.plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot.upset.html">plot.upset</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                         contrast.subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,</span>
@@ -2399,23 +2406,24 @@ format automatically from a
 INTeractome)</strong><a class="anchor" aria-label="anchor" href="#saint-score-significance-analysis-of-interactome"></a>
 </h2>
 <p>SAINT, developed by <a href="https://doi.org/10.1126/science.1176495" class="external-link">Breitkreutz <em>et
-al.</em> (Science, 2010)</a>, is a methods that assigns the number of
+al.</em> (Science, 2010)</a>, is a method that assigns the number of
 identified peptides for each interactor to a probability distribution,
 which is then exploited to estimate the likelihood of a true interaction
-(typically SAINT score ≥0.95).<br> The original methods use the spectral
+(typically SAINT score ≥0.95).<br> The original method uses the spectral
 data, however <a href="https://doi.org/10.1002/pmic.201500499" class="external-link">Teo
 <em>et al.</em> (Proteomics, 2016)</a> developed a method for the
 computation of the SAINT scores on LFQ data named <code>SAINTq</code>.
-The latter is developed in C++ languange, we here implemented the
+The latter is developed in C++ language; here we implemented the
 original algorithm in the function <code>SAINTq</code>.</p>
 <blockquote>
 <p>DISCLAIMER: This is an independent re-implementation of the published
 model, not a re-wrapping of the C++ program. It returns scores with the
 same definitions and behavior, but exact numbers can differ from the
-official binary because of low-level differences (parameter estimation,
-missing-value and control-compression heuristics).</p>
+official <code>SAINTq</code> binary because of low-level differences
+(parameter estimation, missing-value and control-compression
+heuristics).</p>
 </blockquote>
-<p>We benchmarked our re-implementation with the original
+<p>We benchmarked our re-implementation against the original
 <code>SAINTq</code> using a subset of the data from <a href="https://doi.org/10.1038/s42003-025-08449-2" class="external-link">Eickhoff <em>et
 al.</em> (Commun Biol, 2025)</a> that have been reanalyzed in <a href="https://doi.org/10.1093/nargab/lqag015" class="external-link">Eickhoff <em>et al.</em>
 (NAR Genom Bioinform, 2026)</a>.</p>
@@ -2425,7 +2433,7 @@ the bait (the immunoprecipitation target; i.e. AR). Of note, multiple
 baits can be provided, and if the <code>bait</code> argument is left
 blank (<code>NULL</code>), all the non-control groups are tested against
 the same control.<br> The result is an object of class
-<code>DEprot.SAINTq</code> containing 4 slots:</p>
+<code>DEprot.SAINTq</code> containing 3 slots:</p>
 <table class="table">
 <colgroup>
 <col width="14%">
@@ -2548,12 +2556,13 @@ when averaging the per- replicate posterior probabilities into
 </tbody>
 </table>
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">saint_deprot</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SAINTq.html">SAINTq</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="../reference/rime.dpo.html">rime.dpo</a></span>,</span>
-<span>                       metadata.column <span class="op">=</span> <span class="st">"group"</span>,</span>
-<span>                       control <span class="op">=</span> <span class="st">"LNCaP_TRIM33-5#MC-C2_FBS_IgG"</span>,</span>
-<span>                       bait <span class="op">=</span> <span class="st">"LNCaP_TRIM33-5#MC-C2_FBS_AR"</span>,</span>
-<span>                       which.data <span class="op">=</span> <span class="st">"imputed"</span>,</span>
-<span>                       fold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">saint_deprot</span> <span class="op">&lt;-</span></span>
+<span>  <span class="fu"><a href="../reference/SAINTq.html">SAINTq</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="../reference/rime.dpo.html">rime.dpo</a></span>,</span>
+<span>         metadata.column <span class="op">=</span> <span class="st">"group"</span>,</span>
+<span>         control <span class="op">=</span> <span class="st">"LNCaP_TRIM33-5#MC-C2_FBS_IgG"</span>,</span>
+<span>         bait <span class="op">=</span> <span class="st">"LNCaP_TRIM33-5#MC-C2_FBS_AR"</span>,</span>
+<span>         which.data <span class="op">=</span> <span class="st">"imputed"</span>, <span class="co"># use 'raw' to be closer to the original SAINTq</span></span>
+<span>         fold <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">saint_deprot</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/run_saint-1.png" class="r-plt" alt="" width="768" style="display: block; margin: auto;"></p>
 <div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
@@ -2649,7 +2658,7 @@ when averaging the per- replicate posterior probabilities into
 </table>
 <p><br></p>
 <div class="section level3">
-<h3 id="benchamrk-against-the-original-saintq-tool">Benchamrk against the original <code>SAINTq</code> tool<a class="anchor" aria-label="anchor" href="#benchamrk-against-the-original-saintq-tool"></a>
+<h3 id="benchmark-against-the-original-saintq-tool">Benchmark against the original <code>SAINTq</code> tool<a class="anchor" aria-label="anchor" href="#benchmark-against-the-original-saintq-tool"></a>
 </h3>
 <p>We analyzed the same data using the original <code>SAINTq</code>
 (results stored in DEprot as <code>rime.saintq</code>) and compared the
@@ -2683,8 +2692,8 @@ scores obtained between the two methods.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="other-tools">
-<strong>Other tools</strong><a class="anchor" aria-label="anchor" href="#other-tools"></a>
+<h2 id="othertools">
+<strong>Other tools</strong><a class="anchor" aria-label="anchor" href="#othertools"></a>
 </h2>
 <div class="section level3">
 <h3 id="count-detected-proteins">Count detected proteins<a class="anchor" aria-label="anchor" href="#count-detected-proteins"></a>
@@ -2730,7 +2739,7 @@ in how many samples within a group were detected.</p>
 <div class="section level3">
 <h3 id="individual-protein-expression">Individual protein expression<a class="anchor" aria-label="anchor" href="#individual-protein-expression"></a>
 </h3>
-<p>Using the function <code>expression.boxplot</code> is possible to
+<p>Using the function <code>expression.boxplot</code> it is possible to
 generate boxplots of the expression of individual proteins.<br> The
 expression can be grouped by a column of the metadata using the
 <code>group.by.metadata.column</code> parameter. Furthermore it is
@@ -2788,20 +2797,20 @@ possible to scale the values using Z-scores (parameter
 <h3 id="filter-proteins">Filter proteins<a class="anchor" aria-label="anchor" href="#filter-proteins"></a>
 </h3>
 <p>For certain analyses it might be necessary to filter-out/keep only
-certain specific protein (e.g., keep only nuclear proteins).<br>
-With the function <code>filter.proteins</code> is possible to indicate a
-vector containing the protein IDs (it must correspond to the row.names
-of the counts table) and chose whether to <code>"keep"</code> or
-<code>"remove"</code> these proteins.</p>
+certain specific proteins (e.g., keep only nuclear proteins).<br>
+With the function <code>filter.proteins</code> it is possible to
+indicate a vector containing the protein IDs (it must correspond to the
+row names of the counts table) and choose whether to <code>"keep"</code>
+or <code>"remove"</code> these proteins.</p>
 <p>This function works for both <code>DEprot</code> and
-<code>DEprot.analyses</code> classes. The output will look exactly as
+<code>DEprot.analyses</code> classes. The output will look exactly like
 the original, however counts tables (raw, normalized, imputed), count
 boxplots, PCAs, correlations, differential tables, differential protein
-counts, violin and MA-plot will be recomputed.</p>
+counts, volcano and MA-plot will be recomputed.</p>
 <blockquote>
 <p><strong>NOTE</strong>: we discourage the filtering before
 normalization/batch correction and imputation, as well as before
-limma-base differential analyses. In all these methods are based on the
+limma-based differential analyses. All these methods are based on the
 assumption that the proteins ‘available’ are ‘all’ the proteins
 available, which is not the case.</p>
 </blockquote>
@@ -2813,7 +2822,7 @@ available, which is not the case.</p>
 removing cytoplasmic proteins.</p>
 <blockquote>
 <p>Notice that this is only an example and, since the protein IDs are
-randomized, it would not applicable for the example dataset available
+randomized, it would not be applicable to the example dataset available
 with <code>DEprot</code>. Furthermore <code>DEprot</code> does not
 include the packages <code>AnnotationDbi</code> and
 <code>org.Hs.eg.db</code>, which can be installed through the
@@ -2854,7 +2863,7 @@ delete columns; the whole pipeline has to be redone on what is left. The
 function <code>filter.samples</code> does that for you: it reads the
 settings off the object and replays each step on the retained
 samples.</p>
-<p>It works with object of class <code>DEprot</code> and
+<p>It works with objects of class <code>DEprot</code> and
 <code>DEprot.analyses</code>. In the case of the latter, also the
 differential analyses are re-performed using the same parameters (if
 possible).</p>
@@ -2874,8 +2883,8 @@ hand, one might want to change the thresholds used to define the
 differential status of the proteins. To avoid the re-computation of the
 differentials from the beginning, the function
 <code>reapply.thresholds</code> can be used to re-compute the
-differential status, re-plot volcanos and MA-plots, and the n.diff
-summary table.</p>
+differential status, re-plot volcanoes and MA-plots, and re-compute the
+<code>n.diff</code> summary table.</p>
 <div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">&lt;-</span></span>
 <span id="cb68-2"><a href="#cb68-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
 <span id="cb68-3"><a href="#cb68-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
@@ -2918,12 +2927,12 @@ results table of the given contrast (ORA).</p>
 The latter must be a data.frame with two columns: “gs_name” (geneSet
 name) and “gene_symbol” (corresponding to the protein id).<br> In
 <code>DEprot</code> we provide a ready-to-use list of protein complexes
-obtained by the <a href="https://mips.helmholtz-muenchen.de/corum/" class="external-link">CORUM</a> database.</p>
+obtained from the <a href="https://mips.helmholtz-muenchen.de/corum/" class="external-link">CORUM</a> database.</p>
 <blockquote>
 <p>Notice that the “gene_symbol” values must match the “prot.id” in the
-result tables. To this goal, the <code>geneset.enrichment</code>
-function contains the parameter <code>gsub.pattern.prot.id</code> that
-will be used to remove a pattern from the “prot.id”s.</p>
+result tables. To this end, the <code>geneset.enrichment</code> function
+contains the parameter <code>gsub.pattern.prot.id</code> that will be
+used to remove a pattern from the “prot.id”s.</p>
 </blockquote>
 <p><br></p>
 <p>In the following example we will show how to create a geneSet table
@@ -3003,8 +3012,8 @@ from the CORUM data and use it for GSEA and ORA analyses.</p>
 <p>For GSEA analyses the genes in the differential table of the provided
 contrast can be ranked either by using the log<sub>2</sub>(Fold Change)
 [default] or the Spearman’s correlation of the imputed counts between
-the two groups. Depending on the sample size, this two methods can lead
-to different ranking. To compare the two methods it is possible to plot
+the two groups. Depending on the sample size, these two methods can lead
+to different rankings. To compare the two methods it is possible to plot
 the correlation of the two ranks and scores using
 <code>compare.ranking</code>:</p>
 <div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
@@ -3027,10 +3036,10 @@ the correlation of the two ranks and scores using
 <span>                     pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>                     pAdjustMethod <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>                     dotplot.n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
-<p>Results can be visualized using <code>plot.NES</code> and
+<p>Results can be visualized using <code>NES.plot</code> and
 <code>plot.GSEA</code>.<br>Other plots can be found in the output object
 (slots: <code>protein.network</code>, <code>pathway.network</code>,
-<code>NES.plot</code>, <code>dotplot_gene.ratio</code>); have a look to
+<code>NES.plot</code>, <code>dotplot_gene.ratio</code>); have a look at
 the <code>DEprot::test.toolbox$gsea.results</code> dummy example.</p>
 <p><br></p>
 </div>
@@ -3049,10 +3058,10 @@ the <code>DEprot::test.toolbox$gsea.results</code> dummy example.</p>
 <span>                     pAdjustMethod <span class="op">=</span> <span class="st">"BH"</span>,</span>
 <span>                     diff.status.category <span class="op">=</span> <span class="st">"6h.10nM.E2"</span>,</span>
 <span>                     dotplot.n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
-<p>Some plots can be found in the output object slot. (slots:
+<p>Some plots can be found in the output object (slots:
 <code>protein.network</code>, <code>pathway.network</code>,
 <code>dotplot_gene.ratio</code>, <code>dotplot_fold.enrichment</code>);
-have a look to the <code>DEprot::test.toolbox$ora.results</code> dummy
+have a look at the <code>DEprot::test.toolbox$ora.results</code> dummy
 example.</p>
 <p><br></p>
 </div>
@@ -3112,7 +3121,7 @@ analyses</td>
 <tr class="even">
 <td align="right"><em>affinity.propagation</em></td>
 <td align="left">if affinity propagation was applied via
-<code>simplify.enrichments</code>, here can be found the results</td>
+<code>simplify.enrichment</code>, here can be found the results</td>
 </tr>
 </tbody>
 </table>
@@ -3121,7 +3130,7 @@ analyses</td>
 <div class="section level5">
 <h5 id="reduce-size-of-the-enrichment-by-affinity-propagation">Reduce size of the enrichment by affinity propagation<a class="anchor" aria-label="anchor" href="#reduce-size-of-the-enrichment-by-affinity-propagation"></a>
 </h5>
-<p>The function <code>simplify.enrichments</code> applies the affinity
+<p>The function <code>simplify.enrichment</code> applies the affinity
 propagation method developed by <a href="https://doi.org/10.1093/nar/gkae456" class="external-link">Elizarraras <em>et
 al.</em></a> and implemented in <a href="https://www.webgestalt.org/" class="external-link">WebGestalt</a> online toolkit.<br>
 This reduces the size of redundant enrichment discoveries.</p>
@@ -3135,33 +3144,280 @@ This reduces the size of redundant enrichment discoveries.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="importexternal">
+<strong>Import from external tools</strong><a class="anchor" aria-label="anchor" href="#importexternal"></a>
+</h2>
+<p>Assembling the counts matrix by hand is not always necessary. The
+function <code><a href="../reference/import.external.html">import.external()</a></code> reads the output of the most
+common search engines and returns directly a <code>DEprot</code> object:
+long reports are pivoted into a proteins x samples matrix, contaminants
+and decoys are dropped, q-value cutoffs are applied and the sample names
+are extracted from the raw-file paths. The object itself is then built
+internally by <code><a href="../reference/load.counts2.html">load.counts2()</a></code>, hence the result is
+equivalent to a manual loading.</p>
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.external.html">import.external</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"report.pg_matrix.tsv"</span>,</span>
+<span>                       metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
+<span>                       source <span class="op">=</span> <span class="st">"diann.matrix"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<p>The parameter <code>source</code> can be left to its default value
+<code>"auto"</code>: in that case the tool of origin is inferred from
+the column names of the file.</p>
+<table class="table">
+<colgroup>
+<col width="21%">
+<col width="79%">
+</colgroup>
+<thead><tr class="header">
+<th align="right"><code>source</code></th>
+<th align="left">Expected file</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right"><em>diann</em></td>
+<td align="left">DIA-NN main report (<code>report.tsv</code>,
+<code>report.parquet</code>)</td>
+</tr>
+<tr class="even">
+<td align="right"><em>diann.matrix</em></td>
+<td align="left">DIA-NN matrices (<code>report.pg_matrix.tsv</code>,
+<code>gg_</code>, <code>pr_</code>, <code>unique_genes_</code>)</td>
+</tr>
+<tr class="odd">
+<td align="right"><em>spectronaut</em></td>
+<td align="left">Spectronaut long-format export</td>
+</tr>
+<tr class="even">
+<td align="right"><em>spectronaut.pivot</em></td>
+<td align="left">Spectronaut pivot export (one column per run)</td>
+</tr>
+<tr class="odd">
+<td align="right"><em>fragpipe</em></td>
+<td align="left">FragPipe <code>combined_protein.tsv</code> /
+<code>combined_peptide.tsv</code>
+</td>
+</tr>
+<tr class="even">
+<td align="right"><em>maxquant</em></td>
+<td align="left">MaxQuant <code>proteinGroups.txt</code>
+</td>
+</tr>
+<tr class="odd">
+<td align="right"><em>proteome.discoverer</em></td>
+<td align="left">Proteome Discoverer protein-level export (R-friendly
+headers)</td>
+</tr>
+<tr class="even">
+<td align="right"><em>generic</em></td>
+<td align="left">any wide table, indicating the parameters
+<code>id.column</code> and <code>sample.columns</code>
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>Precursor-level reports (DIA-NN, Spectronaut) must be summarized to
+the protein level, and the parameter <code>summarization</code> defines
+how. The default, <code>"maxlfq"</code>, applies the MaxLFQ algorithm to
+the precursor intensities through the <a href="https://cran.r-project.org/package=iq" class="external-link"><code>iq</code></a>
+package; <code>"sum"</code> and <code>"median"</code> collapse the
+precursors of each protein group; <code>"none"</code> takes the
+protein-level column already present in the report
+(<code>PG.MaxLFQ</code> for DIA-NN, <code>PG.Quantity</code> for
+Spectronaut) without recomputing anything.</p>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.external.html">import.external</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"report.parquet"</span>,</span>
+<span>                       metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
+<span>                       source <span class="op">=</span> <span class="st">"diann"</span>,</span>
+<span>                       summarization <span class="op">=</span> <span class="st">"maxlfq"</span>,</span>
+<span>                       q.value <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>                       pg.q.value <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<p>Notice that the <code>data.type</code> is inferred from the quantity
+that has been used: values that already come out of a MaxLFQ/QuantUMS
+step (<code>PG.MaxLFQ</code>, <code>LFQ intensity</code>,
+<code>MaxLFQ Intensity</code>) are loaded as <code>"normalized"</code>
+and the method is stored in the <code>normalization.method</code> slot,
+while raw precursor intensities and spectral counts are loaded as
+<code>"raw"</code>. This can always be overwritten by setting
+<code>data.type</code> explicitly.<br> Zero values are converted to
+<code>NA</code> before the loading, since in proteomics a zero indicates
+a missing measurement and not an absence of signal.</p>
+<p>Sample names are cleaned from the directory path and from the
+raw-file extension (<code>.raw</code>, <code>.d</code>,
+<code>.mzML</code>, etc.), so that they can be matched to the
+<code>column.id</code> column of the metadata. Samples present in the
+report but absent from the metadata are discarded
+(<code>subset.to.metadata = TRUE</code>), which is convenient to exclude
+QC runs from the analyses. If instead the metadata already contains the
+complete raw-file names, set
+<code>clean.sample.names = FALSE</code>.</p>
+<p><br></p>
+<p>Two packages used by this function are not installed together with
+<code>DEprot</code>: <a href="https://cran.r-project.org/package=iq" class="external-link"><code>iq</code></a> for the
+MaxLFQ summarization and <a href="https://cran.r-project.org/package=nanoparquet" class="external-link"><code>nanoparquet</code></a>
+for the <code>.parquet</code> reports of DIA-NN 1.9 and above. They are
+requested only when actually needed, and the installation is never
+performed without an explicit confirmation.</p>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># install.missing: "ask" (default), "always" or "never"</span></span>
+<span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.external.html">import.external</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"report.parquet"</span>,</span>
+<span>                       metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
+<span>                       install.missing <span class="op">=</span> <span class="st">"ask"</span><span class="op">)</span></span></code></pre></div>
+<p>In a non-interactive session (<code>R CMD check</code>, CI, vignette
+knitting) nothing is ever installed: the function stops and reports the
+command to run.</p>
+<p><br></p>
+<p>For the most frequent cases a set of shortcuts is available.
+<code>read.diann()</code>, <code>read.diann.matrix()</code>,
+<code>read.spectronaut()</code>, <code>read.fragpipe()</code> and
+<code>read.maxquant()</code> simply call <code><a href="../reference/import.external.html">import.external()</a></code>
+with the corresponding <code>source</code>.</p>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">read.fragpipe</span><span class="op">(</span>file <span class="op">=</span> <span class="st">"combined_protein.tsv"</span>,</span>
+<span>                     metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
+<span>                     quantity <span class="op">=</span> <span class="st">"MaxLFQ Intensity"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<div class="section level3">
+<h3 id="importmsstats">Import from <code>MSstats</code> objects<a class="anchor" aria-label="anchor" href="#importmsstats"></a>
+</h3>
+<p>The <a href="https://www.bioconductor.org/packages/release/bioc/html/MSstats.html" class="external-link"><code>MSstats</code></a>
+package, developed by <a href="https://doi.org/10.1093/bioinformatics/btu305" class="external-link">M.Choi <em>et
+al.</em> (<em>Bioinformatics</em>, 2014)</a>, and its isobaric
+counterpart <a href="https://www.bioconductor.org/packages/release/bioc/html/MSstatsTMT.html" class="external-link"><code>MSstatsTMT</code></a>,
+by <a href="https://doi.org/10.1074/mcp.RA120.002105" class="external-link">T.Huang <em>et
+al.</em> (<em>Mol.Cell.Proteomics</em>, 2020)</a>, do not write a report
+on disk: their summarization functions return an R object. Hence these
+results are handled by a dedicated function,
+<code><a href="../reference/import.msstats.html">import.msstats()</a></code>, which takes the object itself rather than
+a file path.</p>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># label-free</span></span>
+<span><span class="va">summarized</span> <span class="op">&lt;-</span> <span class="fu">MSstats</span><span class="fu">::</span><span class="fu">dataProcess</span><span class="op">(</span><span class="va">raw</span><span class="op">)</span></span>
+<span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.msstats.html">import.msstats</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">summarized</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># isobaric labelling (TMT)</span></span>
+<span><span class="va">summarized.tmt</span> <span class="op">&lt;-</span> <span class="fu">MSstatsTMT</span><span class="fu">::</span><span class="fu">proteinSummarization</span><span class="op">(</span><span class="va">input.pd</span><span class="op">)</span></span>
+<span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.msstats.html">import.msstats</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">summarized.tmt</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<p>The parameter <code>type</code> distinguishes the two flavours and,
+left to its default <code>"auto"</code>, is deduced from the presence of
+the columns <code>Channel</code> and <code>Mixture</code>.</p>
+<table style="width:100%;" class="table">
+<colgroup>
+<col width="8%">
+<col width="59%">
+<col width="31%">
+</colgroup>
+<thead><tr class="header">
+<th align="right"><code>type</code></th>
+<th align="left">Summarization function</th>
+<th align="left">Sample defined by</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right"><em>lfq</em></td>
+<td align="left"><code>MSstats::dataProcess()</code></td>
+<td align="left"><code>originalRUN</code></td>
+</tr>
+<tr class="even">
+<td align="right"><em>tmt</em></td>
+<td align="left"><code>MSstatsTMT::proteinSummarization()</code></td>
+<td align="left">
+<code>Run</code> + <code>Channel</code>
+</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+<p>For TMT data the sample is the combination of MS run and labelling
+channel, and not the mixture: two technical replicates of the same
+mixture share the <code>Mixture</code> value but occupy different runs.
+A different key can be imposed through <code>sample.id</code>, for
+instance <code>sample.id = "BioReplicate"</code> when the annotation is
+already unambiguous.<br> Besides the complete list returned by the
+summarization functions, the function accepts the
+<code>ProteinLevelData</code> table alone, the legacy
+<code>RunlevelData</code> of the older <code>MSstats</code> versions,
+and the path to an <code>.rds</code> file containing any of them.
+<code>MSstatsPTM</code> objects are unwrapped from their
+<code>$PROTEIN</code> element. Notice that neither <code>MSstats</code>
+nor <code>MSstatsTMT</code> needs to be installed to perform the import,
+since these objects are ordinary data frames.</p>
+<p><br></p>
+<p>Contrary to the search-engine reports, an MSstats object already
+carries its own experimental annotation. When <code>metadata</code> is
+left to <code>NULL</code> the sample table is therefore reconstructed
+from it, keeping the columns that are constant within each sample:
+<code>GROUP</code> and <code>SUBJECT</code> for label-free data,
+<code>Condition</code>, <code>BioReplicate</code>, <code>Mixture</code>
+and <code>TechRepMixture</code> for TMT. The result is a usable metadata
+table and not a simple list of sample names.</p>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.msstats.html">import.msstats</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">summarized.tmt</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/get.metadata.html">get.metadata</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">)</span></span></code></pre></div>
+<p>Two more points deserve attention. MSstats abundances are already
+log-transformed, and the base is assumed to be 2: set
+<code>log.base = 10</code> if <code>dataProcess()</code> was run with
+<code>logTrans = 10</code>. Further, with
+<code>data.type = "auto"</code> label-free data are loaded as
+<em>imputed</em> whenever the column <code>NumImputedFeature</code> is
+present and contains non-zero values, because <code>dataProcess()</code>
+writes that column only when run with <code>MBimpute = TRUE</code>. The
+protein-level table of <code>MSstatsTMT</code> carries no equivalent
+indicator, so TMT data are always loaded as <em>normalized</em>;
+indicate <code>data.type = "imputed"</code> explicitly if the imputation
+was applied.</p>
+<p><br></p>
+<div class="section level4">
+<h4 id="a-note-on-isobaric-data">A note on isobaric data<a class="anchor" aria-label="anchor" href="#a-note-on-isobaric-data"></a>
+</h4>
+<p><code>DEprot</code> has been designed for label-free quantification.
+TMT data can be loaded and analysed, but several assumptions behind the
+package do not hold: missing values are structured by mixture rather
+than by sample, the fold changes are compressed by the co-isolation of
+the precursors, and the abundances have already been normalized within
+and between plexes by <code>proteinSummarization()</code>. A second
+round of <code><a href="../reference/normalize.counts.html">normalize.counts()</a></code> or <code><a href="../reference/impute.counts.html">impute.counts()</a></code>
+is therefore discouraged. The mixture effect, on the contrary, is a
+genuine batch effect and can be corrected with
+<code><a href="../reference/harmonize.batches.html">harmonize.batches()</a></code> using the <code>Mixture</code> column
+of the generated metadata.</p>
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/harmonize.batches.html">harmonize.batches</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
+<span>                         batch.column <span class="op">=</span> <span class="st">"Mixture"</span><span class="op">)</span></span></code></pre></div>
+<p><br></p>
+<hr>
+</div>
+</div>
+</div>
+<div class="section level2">
 <h2 id="info">
 <strong>Package information</strong><a class="anchor" aria-label="anchor" href="#info"></a>
 </h2>
 <div class="section level3">
 <h3 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h3>
-<p>With the package a detailed <a href="https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html" class="external-link">web
-manual</a> with details for each function and respective parameters is
-available.</p>
-<p>The R-package have been published on <a href="https://github.com/sebastian-gregoricchio/DEprot" class="external-link">GitHub</a> and a
+<p>Together with the package, a detailed <a href="https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html" class="external-link">web
+manual</a> describing each function and its parameters is available.</p>
+<p>The R-package has been published on <a href="https://github.com/sebastian-gregoricchio/DEprot" class="external-link">GitHub</a> and a
 <a href="https://sebastian-gregoricchio.github.io/DEprot" class="external-link">git-pages
-website</a> is available as well. At both these sites it is possible to
-find the installation procedure, required dependencies, and the links
-for changeLog, manual and vignette.</p>
+website</a> is available as well. At both sites it is possible to find
+the installation procedure, required dependencies, and the links for
+changeLog, manual and vignette.</p>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="package-history-and-releases">Package history and releases<a class="anchor" aria-label="anchor" href="#package-history-and-releases"></a>
 </h3>
-<p>A list of all releases and respective description of changes applied
-could be found <a href="https://sebastian-gregoricchio.github.io/DEprot/NEWS" class="external-link">here</a>.</p>
+<p>A list of all releases and the respective description of the changes
+applied can be found <a href="https://sebastian-gregoricchio.github.io/DEprot/NEWS" class="external-link">here</a>.</p>
 <p><br></p>
 </div>
 <div class="section level3">
 <h3 id="contact">Contact<a class="anchor" aria-label="anchor" href="#contact"></a>
 </h3>
-<p>For any suggestion, bug fixing, commentary please contact fill an <a href="https://github.com/sebastian-gregoricchio/DEprot/issues" class="external-link">Issues</a>/<a href="https://github.com/sebastian-gregoricchio/DEprot/pulls" class="external-link">Pull
+<p>For any suggestion, bug fixing or commentary please fill an <a href="https://github.com/sebastian-gregoricchio/DEprot/issues" class="external-link">Issues</a>/<a href="https://github.com/sebastian-gregoricchio/DEprot/pulls" class="external-link">Pull
 requests</a> form on the <code>DEprot</code> github page.</p>
 <p><img src="https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&amp;padding=5&amp;bots=true"></p>
 </div>
@@ -3192,5 +3448,12 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 </div>
 
       </footer>
-</body>
+</div>
+
+
+
+
+
+
+  </body>
 </html>
