@@ -19,7 +19,7 @@ Includes means, Fold Changes, and p-values."><!-- mathjax --><script src="https:
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -35,6 +35,9 @@ Includes means, Fold Changes, and p-values."><!-- mathjax --><script src="https:
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/DEprot.overview.vignette.html">*DEprot*: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses</a>
+    </li>
+    <li>
+      <a href="../articles/DEprot.timecourse.vignette.html">*DEprot*: time-course analyses</a>
     </li>
   </ul></li>
 <li>
@@ -56,7 +59,7 @@ Includes means, Fold Changes, and p-values."><!-- mathjax --><script src="https:
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>diff.analyses.limma</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.3.1/R/diff.analyses.limma.R" class="external-link"><code>R/diff.analyses.limma.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/R/diff.analyses.limma.R" class="external-link"><code>R/diff.analyses.limma.R</code></a></small>
     <div class="hidden name"><code>diff.analyses.limma.Rd</code></div>
     </div>
 
@@ -104,7 +107,7 @@ Includes means, Fold Changes, and p-values.</p>
 
 
 <dt id="arg-replicate-column">replicate.column<a class="anchor" aria-label="anchor" href="#arg-replicate-column"></a></dt>
-<dd><p>String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if <code>paired.test = TRUE</code>. Default: <code>NULL</code>.</p></dd>
+<dd><p>String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only if <code>include.rep.model = TRUE</code>. Default: <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-linear-fc-th">linear.FC.th<a class="anchor" aria-label="anchor" href="#arg-linear-fc-th"></a></dt>
@@ -124,7 +127,7 @@ Includes means, Fold Changes, and p-values.</p>
 
 
 <dt id="arg-fitting-method">fitting.method<a class="anchor" aria-label="anchor" href="#arg-fitting-method"></a></dt>
-<dd><p>String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. Default: <code>"ls"</code> (least squares).</p></dd>
+<dd><p>String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. The robust regression cannot be combined with <code>include.rep.model = TRUE</code>. Default: <code>"ls"</code> (least squares).</p></dd>
 
 
 <dt id="arg-up-color">up.color<a class="anchor" aria-label="anchor" href="#arg-up-color"></a></dt>
@@ -161,17 +164,21 @@ Includes means, Fold Changes, and p-values.</p>
 error of the mean (<code>sem.&lt;group&gt;</code>) of the log2 expression values, together with <code>lfcSE</code>, the moderated
 (posterior) standard error of the contrast coefficient estimated by limma (<code>stdev.unscaled * sqrt(s2.post)</code>).
 This is the denominator of the moderated t-statistic reported in the <code>statistic</code> column and it is the direct
-equivalent of the <code>lfcSE</code> column returned by <code>DESeq2::results()</code>. The log2(FoldChange) column is computed as
-the difference between the group means, which coincides with the limma contrast coefficient for a least-squares fit of a
-<code>~ 0 + group</code> design, but not when <code>include.rep.model = TRUE</code> (generalized least squares) or when
-<code>fitting.method = "robust"</code>: in those cases <code>statistic</code> may differ slightly from <code>log2(FoldChange)/lfcSE</code>.
+equivalent of the <code>lfcSE</code> column returned by <code>DESeq2::results()</code>. The log2(FoldChange) column is the contrast
+coefficient estimated by limma, so that <code>statistic = log2(FoldChange)/lfcSE</code> holds in every case. For a
+least-squares fit of a <code>~ 0 + group</code> design the coefficient corresponds exactly to the difference between the group
+means reported in the <code>log2.mean.&lt;group&gt;</code> columns; when <code>include.rep.model = TRUE</code> the fit becomes a
+generalized least squares in which the samples are weighted through the consensus correlation between replicates, and
+the same is true of <code>fitting.method = "robust"</code>: in those cases the coefficient stays close to the difference of the
+means without coinciding with it.
 Note that, when imputed counts are used, the imputation compresses the variance and <code>sd</code>, <code>sem</code> and
 <code>lfcSE</code> are consequently under-estimated.</p>
 <p>When set to <code>"fdrtool"</code>, the moderated t-statistics returned by limma are passed to <code><a href="https://rdrr.io/pkg/fdrtool/man/fdrtool.html" class="external-link">fdrtool::fdrtool</a></code>
 (as normal deviates, <code>statistic = "normal"</code>), which estimates the proportion of null features and an empirical
 null: the resulting tail-area-based q-values are stored in the <code>padj</code> column, while the local false discovery rate
-(<code>lfdr</code>) is added as an extra column of the results table. If fewer than 200 proteins with a finite statistic are
-available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised).</p>
+(<code>lfdr</code>) is appended as an extra column at the end of the results table. If fewer than 200 proteins with a finite statistic are
+available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised)
+and no <code>lfdr</code> column is returned.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

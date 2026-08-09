@@ -15,7 +15,7 @@ the original object's slots and re-using the existing DEprot functions
 (normalize.counts, harmonize.batches,
 randomize.missing.values, impute.counts and, for
 DEprot.analyses, diff.analyses / diff.analyses.limma /
-diff.analyses.prolfqua)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+diff.analyses.prolfqua / diff.analyses.proDA)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -33,7 +33,7 @@ diff.analyses.prolfqua)."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -49,6 +49,9 @@ diff.analyses.prolfqua)."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/DEprot.overview.vignette.html">*DEprot*: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses</a>
+    </li>
+    <li>
+      <a href="../articles/DEprot.timecourse.vignette.html">*DEprot*: time-course analyses</a>
     </li>
   </ul></li>
 <li>
@@ -70,7 +73,7 @@ diff.analyses.prolfqua)."><!-- mathjax --><script src="https://cdnjs.cloudflare.
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>filter.samples</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.3.1/R/filter.samples.R" class="external-link"><code>R/filter.samples.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/R/filter.samples.R" class="external-link"><code>R/filter.samples.R</code></a></small>
     <div class="hidden name"><code>filter.samples.Rd</code></div>
     </div>
 
@@ -91,7 +94,7 @@ the original object's slots and re-using the existing DEprot functions
 (<a href="normalize.counts.html">normalize.counts</a>, <a href="harmonize.batches.html">harmonize.batches</a>,
 <a href="randomize.missing.values.html">randomize.missing.values</a>, <a href="impute.counts.html">impute.counts</a> and, for
 <code>DEprot.analyses</code>, <a href="diff.analyses.html">diff.analyses</a> / <a href="diff.analyses.limma.html">diff.analyses.limma</a> /
-<a href="diff.analyses.prolfqua.html">diff.analyses.prolfqua</a>).</p>
+<a href="diff.analyses.prolfqua.html">diff.analyses.prolfqua</a> / <a href="diff.analyses.proDA.html">diff.analyses.proDA</a>).</p>
     </div>
 
     <div id="ref-usage">
@@ -141,10 +144,11 @@ literally called <code>"batch"</code>. Default: <code>NULL</code>.</p></dd>
 <dt id="arg-diff-method">diff.method<a class="anchor" aria-label="anchor" href="#arg-diff-method"></a></dt>
 <dd><p>String defining which differential-analyses engine should
 be used to recompute the contrasts of a <code>DEprot.analyses</code> object. One
-among <code>"auto"</code>, <code>"t.test"</code>, <code>"limma"</code> and <code>"prolfqua"</code>.
-With <code>"auto"</code> (default) the engine is read directly from the object
-(the <code>stat.test</code> entry of <code>differential.analyses.params</code> records
-whether <code>limma</code>, <code>prolfqua</code> or the t/Wilcoxon engine was used);
+among <code>"auto"</code>, <code>"t.test"</code>, <code>"limma"</code>, <code>"prolfqua"</code> and
+<code>"proDA"</code>. With <code>"auto"</code> (default) the engine is read directly
+from the object (the <code>stat.test</code> entry of
+<code>differential.analyses.params</code> records whether <code>limma</code>,
+<code>prolfqua</code>, <code>proDA</code> or the t/Wilcoxon engine was used);
 for legacy objects that do not store it, <code>prolfqua</code> is still detected
 and the function otherwise falls back to <code>diff.analyses</code> (t/Wilcoxon).
 Set this argument explicitly only to override the stored engine. Default:
@@ -210,11 +214,17 @@ the corresponding slot of the original object:</p><ul><li><p><em>Normalization</
         <code>contrasts</code> slots): the contrasts, fold-change thresholds,
         p-value/FDR threshold, adjustment method and counts used are recovered.
         The engine is identified from the stored <code>stat.test</code>
-        (<code>"limma"</code>, <code>"prolfqua"</code> or the t/Wilcoxon test name); the
-        <code>replicate.column</code> is recovered for every engine, together with
-        the t/Wilcoxon <code>paired.test</code>, the limma <code>rep.model</code> /
-        <code>fitting.method</code>, and the prolfqua <code>strategy</code> /
-        <code>moderate.variance</code>.</p></li>
+        (<code>"limma"</code>, <code>"prolfqua"</code>, <code>"proDA"</code> or the t/Wilcoxon
+        test name); the <code>replicate.column</code> is recovered for every engine,
+        together with the t/Wilcoxon <code>paired.test</code>, the limma
+        <code>rep.model</code> / <code>fitting.method</code>, the prolfqua
+        <code>strategy</code> / <code>moderate.variance</code> / <code>robust.scaling</code>,
+        and the proDA <code>rep.model</code> / <code>moderate.location</code> /
+        <code>moderate.variance</code> / <code>min.detected</code> / <code>n.subsample</code> /
+        <code>max.iter</code>.</p></li>
+<li><p><em>Protein annotation</em> (<code>protein.info</code> slot): the table is
+        carried over to the rebuilt object, since removing samples does not
+        change the proteins.</p></li>
 </ul><p>The seeds saved during the original randomization/imputation are re-used so
 the re-computation is as reproducible as possible on the reduced data.</p>
 <p><strong>HarmonizR fallback.</strong> When the original object was harmonized, the

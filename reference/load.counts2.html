@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -33,6 +33,9 @@
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/DEprot.overview.vignette.html">*DEprot*: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses</a>
+    </li>
+    <li>
+      <a href="../articles/DEprot.timecourse.vignette.html">*DEprot*: time-course analyses</a>
     </li>
   </ul></li>
 <li>
@@ -54,7 +57,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>load.counts2</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.3.1/R/load.counts2.R" class="external-link"><code>R/load.counts2.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/R/load.counts2.R" class="external-link"><code>R/load.counts2.R</code></a></small>
     <div class="hidden name"><code>load.counts2.Rd</code></div>
     </div>
 
@@ -71,7 +74,9 @@
 <span>  normalization.method <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  randomization.method <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  imputation.method <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span>  column.id <span class="op">=</span> <span class="st">"column.id"</span></span>
+<span>  column.id <span class="op">=</span> <span class="st">"column.id"</span>,</span>
+<span>  protein.info <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  protein.info.id.column <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -110,10 +115,22 @@
 <dt id="arg-column-id">column.id<a class="anchor" aria-label="anchor" href="#arg-column-id"></a></dt>
 <dd><p>String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of <code>counts</code>.</p></dd>
 
+
+<dt id="arg-protein-info">protein.info<a class="anchor" aria-label="anchor" href="#arg-protein-info"></a></dt>
+<dd><p>Optional <code>data.frame</code> (or <code>matrix</code>) with one row per protein and any number of annotation columns (e.g., gene symbol, description, number of peptides). The protein IDs must be provided as row names, in a column called <code>prot.id</code>, or in the column indicated by <code>protein.info.id.column</code>; they must correspond to the row names of <code>counts</code>. The table is re-ordered to match the counts: proteins missing from the annotation are filled with <code>NA</code>, annotations of proteins absent from the counts are discarded. Default: <code>NULL</code> (no annotation).</p></dd>
+
+
+<dt id="arg-protein-info-id-column">protein.info.id.column<a class="anchor" aria-label="anchor" href="#arg-protein-info-id-column"></a></dt>
+<dd><p>String indicating the name of the column of <code>protein.info</code> containing the protein IDs. If <code>NULL</code> (default), the row names are used (or a column called <code>prot.id</code> when the table has no explicit row names).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>A <code>DEprot</code> object (S4 vector).</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><a href="add.protein.info.html">add.protein.info</a>, <a href="get.results.html">get.results</a></p></div>
     </div>
     <div id="author">
     <h2>Author</h2>

@@ -19,7 +19,7 @@ The sample scores (dots) are overlaid with the projection of the proteins (arrow
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -35,6 +35,9 @@ The sample scores (dots) are overlaid with the projection of the proteins (arrow
   </a>
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/DEprot.overview.vignette.html">*DEprot*: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses</a>
+    </li>
+    <li>
+      <a href="../articles/DEprot.timecourse.vignette.html">*DEprot*: time-course analyses</a>
     </li>
   </ul></li>
 <li>
@@ -56,7 +59,7 @@ The sample scores (dots) are overlaid with the projection of the proteins (arrow
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>plot.PCoA.biplot</h1>
-    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/1.3.1/R/plot.PCoA.biplot.R" class="external-link"><code>R/plot.PCoA.biplot.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/R/plot.PCoA.biplot.R" class="external-link"><code>R/plot.PCoA.biplot.R</code></a></small>
     <div class="hidden name"><code>plot.PCoA.biplot.Rd</code></div>
     </div>
 
@@ -67,8 +70,7 @@ The sample scores (dots) are overlaid with the projection of the proteins (arrow
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'PCoA.biplot'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot.PCoA.biplot</span><span class="op">(</span></span>
 <span>  <span class="va">DEprot.PCoA.object</span>,</span>
 <span>  PCo.x <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  PCo.y <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -188,8 +190,8 @@ protein aligns with the plane, not the magnitude of its intensity change.</p>
 <span class="r-in"><span><span class="co"># The DEprot.object must be provided to compute the protein projections</span></span></span>
 <span class="r-in"><span><span class="va">pcoa</span> <span class="op">&lt;-</span> <span class="fu"><a href="perform.PCoA.html">perform.PCoA</a></span><span class="op">(</span>DEprot.correlation.object <span class="op">=</span> <span class="va">correlation</span>,</span></span>
 <span class="r-in"><span>                     DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Only 7 of the 11 principal coordinates requested correspond to a positive eigenvalue and could be computed.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The dissimilarities are not euclidean-embeddable: 3 negative eigenvalue(s) detected (largest relative magnitude = 0.083).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Only 8 of the 11 principal coordinates requested correspond to a positive eigenvalue and could be computed.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The dissimilarities are not euclidean-embeddable: 3 negative eigenvalue(s) detected (largest relative magnitude = 0.0798).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>        The negative eigenvalues are non-negligible. Consider using 'distance.transformation = "sqrt"' or 'correction = "cailliez"'/'correction = "lingoes"'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>        The proportions of variance are computed using only the positive eigenvalues as denominator.</span>
 <span class="r-in"><span></span></span>
