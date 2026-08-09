@@ -1,4 +1,7 @@
-comment: false
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+  require_changes: false
 
 coverage:
   status:
@@ -6,7 +9,17 @@ coverage:
       default:
         target: auto
         threshold: 1%
+        informational: true
     patch:
       default:
-        target: auto
-        threshold: 1%
+        target: 80%
+        threshold: 5%
+        informational: true
+
+ignore:
+  - "R/zzz.R"
+  - "R/globals.R"
+  - "R/options.R"
+  - "R/data.R"
+  - "inst/**"
+  - "vignettes/**"

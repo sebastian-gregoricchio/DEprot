@@ -88,7 +88,8 @@ Suggests:
   statmod,
   SummarizedExperiment,
   testthat (>= 3.0.0),
-  tidyr
+  tidyr,
+  withr
 biocViews:
 Remotes:
   sebastian-gregoricchio/aPEAR,
