@@ -26,6 +26,11 @@ jobs:
         with:
           use-public-rspm: true
 
+      # 'Suggests' are installed by default, hence the packages needed by the tests
+      # (pcaMethods, MSnbase, QFeatures, SummarizedExperiment, iq, ...) must NOT be
+      # repeated here: a package listed both in DESCRIPTION and in 'extra-packages'
+      # gives pak two direct references to reconcile, which currently fails with
+      # "$ operator is invalid for atomic vectors".
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::covr, any::xml2
@@ -44,7 +49,20 @@ jobs:
             install_path = file.path(normalizePath(Sys.getenv("RUNNER_TEMP"), winslash = "/"), "package")
           )
           print(cov)
-          print(covr::zero_coverage(cov)[, c("filename", "first_line")])
+
+          ## uncovered lines per file, most affected first. The columns returned by
+          ## zero_coverage() differ between covr versions, hence only 'filename' is used and
+          ## the whole report is guarded: a diagnostic must never fail the workflow.
+          tryCatch({
+            zero <- covr::zero_coverage(cov)
+            if (nrow(zero) > 0) {
+              cat("\nUncovered lines per file:\n")
+              print(sort(table(basename(as.character(zero$filename))), decreasing = TRUE))
+            } else {
+              cat("\nNo uncovered line.\n")
+            }
+          }, error = function(e) {message("Could not summarize the uncovered lines: ", conditionMessage(e))})
+
           covr::to_cobertura(cov)
         shell: Rscript {0}
 
