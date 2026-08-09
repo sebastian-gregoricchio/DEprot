@@ -10,7 +10,9 @@ load.counts(
   log.base,
   imputation = NA,
   normalization.method = NA,
-  column.id = "column.id"
+  column.id = "column.id",
+  protein.info = NULL,
+  protein.info.id.column = NULL
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ load.counts(
 \item{normalization.method}{String or list indicating the normalization method used. If none, use the default value \code{NA}.}
 
 \item{column.id}{String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of \code{counts}.}
+
+\item{protein.info}{Optional \code{data.frame} (or \code{matrix}) with one row per protein and any number of annotation columns. The protein IDs must be provided as row names, in a column called \code{prot.id}, or in the column indicated by \code{protein.info.id.column}. Default: \code{NULL} (no annotation).}
+
+\item{protein.info.id.column}{String indicating the name of the column of \code{protein.info} containing the protein IDs. If \code{NULL} (default), the row names are used.}
 }
 \value{
 A \code{DEprot} object (S4 vector).

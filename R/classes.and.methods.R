@@ -4,6 +4,7 @@ NULL
 #' @title DEprot class
 #'
 #' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
+#' @slot protein.info A data.frame (or \code{NULL}) containing extra information about the proteins (e.g., gene symbol, description, number of peptides). It has one row per protein, row-by-row aligned with the counts tables, and the same row names. It is kept synchronized with the counts by all the functions that add or remove proteins. Class: \code{"ANY"}.
 #' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
 #' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
 #' @slot random.counts Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.
@@ -28,6 +29,7 @@ NULL
 
 setClass(Class = "DEprot",
          slots = list(metadata = "ANY",
+                      protein.info = "ANY",
                       raw.counts = "ANY",
                       norm.counts = "ANY",
                       random.counts = "ANY",
@@ -56,6 +58,7 @@ setClass(Class = "DEprot",
 #' @title DEprot.analyses class
 #'
 #' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
+#' @slot protein.info A data.frame (or \code{NULL}) containing extra information about the proteins (e.g., gene symbol, description, number of peptides). It has one row per protein, row-by-row aligned with the counts tables, and the same row names. It is kept synchronized with the counts by all the functions that add or remove proteins. Class: \code{"ANY"}.
 #' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
 #' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
 #' @slot random.counts Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.
@@ -88,6 +91,7 @@ setClass(Class = "DEprot",
 
 setClass(Class = "DEprot.analyses",
          slots = list(metadata = "ANY",
+                      protein.info = "ANY",
                       raw.counts = "ANY",
                       norm.counts = "ANY",
                       random.counts = "ANY",
@@ -430,6 +434,112 @@ setClass(Class = "DEprot.SAINTq",
 
 
 
+
+#' @title DEprot.missingness class
+#'
+#' @description
+#' S4 object storing the results of \code{\link{missingness.diagnostic}}: the classification of the
+#' missing values into MNAR-like (left-censored, to be replaced by \link{randomize.missing.values})
+#' and MCAR-like (to be replaced by \link{impute.counts}), together with the corresponding
+#' summary tables and diagnostic plots.
+#'
+#' @slot data.used String indicating the counts table used for the diagnostic ('raw', 'normalized', 'randomized', 'imputed'). Class: \code{"ANY"}.
+#' @slot counts.available String vector indicating all the counts tables available in the input object. Class: \code{"ANY"}.
+#' @slot metadata Data.frame corresponding to the metadata table of the samples analyzed. Class: \code{"ANY"}.
+#' @slot group.column String indicating the metadata column used to define the groups of replicates. Class: \code{"ANY"}.
+#' @slot missing.matrix Logical matrix (rows: proteins, columns: samples) indicating the missing values (\code{TRUE}). Class: \code{"ANY"}.
+#' @slot imputation.map Character matrix (rows: proteins, columns: samples) indicating, for each value, the strategy
+#'   that the \code{DEprot} double-imputation would apply: \code{"detected"} (measured value), \code{"MNAR"}
+#'   (missing in at least \code{percentage.missing}\% of the replicates of a group; randomized using the bottom of the
+#'   distribution), \code{"MCAR"} (sparse missing value; imputed). Class: \code{"ANY"}.
+#' @slot protein.stats Data.frame with one row per protein reporting the number/frequency of missing values (globally and
+#'   per group), the average intensity and the assigned \code{missing.class} ('complete', 'MCAR', 'MNAR', 'all.missing'). Class: \code{"ANY"}.
+#' @slot sample.stats Data.frame with one row per sample reporting the number and percentage of missing values, split by class. Class: \code{"ANY"}.
+#' @slot group.summary Data.frame with one row per group of replicates summarizing the missing values and the number of
+#'   proteins per class within the group. Class: \code{"ANY"}.
+#' @slot pattern.summary Data.frame with the number and percentage of proteins in each missing-value class. Class: \code{"ANY"}.
+#' @slot global.stats List of global metrics: total percentage of missing values, fraction of missing values that are
+#'   MNAR-like, estimated \code{LOD50} (intensity at which 50\% of the values are missing), slope and p-value of the
+#'   logistic dropout model, p-value of the intensity shift between complete and incomplete proteins, and the intensity
+#'   threshold corresponding to the bottom \code{tail.percentage}\% of the distribution. Class: \code{"ANY"}.
+#' @slot dropout.model Object of class \code{glm} corresponding to the logistic dropout model
+#'   (\code{cbind(n.missing, n.detected) ~ mean.intensity}). Class: \code{"ANY"}.
+#' @slot plots List of ggplot objects: \code{detection.density}, \code{dropout.curve}, \code{missingness.heatmap},
+#'   \code{missing.per.sample}, \code{detection.frequency}, \code{pattern.barplot}, \code{sample.similarity}, \code{upset}. Class: \code{"ANY"}.
+#' @slot jaccard.matrix Numeric matrix of the sample-vs-sample Jaccard similarity of the detection patterns
+#'   (\code{intersection / union} of the sets of detected proteins). Class: \code{"ANY"}.
+#' @slot jaccard.cluster \code{hclust} object generated by
+#'   \code{hclust(d = as.dist(1 - jaccard.matrix), method = cluster.method)}, used to order the samples
+#'   and to draw the dendrogram of the \code{sample.similarity} heatmap. Class: \code{"ANY"}.
+#' @slot contrast.stats List (one element per contrast, \code{NULL} if no \code{DEprot.analyses} object was provided) containing
+#'   the contrast id, the samples of each group, the per-protein classification restricted to the contrast
+#'   (including the \code{testable} column, \code{FALSE} for proteins missing in both groups) and the corresponding plots. Class: \code{"ANY"}.
+#' @slot parameters List of the parameters used to run the diagnostic (counts used, group column, \code{percentage.missing},
+#'   \code{tail.percentage} and the source of these parameters: user-defined or retrieved from the randomization). Class: \code{"ANY"}.
+#'
+#' @seealso \code{\link{missingness.diagnostic}}, \code{\link{randomize.missing.values}}, \code{\link{impute.counts}}
+#'
+#' @export
+
+setClass(Class = "DEprot.missingness",
+         slots = list(data.used = "ANY",
+                      counts.available = "ANY",
+                      metadata = "ANY",
+                      group.column = "ANY",
+                      missing.matrix = "ANY",
+                      imputation.map = "ANY",
+                      protein.stats = "ANY",
+                      sample.stats = "ANY",
+                      group.summary = "ANY",
+                      pattern.summary = "ANY",
+                      global.stats = "ANY",
+                      dropout.model = "ANY",
+                      plots = "ANY",
+                      jaccard.matrix = "ANY",
+                      jaccard.cluster = "ANY",
+                      contrast.stats = "ANY",
+                      parameters = "ANY"))
+
+
+
+
+#' @title DEprot.outliers class
+#'
+#' @slot metrics data.frame collecting, for each sample, the three quality metrics, their robust Z-scores/p-values, the individual flags, the total number of flags and the final outlier call, merged with the metadata table. Class: \code{"ANY"}.
+#' @slot outliers vector containing the samples called as outliers. Class: \code{"ANY"}.
+#' @slot sample.subset vector containing the list of samples analyzed. Class: \code{"ANY"}.
+#' @slot data.used vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.
+#' @slot correlation.method String indicating the method used for the correlation (e.g., 'pearson', 'spearman', 'kendall'). Class: \code{"ANY"}.
+#' @slot correlation.matrix the sample-by-sample correlation matrix used to compute the median correlations, with the diagonal set to \code{NA}. Class: \code{"ANY"}.
+#' @slot PCA the \code{DEprot.PCA} object generated internally and used to compute the Mahalanobis distances. Class: \code{"ANY"}.
+#' @slot missingness.data.used vector indicating the type of counts used to quantify the missing values, \code{NA} when no unimputed table was available. Class: \code{"ANY"}.
+#' @slot group.column String indicating the metadata column used to restrict the correlations to the replicates of the same group, \code{NULL} when all the samples were used. Class: \code{"ANY"}.
+#' @slot metrics.available logical vector indicating which of the three metrics could effectively be computed. Class: \code{"ANY"}.
+#' @slot parameters list of the thresholds used to flag the samples. Class: \code{"ANY"}.
+#' @slot plot patchwork object combining the diagnostic plots of all the metrics available. Class: \code{"ANY"}.
+#' @slot plot.list list of the individual ggplot objects, one per metric. Class: \code{"ANY"}.
+#'
+#' @export
+
+setClass(Class = "DEprot.outliers",
+         slots = list(metrics = "ANY",
+                      outliers = "ANY",
+                      sample.subset = "ANY",
+                      data.used = "ANY",
+                      correlation.method = "ANY",
+                      correlation.matrix = "ANY",
+                      PCA = "ANY",
+                      missingness.data.used = "ANY",
+                      group.column = "ANY",
+                      metrics.available = "ANY",
+                      parameters = "ANY",
+                      plot = "ANY",
+                      plot.list = "ANY"))
+
+
+
+
+# ===================================================================================================================
 ################# METHODS #################
 
 #' @title DEprot show-method
@@ -463,6 +573,11 @@ setMethod(
     cat("\n  Counts available: ", paste(available, collapse = ", "))
     cat("\nLog transformation: ", log.txt)
     cat("\n  Metadata columns: ", paste(colnames(object@metadata), collapse = ", "), "\n")
+
+    info <- .get.protein.info(object)
+    if (!is.null(info)) {
+      cat("      Protein info: ", paste(colnames(info), collapse = ", "), "\n")
+    }
   }
 )
 
@@ -815,6 +930,207 @@ setMethod(f = "summary",
 
 
 
+
+#' @title DEprot.missingness show-method
+#' @param object Object of class \code{DEprot.missingness}
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.missingness",
+          definition =
+            function(object) {
+
+              gs = object@global.stats
+              ps = object@pattern.summary
+
+              cat("DEprot.missingness object:")
+              cat("\n           Counts used: ", object@data.used,
+                  paste0("(available: ", paste(object@counts.available, collapse = ", "), ")"))
+              cat("\n              Proteins: ", gs$n.proteins)
+              cat("\n               Samples: ", gs$n.samples)
+              cat("\n          Group column: ", object@group.column)
+              cat("\n     MNAR defined when: ", paste0(">= ", object@parameters$percentage.missing, "% missing values within a group"))
+              cat("\n            Parameters: ", object@parameters$parameters.source)
+              cat("\n")
+              cat("\n        Missing values: ", paste0(gs$n.missing, "/", gs$n.values,
+                                                       " (", round(gs$perc.missing, 2), "%)"))
+              cat("\n        of which MNAR: ", paste0(gs$n.cells.MNAR, " (", round(gs$perc.missing.MNAR, 1), "% of the missing values)"))
+              cat("\n        of which MCAR: ", paste0(gs$n.cells.MCAR, " (", round(100 - gs$perc.missing.MNAR, 1), "% of the missing values)"))
+              cat("\n")
+              cat("\n  Estimated LOD50: ", ifelse(is.na(gs$LOD50), yes = "not estimable", no = round(gs$LOD50, 3)))
+              cat("\n    Dropout slope: ", ifelse(is.na(gs$dropout.slope), yes = "NA",
+                                                  no = paste0(round(gs$dropout.slope, 3),
+                                                              " (p = ", format.pval(gs$dropout.pvalue, digits = 3), ")")))
+              cat("\n  Intensity shift: ", ifelse(is.na(gs$intensity.shift.pvalue), yes = "NA",
+                                                  no = paste0("incomplete - complete = ",
+                                                              round(gs$median.intensity.incomplete - gs$median.intensity.complete, 3),
+                                                              " (p = ", format.pval(gs$intensity.shift.pvalue, digits = 3), ")")))
+              cat("\n")
+
+              ## interpretation helper
+              mnar.evidence = (!is.na(gs$dropout.slope) && gs$dropout.slope < 0 &&
+                                 !is.na(gs$dropout.pvalue) && gs$dropout.pvalue < 0.05)
+
+              cat("\n  Interpretation: ",
+                  ifelse(mnar.evidence,
+                         yes = "the missingness is intensity-dependent (MNAR/left-censoring is dominant).",
+                         no = "no clear intensity-dependence of the missingness (MCAR-like)."))
+              cat("\n")
+              cat("\n")
+              cat("Proteins per missing-value class:\n")
+              print(ps)
+
+              if (!is.null(object@contrast.stats)) {
+                cat("\nContrast-level diagnostics available for: ",
+                    paste(names(object@contrast.stats), collapse = ", "), "\n")
+              }
+            }#end definition
+) #end method
+
+
+
+#' @title DEprot.missingness summary-method
+#' @param object Object of class \code{DEprot.missingness}
+#' @export
+setMethod(f = "summary",
+          signature = "DEprot.missingness",
+          definition =
+            function(object) {
+
+              if (is.null(object@contrast.stats)) {
+                return(object@group.summary)
+              }
+
+              recap =
+                do.call(rbind,
+                        lapply(X = names(object@contrast.stats),
+                               FUN = function(n) {
+                                 x = object@contrast.stats[[n]]
+                                 cbind(data.frame(contrast.id = n,
+                                                  group.factor = x$metadata.column,
+                                                  group1 = x$var.1,
+                                                  group2 = x$var.2,
+                                                  stringsAsFactors = FALSE),
+                                       x$summary)
+                               }))
+              rownames(recap) = NULL
+              return(recap)
+            }#end definition
+) #end method
+
+
+
+#' @title DEprot.missingness plot-method
+#' @param x Object of class \code{DEprot.missingness}.
+#' @param y Not used.
+#' @param ... Not used.
+#' @param plot.type String indicating which plot(s) should be returned: 'summary' (default, combination of the four main
+#' diagnostics), 'density', 'dropout', 'heatmap', 'samples', 'frequency', 'classes', 'similarity', 'upset', 'contrasts', 'all'.
+#' @param contrast Index or name of a contrast (only when \code{plot.type = "contrasts"}). Default: \code{NULL} (all contrasts).
+#' @param ncol,nrow The dimensions of the grid to create - if both are NULL (default) it will use the same logic as
+#' \code{facet_wrap()} to set the dimensions.
+#' @keywords internal
+#' @importFrom patchwork wrap_plots
+#' @export
+setMethod(f = "plot",
+          signature = "DEprot.missingness",
+          definition =
+            function(x, y, ..., plot.type = "summary", contrast = NULL, ncol = NULL, nrow = NULL) {
+
+              p = x@plots
+
+              plot.list =
+                switch(EXPR = tolower(plot.type),
+                       "summary" = list(p$detection.density, p$dropout.curve, p$pattern.barplot, p$missing.per.sample),
+                       "density" = list(p$detection.density),
+                       "dropout" = list(p$dropout.curve),
+                       "heatmap" = list(p$missingness.heatmap),
+                       "samples" = list(p$missing.per.sample),
+                       "frequency" = list(p$detection.frequency),
+                       "classes" = list(p$pattern.barplot),
+                       "similarity" = list(p$sample.similarity),
+                       "upset" = list(p$upset),
+                       "all" = p,
+                       "contrasts" = NULL,
+                       stop(paste0("The 'plot.type' is not recognized. Choose among: 'summary', 'density', 'dropout', ",
+                                   "'heatmap', 'samples', 'frequency', 'classes', 'similarity', 'upset', 'contrasts', 'all'.")))
+
+              if (tolower(plot.type) == "contrasts") {
+                if (is.null(x@contrast.stats)) {
+                  message("No contrast-level diagnostic is available in this object.")
+                  return(invisible(NULL))
+                }
+
+                selected = if (is.null(contrast)) {names(x@contrast.stats)} else {names(x@contrast.stats)[contrast]}
+                plot.list = unlist(lapply(x@contrast.stats[selected],
+                                          function(i) {list(i$plots$pattern.barplot, i$plots$detection.density)}),
+                                   recursive = FALSE)
+              }
+
+              plot.list = Filter(Negate(is.null), plot.list)
+
+              if (length(plot.list) == 0) {
+                message("No plot is available for the requested 'plot.type'.")
+                return(invisible(NULL))
+              }
+
+              if (length(plot.list) == 1) {
+                print(plot.list[[1]])
+                return(invisible(plot.list[[1]]))
+              }
+
+              combined = patchwork::wrap_plots(plot.list, ncol = ncol, nrow = nrow)
+              print(combined)
+              invisible(combined)
+            }#end definition
+) #end method
+
+
+
+
+
+#' @title DEprot.outliers show-method
+#' @param object Object of class \code{DEprot.outliers}
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.outliers",
+          definition =
+            function(object) {
+              cat("DEprot.outliers object:")
+              cat("\n  Samples analyzed: ", length(object@sample.subset))
+              cat("\n         Data used: ", paste0(object@data.used, " (log2)"))
+              cat("\n Metrics available: ", paste(names(object@metrics.available)[object@metrics.available == TRUE], collapse = ", "))
+              cat("\n    Flags required: ", object@parameters$min.flags)
+              cat("\n          Outliers: ", ifelse(length(object@outliers) > 0,
+                                                   yes = paste(object@outliers, collapse = ", "),
+                                                   no = "none"))
+              cat("\n")
+              cat("\n")
+              cat("Sample metrics:\n")
+              print(object@metrics[,c("column.id", "group", "median.correlation", "correlation.z",
+                                      "mahalanobis.distance", "mahalanobis.padj",
+                                      "missing.rate", "missingness.z", "n.flags", "outlier")])})
+
+
+
+#' @title DEprot.outliers plot-method
+#' @param x Object of class \code{DEprot.outliers}
+#' @param y Not used.
+#' @param ... Not used.
+#' @keywords internal
+#' @export
+setMethod(f = "plot",
+          signature = "DEprot.outliers",
+          definition =
+            function(x, y, ...) {
+              print(x@plot)
+              invisible(x@plot)
+            })
+
+
+
+
+
+## ================================================================================================
 ## ================================================================= ##
 ##  Instance-aware slot completion for all DEprot S4 classes.
 ##  Only slots holding a real value (not NULL / not NA / not empty)
@@ -826,7 +1142,8 @@ setMethod(f = "summary",
                      "DEprot.correlation", "DEprot.upset",
                      "DEprot.contrast.heatmap", "DEprot.counts.heatmap",
                      "DEprot.enrichResult", "DEprot.pvalues",
-                     "DEprot.normality", "DEprot.RMSE", "DEprot.SAINTq")
+                     "DEprot.normality", "DEprot.RMSE", "DEprot.SAINTq",
+                     "DEprot.missingness")
 
 # A slot counts as "empty" if it is NULL, zero-length, or a single NA.
 # Logical flags holding FALSE (e.g. `normalized`) are NOT empty and stay visible.

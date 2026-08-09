@@ -4,12 +4,13 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
-#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.
+#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (\code{"lmer"} and \code{"logistf"}). Default: \code{NULL}.
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
 #' @param FDR.th Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.
 #' @param strategy String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).
 #' @param moderate.variance String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.
+#' @param robust.scaling Logical value indicating whether the robust scaling of \code{prolfqua} (median centering and MAD scaling of each sample) should be applied to the intensities before the fit. Default: \code{TRUE}.
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
@@ -24,6 +25,22 @@
 #' moderated t-statistic reported in the \code{statistic} column. In both cases
 #' \code{statistic = log2(FoldChange) / lfcSE}. Note that, when imputed counts are used, the imputation compresses the
 #' variance and \code{sd}, \code{sem} and \code{lfcSE} are consequently under-estimated.
+#'
+#' Before fitting the model, \code{prolfqua} re-normalizes the intensities of each sample: the median of the sample is
+#' subtracted and the values are divided by the median absolute deviation (MAD) of the sample, expressed relatively to the
+#' average MAD of the samples. The dispersion of the samples is equalized in this way, but the log2(FoldChange) is
+#' estimated on this rescaled space while \code{basemean.log2}, \code{log2.mean.<group>}, \code{sd.<group>} and
+#' \code{sem.<group>} are computed directly on the counts stored in the object: the difference between the two group means
+#' is therefore close to the reported fold change, without coinciding with it exactly. On counts that have already been
+#' normalized within \emph{DEprot} this is a second normalization that has not been asked for, and it can be skipped with
+#' \code{robust.scaling = FALSE}. The effect is stronger on imputed counts, since the imputation shrinks the MAD of a
+#' sample proportionally to the number of values that were replaced, which makes the rescaling follow the pattern of the
+#' missing values.
+#'
+#' The scaling factor applied to each sample is stored, for every contrast, in the \code{scaling.factors} element of
+#' \code{prolfqua.out}. A factor of 1 indicates a sample whose dispersion corresponds to the average of the samples of the
+#' contrast, while values above or below 1 indicate a sample whose fold changes are respectively compressed or expanded by
+#' the scaling. A warning is raised when the factors deviate more than 15\% from unity.
 #'
 #' @import dplyr
 #' @import ggplot2
@@ -49,6 +66,15 @@
 #'                               linear.FC.th = 1.2)
 #'
 #'
+#' # Counts already normalized: the re-normalization of prolfqua can be skipped
+#' dpo <- diff.analyses.prolfqua(DEprot.object = DEprot::test.toolbox$dpo.norm,
+#'                               contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+#'                               strategy = "lm",
+#'                               robust.scaling = FALSE,
+#'                               which.data = "normalized",
+#'                               linear.FC.th = 1.2)
+#'
+#'
 #' @export diff.analyses.prolfqua
 
 diff.analyses.prolfqua =
@@ -60,6 +86,7 @@ diff.analyses.prolfqua =
            FDR.th = 0.05,
            strategy = "lm",
            moderate.variance = FALSE,
+           robust.scaling = TRUE,
            up.color = "indianred",
            down.color = "steelblue",
            unresponsive.color = "purple",
@@ -331,7 +358,42 @@ diff.analyses.prolfqua =
 
 
       ## transform intensities
-      lfqpro = suppressMessages(suppressWarnings(lfqdata$get_Transformer()$log2()$robscale()$lfq))
+      ## Before the fit prolfqua re-normalizes each sample: the median of the sample is subtracted and the
+      ## values are divided by its MAD, expressed relatively to the average MAD of the samples. On counts
+      ## already normalized within DEprot this is a second normalization applied on top of the first one,
+      ## and it is skipped when 'robust.scaling = FALSE'. The log2 transformation is instead always
+      ## required, since the intensities are handed to prolfqua in linear scale.
+      transformer = suppressMessages(suppressWarnings(lfqdata$get_Transformer()$log2()))
+
+      ## Scaling factors that the robust scaling applies to each sample, collected before the
+      ## transformation: a factor of 1 corresponds to a sample whose dispersion is the average one, while
+      ## values above or below 1 indicate fold changes respectively compressed or expanded by the scaling.
+      robscales = tryCatch(expr = suppressMessages(suppressWarnings(transformer$get_scales())),
+                           error = function(e){NULL})
+
+      if (!is.null(robscales)) {
+        scaling.factors =
+          data.frame(sample.id = names(robscales$mads),
+                     median = as.numeric(robscales$medians),
+                     mad = as.numeric(robscales$mads),
+                     scaling.factor = as.numeric(robscales$mads) / mean(as.numeric(robscales$mads), na.rm = TRUE))
+
+        max.deviation = max(abs(scaling.factors$scaling.factor - 1), na.rm = TRUE)
+
+        if (isTRUE(robust.scaling) & isTRUE(max.deviation > 0.15)) {
+          warning("In the contrast '", names(contrasts.info)[i], "' the robust scaling of prolfqua rescales the samples by a factor deviating up to ",
+                  round(max.deviation*100, 1), "% from the average dispersion, and the estimated fold changes are affected accordingly. ",
+                  "Set 'robust.scaling = FALSE' if the counts have been normalized already (see 'prolfqua.out$scaling.factors').")
+        }
+      } else {
+        scaling.factors = NULL
+      }
+
+      if (isTRUE(robust.scaling)) {
+        lfqpro = suppressMessages(suppressWarnings(transformer$robscale()$lfq))
+      } else {
+        lfqpro = suppressMessages(suppressWarnings(transformer$lfq))
+      }
       lfqpro$rename_response("log_protein_abundance")
 
       ## fit models to lfqpro data
@@ -606,6 +668,7 @@ diff.analyses.prolfqua =
                                      MA.plot = ma.plot,
                                      statistic.distribution = DEprot::identify.distribution(diff.tb$statistic),
                                      prolfqua.out = list(LFQ.data = lfqpro,
+                                                         scaling.factors = scaling.factors,
                                                          model = mod,
                                                          contrast = contrastX,
                                                          full.results = contrdf))
@@ -620,6 +683,7 @@ diff.analyses.prolfqua =
     DEprot.object.analyses =
       new(Class = "DEprot.analyses",
           metadata = DEprot.object@metadata,
+          protein.info = .get.protein.info(DEprot.object),
           raw.counts = DEprot.object@raw.counts,
           norm.counts =  DEprot.object@norm.counts,
           random.counts =  DEprot.object@random.counts,
@@ -647,7 +711,8 @@ diff.analyses.prolfqua =
                                               replicate.column = replicate.column,
                                               strategy = list(strategy.id = strategy,
                                                               model.function = modelFunction),
-                                              moderate.variance = moderate.variance))
+                                              moderate.variance = moderate.variance,
+                                              robust.scaling = robust.scaling))
 
     return(DEprot.object.analyses)
   } # END function

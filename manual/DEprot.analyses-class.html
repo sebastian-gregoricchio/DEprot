@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
       </span>
     </div>
 
@@ -69,6 +69,10 @@
 
 <dl><dt><code>metadata</code></dt>
 <dd><p>The data.frame corresponding to the metadata table describing the samples. Class: <code>"ANY"</code>.</p></dd>
+
+
+<dt><code>protein.info</code></dt>
+<dd><p>A data.frame (or <code>NULL</code>) containing extra information about the proteins (e.g., gene symbol, description, number of peptides). It has one row per protein, row-by-row aligned with the counts tables, and the same row names. It is kept synchronized with the counts by all the functions that add or remove proteins. Class: <code>"ANY"</code>.</p></dd>
 
 
 <dt><code>raw.counts</code></dt>

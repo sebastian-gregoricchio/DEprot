@@ -44,14 +44,38 @@ knitr::kable(sample.config, row.names = F, caption = "**Sample metadata table**"
 data("unimputed.counts", package = "DEprot")
 knitr::kable(data.frame(head(unimputed.counts[,1:6])), row.names = T, caption = "**Unimputed log2(LFQ) values**")
 
-## ----make_dpo-----------------------------------------------------------------
+## ----read_protein_info, eval=F------------------------------------------------
+# # Protein annotation
+# ## here a dummy example is generated using the same names of the counts row names
+# protein.annotation <- data.frame(protein.name = rownames(unimputed.counts))
+# rownames(protein.annotation) = rownames(unimputed.counts)
+# 
+# head(protein.annotation)
+
+## ----print_protein_info, echo=FALSE-------------------------------------------
+protein.annotation <- data.frame(protein.name = rownames(unimputed.counts))
+rownames(protein.annotation) = rownames(unimputed.counts)
+knitr::kable(head(protein.annotation), row.names = TRUE, caption = "**Protein annotation table**")
+
+## ----make_dpo_info------------------------------------------------------------
 dpo <- load.counts2(counts = unimputed.counts,
                     metadata = sample.config,
                     data.type = "raw",
                     log.base = 2,
-                    column.id = "column.id")
+                    column.id = "column.id",
+                    protein.info = protein.annotation) # set as NULL if not available
 
 dpo
+
+## ----add_protein_info, eval=F-------------------------------------------------
+# dpo <- add.protein.info(DEprot.object = dpo,
+#                         protein.info = protein.annotation)
+
+## ----get_protein_info, eval=F-------------------------------------------------
+# head(get.protein.info(dpo))
+
+## ----print_get_protein_info, echo=FALSE---------------------------------------
+knitr::kable(head(get.protein.info(dpo)), row.names = TRUE, caption = "**Protein annotation stored in the object**")
 
 ## ----rename_samples-----------------------------------------------------------
 dpo <- rename.samples(DEprot.object = dpo,
@@ -111,6 +135,18 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
                                 tail.percentage = 3,
                                 seed = 1234,
                                 verbose = FALSE)
+
+## ----missingness_diagnostic---------------------------------------------------
+miss <- missingness.diagnostic(DEprot.object = dpo,
+                               verbose = FALSE)
+
+miss
+
+## ----missingness_summary_plots, fig.width = 12, fig.height = 9----------------
+plot(miss, ncol = 2)
+
+## ----missingness_heatmap, fig.width = 8, fig.height = 9-----------------------
+plot(miss, plot.type = "heatmap")
 
 ## ----choice_of_imp, fig.width = 15, fig.height = 12, message=FALSE, warning=FALSE----
 imp.comparison <- compare.imp.methods(DEprot.object = dpo,
@@ -337,38 +373,23 @@ PCoA_biplot_1.2 <- plot.PCoA.biplot(DEprot.PCoA.object = PCoA.ERa.active,
                                     n.loadings = 5)
 PCoA_biplot_1.2
 
-## ----normality_test, message=T, fig.width=10, fig.height=10-------------------
-normality <- check.normality(DEprot.object = dpo,
-                             p.threshold = 0.05,
-                             which.data = "imputed",
-                             verbose = TRUE)
+## ----detect_outliers----------------------------------------------------------
+outliers <- detect.outliers(DEprot.object = dpo,
+                            which.data = "imputed",
+                            group.column = "condition",
+                            correlation.method = "pearson",
+                            n.PCs = 3,
+                            min.flags = 2)
 
-## ----normality_test_plots-----------------------------------------------------
-## example of Q-Q and density plots
-plot(normality, n.samples = 1)
+outliers
 
-## ----compute_diff_exp_examples_limma, eval=F----------------------------------
-# ## Unpaired test
-# dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
-#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-#                                                          c("condition", "6h.10nM.E2", "FBS")),
-#                                     linear.FC.th = 2,
-#                                     padj.th = 0.05,
-#                                     padj.method = "BH",
-#                                     fitting.method = "ls",
-#                                     which.data = "imputed")
-# 
-# ## Paired test
-# dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
-#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-#                                                          c("condition", "6h.10nM.E2", "FBS")),
-#                                     replicate.column = "replicate",
-#                                     include.rep.model = TRUE,
-#                                     linear.FC.th = 2,
-#                                     padj.th = 0.05,
-#                                     padj.method = "BH",
-#                                     fitting.method = "ls",
-#                                     which.data = "imputed")
+## ----plot_outliers, fig.height=9, fig.width=7---------------------------------
+plot(outliers)
+
+## ----filter_outliers, eval=FALSE----------------------------------------------
+# dpo.clean <- filter.samples(DEprot.object = dpo,
+#                             samples = outliers@outliers,
+#                             mode = "remove")
 
 ## ----compute_diff_exp_examples_Ttest, eval=F----------------------------------
 # ## Unpaired test
@@ -413,17 +434,116 @@ dpo_analyses
 ## ----analyses_summary, eval=F-------------------------------------------------
 # diff.analyses_summary <- summary(dpo)
 
+## ----normality_test, message=T, fig.width=10, fig.height=10-------------------
+normality <- check.normality(DEprot.object = dpo,
+                             p.threshold = 0.05,
+                             which.data = "imputed",
+                             verbose = TRUE)
+
+## ----normality_test_plots-----------------------------------------------------
+## example of Q-Q and density plots
+plot(normality, n.samples = 1)
+
+## ----compute_diff_exp_examples_limma, eval=F----------------------------------
+# ## Unpaired test
+# dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
+#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                          c("condition", "6h.10nM.E2", "FBS")),
+#                                     linear.FC.th = 2,
+#                                     padj.th = 0.05,
+#                                     padj.method = "BH",
+#                                     fitting.method = "ls",
+#                                     which.data = "imputed")
+# 
+# ## Paired test
+# dpo_analyses <- diff.analyses.limma(DEprot.object = dpo,
+#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+#                                                          c("condition", "6h.10nM.E2", "FBS")),
+#                                     replicate.column = "replicate",
+#                                     include.rep.model = TRUE,
+#                                     linear.FC.th = 2,
+#                                     padj.th = 0.05,
+#                                     padj.method = "BH",
+#                                     fitting.method = "ls",
+#                                     which.data = "imputed")
+
+## ----prolfqua_analyses, eval = FALSE------------------------------------------
+# dpo_prolfqua <-
+#   diff.analyses.prolfqua(DEprot.object = dpo_imputed,
+#                          contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+#                                               c("condition", "6h.10nM.E2", "6h.DMSO")),
+#                          strategy = "lm",
+#                          linear.FC.th = 1.5,
+#                          FDR.th = 0.05,
+#                          which.data = "imputed")
+
+## ----prolfqua_lmer, eval = FALSE----------------------------------------------
+# dpo_prolfqua <-
+#   diff.analyses.prolfqua(DEprot.object = dpo_imputed,
+#                          contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO")),
+#                          strategy = "lmer",
+#                          replicate.column = "replicate",
+#                          linear.FC.th = 1.5)
+
+## ----prolfqua_scaling, eval = FALSE-------------------------------------------
+# dpo_prolfqua <-
+#   diff.analyses.prolfqua(DEprot.object = dpo_norm,
+#                          contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+#                          strategy = "lm",
+#                          robust.scaling = FALSE,
+#                          which.data = "normalized")
+
+## ----prolfqua_scaling_factors, eval = FALSE-----------------------------------
+# dpo_prolfqua@analyses.result.list$condition_FBS.vs.6h.DMSO$prolfqua.out$scaling.factors
+
+## ----prolfqua_unimputed, eval = FALSE-----------------------------------------
+# dpo_prolfqua <-
+#   diff.analyses.prolfqua(DEprot.object = dpo_norm,
+#                          contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+#                          strategy = "lm",
+#                          robust.scaling = FALSE,
+#                          which.data = "normalized")
+
+## ----proDA_analyses, eval = FALSE---------------------------------------------
+# dpo_proDA <-
+#   diff.analyses.proDA(DEprot.object = dpo_norm,
+#                       contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+#                                            c("condition", "6h.10nM.E2", "6h.DMSO")),
+#                       linear.FC.th = 1.5,
+#                       padj.th = 0.05,
+#                       which.data = "normalized")
+
+## ----proDA_missingness, eval = FALSE------------------------------------------
+# miss <- missingness.diagnostic(DEprot.object = dpo_norm)
+# 
+# dpo_proDA <-
+#   diff.analyses.proDA(DEprot.object = dpo_norm,
+#                       contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+#                       missingness.object = miss,
+#                       linear.FC.th = 1.5)
+
+## ----proDA_paired, eval = FALSE-----------------------------------------------
+# dpo_proDA <-
+#   diff.analyses.proDA(DEprot.object = dpo_norm,
+#                       contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO")),
+#                       include.rep.model = TRUE,
+#                       replicate.column = "replicate",
+#                       linear.FC.th = 1.5)
+
+## ----proDA_dropout, eval = FALSE----------------------------------------------
+# dpo_proDA@analyses.result.list$condition_FBS.vs.6h.DMSO$proDA.fit$dropout.curves
+
 ## ----get_results, eval = F----------------------------------------------------
 # ## Direct access
 # results = dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results
 # 
 # ## Function
-# results = get.results(dpo_analyses, contrast = 1)
+# results = get.results(dpo_analyses, contrast = 1, protein.info.columns = "all")
 # 
 # head(results)
 
 ## ----get_results2, echo=FALSE-------------------------------------------------
-knitr::kable(get.results(dpo_analyses, contrast = 1)[1:6,], row.names = F)
+knitr::kable(get.results(dpo_analyses, contrast = 1, protein.info.columns = "all")[1:6,], row.names = FALSE)
 
 ## ----eval = FALSE-------------------------------------------------------------
 # res <- get.results(dpo, contrast = 1)
@@ -830,6 +950,45 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 # GSEA.results.simplified <- simplify.enrichment(GSEA.results)
 # ORA.results.simplified <- simplify.enrichment(ORA.results)
 
+## ----combine_enrichments, eval = FALSE----------------------------------------
+# combined <-
+#   combine.enrichments(enrichment.list = list(`E2 6h` = ORA.results.6h,
+#                                              `E2 24h` = ORA.results.24h,
+#                                              `E2 48h` = ORA.results.48h),
+#                       dotplot.n = 5,
+#                       padj.cutoff = 0.05,
+#                       size.by = "FoldEnrichment",
+#                       order.by = "discovery")
+# 
+# combined$dotplot
+
+## ----divergent_enrichment, eval = FALSE---------------------------------------
+# ORA.E2 <-
+#   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+#                      contrast = 1,
+#                      TERM2GENE = corum_geneSet,
+#                      enrichment.type = "ORA",
+#                      gsub.pattern.prot.id = "_HUMAN|;.*",
+#                      diff.status.category = "6h.10nM.E2")
+# 
+# ORA.DMSO <-
+#   geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+#                      contrast = 1,
+#                      TERM2GENE = corum_geneSet,
+#                      enrichment.type = "ORA",
+#                      gsub.pattern.prot.id = "_HUMAN|;.*",
+#                      diff.status.category = "6h.DMSO")
+# 
+# 
+# divergent <-
+#   divergent.enrichment(enrichment.list = list(`6h E2` = ORA.E2,
+#                                               `6h DMSO` = ORA.DMSO),
+#                        value = "FoldEnrichment",
+#                        top.n = 10,
+#                        padj.cutoff = 0.05)
+# 
+# divergent$divergent.plot
+
 ## ----import_external, eval=F--------------------------------------------------
 # dpo <- import.external(file = "report.pg_matrix.tsv",
 #                        metadata = sample.config,
@@ -870,4 +1029,35 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 ## ----import_msstats_harmonize, eval=F-----------------------------------------
 # dpo <- harmonize.batches(DEprot.object = dpo,
 #                          batch.column = "Mixture")
+
+## ----export_external, eval=F--------------------------------------------------
+# se <- export.external(DEprot.object = dpo,
+#                       format = "SummarizedExperiment")
+
+## ----export_counts_type, eval=F-----------------------------------------------
+# # imputed counts as primary assay, all the others still accessible
+# se <- export.external(DEprot.object = dpo, counts.type = "imputed")
+# 
+# # only two matrices, normalized as primary
+# se <- export.external(DEprot.object = dpo, assays = c("raw", "normalized"))
+
+## ----export_results, eval=F---------------------------------------------------
+# se <- export.external(DEprot.object = dpo.analyses,
+#                       add.results = TRUE,
+#                       contrast.subset = c(1, 3))
+# 
+# SummarizedExperiment::rowData(se)
+
+## ----export_metadata, eval=F--------------------------------------------------
+# se <- export.external(DEprot.object = dpo, keep.object = TRUE)
+# 
+# S4Vectors::metadata(se)$imputation.method
+# dpo <- S4Vectors::metadata(se)$DEprot.object
+
+## ----export_shortcut, eval=F--------------------------------------------------
+# se <- as.SummarizedExperiment(dpo.analyses)
+# qf <- as.QFeatures(dpo, assay.name = "proteins")
+
+## ----session_info-------------------------------------------------------------
+sessionInfo()
 

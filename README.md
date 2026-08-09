@@ -113,8 +113,13 @@ if (!require("DEprot", quietly = TRUE)) {
 <br />
 
 ## Documentation
-With the package a [web-manual](https://sebastian-gregoricchio.github.io/DEprot/manual/index.html) and a [vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html) are available.
-The vignette can be inspected on R as well by typing `browseVignettes("DEprot")`.
+With the package there are available:
+
+* [web-manual](https://sebastian-gregoricchio.github.io/DEprot/manual/index.html): technical manual of each function;
+* [overview vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html): presents most of the tools and analyses workflow;
+* [time-course vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.timecourse.vignette.html): shows how to perform time-course analyses within `DEprot` using splines modelling.
+
+Note that the vignettes can be inspected on R as well by typing `browseVignettes("DEprot")`.
 
 Other examples of `DEprot` usage can be found on [Zenodo](https://doi.org/10.5281/zenodo.17472993).
 

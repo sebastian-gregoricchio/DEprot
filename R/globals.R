@@ -20,5 +20,20 @@ utils::globalVariables(unique(c(
   "presence", "processing.time", "prot.id", "pval", "rank.cor", "rank.fc",
   "rank.stat", "ranking.score", "runningScore", "score", "setSize", "shared",
   "statistic", "status", "value", "x", "xmax", "xmin", "y", "ymax", "ymin",
-  "id", "sample"
+  "id", "sample",
+  "mean.intensity", "freq.missing", "missing.class", "completeness",
+  "n.detected", "n.missing", "n.proteins", "perc.missing", "prot.id",
+  "proteins.complete", "proteins.MCAR", "proteins.MNAR",
+  "sample.x", "sample.y", "n.missing_", "column.id", "group",
+
+  # --- time-course module ---
+  "time", "avg", "sem", "cluster", "membership", "facet", "p.adjust", "ID",
+
+  # --- enrichment module ---
+  "Count", "alias", "best.discovery", "best.padj", "count.label", "discovery",
+  "label.color", "log10.padj", "order.value", "p.adjust", "set.size", "significant",
+  "signed.value", "size.value",
+
+  # --- outliers module ---
+  "metric.value", "flag", "n.flags", "outlier", "status", "mahalanobis.distance"
 )))

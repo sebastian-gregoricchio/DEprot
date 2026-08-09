@@ -72,7 +72,7 @@ test_that("method-summary for class DEprot.RMSE works", {
 
 
 test_that("method-plot for class DEprot works", {
-  expect_no_error(invisible(plot(DEprot::test.toolbox$dpo.imp)))
+  expect_no_error(suppressWarnings(plot(DEprot::test.toolbox$dpo.imp)))
 })
 
 
@@ -85,16 +85,16 @@ test_that("method-plot for class DEprot works", {
 # })
 
 test_that("method-plot for class DEprot.analyses works (correlation)", {
-  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "cor")))
+  expect_no_error(suppressWarnings(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "cor")))
 })
 
 test_that("method-plot for class DEprot.analyses works (PCA)", {
-  expect_no_error(invisible(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "PCA")))
+  expect_no_error(suppressWarnings(plot(DEprot::test.toolbox$diff.exp.limma, plot.type = "PCA")))
 })
 
 
 test_that("method-plot for class DEprot.normality works", {
-  expect_no_error(invisible(plot(check.normality(DEprot.object = DEprot::test.toolbox$dpo.imp), n.samples = 1)))
+  expect_no_error(suppressMessages(suppressWarnings(plot(check.normality(DEprot.object = DEprot::test.toolbox$dpo.imp), n.samples = 1))))
 })
 
 

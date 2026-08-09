@@ -13,6 +13,7 @@
   FDR.th = 0.05,
   strategy = "lm",
   moderate.variance = FALSE,
+  robust.scaling = TRUE,
   up.color = "indianred",
   down.color = "steelblue",
   unresponsive.color = "purple",
@@ -26,7 +27,7 @@
 
 \item{contrast.list}{List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.}
 
-\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.}
+\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (\code{"lmer"} and \code{"logistf"}). Default: \code{NULL}.}
 
 \item{linear.FC.th}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}
 
@@ -37,6 +38,8 @@
 \item{strategy}{String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).}
 
 \item{moderate.variance}{String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.}
+
+\item{robust.scaling}{Logical value indicating whether the robust scaling of \code{prolfqua} (median centering and MAD scaling of each sample) should be applied to the intensities before the fit. Default: \code{TRUE}.}
 
 \item{up.color}{String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.}
 
@@ -64,12 +67,37 @@ computed by \code{prolfqua}; when \code{moderate.variance = TRUE} it is the mode
 moderated t-statistic reported in the \code{statistic} column. In both cases
 \code{statistic = log2(FoldChange) / lfcSE}. Note that, when imputed counts are used, the imputation compresses the
 variance and \code{sd}, \code{sem} and \code{lfcSE} are consequently under-estimated.
+
+Before fitting the model, \code{prolfqua} re-normalizes the intensities of each sample: the median of the sample is
+subtracted and the values are divided by the median absolute deviation (MAD) of the sample, expressed relatively to the
+average MAD of the samples. The dispersion of the samples is equalized in this way, but the log2(FoldChange) is
+estimated on this rescaled space while \code{basemean.log2}, \code{log2.mean.<group>}, \code{sd.<group>} and
+\code{sem.<group>} are computed directly on the counts stored in the object: the difference between the two group means
+is therefore close to the reported fold change, without coinciding with it exactly. On counts that have already been
+normalized within \emph{DEprot} this is a second normalization that has not been asked for, and it can be skipped with
+\code{robust.scaling = FALSE}. The effect is stronger on imputed counts, since the imputation shrinks the MAD of a
+sample proportionally to the number of values that were replaced, which makes the rescaling follow the pattern of the
+missing values.
+
+The scaling factor applied to each sample is stored, for every contrast, in the \code{scaling.factors} element of
+\code{prolfqua.out}. A factor of 1 indicates a sample whose dispersion corresponds to the average of the samples of the
+contrast, while values above or below 1 indicate a sample whose fold changes are respectively compressed or expanded by
+the scaling. A warning is raised when the factors deviate more than 15\% from unity.
 }
 \examples{
 dpo <- diff.analyses.prolfqua(DEprot.object = DEprot::test.toolbox$dpo.imp,
                               contrast.list = list(c("condition", "FBS", "6h.DMSO"),
                                                    c("condition", "6h.10nM.E2", "6h.DMSO")),
                               strategy = "lm",
+                              linear.FC.th = 1.2)
+
+
+# Counts already normalized: the re-normalization of prolfqua can be skipped
+dpo <- diff.analyses.prolfqua(DEprot.object = DEprot::test.toolbox$dpo.norm,
+                              contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+                              strategy = "lm",
+                              robust.scaling = FALSE,
+                              which.data = "normalized",
                               linear.FC.th = 1.2)
 
 

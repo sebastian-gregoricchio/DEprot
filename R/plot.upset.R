@@ -46,7 +46,7 @@ plot.upset =
            height.ratio = 0.5,
            width.ratio = 0.3,
            use.uncorrected.pvalue = FALSE) # 'ascending', 'descending', FALSE
-    {
+  {
 
     # ### Libraries
     # require(dplyr)
@@ -117,41 +117,34 @@ plot.upset =
     colnames(overlaps.tb)[1] = "prot.id"
 
     for (i in 1:length(analyses.result.list)) {
+      ## The two group labels are built from the definition of the contrast rather than being
+      ## collected from the results with unique(): when a contrast is differential in a single
+      ## direction only one label is observed, and the second one would be NA (which generates
+      ## a column literally named 'NA', not selectable by ComplexUpset).
+      status.prefix = paste0(contrasts[[i]]$metadata.column, ": ",
+                             contrasts[[i]]$var.1, " *vs* ",
+                             contrasts[[i]]$var.2, " | **")
+
+      groups = paste0(status.prefix, c(contrasts[[i]]$var.1, contrasts[[i]]$var.2), "**")
+
       tb =
         dplyr::mutate(.data = analyses.result.list[[i]]$results,
-                      diff.status = paste0(contrasts[[i]]$metadata.column, ": ",
-                                           contrasts[[i]]$var.1, " *vs* ",
-                                           contrasts[[i]]$var.2, " | **",
-                                           diff.status, "**"))
+                      diff.status = paste0(status.prefix, diff.status, "**"))
 
       ### filter not differential
-      tb = dplyr::filter(.data = tb, !grepl(x = diff.status, "unresponsive|null"))
+      ## keeping only the two differential labels also discards the NA statuses
+      tb = dplyr::filter(.data = tb, diff.status %in% groups)
 
       if (nrow(tb) > 0) {
-        ## split groups
-        groups = unique(tb$diff.status)
-        group1 = dplyr::filter(.data = tb, diff.status == groups[1])
-        group2 = dplyr::filter(.data = tb, diff.status == groups[2])
+        ## check which proteins are in each group (empty groups give an all-FALSE column)
+        for (g in groups) {
+          if (!(g %in% colnames(overlaps.tb))) {
+            overlaps.tb =
+              dplyr::mutate(.data = overlaps.tb,
+                            new.group = prot.id %in% dplyr::filter(.data = tb, diff.status == g)$prot.id)
 
-        ## check which proteins are in group1
-        if (!(groups[1] %in% colnames(overlaps.tb))) {
-          if (nrow(group1) > 0) {
-            overlaps.tb = dplyr::mutate(.data = overlaps.tb, group1 = prot.id %in% group1$prot.id)
-          } else {
-            overlaps.tb$group1 = FALSE
+            colnames(overlaps.tb)[ncol(overlaps.tb)] = g
           }
-          colnames(overlaps.tb)[ncol(overlaps.tb)] = groups[1]
-        }
-
-
-        ## check which proteins are in group2
-        if (!(groups[2] %in% colnames(overlaps.tb))) {
-          if (nrow(group2) > 0) {
-            overlaps.tb = dplyr::mutate(.data = overlaps.tb, group2 = prot.id %in% group2$prot.id)
-          } else {
-            overlaps.tb$group2 = FALSE
-          }
-          colnames(overlaps.tb)[ncol(overlaps.tb)] = groups[2]
         }
       }
     }
@@ -159,11 +152,32 @@ plot.upset =
 
     if (ncol(overlaps.tb) > 1) {
       # Remove proteins missing everywhere
-      overlaps.tb = overlaps.tb[rowSums(overlaps.tb[,-1]) > 0,]
+      # ('drop = FALSE' avoids the collapse to a vector when a single group is available)
+      overlaps.tb = overlaps.tb[rowSums(overlaps.tb[,-1,drop = FALSE]) > 0,]
     } else {
       stop("No differential proteins have been found. Upset plot cannot be generated")
       #return()
     }
+
+
+    ### Define the themes of the upset panels
+    ## Since ggplot2 4.0.0 a list of theme components (e.g. list(theme_minimal(), theme(...)))
+    ## is not recognized as a valid theme anymore: each entry must be a single complete theme
+    ## object. All the panel keys are passed explicitly, so that the (stale) internal defaults
+    ## of ComplexUpset are never merged in ('default' covers the panels not named here).
+    upset.base.theme =
+      theme_minimal() +
+      theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
+            axis.text.y.left = ggtext::element_markdown(color = "black"),
+            axis.title.x = element_blank(),
+            axis.title.y = element_blank(),
+            panel.grid.major.x = element_blank())
+
+    upset.themes =
+      list("intersections_matrix" = upset.base.theme,
+           "overall_sizes" = upset.base.theme + theme(panel.grid.major.y = element_blank()),
+           "Intersection size" = upset.base.theme + theme(axis.text.x = element_blank()),
+           "default" = upset.base.theme + theme(axis.text.x = element_blank()))
 
 
     ## Make upset plot
@@ -190,19 +204,7 @@ plot.upset =
                 scale_y_reverse(expand = c(0,0)) +
                 theme(axis.line.x = element_line(colour = "black"),
                       axis.ticks.x = element_line(colour = "black")),
-              themes = upset_modify_themes(list("intersections_matrix" = list(theme_minimal(),
-                                                                              theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
-                                                                               axis.text.y.left = ggtext::element_markdown(color = "black"),
-                                                                               panel.grid.major.x = element_blank())),
-                                                "overall_sizes" = list(theme_minimal(),
-                                                                       theme(axis.text.x.bottom = ggtext::element_markdown(color = "black"),
-                                                                        axis.text.y.left = ggtext::element_markdown(color = "black"))),
-                                                "Intersection size" = list(theme_minimal(),
-                                                                          theme(axis.text.x=element_blank(),
-                                                                                axis.title.x=element_blank())),
-                                                "default" = list(theme_minimal(),
-                                                                 theme(axis.text.x=element_blank(),
-                                                                       axis.title.x=element_blank())) )),
+              themes = upset.themes,
               sort_intersections_by = sort.intersections,
               sort_sets = sort.sets,
               height_ratio = height.ratio,
@@ -223,4 +225,3 @@ plot.upset =
     return(DEprot.upset.object)
 
   } # END function
-

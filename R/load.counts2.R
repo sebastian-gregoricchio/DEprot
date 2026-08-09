@@ -10,6 +10,8 @@
 #' @param randomization.method String or list indicating the randomization method used. If none, use the default value \code{NA}.
 #' @param imputation.method A string indicating the imputation method used. If none, use the default value \code{NA}.
 #' @param column.id String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of \code{counts}.
+#' @param protein.info Optional \code{data.frame} (or \code{matrix}) with one row per protein and any number of annotation columns (e.g., gene symbol, description, number of peptides). The protein IDs must be provided as row names, in a column called \code{prot.id}, or in the column indicated by \code{protein.info.id.column}; they must correspond to the row names of \code{counts}. The table is re-ordered to match the counts: proteins missing from the annotation are filled with \code{NA}, annotations of proteins absent from the counts are discarded. Default: \code{NULL} (no annotation).
+#' @param protein.info.id.column String indicating the name of the column of \code{protein.info} containing the protein IDs. If \code{NULL} (default), the row names are used (or a column called \code{prot.id} when the table has no explicit row names).
 #'
 #' @return A \code{DEprot} object (S4 vector).
 #'
@@ -18,6 +20,8 @@
 #' @import methods
 #' @importFrom data.table fread
 #' @importFrom reshape2 melt
+#'
+#' @seealso \link{add.protein.info}, \link{get.results}
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -38,7 +42,9 @@ load.counts2 =
            normalization.method = NA,
            randomization.method = NA,
            imputation.method = NA,
-           column.id = "column.id") {
+           column.id = "column.id",
+           protein.info = NULL,
+           protein.info.id.column = NULL) {
 
     # ### Libraries
     # require(dplyr)
@@ -129,6 +135,16 @@ load.counts2 =
     # after standardization the data are always on a log2 scale
     log.transformed = TRUE
     log.base = 2
+
+
+
+    ### Check and align the protein annotation (protein.info)
+    # Performed after the removal of the all-NA rows so that the table is
+    # aligned to the proteins effectively retained in the object.
+    protein.info = .check.protein.info(protein.info = protein.info,
+                                       protein.ids = rownames(cnt),
+                                       id.column = protein.info.id.column,
+                                       arg.name = "protein.info")
 
 
 
@@ -308,6 +324,7 @@ load.counts2 =
     DEprot.object =
       new(Class = "DEprot",
           metadata = meta,
+          protein.info = protein.info,
           raw.counts = raw.counts,
           norm.counts = norm.counts,
           random.counts = random.counts,

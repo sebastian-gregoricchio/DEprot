@@ -45,8 +45,8 @@
 #
 #
 #
-# ###################
-## TEST TOOLBOX
+# # ###################
+# # TEST TOOLBOX
 # test.unimputed.lfq = DEprot::unimputed.counts[1:51,]
 # test.dpo.raw = DEprot::load.counts2(counts = test.unimputed.lfq, metadata = DEprot::sample.config, data.type = "raw", log.base = 2)
 # test.dpo.raw = DEprot::remove.undetected.proteins(test.dpo.raw, which.data = "raw")
@@ -96,7 +96,7 @@
 #                     geneset = test.geneset,
 #                     gsea.results = test.gsea.results,
 #                     ora.results = test.ora.results)
-#
+
 #
 # ################################################################################
 # # Generate data files

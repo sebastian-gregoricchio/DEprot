@@ -162,27 +162,76 @@ Notice that another important point is whether the data are log transformed, and
 
 If data are pre-normalized and/or pre-imputed, it can be indicated with the corresponding parameter `data.type`, and any information about the method used that you would like to store in the object can be added using the corresponding parameters `normalization.method` and `imputation.method`.<br></br>
 
-Ultimately, if the metadata table does not contain a `column.id` column corresponding to the column names of the `counts_table`, it is possible to indicate the name of another column that should be assumed to be the `column.id`.
+If the metadata table does not contain a `column.id` column corresponding to the column names of the `counts_table`, it is possible to indicate the name of another column that should be assumed to be the `column.id`.
 
-```{r make_dpo}
+<br>
+
+Besides the samples, also the proteins can carry their own annotation. The parameter `protein.info` accepts a data.frame with one row per protein and any number of columns (gene symbol, protein description, number of peptides used for the quantification, etc.).
+The protein identifiers can be given as row names, in a column called `prot.id`, or in any other column indicated through `protein.info.id.column`. The table does not need to be sorted, nor to be complete: it is reordered on the counts, proteins without annotation
+are filled with `NA`, and annotations of proteins absent from the counts are discarded.<br></br>
+From this moment on the annotation follows the counts. Whenever proteins are removed, for instance by `remove.undetected.proteins()` or `filter.proteins()`, the same rows are dropped from the *protein.info* slot, so that the two tables always describe the same proteins.
+
+```{r read_protein_info, eval=F}
+# Protein annotation
+## here a dummy example is generated using the same names of the counts row names
+protein.annotation <- data.frame(protein.name = rownames(unimputed.counts))
+rownames(protein.annotation) = rownames(unimputed.counts)
+
+head(protein.annotation)
+```
+```{r print_protein_info, echo=FALSE}
+protein.annotation <- data.frame(protein.name = rownames(unimputed.counts))
+rownames(protein.annotation) = rownames(unimputed.counts)
+knitr::kable(head(protein.annotation), row.names = TRUE, caption = "**Protein annotation table**")
+```
+
+
+```{r make_dpo_info}
 dpo <- load.counts2(counts = unimputed.counts,
                     metadata = sample.config,
                     data.type = "raw",
                     log.base = 2,
-                    column.id = "column.id")
+                    column.id = "column.id",
+                    protein.info = protein.annotation) # set as NULL if not available
 
 dpo
 ```
 
 <br>
 
+The annotation does not need to be provided at loading: it can be attached at any moment to
+an object built already. Notice that `overwrite = TRUE` is required to replace a table already
+stored in the object, while `protein.info = NULL` removes it.
 
-This object is an S4-vector of class `DEprot`. The S4-vectors are containers of slots that can be accessed using the symbol `@` (e.g., `object@slot.id`).<br></br>The structure of an object of class `DEprot` (and `DEprot.analyses`) is the following:
+```{r add_protein_info, eval=F}
+dpo <- add.protein.info(DEprot.object = dpo,
+                        protein.info = protein.annotation)
+```
+
+<br>
+
+The annotation stored in an object can be inspected at any moment with `get.protein.info()`, in the same fashion as `get.metadata()` for the samples. The row names of the table returned always correspond to the proteins of the counts, hence the two tables can be combined directly.
+
+```{r get_protein_info, eval=F}
+head(get.protein.info(dpo))
+```
+
+```{r print_get_protein_info, echo=FALSE}
+knitr::kable(head(get.protein.info(dpo)), row.names = TRUE, caption = "**Protein annotation stored in the object**")
+```
+
+
+<br>
+
+This object is an S4-vector of class `DEprot`. The S4-vectors are containers of slots that can be accessed using the symbol `@` (or `$` from version >1.3.0) (e.g., `object@slot.id`).<br></br>The structure of an object of class `DEprot` (and `DEprot.analyses`) is the following:
 
 | Slot                           | Description                                                                                               |
 | -----------------------------: | :-------------------------------------------------------------------------------------------------------- |
+| *metadata*                     | data.frame describing the samples: it always contains a `column.id` column matching the column names of the counts, plus any other sample feature (cell line, condition, replicate, etc.)  |
+| *protein.info*                 | table of extra information about the proteins (gene symbol, description, etc.), if not available it will be `NULL`  |
 | *raw.counts*                   | table containing the raw counts, if not available it will be `NULL`                                       |
 | *norm.counts*                  | table containing the normalized counts, if not available it will be `NULL`                                |
+| *random.counts*                | table containing the randomized counts, if not available it will be `NULL`                                |
 | *imputed.counts*               | table containing the imputed counts, if not available it will be `NULL`                                   |
 | *log.base*                     | a number indicating the base of the log used to transform the table, if not available it will be `NA`     |
 | *log.transformed*              | logical value indicating whether the data are log-transformed or not                                      |
@@ -352,6 +401,105 @@ dpo <- randomize.missing.values(DEprot.object = dpo,
 >Using the `"column.id"` as *group.column* is equivalent to impute all the data with this method.
 
 <br>
+
+## Missingness diagnostics {#missingness}
+Before choosing randomization/imputation strategy it is worth asking *why* the values are missing. As briefly mentioned before, two mechanisms are usually mixed in the same LFQ table: values that are absent because the protein was below the detection limit of the instrument (MNAR, *missing not at random*, or left-censored) and values that are absent for reasons unrelated to the abundance, such as a failed identification in a single run (MCAR, *missing completely at random*). The two require opposite treatments. Replacing a left-censored value with an estimate derived from the other replicates pushes it upwards, which is exactly the artefact that `randomize.missing.values` avoids; conversely, assigning a value from the bottom of the distribution to a protein that was simply not identified in one run out of twelve introduces a fold change that does not exist.
+
+The function `missingness.diagnostic` describes the structure of the missing values and classifies them following the same rule used by the double-imputation strategy of `DEprot`: within each group of replicates, a protein missing in at least `percentage.missing`% of the samples is flagged as MNAR-like (it would be replaced by `randomize.missing.values` using the bottom `tail.percentage`% of the distribution), while all the remaining missing values are flagged as MCAR-like (they would be replaced by `impute.counts`).
+
+The counts used are chosen automatically: since randomization and imputation both fill the `NA`s, the function takes the lowest level available following the priority raw > normalized > randomized > imputed, and stops if only imputed counts are found. If `randomize.missing.values` has already been run, the parameters (`group.column`, `percentage.missing`, `tail.percentage`) are read back from the object, so that the diagnostic mirrors the treatment actually applied; otherwise the defaults of `randomize.missing.values` are used and any of them can be overwritten manually.
+
+```{r missingness_diagnostic}
+miss <- missingness.diagnostic(DEprot.object = dpo,
+                               verbose = FALSE)
+
+miss
+```
+
+>The parameters are retrieved from the randomization run above; passing `group.column`, `percentage.missing` or `tail.percentage` explicitly overrides them, which is useful to check how many proteins would change class with a different threshold.
+
+<br>
+
+### Reading the diagnostic plots
+The default `plot` call combines the four panels that are most informative for the choice of the strategy; each plot is stored individually in the `plots` slot and can be recalled with the `plot.type` argument (`"density"`, `"dropout"`, `"heatmap"`, `"samples"`, `"frequency"`, `"classes"`, `"similarity"`, `"upset"`, `"contrasts"`, or `"all"`).
+
+```{r missingness_summary_plots, fig.width = 12, fig.height = 9}
+plot(miss, ncol = 2)
+```
+
+<br>
+
+#### Detection *vs* abundance
+The first panel compares the distribution of the average intensity of the proteins quantified in all the samples with that of the proteins showing at least one missing value. If the two densities overlap, the missing values are spread over the whole dynamic range and are compatible with a MCAR mechanism. If the incomplete proteins are shifted to the left, their absence is a function of their abundance, which is the signature of left-censoring. The dashed line marks the intensity threshold corresponding to the bottom `tail.percentage`% of the distribution, that is the pool from which `randomize.missing.values` samples the replacement values.
+
+<br>
+
+#### Dropout curve
+This is the panel that quantifies what the density plot shows qualitatively, and it deserves a longer explanation.
+
+Each point is a protein: on the x-axis its mean intensity computed over the samples in which it was measured, on the y-axis the percentage of samples in which it is missing. Proteins quantified everywhere sit on the bottom line, proteins detected only sporadically sit at the top. The black curve is a logistic regression of the number of missing values over the total number of samples as a function of the mean intensity (`glm(cbind(n.missing, n.detected) ~ mean.intensity, family = binomial)`), and the corresponding model is stored in the `dropout.model` slot.
+
+Three numbers summarize the fit, all available in `global.stats`:
+
+* **`dropout.slope`**: the slope of the logistic model, on the logit scale. A negative slope means that the probability of a value being missing decreases as the abundance increases, which is what a detection limit produces. A slope close to zero describes missing values scattered over the whole intensity range, independently of the abundance.
+* **`dropout.pvalue`**: the p-value of the slope. With several thousand proteins even a very shallow slope reaches significance, therefore the magnitude of the slope and the shape of the curve are more informative than the p-value alone.
+* **`LOD50`**: the intensity at which the model predicts 50% of missing values, computed as `-intercept/slope`. It is an empirical estimate of the limit of detection of the experiment and it is drawn as a vertical dashed line. It is reported only when it falls inside the range of the observed intensities; when the dropout is shallow the 50% point lies far outside the data and an extrapolated value would be meaningless, so `NA` is returned instead.
+
+A fourth number completes the picture: `intensity.shift.pvalue`, the one-sided Wilcoxon test comparing the mean intensity of the incomplete proteins with that of the complete ones, together with the two medians (`median.intensity.incomplete` and `median.intensity.complete`). The `show` method combines slope and p-value into a one-line interpretation of the dominant mechanism.
+
+Two comparisons make the numbers actionable. First, `LOD50` against the threshold of the randomization pool (`tail.threshold`, the dashed line of the density panel): when the pool sits at or below the estimated detection limit, the values drawn by `randomize.missing.values` fall in the region where the instrument stops detecting, which is what the method assumes. A pool sitting well above `LOD50` means that the randomized values are higher than the censoring point and the fold changes of the MNAR proteins will be compressed; lowering `tail.percentage` corrects it. Second, the fraction of missing values that are MNAR-like (`perc.missing.MNAR`): a steep dropout curve combined with a low MNAR fraction means that most of the censored values are scattered rather than concentrated within a group, so they will be handled by the imputation and not by the randomization.
+
+One caveat when reading the top of the plot. The mean intensity is computed on the observed values only, so a protein missing in most of the samples has its abundance estimated from the few measurements that survived, which are the ones that happened to be above the detection limit. This inflates the abundance of the highly incomplete proteins and flattens the right tail of the curve, so the real dropout is usually somewhat steeper than the fitted one. `LOD50` is best used as an internal reference for comparing datasets processed in the same way, rather than as a physical property of the instrument.
+
+<br>
+
+#### Missing-value classes and missingness pattern
+The bar plot counts the proteins per class, both globally and within each group of replicates: `complete` (no missing value), `MCAR` (missing values below the group threshold), `MNAR` (at least one group above the threshold) and `all.missing` (never detected). The proteins in the last class carry no information and are the ones to remove before testing.
+
+The heatmap (`plot.type = "heatmap"`) shows the same classification at the level of the single value. Each cell is colored according to the treatment that the double-imputation strategy would apply to it, so the plot doubles as a map of what is about to be modified in the counts table: the cells marked as MNAR-like will receive a random value from the bottom of the distribution, the ones marked as MCAR-like will be imputed. Proteins are clustered on the binary detection pattern and the samples are grouped by condition, which makes the blocks of condition-specific absence immediately visible. The same information is stored, without subsampling, in the `imputation.map` slot.
+
+```{r missingness_heatmap, fig.width = 8, fig.height = 9}
+plot(miss, plot.type = "heatmap")
+```
+
+<br>
+
+#### Sample-level diagnostics
+Two panels describe the samples rather than the proteins. The bar plot of the percentage of missing values per sample (`plot.type = "samples"`) identifies runs of lower quality; a single sample well above the average is usually a technical problem and is a candidate for exclusion. The heatmap of the Jaccard similarity between detection patterns (`plot.type = "similarity"`) compares which proteins were detected in which sample: the samples are clustered on `1 - Jaccard` and the dendrogram is drawn on the left. If the clusters follow the experimental conditions, part of the missingness is biological; if they follow the batches or the acquisition order, the missingness is structured by a technical factor and the imputation should be evaluated with that in mind. The matrix and the `hclust` object are kept in the `jaccard.matrix` and `jaccard.cluster` slots.
+
+Finally, `plot.type = "frequency"` gives the number of proteins as a function of the number of samples in which they were detected. The distribution is typically bimodal, with a peak on the right corresponding to the core proteome and a peak on the left corresponding to the sporadic identifications, while `plot.type = "upset"` shows how the MNAR-like proteins are shared between the groups.
+
+<br>
+
+### Contrast-level diagnostics
+When a `DEprot.analyses` object is used as input, the diagnostic is repeated on the samples of each contrast and the results are collected in the `contrast.stats` slot (use the `contrasts` argument to restrict the analysis to a subset, or `contrasts = "none"` to skip it). Within a contrast the classification becomes directional: besides `complete` and `MCAR`, a protein can be MNAR in the first group, MNAR in the second, or missing in both. The last case is reported in the `testable` column as `FALSE`, since a protein absent from both sides carries no information for that comparison whatever value the imputation assigns to it. The two plots of each contrast (`plot(miss, plot.type = "contrasts")`) show the number of proteins per class and the detection *vs* abundance densities restricted to those samples, and `summary()` returns the same counts for all the contrasts in a single table.
+
+<br>
+
+The `DEprot.missingness` object contains the following slots:
+
+| Slot                 | Description                                                                                             |
+| -------------------: | :------------------------------------------------------------------------------------------------------ |
+| *data.used*          | vector indicating the type of counts used (raw, normalized, randomized, imputed)                        |
+| *counts.available*   | vector indicating all the counts tables available in the input object                                   |
+| *metadata*           | metadata of the samples analyzed (subset of the original `DEprot@metadata`)                             |
+| *group.column*       | string indicating the metadata column used to define the groups of replicates                           |
+| *missing.matrix*     | logical matrix (proteins x samples) in which `TRUE` indicates a missing value                           |
+| *imputation.map*     | character matrix (proteins x samples) indicating for each value the treatment of the double-imputation strategy: `detected`, `MNAR` (randomized) or `MCAR` (imputed) |
+| *protein.stats*      | `data.frame` with one row per protein: number and frequency of missing values (globally and per group), mean/sd/min/max intensity and the assigned `missing.class` |
+| *sample.stats*       | `data.frame` with one row per sample: number and percentage of missing values, split by class            |
+| *group.summary*      | `data.frame` with one row per group of replicates summarizing the missing values and the proteins per class |
+| *pattern.summary*    | `data.frame` with the number and percentage of proteins in each missing-value class                     |
+| *global.stats*       | list of global metrics: total percentage of missing values, fraction of MNAR-like missing values, `LOD50`, slope and p-value of the dropout model, p-value of the intensity shift, and the threshold of the randomization pool |
+| *dropout.model*      | object of class `glm` corresponding to the logistic dropout model                                       |
+| *plots*              | list of `ggplot` objects (`detection.density`, `dropout.curve`, `missingness.heatmap`, `missing.per.sample`, `detection.frequency`, `pattern.barplot`, `sample.similarity`, `upset`) |
+| *jaccard.matrix*     | the sample-vs-sample Jaccard similarity matrix of the detection patterns                                |
+| *jaccard.cluster*    | `hclust` object generated by `hclust(d = as.dist(1 - jaccard.matrix), method = cluster.method)`          |
+| *contrast.stats*     | list with the contrast-level diagnostics (`NULL` when no `DEprot.analyses` object is provided)          |
+| *parameters*         | list of the parameters used, including the source of `percentage.missing` and `tail.percentage` (user-defined or retrieved from the randomization) |
+
+<br>
+
 
 ## Choice of the imputation method
 We implemented the function `compare.imp.methods` to compare the different imputation methods and choose the best one for your data type. Indeed, your dataset is subsampled and NAs are introduced simulating the distribution and the proportion of the original data.
@@ -724,15 +872,103 @@ Unlike the PCA biplot, these arrows represent the a-posteriori correlation betwe
 
 <br>
 
+
+## Automatic outlier detection {#outliers}
+PCAs, PCoAs and correlation heatmaps show which samples behave oddly, but the call is left to the eye of the analyst. The function `detect.outliers` turns that judgement into a reproducible one: it computes three per-sample quality metrics and flags a sample when at least `min.flags` of them are triggered.
+
+The three metrics are deliberately independent from each other:
+
+* the **median correlation** of a sample against the others (or against the replicates of its own group, if `group.column` is provided) catches samples whose global profile does not look like anybody else's;
+* the **Mahalanobis distance** in the space of the first principal components catches samples that sit far from the bulk of the data in the reduced space, even when their pairwise correlations look acceptable;
+* the **missing rate** catches samples with a poor identification depth, which is often the underlying cause of the other two.
+
+```{r detect_outliers}
+outliers <- detect.outliers(DEprot.object = dpo,
+                            which.data = "imputed",
+                            group.column = "condition",
+                            correlation.method = "pearson",
+                            n.PCs = 3,
+                            min.flags = 2)
+
+outliers
+```
+
+<br>
+
+The three panels are stored in the `plot` slot and can be printed with the `plot` method. Samples are ordered by the number of flags they collected, so the suspicious ones sit on the left; the dashed red lines mark the thresholds effectively applied.
+
+```{r plot_outliers, fig.height=9, fig.width=7}
+plot(outliers)
+```
+
+<br>
+
+### How the thresholds work
+The correlation and the missingness are flagged on a **robust Z-score**, `(x - median(x)) / mad(x)`, computed across all the samples: `correlation.z.th = -2.5` means "2.5 robust standard deviations *below* the typical median correlation", and `missingness.z.th = 2.5` the symmetric condition on the missing rate. A relative threshold adapts to the dispersion of the experiment, which is exactly what one wants when comparing a deeply-sequenced whole-cell run to a sparse RIME. When an absolute limit is preferable, `correlation.min` and `missingness.max` can be set on top of the Z-scores; the two conditions are combined with an OR.
+
+The Mahalanobis distances are treated differently. Since the principal components returned by `perform.PCA` are orthogonal by construction, the covariance matrix reduces to its diagonal and can be estimated robustly from the median and the MAD of each component. This avoids the singularity that a full covariance matrix would produce whenever the number of samples approaches the number of components, which is the normal situation in proteomics. The resulting squared distances follow a chi-square distribution with as many degrees of freedom as the components used, so the flag is set on an adjusted p-value (`mahalanobis.padj.th`) rather than on an arbitrary cut-off.
+
+> On small designs the chi-square approximation is fairly liberal, and a single flag is not by itself a reason to discard a sample. This is why `min.flags` defaults to 2: agreement between two independent metrics is a much stronger signal than any of them alone. Set `min.flags = 1` to obtain a list of *candidates* to inspect manually, and `min.flags = 3` to keep only the unambiguous cases.
+
+<br>
+
+### Missing values and imputed data
+The correlation and the PCA are computed on the counts requested with `which.data` (by default the imputed ones), but the missing rate obviously cannot be: after imputation there are no missing values left. The function therefore looks for the first unimputed table available, in the order raw &rarr; normalized &rarr; randomized, and reports which one it used in the `missingness.data.used` slot. If the object was loaded already imputed, the metric is silently dropped and `min.flags` is capped to the number of metrics that could actually be computed.
+
+<br>
+
+### Removing the flagged samples
+The `outliers` slot contains a plain character vector, which is what `filter.samples` expects. The whole pipeline (normalization, randomization, imputation, batch harmonization and, for a `DEprot.analyses` object, the differential analyses) is recomputed from the raw counts on the retained samples only:
+
+```{r filter_outliers, eval=FALSE}
+dpo.clean <- filter.samples(DEprot.object = dpo,
+                            samples = outliers@outliers,
+                            mode = "remove")
+```
+
+Re-running `detect.outliers` on the filtered object is a reasonable sanity check, keeping in mind that a relative threshold will always find *something* at the tail of the distribution: an empty list of flags at `min.flags = 2` is what should be expected, not an empty list at `min.flags = 1`.
+
+<br>
+
+The `DEprot.outliers` object contains the following slots:
+
+| Slot                     | Description                                                                                                                              |
+| -----------------------: | :---------------------------------------------------------------------------------------------------------------------------------------- |
+| *metrics*                | data.frame with the three metrics, their Z-scores/p-values, the individual flags, the number of flags and the final call, per sample      |
+| *outliers*               | vector of the samples called as outliers                                                                                                 |
+| *sample.subset*          | vector containing the list of samples analyzed                                                                                           |
+| *data.used*              | vector indicating the type of counts used (imputed, normalized, raw)                                                                     |
+| *correlation.method*     | String indicating the correlation method used (one among: pearson, spearman, kendall)                                                    |
+| *correlation.matrix*     | the sample-by-sample correlation matrix used for the median correlations, diagonal set to `NA`                                           |
+| *PCA*                    | the `DEprot.PCA` object generated internally and used for the Mahalanobis distances                                                      |
+| *missingness.data.used*  | type of counts used to quantify the missing values, `NA` when no unimputed table was available                                            |
+| *group.column*           | metadata column used to restrict the correlations to the replicates of the same group, `NULL` when all the samples were used             |
+| *metrics.available*      | logical vector indicating which of the three metrics could effectively be computed                                                       |
+| *parameters*             | list of the thresholds applied                                                                                                           |
+| *plot*                   | `patchwork` object combining the diagnostic plots of all the metrics available                                                           |
+| *plot.list*              | list of the individual `ggplot` objects, one per metric                                                                                  |
+
+
+<br>
+
 -----------------------------------------
 
 # **Differential Expression (DE) analyses** {#diffexp}
-Differential expression analyses between two conditions can be performed employing two different methods using the functions `diff.analyses` and `diff.analyses.limma`. With the first (`diff.analyses`) the conditions will be compared two-by-two (individual t-/Wilcox tests), while with the second (`diff.analyses.limma`) the `limma` package is used to fit the data to a linear model.
+Differential expression analyses between two conditions can be performed employing four different methods using the functions `diff.analyses`, `diff.analyses.limma`, `diff.analyses.prolfqua` and `diff.analyses.proDA`.
 
-In both cases, it is sufficient to provide a list of three-element vectors. The latter should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
+1. [`diff.analyses`](#diff_ttest) the conditions will be compared two-by-two (individual t-/Wilcox tests);
+2. [`diff.analyses.limma`](#diff_limma) the `limma` package is used to fit the data to a linear model;
+3. [`diff.analyses.prolfqua`](#diff_prolfqua) the `prolfqua` package is used to fit the data to a linear model, a mixed-effects model or a logistic regression, depending on the `strategy` indicated;
+4. [`diff.analyses.proDA`](#diff_proDA) the `proDA` package is used to fit a censored model, in which the missing values are read as observations below the detection limit instead of being replaced.
 
-When a replicate column is available, it is possible to run the analyses in *paired* mode. When using `diff.analyses`, it is sufficient to indicate the column from the metadata table that corresponds to the replicate identifiers (in our example `replicate.column = "replicate"`) and set `paired.test = TRUE`. For each contrast it will be verified that replicate identifiers are not repeated within a group and that replicate number and identifiers coincide between the two groups. By default, analyses ignore the replicates. <br>
-If `diff.analyses.limma` is used instead, the correlation between replicates will be estimated and incorporated in the fitting model. In this case indicate the replicate column identifier (in our example `replicate.column = "replicate"`) and set `include.rep.model = TRUE`.
+The first two methods require complete observations, hence imputed counts, while the last two can be applied to data that still contain missing values. For `diff.analyses.proDA` this is in fact a requirement: the missing values are themselves the input of the model, and the function stops when imputed or randomized counts are indicated (see the [dedicated paragraph](#proDA)).
+
+In all cases, it is sufficient to provide a list of three-element vectors. The latter should indicate any column of the metadata table (grouping factor) and two values (groups) to compare within this column. The first variable will be numerator and the second the denominator of the fold change: `c("group.column", "condition.A", "condition.B")`, FoldChange = group A/B.
+
+When a replicate column is available, it is possible to run the analyses in *paired* mode, although the way the replicate enters the model depends on the method. When using `diff.analyses`, it is sufficient to indicate the column from the metadata table that corresponds to the replicate identifiers (in our example `replicate.column = "replicate"`) and set `paired.test = TRUE`. For each contrast it will be verified that replicate identifiers are not repeated within a group and that replicate number and identifiers coincide between the two groups. By default, analyses ignore the replicates. <br>
+If `diff.analyses.limma` is used instead, the correlation between replicates will be estimated and incorporated in the fitting model. In this case indicate the replicate column identifier (in our example `replicate.column = "replicate"`) and set `include.rep.model = TRUE`. <br>
+`diff.analyses.prolfqua` treats the replicate as a random effect of the model (`log_protein_abundance ~ Group + (1|rep)`), which is obtained by indicating the replicate column identifier and setting `strategy = "lmer"`. <br>
+`diff.analyses.proDA` adds instead the replicate as a blocking fixed effect: as for `limma`, indicate the replicate column identifier and set `include.rep.model = TRUE`.
 
 > In the following example we will compare *6h.10nM.E2* vs *6h.DMSO*, and *6h.10nM.E2* vs *FBS*. Both paired and unpaired examples are shown, but further analyses are based on the paired results only (multi t-test mode).
 
@@ -740,7 +976,61 @@ If `diff.analyses.limma` is used instead, the correlation between replicates wil
 <br>
 
 ## Differential analyses algorithms
-### `limma` mode
+### Multiple t-test/wilcoxon mode {#diff_ttest}
+> Next paragraphs use these results, in paired mode
+
+```{r compute_diff_exp_examples_Ttest, eval=F}
+## Unpaired test
+dpo_analyses <- diff.analyses(DEprot.object = dpo,
+                              contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+                                                   c("condition", "6h.10nM.E2", "FBS")),
+                              linear.FC.th = 2,
+                              padj.th = 0.05,
+                              padj.method = "BH",
+                              stat.test = "t.test",
+                              which.data = "imputed")
+
+## Paired test
+dpo_analyses <- diff.analyses(DEprot.object = dpo,
+                              contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+                                                   c("condition", "6h.10nM.E2", "FBS")),
+                              replicate.column = "replicate",
+                              paired.test = TRUE,
+                              linear.FC.th = 2,
+                              padj.th = 0.05,
+                              padj.method = "BH",
+                              stat.test = "t.test",
+                              which.data = "imputed")
+
+dpo_analyses
+```
+
+```{r compute_diff_exp_paired, echo=FALSE}
+## Paired test
+dpo_analyses <- diff.analyses(DEprot.object = dpo,
+                              contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
+                                                   c("condition", "6h.10nM.E2", "FBS")),
+                              replicate.column = "replicate",
+                              paired.test = TRUE,
+                              linear.FC.th = 2,
+                              padj.th = 0.05,
+                              padj.method = "BH",
+                              stat.test = "t.test",
+                              which.data = "imputed")
+
+dpo_analyses
+```
+
+The summary can be collected by using the generic function `summary`:
+
+```{r analyses_summary, eval=F}
+diff.analyses_summary <- summary(dpo)
+```
+
+<br>
+
+
+### `limma` mode {#diff_limma}
 #### Verify normality of the data
 The main assumption to run `limma` is that the data are normally distributed. For this reason it is good practice to verify that the data are normally distributed for each sample. This can be accomplished using the function `check.normality`. It will return an S4 vector composed of:
 
@@ -817,61 +1107,206 @@ standard correction, stay with BH.
 
 <br>
 
-### Multiple t-test mode
-> Next paragraphs use these results, in paired mode
 
-```{r compute_diff_exp_examples_Ttest, eval=F}
-## Unpaired test
-dpo_analyses <- diff.analyses(DEprot.object = dpo,
-                              contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-                                                   c("condition", "6h.10nM.E2", "FBS")),
-                              linear.FC.th = 2,
-                              padj.th = 0.05,
-                              padj.method = "BH",
-                              stat.test = "t.test",
-                              which.data = "imputed")
+## `prolfqua` mode {#diff_prolfqua}
+The third method relies on [`prolfqua`](https://pubs.acs.org/doi/10.1021/acs.jproteome.2c00441) (Wolski *et al.*, J Proteome Research 2023), a package written specifically for label-free quantitation data. A model is fitted protein by protein on the two groups of the contrast, and the comparison is then extracted as a contrast of the fitted coefficients. Two features distinguish it from `diff.analyses.limma`: the model to fit can be chosen among four alternatives through the `strategy` parameter, and the fit tolerates missing values, so the analyses can be run on normalized counts without passing through the imputation.
 
-## Paired test
-dpo_analyses <- diff.analyses(DEprot.object = dpo,
-                              contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-                                                   c("condition", "6h.10nM.E2", "FBS")),
-                              replicate.column = "replicate",
-                              paired.test = TRUE,
-                              linear.FC.th = 2,
-                              padj.th = 0.05,
-                              padj.method = "BH",
-                              stat.test = "t.test",
-                              which.data = "imputed")
-
-dpo_analyses
+```{r prolfqua_analyses, eval = FALSE}
+dpo_prolfqua <-
+  diff.analyses.prolfqua(DEprot.object = dpo_imputed,
+                         contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                              c("condition", "6h.10nM.E2", "6h.DMSO")),
+                         strategy = "lm",
+                         linear.FC.th = 1.5,
+                         FDR.th = 0.05,
+                         which.data = "imputed")
 ```
 
-```{r compute_diff_exp_paired, echo=FALSE}
-## Paired test
-dpo_analyses <- diff.analyses(DEprot.object = dpo,
-                              contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO"),
-                                                   c("condition", "6h.10nM.E2", "FBS")),
-                              replicate.column = "replicate",
-                              paired.test = TRUE,
-                              linear.FC.th = 2,
-                              padj.th = 0.05,
-                              padj.method = "BH",
-                              stat.test = "t.test",
-                              which.data = "imputed")
+Notice that the threshold on the multiple-testing correction is indicated through `FDR.th` and not `padj.th`: the correction is computed by `prolfqua` itself and cannot be changed from here, which is also the reason why this function has no `padj.method` parameter. Consistently, the column of the `results` table is called `FDR` instead of `padj`.
 
-dpo_analyses
+<br>
+
+### Choice of the model
+The `strategy` parameter defines the formula and the estimator used for the fit:
+
+| Strategy | Model |
+| -----: | :---------- |
+| `lm` | linear model, `log_protein_abundance ~ Group` (default) |
+| `rlm` | robust linear model on the same formula, less sensitive to outlying replicates |
+| `lmer` | linear mixed-effects model, `log_protein_abundance ~ Group + (1|rep)`, in which the replicate is a random effect |
+| `logistf` | Firth's bias-reduced logistic regression, `log_protein_abundance ~ Group + rep` |
+
+<br>
+
+The strategies `lmer` and `logistf` need the replicate identifiers, hence a `replicate.column` must be indicated:
+
+```{r prolfqua_lmer, eval = FALSE}
+dpo_prolfqua <-
+  diff.analyses.prolfqua(DEprot.object = dpo_imputed,
+                         contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO")),
+                         strategy = "lmer",
+                         replicate.column = "replicate",
+                         linear.FC.th = 1.5)
 ```
 
-The summary can be collected by using the generic function `summary`:
+Independently from the strategy, `moderate.variance = TRUE` moderates the variance of the contrast across all the proteins, in the same spirit as the empirical Bayes moderation of `limma`. The `statistic` column then reports the moderated t-statistic, and `lfcSE` the corresponding moderated standard error.
 
-```{r analyses_summary, eval=F}
-diff.analyses_summary <- summary(dpo)
+<br>
+
+### Re-normalization applied by prolfqua
+Before fitting the model, `prolfqua` re-normalizes each sample: the median of the sample is subtracted, and the values are divided by the median absolute deviation (MAD) of the sample expressed relatively to the average MAD of the samples. The dispersion of the samples is equalized in this way, which is a reasonable default for counts that arrive raw, but on counts already normalized within *DEprot* it is a second normalization that has not been asked for. The centering is harmless once the samples are median-aligned; the division by the MAD is not, because it rescales each sample by a different factor and therefore modifies the estimated fold changes.
+
+The step can be skipped with `robust.scaling = FALSE`, and this is the recommended choice whenever `which.data` points to counts that have been normalized:
+
+```{r prolfqua_scaling, eval = FALSE}
+dpo_prolfqua <-
+  diff.analyses.prolfqua(DEprot.object = dpo_norm,
+                         contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+                         strategy = "lm",
+                         robust.scaling = FALSE,
+                         which.data = "normalized")
+```
+
+The factors that the scaling applies to each sample are stored for every contrast, whether the scaling has been performed or not, and can be inspected to decide whether the question is relevant for a given dataset:
+
+```{r prolfqua_scaling_factors, eval = FALSE}
+dpo_prolfqua@analyses.result.list$condition_FBS.vs.6h.DMSO$prolfqua.out$scaling.factors
+```
+
+A `scaling.factor` of 1 indicates a sample whose dispersion corresponds to the average of the samples of the contrast, while values above or below 1 indicate a sample whose fold changes are respectively compressed or expanded by the scaling. Factors close to 1 for all the samples mean that the scaling changes little; a factor of 1.4 means that the contribution of that sample to the fold changes has been reduced by 40%. A warning is raised automatically when the deviation exceeds 15%.
+
+> The effect is stronger on imputed counts. The imputation replaces the missing values with values drawn from the low tail of the distribution, which shrinks the MAD of a sample proportionally to the number of values that were replaced: the samples are not imputed to the same extent, so the rescaling ends up following the pattern of the missing values.
+
+<br>
+
+### Analyses on unimputed data
+Being able to fit a model in the presence of missing values, `prolfqua` can be applied to counts that have not been imputed, and the proteins for which too few observations are available are simply left out of the results:
+
+```{r prolfqua_unimputed, eval = FALSE}
+dpo_prolfqua <-
+  diff.analyses.prolfqua(DEprot.object = dpo_norm,
+                         contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+                         strategy = "lm",
+                         robust.scaling = FALSE,
+                         which.data = "normalized")
+```
+
+> The missing values are ignored, not modelled: the estimates are computed on the replicates in which the protein was detected, as if the others had never been measured. When the missing values are concentrated in one of the two groups this is an optimistic assumption, and the model described in the [dropout-aware analyses paragraph](#proDA) is the more appropriate choice. Run [`missingness.diagnostic`](#missingness) to decide which of the two situations applies to your data.
+
+<br>
+
+### Reading the results
+The `results` table contains the same columns as the other differential functions, with `FDR` in place of `padj`. Notice that `log2(FoldChange)` and `statistic` come from the model, hence from the scale on which the model was fitted, while `basemean.log2`, `log2.mean.<group>`, `sd.<group>` and `sem.<group>` are computed by *DEprot* directly on the counts stored in the object. With `robust.scaling = FALSE` the difference between the two group means and the reported fold change coincide; with the scaling active they remain close without being identical.
+
+Differently from `diff.analyses.limma` and `diff.analyses.proDA`, which build the design on all the samples of the metadata column, here the counts and the metadata are filtered on the two groups of the contrast before the fit: each contrast is an independent analysis, and the samples of the other groups do not contribute to the estimates.
+
+For each contrast the analyses list contains an extra `prolfqua.out` element:
+
+| Element | Description |
+| -----: | :---------- |
+| *LFQ.data* | the `LFQData` object after the transformation applied by `prolfqua` |
+| *scaling.factors* | median, MAD and scaling factor of each sample of the contrast |
+| *model* | the fitted model |
+| *contrast* | the contrast object, moderated or not depending on `moderate.variance` |
+| *full.results* | the complete contrast table returned by `prolfqua`, including the columns not kept in `results` |
+
+<br>
+
+
+## Dropout-aware analyses without imputation (`proDA`) {#diff_proDA}
+The three functions described above need a complete matrix, so every missing value has to be replaced before the test: randomized from the bottom of the distribution, or imputed. Once replaced, the value is treated as if it had been measured, and the test cannot distinguish a protein quantified at 18.2 from a protein that was never detected and for which 18.2 was written in place of the blank. Values drawn from the low tail are all similar to each other, so the within-group variance of a protein missing in most replicates is compressed, the *t* statistic grows, and proteins absent from one condition reach the top of the volcano partly because of the way the blanks were filled.
+
+`diff.analyses.proDA` takes the other route and never fills the blanks. A missing value is read as the statement *"this protein was below the detection limit in this sample"*, which is a left-censored observation, the same object handled by a survival model when a patient is still alive at the end of the study: the exact value is unknown, only the fact that it lies below a threshold. The probability of detecting a protein at a given intensity is described by a sigmoidal dropout curve estimated separately for each sample, the group means are inferred on the mixture of measured and censored observations, and the uncertainty on the censored ones stays inside the model and propagates into `lfcSE`. A protein detected in one replicate out of three therefore receives a wide standard error and a modest p-value instead of a suspiciously significant one. The implementation relies on [`proDA`](https://bioconductor.org/packages/release/bioc/html/proDA.html) (Ahlmann-Eltze & Anders, 2020).
+
+> The counts selected through `which.data` must still contain the missing values, since they are what the model reads: the function stops when imputed or randomized counts are indicated, because in that case there is nothing left to censor. What else the object contains is irrelevant, so an object carrying also the randomized and the imputed counts can be used as it is, as long as `which.data` points to the normalized (default) or the raw counts.
+
+```{r proDA_analyses, eval = FALSE}
+dpo_proDA <-
+  diff.analyses.proDA(DEprot.object = dpo_norm,
+                      contrast.list = list(c("condition", "FBS", "6h.DMSO"),
+                                           c("condition", "6h.10nM.E2", "6h.DMSO")),
+                      linear.FC.th = 1.5,
+                      padj.th = 0.05,
+                      which.data = "normalized")
+```
+
+<br>
+
+### When it is worth it
+This model answers the question raised by [`missingness.diagnostic`](#missingness): the diagnostic says whether the probability of being missing depends on the intensity, and the answer decides how the blanks should be handled. A steep dropout curve, an `LOD50` sitting in the low tail of the distribution and a high `perc.missing.MNAR` describe left-censored data, and this is the case in which modelling the censoring pays off. When the diagnostic finds no dependency between intensity and missingness, the data are missing at random, imputation is doing a reasonable job and `diff.analyses.limma` on imputed counts is the cheaper and equally valid choice.
+
+The check is performed by the function itself, which raises a warning when the dropout slope is not significant and runs the analyses anyway. The diagnostic is recomputed internally unless it is passed directly, which is the recommended way when it has already been generated:
+
+```{r proDA_missingness, eval = FALSE}
+miss <- missingness.diagnostic(DEprot.object = dpo_norm)
+
+dpo_proDA <-
+  diff.analyses.proDA(DEprot.object = dpo_norm,
+                      contrast.list = list(c("condition", "FBS", "6h.DMSO")),
+                      missingness.object = miss,
+                      linear.FC.th = 1.5)
+```
+
+The parameters read from the diagnostic (`LOD50`, dropout slope and p-value, percentage of missing values and of MNAR cells) are stored in `differential.analyses.params$missingness.stats`.
+
+<br>
+
+### The model
+The design is `~ 0 + <metadata.column>` and is built on all the samples of the column, exactly as in `diff.analyses.limma`: the two groups of the contrast are compared afterwards with a Wald test, and the samples of the other groups still contribute to the hyper-parameters and to the residual degrees of freedom. Contrasts defined on the same metadata column share a single fit, which is computed only once.
+
+Setting `include.rep.model = TRUE` adds the replicate as a blocking fixed effect, the equivalent of a paired design; a `replicate.column` is required.
+
+```{r proDA_paired, eval = FALSE}
+dpo_proDA <-
+  diff.analyses.proDA(DEprot.object = dpo_norm,
+                      contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO")),
+                      include.rep.model = TRUE,
+                      replicate.column = "replicate",
+                      linear.FC.th = 1.5)
+```
+
+Fitting a censored model protein by protein costs considerably more than a linear model, and the difference is measured in minutes rather than seconds on a full dataset. Two parameters control the cost: `n.subsample`, the number of proteins used to estimate the hyper-parameters (the rows are shuffled before the subsampling, so the estimate is not biased by the order of the counts table), and `max.iter`, the maximum number of iterations of the estimation loop. Proteins with fewer than `min.detected` observed values are excluded from the fit and kept in the results table with `NA` statistics.
+
+Also `padj.method = "fdrtool"` is available, and behaves as described for [`diff.analyses.limma`](#fdrtool).
+
+> The model needs a reasonable number of samples to estimate the dropout curves. With three replicates per group and two groups the estimation can be unstable, so this function is an alternative for well-powered designs rather than a replacement of the default pipeline.
+
+<br>
+
+### Reading the results
+The `results` table has the same columns, in the same order, as the other three differential functions, with three additions at the end.
+
+| Column | Description |
+| -----: | :---------- |
+| `n.detected.<groupA>`, `n.detected.<groupB>` | number of samples in which the protein was actually quantified in each group |
+| `n.approx` | effective sample size estimated by the model over all the samples of the design; it counts how much information the censored observations carry, and a value close to the number of observed values means that the missing ones are not informative |
+
+<br>
+
+Two columns change meaning with respect to the other functions. The `log2(FoldChange)` is the contrast estimate of the censored model and not the difference between the observed means: for a protein missing in one of the two groups the two quantities differ substantially, since the model extrapolates below the detection limit instead of averaging the values that happened to be observed. Consistently, `log2.mean.<group>` reports the model-based group means, computed as the average of the fitted values over the samples of each group. The `sd.<group>` and `sem.<group>` columns are instead descriptive and computed on the observed values only, so for an incomplete protein they are estimated on the surviving replicates and remain under-estimated.
+
+For each contrast the analyses list contains an extra `proDA.fit` element, the equivalent of `limma.fit` and `prolfqua.out`:
+
+| Element | Description |
+| -----: | :---------- |
+| *fit* | the `proDAFit` object returned by `proDA::proDA` |
+| *design* | the model matrix used for the fit |
+| *contrast* | the contrast vector tested |
+| *dropout.curves* | a data.frame with, for each sample, the position and the scale of the fitted dropout curve |
+| *full.results* | the complete table returned by `proDA::test_diff`, including `avg_abundance` and `n_obs` |
+
+<br>
+
+The `position` of a dropout curve is the intensity at which a sample has 50% probability of detecting a protein, which makes it the per-sample counterpart of the `LOD50` returned by `missingness.diagnostic`; the `scale` describes how sharp the transition between detection and dropout is. The two estimates are obtained in completely different ways, so they are not expected to coincide exactly, but a sample whose position sits far from the others has a detection limit of its own and deserves a look before the results are interpreted.
+
+```{r proDA_dropout, eval = FALSE}
+dpo_proDA@analyses.result.list$condition_FBS.vs.6h.DMSO$proDA.fit$dropout.curves
 ```
 
 <br>
 
 
-## DE results
+## DE results {#DE_res}
 The output will be a `DEprot.analyses` object. This class is similar to the base `DEprot` one, however 3 slots are now available:
 
 * *contrasts*: corresponds to the list used to define the contrasts, but includes also the IDs of the counts matrix belonging to each subgroup and whether the statistical test was performed in *paired* mode.
@@ -892,48 +1327,70 @@ The `analyses.result.list`, for each contrast, stores a list with the following 
 | *MA.plot*      | MA-plot showing the log2(basemean) x log2(FoldChange) of differential expression results; it can be regenerated using `plot.MA` |
 | *statistic.distribution* | A list containing the best-fitting distribution name (one among: 't', 'norm', 'f', 'chisq', NA), an AIC/BIC comparison table, the fitted model objects, and a Kolmogorov-Smirnov goodness-of-fit test for the best candidate. |
 
-If the function `diff.analyses.limma` was used, an additional slot called `limma.fit` will be available and will contain the results of `limma::contrasts.fit`.
+<br>
+
+Depending on the function used, one further element is available and gives access to the model itself:
+
+| Element | Function | Description |
+| -----: | :----- | :---------- |
+| *limma.fit* | `diff.analyses.limma` | the results of `limma::contrasts.fit` |
+| *prolfqua.out* | `diff.analyses.prolfqua` | the `LFQData` object after the transformation, the scaling factors of the samples, the fitted model, the contrast object and the complete contrast table |
+| *proDA.fit* | `diff.analyses.proDA` | the fitted model, the design and the contrast used, the dropout curve of each sample and the complete table returned by `proDA::test_diff` |
 
 <br>
 
 
 ### DE *results* table
-The table with the results of the differential analyses can be retrieved directly from the list in the `DEprot.analyses` object (`dpo_analyses@analyses.result.list$contrast.id$results`) or using the `get.results` function.
+The table with the results of the differential analyses can be retrieved directly from the list in the `DEprot.analyses` object (`dpo_analyses@analyses.result.list$contrast.id$results`) or using the `get.results` function.<br>
+The annotation columns can then be appended to the differential expression tables by `get.results()`, using `protein.info.columns = "all"` or the names of the columns of interest.
+
 
 ```{r get_results, eval = F}
 ## Direct access
 results = dpo_analyses@analyses.result.list$condition_6h.10nM.E2.vs.6h.DMSO$results
 
 ## Function
-results = get.results(dpo_analyses, contrast = 1)
+results = get.results(dpo_analyses, contrast = 1, protein.info.columns = "all")
 
 head(results)
 ```
 
 ```{r get_results2, echo=FALSE}
-knitr::kable(get.results(dpo_analyses, contrast = 1)[1:6,], row.names = F)
+knitr::kable(get.results(dpo_analyses, contrast = 1, protein.info.columns = "all")[1:6,], row.names = FALSE)
 ```
 
 <br>
 
 #### Columns of the *results* table
-The three differential functions (`diff.analyses`, `diff.analyses.limma`, `diff.analyses.prolfqua`) all return the same columns, in the same order. `<groupA>` and `<groupB>` stand for the two variables of the contrast.
+The four differential functions (`diff.analyses`, `diff.analyses.limma`, `diff.analyses.prolfqua`, `diff.analyses.proDA`) all return the same columns, in the same order, and some of them add further columns at the end of the table. `<groupA>` and `<groupB>` stand for the two variables of the contrast.
 
 | Column | Description |
 | -----: | :---------- |
 | `prot.id` | protein identifier (row names of the counts table) |
-| `basemean.log2` | mean of the log2 expression values over all the samples of both groups |
-| `log2.mean.<groupA>` | mean of the log2 expression values in group A |
-| `log2.mean.<groupB>` | mean of the log2 expression values in group B |
-| `log2.Fold_<groupA>.vs.<groupB>` | log2(FoldChange) of group A over group B |
+| `basemean.log2` | mean of the log2 expression values over all the samples of both groups. For `proDA`, it corresponds to the model estimate. |
+| `log2.mean.<groupA>`, `log2.mean.<groupB>` | mean of the log2 expression values in group A/B. For `proDA`, it corresponds to the model estimate. |
+| `log2.Fold_<groupA>.vs.<groupB>` | log2(FoldChange) of group A over group B; the model estimate for `limma`, `prolfqua` and `proDA`, the difference of the group means for `diff.analyses`. |
 | `p.value` | p-value of the statistical test |
-| `padj`/`FDR` | p-value corrected for multiple testing using the method indicated by `padj.method`; named `FDR` in the output of `diff.analyses.prolfqua` |
-| `statistic` | test statistic: *t* for the t-test, *W* for the Wilcoxon test, moderated *t* for `limma` and for `prolfqua` |
+| `padj`/`FDR` | p-value corrected for multiple testing using the method indicated by `padj.method`; in the output of `diff.analyses.prolfqua` it is named `FDR` and is computed by `prolfqua` itself, which has no `padj.method` argument |
+| `statistic` | test statistic: *t* for the t-test, *W* for the Wilcoxon test, moderated *t* for `limma`, *t* for `prolfqua` (moderated when `moderate.variance = TRUE`), Wald *t* for `proDA` |
 | `df` | degrees of freedom associated to the test |
 | `diff.status` | differential status of the protein: name of the enriched group, `unresponsive`, or `null` |
-| `sd.<groupA>`, `sd.<groupB>` | standard deviation of the log2 expression values within each group |
+| `sd.<groupA>`, `sd.<groupB>` | standard deviation of the log2 expression values within each group; always computed on the observed values, also when the means come from a model |
 | `sem.<groupA>`, `sem.<groupB>` | standard error of the mean of the log2 expression values within each group, computed as *sd*/sqrt(*n*), where *n* is the number of non-missing values |
 | `lfcSE` | standard error of the log2(FoldChange); equivalent of the `lfcSE` column returned by `DESeq2::results()` |
+
+<br>
+
+Where the means and the fold change come from depends on the function. `diff.analyses` and `diff.analyses.limma` compute both directly on the counts stored in the object. `diff.analyses.prolfqua` computes the means on the counts, while the fold change is estimated on the intensities as rescaled by `prolfqua` for the fit (see the [corresponding paragraph](#prolfqua)). `diff.analyses.proDA` reports means and fold change of the censored model, so that both account for the values that were below the detection limit; the `sd.<group>` and `sem.<group>` columns remain descriptive and are computed on the observed values only, in all four cases.
+
+<br>
+
+#### Additional columns
+| Column | Returned by | Description |
+| -----: | :----- | :---------- |
+| `lfdr` | `diff.analyses.limma`, `diff.analyses.proDA` | local false discovery rate estimated by `fdrtool`, added only when `padj.method = "fdrtool"` and the estimation succeeded |
+| `n.detected.<groupA>`, `n.detected.<groupB>` | `diff.analyses.proDA` | number of samples in which the protein was quantified in each group |
+| `n.approx` | `diff.analyses.proDA` | effective sample size estimated by the model over all the samples of the design; it measures how much information the values below the detection limit carry |
 
 <br>
 
@@ -942,7 +1399,7 @@ What `lfcSE` measures depends on the function used, although in every case it is
 
 `diff.analyses` returns the standard error used by the t-test itself, so `statistic = log2(FoldChange) / lfcSE`. For unpaired tests this is the Welch standard error and equals `sqrt(sem.<groupA>^2 + sem.<groupB>^2)`; for paired tests it is the standard error of the per-replicate differences, and the two do not coincide. The Wilcoxon test ranks the values instead of modelling them, and no standard error is attached to the fold change: `lfcSE` is `NA` whenever `stat.test = "wilcoxon"`.
 
-`diff.analyses.limma` returns the moderated (posterior) standard error of the contrast coefficient, the same quantity that limma uses as denominator of its moderated *t*. `diff.analyses.prolfqua` returns the standard error of the contrast estimate, moderated when `moderate.variance = TRUE`.
+`diff.analyses.limma` returns the moderated (posterior) standard error of the contrast coefficient, the same quantity that limma uses as denominator of its moderated *t*. `diff.analyses.prolfqua` returns the standard error of the contrast estimate, moderated when `moderate.variance = TRUE`. `diff.analyses.proDA` returns the standard error of the contrast of the censored model, which includes the uncertainty on the values that were not detected: a protein quantified in a minority of the replicates receives a wide `lfcSE`, where the same protein analyzed on imputed counts would have received a narrow one.
 
 Together with `df`, `lfcSE` gives confidence intervals (CI) on the fold change:
 
@@ -957,7 +1414,7 @@ res$CI.lower <- res$log2.Fold_FBS.vs.6h.DMSO - t.crit * res$lfcSE
 res$CI.upper <- res$log2.Fold_FBS.vs.6h.DMSO + t.crit * res$lfcSE
 ```
 
->One caveat: imputation replaces missing values with conditional estimates that carry no residual noise. Run on imputed counts, `sd`, `sem` and `lfcSE` are all biased downwards, and intervals built from them are narrower than they should be.
+>One caveat: imputation replaces missing values with conditional estimates that carry no residual noise. Run on imputed counts, `sd`, `sem` and `lfcSE` are all biased downwards, and intervals built from them are narrower than they should be. Modelling the missing values instead of replacing them keeps that uncertainty visible, which is what the [dropout-aware analyses](#proDA) are for.
 
 <br>
 
@@ -1685,6 +2142,99 @@ GSEA.results.simplified <- simplify.enrichment(GSEA.results)
 ORA.results.simplified <- simplify.enrichment(ORA.results)
 ```
 
+
+<br>
+
+### Combine multiple enrichments {#combineenrichments}
+Enrichments performed separately can be displayed together: different contrasts, different `diff.status` categories, different timepoints, or a combination of these. Both functions take a named list in which each element can be a `DEprot.enrichResult` object, an `enrichResult`/`gseaResult` object coming directly from [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html), a `DEprot.timecourse.enrichment` object, or simply a result table. The three sources can be mixed in the same list.<br>
+The names of the list are used as labels and define the order of the discoveries in the plots.
+
+> Notice that a `DEprot.timecourse.enrichment` carries several discoveries at once: each of its clusters is expanded into an independent discovery named `<list.name>.cluster.<k>`.
+
+<br>
+
+#### Merged dotplot
+`combine.enrichments` displays the discoveries on the x-axis and the genesets on the y-axis. The size of the dots corresponds to the fold enrichment (or to the gene ratio), their color to the significance, and the number written inside to the count of proteins found in that geneset.
+
+```{r combine_enrichments, eval = FALSE}
+combined <-
+  combine.enrichments(enrichment.list = list(`E2 6h` = ORA.results.6h,
+                                             `E2 24h` = ORA.results.24h,
+                                             `E2 48h` = ORA.results.48h),
+                      dotplot.n = 5,
+                      padj.cutoff = 0.05,
+                      size.by = "FoldEnrichment",
+                      order.by = "discovery")
+
+combined$dotplot
+```
+
+For each discovery only the top `dotplot.n` genesets are kept, and the plot shows the union of these selections: a geneset picked because of one contrast is then displayed for all of them, which is what makes the comparison possible. A specific set of genesets can be imposed with the `terms` parameter, in which case `dotplot.n` is ignored.
+
+Genesets that were tested but did not pass the `padj.cutoff` in a given discovery are drawn as empty grey dots, so that a missing dot keeps the meaning of "the geneset was not returned at all by that enrichment". Since `clusterProfiler` filters its own output, these grey dots appear only if the single enrichments were run with permissive thresholds (`pvalueCutoff = 1`, `qvalueCutoff = 1`). Use `show.non.significant = FALSE` to hide them.
+
+The vertical order of the genesets is defined by `order.by`:
+
+| Value            | Description                                                                                       |
+| ---------------: | :------------------------------------------------------------------------------------------------ |
+| *discovery*      | sorted by the discovery in which each geneset is the most significant, generating a diagonal pattern |
+| *significance*   | sorted by the best adjusted p-value                                                               |
+| *clustering*     | hierarchical clustering of the enrichment values, placing next to each other the genesets with a similar profile |
+| *alphabetical*   | alphabetical order                                                                                |
+
+> Notice that the fold enrichment is not defined for a GSEA: to include GSEA discoveries in the plot use `size.by = "GeneRatio"`, otherwise they will be dropped (with a warning).
+
+<br>
+
+#### Divergent bar plot
+When two enrichments correspond to the two sides of the same comparison, for instance the ORA of the proteins up- and down-regulated in a contrast, `divergent.enrichment` plots them back-to-back: the first element of the list on the positive side, the second one with the sign inverted.
+
+```{r divergent_enrichment, eval = FALSE}
+ORA.E2 <-
+  geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+                     contrast = 1,
+                     TERM2GENE = corum_geneSet,
+                     enrichment.type = "ORA",
+                     gsub.pattern.prot.id = "_HUMAN|;.*",
+                     diff.status.category = "6h.10nM.E2")
+
+ORA.DMSO <-
+  geneset.enrichment(DEprot.analyses.object = dpo_analyses,
+                     contrast = 1,
+                     TERM2GENE = corum_geneSet,
+                     enrichment.type = "ORA",
+                     gsub.pattern.prot.id = "_HUMAN|;.*",
+                     diff.status.category = "6h.DMSO")
+
+
+divergent <-
+  divergent.enrichment(enrichment.list = list(`6h E2` = ORA.E2,
+                                              `6h DMSO` = ORA.DMSO),
+                       value = "FoldEnrichment",
+                       top.n = 10,
+                       padj.cutoff = 0.05)
+
+divergent$divergent.plot
+```
+
+The top `top.n` genesets are taken independently for each side, so both are represented even when one of the two is far more enriched than the other. Genesets found on both sides share a single row and their bars face each other.
+
+The length of the bars is set by `value` and can be the `FoldEnrichment`, the `GeneRatio`, the `Count`, the `NES` or the `padj` (plotted as -log~10~). Only the magnitude of the metric is used, the side being given by the position in the list. The transparency of the bars is proportional to the significance and the labels at the end of each bar indicate the count of proteins over the size of the geneset, exactly as in `NES.plot`.
+
+<br>
+
+#### Combined enrichment output
+Both functions return a list with two elements:
+
+| Element                       | Description                                                                              |
+| ----------------------------: | :--------------------------------------------------------------------------------------- |
+| *results*                     | data.frame combining the results of all the discoveries                                  |
+| *dotplot* / *divergent.plot*  | the ggplot object                                                                        |
+
+The `results` table is shared by the two functions: the columns of GSEA and ORA analyses are harmonized (`discovery`, `enrichment.type`, `ID`, `alias`, `Count`, `set.size`, `GeneRatio.numeric`, `FoldEnrichment`, `NES`, `pvalue`, `p.adjust`), which is what allows discoveries of different origin to be plotted on the same axes. For a GSEA the leading edge is used as the equivalent of the ORA `Count`, and the size of the geneset as its background.
+
+
+
 <br>
 
 ------------------
@@ -1806,6 +2356,80 @@ dpo <- harmonize.batches(DEprot.object = dpo,
                          batch.column = "Mixture")
 ```
 
+
+<br>
+
+------------------
+
+# **Export to other packages** {#exportexternal}
+The opposite operation is performed by `export.external()`, which converts a `DEprot` or `DEprot.analyses` object into the containers used by the rest of the Bioconductor ecosystem. This is useful when a specific step is not covered by `DEprot`: peptide-to-protein aggregation with `QFeatures`, mixed models with `msqrob2`, or simply a plotting function of another package. Nothing has to be reassembled by hand, since all the count matrices available become assays, the metadata table becomes the column annotation, and the protein information becomes the row annotation.
+
+```{r export_external, eval=F}
+se <- export.external(DEprot.object = dpo,
+                      format = "SummarizedExperiment")
+```
+
+<br>
+
+| `format`               | Class returned         | Package required            |
+| ---------------------: | :--------------------- | :-------------------------- |
+| *SummarizedExperiment* | `SummarizedExperiment` | `SummarizedExperiment`      |
+| *QFeatures*            | `QFeatures`            | `QFeatures`                 |
+| *MSnSet*               | `MSnSet`               | `MSnbase`                   |
+| *EList*                | `EList`                | `limma` (already installed) |
+| *list*                 | a plain list of tables | none                        |
+
+<br>
+
+The assays are named after the counts they contain, `raw`, `normalized`, `randomized` and `imputed`, and only the matrices actually present in the object are exported. The one indicated by `counts.type` is placed first, so that it becomes the assay returned by `assay(se)` without further arguments; left to its default `"auto"`, the most processed matrix available is used.
+
+```{r export_counts_type, eval=F}
+# imputed counts as primary assay, all the others still accessible
+se <- export.external(DEprot.object = dpo, counts.type = "imputed")
+
+# only two matrices, normalized as primary
+se <- export.external(DEprot.object = dpo, assays = c("raw", "normalized"))
+```
+
+<br>
+
+A `SummarizedExperiment` requires all its assays to share the same dimensions, while in `DEprot` the count matrices can differ: proteins are commonly removed between the normalization and the imputation. The secondary matrices are therefore re-indexed on the proteins and samples of the primary assay, dropping what is not part of it and filling with `NA` what is missing. A message reports how many proteins were filled, which makes it easy to notice when the primary assay was not the one expected.
+
+<br>
+
+For a `DEprot.analyses` object the differential results are added to the row annotation as well, one block of columns per contrast, prefixed with the contrast name to keep them distinguishable (`condition_treated.vs.untreated.log2.Fold_treated.vs.untreated`, `condition_treated.vs.untreated.padj`, and so on). A subset can be selected with `contrast.subset`, in the same way as in `export.analyses()`.
+
+```{r export_results, eval=F}
+se <- export.external(DEprot.object = dpo.analyses,
+                      add.results = TRUE,
+                      contrast.subset = c(1, 3))
+
+SummarizedExperiment::rowData(se)
+```
+
+<br>
+
+None of the destination classes has a place for the log base, the normalization and imputation methods, or the thresholds used in the differential analyses. These parameters are written in the metadata list of the exported object rather than being dropped silently, and `keep.object = TRUE` stores the entire original object there too, which makes the round-trip lossless.
+
+```{r export_metadata, eval=F}
+se <- export.external(DEprot.object = dpo, keep.object = TRUE)
+
+S4Vectors::metadata(se)$imputation.method
+dpo <- S4Vectors::metadata(se)$DEprot.object
+```
+
+<br>
+
+`SummarizedExperiment`, `QFeatures` and `MSnbase` are not installed together with `DEprot`: as for the import functions, they are requested only when the corresponding format is asked for, and the installation is never performed without an explicit confirmation (`install.missing`). The `"EList"` and `"list"` formats need nothing at all.
+
+Three shortcuts are available for the most frequent cases: `as.SummarizedExperiment()`, `as.QFeatures()` and `as.MSnSet()` simply call `export.external()` with the corresponding `format`, and accept all its other parameters.
+
+```{r export_shortcut, eval=F}
+se <- as.SummarizedExperiment(dpo.analyses)
+qf <- as.QFeatures(dpo, assay.name = "proteins")
+```
+
+
 <br>
 
 -----------------
@@ -1832,3 +2456,13 @@ For any suggestion, bug fixing or commentary please fill an [Issues](https://git
 
 ## License
 This package is under a GNU General Public License (version 3).
+
+<br>
+
+---------------------------------------------------
+
+# **Session info**
+
+```{r session_info}
+sessionInfo()
+```

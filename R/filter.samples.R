@@ -16,7 +16,7 @@
 #' (\link{normalize.counts}, \link{harmonize.batches},
 #' \link{randomize.missing.values}, \link{impute.counts} and, for
 #' \code{DEprot.analyses}, \link{diff.analyses} / \link{diff.analyses.limma} /
-#' \link{diff.analyses.prolfqua}).
+#' \link{diff.analyses.prolfqua} / \link{diff.analyses.proDA}).
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
 #' @param samples Character vector with the identifiers of the samples to remove
@@ -33,10 +33,11 @@
 #'   literally called \code{"batch"}. Default: \code{NULL}.
 #' @param diff.method String defining which differential-analyses engine should
 #'   be used to recompute the contrasts of a \code{DEprot.analyses} object. One
-#'   among \code{"auto"}, \code{"t.test"}, \code{"limma"} and \code{"prolfqua"}.
-#'   With \code{"auto"} (default) the engine is read directly from the object
-#'   (the \code{stat.test} entry of \code{differential.analyses.params} records
-#'   whether \code{limma}, \code{prolfqua} or the t/Wilcoxon engine was used);
+#'   among \code{"auto"}, \code{"t.test"}, \code{"limma"}, \code{"prolfqua"} and
+#'   \code{"proDA"}. With \code{"auto"} (default) the engine is read directly
+#'   from the object (the \code{stat.test} entry of
+#'   \code{differential.analyses.params} records whether \code{limma},
+#'   \code{prolfqua}, \code{proDA} or the t/Wilcoxon engine was used);
 #'   for legacy objects that do not store it, \code{prolfqua} is still detected
 #'   and the function otherwise falls back to \code{diff.analyses} (t/Wilcoxon).
 #'   Set this argument explicitly only to override the stored engine. Default:
@@ -83,11 +84,17 @@
 #'         \code{contrasts} slots): the contrasts, fold-change thresholds,
 #'         p-value/FDR threshold, adjustment method and counts used are recovered.
 #'         The engine is identified from the stored \code{stat.test}
-#'         (\code{"limma"}, \code{"prolfqua"} or the t/Wilcoxon test name); the
-#'         \code{replicate.column} is recovered for every engine, together with
-#'         the t/Wilcoxon \code{paired.test}, the limma \code{rep.model} /
-#'         \code{fitting.method}, and the prolfqua \code{strategy} /
-#'         \code{moderate.variance}.
+#'         (\code{"limma"}, \code{"prolfqua"}, \code{"proDA"} or the t/Wilcoxon
+#'         test name); the \code{replicate.column} is recovered for every engine,
+#'         together with the t/Wilcoxon \code{paired.test}, the limma
+#'         \code{rep.model} / \code{fitting.method}, the prolfqua
+#'         \code{strategy} / \code{moderate.variance} / \code{robust.scaling},
+#'         and the proDA \code{rep.model} / \code{moderate.location} /
+#'         \code{moderate.variance} / \code{min.detected} / \code{n.subsample} /
+#'         \code{max.iter}.
+#'   \item \emph{Protein annotation} (\code{protein.info} slot): the table is
+#'         carried over to the rebuilt object, since removing samples does not
+#'         change the proteins.
 #' }
 #' The seeds saved during the original randomization/imputation are re-used so
 #' the re-computation is as reproducible as possible on the reduced data.
@@ -178,8 +185,8 @@ filter.samples =
     samples = as.character(samples)
 
     diff.method = tolower(diff.method[1])
-    if (!(diff.method %in% c("auto", "t.test", "ttest", "wilcoxon", "limma", "prolfqua"))) {
-      stop("'diff.method' must be one among 'auto', 't.test', 'limma' and 'prolfqua'.", call. = FALSE)
+    if (!(diff.method %in% c("auto", "t.test", "ttest", "wilcoxon", "limma", "prolfqua", "proda"))) {
+      stop("'diff.method' must be one among 'auto', 't.test', 'limma', 'prolfqua' and 'proDA'.", call. = FALSE)
     }
 
 
@@ -315,7 +322,8 @@ filter.samples =
                                        metadata = meta.sub,
                                        data.type = level.type,
                                        log.base = log.base,
-                                       column.id = "column.id"))
+                                       column.id = "column.id",
+                                       protein.info = .get.protein.info(DEprot.object)))
 
 
 
@@ -578,10 +586,11 @@ filter.samples =
       engine = diff.method
       if (engine == "ttest") {engine = "t.test"}
       if (engine == "wilcoxon") {engine = "t.test"; if (is.null(stat.test)) {stat.test = "wilcoxon"}}
+      if (engine == "proda") {engine = "proDA"}
       if (engine == "auto") {
         if (!is.null(stored.stat)) {
           s = tolower(as.character(stored.stat))
-          engine = if (s == "limma") {"limma"} else if (s == "prolfqua") {"prolfqua"} else {"t.test"}
+          engine = if (s == "limma") {"limma"} else if (s == "prolfqua") {"prolfqua"} else if (s == "proda") {"proDA"} else {"t.test"}
         } else {
           # legacy objects: prolfqua is detectable, t.test vs limma is not
           is.prolfqua = identical(as.character(padj.method), "effective FDR") ||
@@ -609,9 +618,21 @@ filter.samples =
       include.rep.model.value = if (!is.null(diff.params$rep.model)) {isTRUE(diff.params$rep.model)} else {isTRUE(any.paired)}
       fitting.method.value    = diff.params$fitting.method %||% "ls"
 
-      # prolfqua: 'strategy' (strategy.id) and 'moderate.variance' are stored
+      # prolfqua: 'strategy' (strategy.id), 'moderate.variance' and 'robust.scaling' are stored
       prolfqua.strategy = diff.params$strategy$strategy.id %||% "lm"
       moderate.value    = diff.params$moderate.variance %||% FALSE
+      robust.scaling.value = if (!is.null(diff.params$robust.scaling)) {isTRUE(diff.params$robust.scaling)} else {TRUE}
+
+      # proDA: the moderation of location and variance, the minimum number of observed values and the
+      # parameters controlling the cost of the fit are stored. 'n.subsample' is saved as the number of
+      # proteins actually used, together with the seed of the shuffling, so that the re-computation
+      # reproduces the original one on the retained samples.
+      moderate.location.value = if (!is.null(diff.params$moderate.location)) {isTRUE(diff.params$moderate.location)} else {TRUE}
+      moderate.variance.value = if (!is.null(diff.params$moderate.variance)) {isTRUE(diff.params$moderate.variance)} else {TRUE}
+      min.detected.value      = diff.params$min.detected %||% 1
+      n.subsample.value       = diff.params$n.subsample
+      max.iter.value          = diff.params$max.iter %||% 20
+      seed.value              = diff.params$seed
 
       # replicate column: every engine now stores it, so the 'replicate.column'
       # argument only acts as an override and the stored value is used otherwise.
@@ -620,6 +641,7 @@ filter.samples =
       # is a replicate column actually required by the chosen configuration?
       needs.rep = (engine == "t.test"   && isTRUE(paired.test.value)) ||
         (engine == "limma"    && isTRUE(include.rep.model.value)) ||
+        (engine == "proDA"    && isTRUE(include.rep.model.value)) ||
         (engine == "prolfqua" && tolower(prolfqua.strategy) %in% c("lmer", "logistf"))
       if (isTRUE(needs.rep) && is.null(rep.col)) {
         stop("The original differential analyses require the replicate column (paired test or mixed-effects model) but it is not available. ",
@@ -641,8 +663,30 @@ filter.samples =
                                              FDR.th = padj.th,
                                              strategy = prolfqua.strategy,
                                              moderate.variance = moderate.value,
+                                             robust.scaling = robust.scaling.value,
                                              which.data = diff.which,
                                              overwrite.analyses = TRUE)
+
+      } else if (engine == "proDA") {
+        ## the censoring is read from the counts, so the diagnostic is not recomputed here: the
+        ## verdict on the missingness pattern belongs to the original object and has not changed.
+        dpo = DEprot::diff.analyses.proDA(DEprot.object = dpo,
+                                          contrast.list = contrast.list,
+                                          include.rep.model = include.rep.model.value,
+                                          replicate.column = rep.col,
+                                          linear.FC.th = linear.FC.th,
+                                          linear.FC.unresp.range = linear.FC.unresp.range,
+                                          padj.th = padj.th,
+                                          padj.method = padj.method,
+                                          moderate.location = moderate.location.value,
+                                          moderate.variance = moderate.variance.value,
+                                          min.detected = min.detected.value,
+                                          n.subsample = n.subsample.value,
+                                          max.iter = max.iter.value,
+                                          check.missingness = FALSE,
+                                          which.data = diff.which,
+                                          seed = seed.value,
+                                          overwrite.analyses = TRUE)
 
       } else if (engine == "limma") {
         dpo = DEprot::diff.analyses.limma(DEprot.object = dpo,

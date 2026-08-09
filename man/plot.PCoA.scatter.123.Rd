@@ -4,7 +4,7 @@
 \alias{plot.PCoA.scatter.123}
 \title{plot.PCoA.scatter.123}
 \usage{
-\method{plot}{PCoA.scatter.123}(
+plot.PCoA.scatter.123(
   DEprot.PCoA.object,
   color.column = "column.id",
   shape.column = NULL,

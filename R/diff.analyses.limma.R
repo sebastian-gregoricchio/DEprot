@@ -8,12 +8,12 @@
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
 #' @param include.rep.model Logical value indicating whether the model should include the replicate information. Requires a 'replicate.column'. Default: \code{FALSE}.
-#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.
+#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only if \code{include.rep.model = TRUE}. Default: \code{NULL}.
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
 #' @param padj.th Numeric value indicating the p.adjusted threshold to apply to the differential analyses. Default: \code{0.05}.
 #' @param padj.method String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none", "fdrtool". Default: \code{BH}.
-#' @param fitting.method String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. Default: \code{"ls"} (least squares).
+#' @param fitting.method String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. The robust regression cannot be combined with \code{include.rep.model = TRUE}. Default: \code{"ls"} (least squares).
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
 #' @param down.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"steelblue"}.
 #' @param unresponsive.color String indicating the color to use for unresponsive proteins in the plots. Default: \code{"purple"}.
@@ -26,18 +26,22 @@
 #' error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the moderated
 #' (posterior) standard error of the contrast coefficient estimated by limma (\code{stdev.unscaled * sqrt(s2.post)}).
 #' This is the denominator of the moderated t-statistic reported in the \code{statistic} column and it is the direct
-#' equivalent of the \code{lfcSE} column returned by \code{DESeq2::results()}. The log2(FoldChange) column is computed as
-#' the difference between the group means, which coincides with the limma contrast coefficient for a least-squares fit of a
-#' \code{~ 0 + group} design, but not when \code{include.rep.model = TRUE} (generalized least squares) or when
-#' \code{fitting.method = "robust"}: in those cases \code{statistic} may differ slightly from \code{log2(FoldChange)/lfcSE}.
+#' equivalent of the \code{lfcSE} column returned by \code{DESeq2::results()}. The log2(FoldChange) column is the contrast
+#' coefficient estimated by limma, so that \code{statistic = log2(FoldChange)/lfcSE} holds in every case. For a
+#' least-squares fit of a \code{~ 0 + group} design the coefficient corresponds exactly to the difference between the group
+#' means reported in the \code{log2.mean.<group>} columns; when \code{include.rep.model = TRUE} the fit becomes a
+#' generalized least squares in which the samples are weighted through the consensus correlation between replicates, and
+#' the same is true of \code{fitting.method = "robust"}: in those cases the coefficient stays close to the difference of the
+#' means without coinciding with it.
 #' Note that, when imputed counts are used, the imputation compresses the variance and \code{sd}, \code{sem} and
 #' \code{lfcSE} are consequently under-estimated.
 #'
 #' When set to \code{"fdrtool"}, the moderated t-statistics returned by limma are passed to \code{fdrtool::fdrtool}
 #' (as normal deviates, \code{statistic = "normal"}), which estimates the proportion of null features and an empirical
 #' null: the resulting tail-area-based q-values are stored in the \code{padj} column, while the local false discovery rate
-#' (\code{lfdr}) is added as an extra column of the results table. If fewer than 200 proteins with a finite statistic are
-#' available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised).
+#' (\code{lfdr}) is appended as an extra column at the end of the results table. If fewer than 200 proteins with a finite statistic are
+#' available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised)
+#' and no \code{lfdr} column is returned.
 #'
 #' @import dplyr
 #' @import ggplot2
@@ -117,6 +121,17 @@ diff.analyses.limma =
       } else {
         meta.tb[,replicate.column[[1]]] = as.character(meta.tb[,replicate.column[[1]]])
       }
+    } else if (include.rep.model == TRUE) {
+      stop("The replicate model was required ('include.rep.model = TRUE') but no 'replicate.column' was provided.")
+    }
+
+
+    ### Check the compatibility of the replicate model with the fitting method
+    ## The blocking of the replicates is applied by limma through gls.series(), while the robust regression
+    ## is fitted by mrlm(), which accepts neither the blocking factor nor the correlation between replicates.
+    if (include.rep.model == TRUE & tolower(fitting.method) == "robust") {
+      stop(paste0("The replicate model cannot be combined with 'fitting.method = \"robust\"': limma fits the robust regressions through mrlm(), which does not support the blocking of the replicates.\n",
+                  "       Use 'fitting.method = \"ls\"' or set 'include.rep.model = FALSE'."))
     }
 
 
@@ -252,13 +267,12 @@ diff.analyses.limma =
     diff.analyses.list = list()
 
     for (i in 1:length(contrasts.info)) {
-      # means and FoldChange
+      # means
       diff.tb =
         data.frame(prot.id = rownames(mat.log2),
                    basemean.log2 = rowMeans(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2), drop = FALSE], na.rm = TRUE),
                    log2.mean.group1 = rowMeans(mat.log2[,contrasts.info[[i]]$group.1, drop = FALSE], na.rm = TRUE),
-                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE], na.rm = TRUE)) %>%
-        dplyr::mutate(log2.Fold_group1.vs.group2 = log2.mean.group1 - log2.mean.group2)
+                   log2.mean.group2 = rowMeans(mat.log2[,contrasts.info[[i]]$group.2, drop = FALSE], na.rm = TRUE))
 
 
       ## Define the design
@@ -268,10 +282,13 @@ diff.analyses.limma =
 
 
       ## Fit the model
+      ## The correlation between replicates is used by limma only through gls.series(), which is reached
+      ## when the blocking factor is passed to lmFit(): providing 'correlation' without 'block' would leave
+      ## the fit to lm.series(), which ignores it.
       if (include.rep.model == TRUE) {
         block = meta.tb[,replicate.column]
         corfit = limma::duplicateCorrelation(object = mat.log2, design = design, block = block)
-        fit = limma::lmFit(object = mat.log2, design = design, correlation = corfit$consensus, method = fitting.method)
+        fit = limma::lmFit(object = mat.log2, design = design, block = block, correlation = corfit$consensus, method = fitting.method)
       } else {
         fit = limma::lmFit(object = mat.log2, design = design, method = fitting.method)
       }
@@ -293,13 +310,19 @@ diff.analyses.limma =
       results.limma$prot.id = rownames(results.limma)
 
       ## Combine results with diff.tb
+      ## The log2(FoldChange) is the contrast coefficient estimated by limma, and not the difference between
+      ## the group means: the two coincide for a least-squares fit of a '~ 0 + group' design, while they
+      ## differ when the samples are weighted (replicate model or robust regression). Taking the coefficient
+      ## keeps the fold change consistent with the statistic, the standard error and the p-value.
       diff.tb =
         dplyr::left_join(x = diff.tb,
-                         y = dplyr::select(.data = results.limma, prot.id, P.Value, adj.P.Val, t),
+                         y = dplyr::select(.data = results.limma, prot.id, logFC, P.Value, adj.P.Val, t),
                          by = "prot.id") %>%
-        dplyr::rename(p.value = P.Value,
+        dplyr::rename(log2.Fold_group1.vs.group2 = logFC,
+                      p.value = P.Value,
                       padj = adj.P.Val,
-                      statistic = t)
+                      statistic = t) %>%
+        dplyr::select(prot.id, basemean.log2, log2.mean.group1, log2.mean.group2, log2.Fold_group1.vs.group2, p.value, padj, statistic)
 
       diff.tb$df = (fitted.data$df.prior + fitted.data$df.residual)[match(diff.tb$prot.id, rownames(fitted.data$t))]
 
@@ -312,6 +335,12 @@ diff.analyses.limma =
       ## strategy adopted by the DEP package. Since imputation compresses the variance and can
       ## bias the statistic distribution, the empirical-null fit of fdrtool is often preferable
       ## to a fixed-null p.adjust() correction on this type of data.
+      ## The local FDR is collected in a temporary vector and appended at the end of the results
+      ## table (after 'lfcSE'), so that the columns shared with the other differential functions
+      ## keep the same order; when the fit fails, and the correction falls back to
+      ## Benjamini-Hochberg, no 'lfdr' column is added for that contrast.
+      lfdr.values = NULL
+
       if (tolower(padj.method) == "fdrtool") {
         stat.values = diff.tb$statistic
         finite.idx = which(is.finite(stat.values))
@@ -328,6 +357,8 @@ diff.analyses.limma =
 
         if (!is.null(fdr.fit)) {
           diff.tb$padj[finite.idx] = fdr.fit$qval
+          lfdr.values = rep(NA, nrow(diff.tb))
+          lfdr.values[finite.idx] = fdr.fit$lfdr
         } else {
           ## Not enough features (or degenerate statistic distribution) for a reliable
           ## fdrtool fit: fall back to Benjamini-Hochberg for this contrast.
@@ -404,6 +435,10 @@ diff.analyses.limma =
       diff.tb$sem.group2 = unname(sem.group2[row.idx])
       diff.tb$lfcSE = unname(lfcSE)
 
+      if (!is.null(lfdr.values)) {
+        diff.tb$lfdr = lfdr.values
+      }
+
 
       ## Run PCA
       PCA.data = DEprot::perform.PCA(DEprot.object = DEprot.object,
@@ -440,7 +475,7 @@ diff.analyses.limma =
         data.frame(diff.tb %>%
                      dplyr::group_by(diff.status, .drop = FALSE) %>%
                      dplyr::summarise(n = n(),
-                                      median.FoldChange = median(log2.Fold_group1.vs.group2)))
+                                      median.FoldChange = median(log2.Fold_group1.vs.group2, na.rm = TRUE)))
 
 
       ## Make volcano plot
@@ -578,6 +613,7 @@ diff.analyses.limma =
     DEprot.object.analyses =
       new(Class = "DEprot.analyses",
           metadata = DEprot.object@metadata,
+          protein.info = .get.protein.info(DEprot.object),
           raw.counts = DEprot.object@raw.counts,
           norm.counts =  DEprot.object@norm.counts,
           random.counts =  DEprot.object@random.counts,

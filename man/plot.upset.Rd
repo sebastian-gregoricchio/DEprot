@@ -4,7 +4,7 @@
 \alias{plot.upset}
 \title{plot.upset}
 \usage{
-\method{plot}{upset}(
+plot.upset(
   DEprot.analyses.object,
   contrast.subset = NULL,
   title = NULL,

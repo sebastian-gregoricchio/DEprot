@@ -8,6 +8,8 @@
 #' @param imputation A string indicating the imputation method used. If none, use the default value \code{NA}.
 #' @param normalization.method String or list indicating the normalization method used. If none, use the default value \code{NA}.
 #' @param column.id String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of \code{counts}.
+#' @param protein.info Optional \code{data.frame} (or \code{matrix}) with one row per protein and any number of annotation columns. The protein IDs must be provided as row names, in a column called \code{prot.id}, or in the column indicated by \code{protein.info.id.column}. Default: \code{NULL} (no annotation).
+#' @param protein.info.id.column String indicating the name of the column of \code{protein.info} containing the protein IDs. If \code{NULL} (default), the row names are used.
 #'
 #' @return A \code{DEprot} object (S4 vector).
 #'
@@ -49,7 +51,9 @@ load.counts =
            log.base,
            imputation = NA,
            normalization.method = NA,
-           column.id = "column.id") {
+           column.id = "column.id",
+           protein.info = NULL,
+           protein.info.id.column = NULL) {
 
     # ### Libraries
     # require(dplyr)
@@ -66,7 +70,7 @@ load.counts =
         if ("" %in% rownames(x) | NA %in% rownames(x)) {
           stop("The rownames of the counts contain missing values ('') or NAs. Replace it with actual values.")
           #return(return())
-        ### Check if rownames are duplicated
+          ### Check if rownames are duplicated
         } else if (TRUE %in% duplicated(rownames(counts))) {
           warning("One or more rownames in the counts tables are duplicated. Only unique values are allowed. The `make.unique` function is applied on counts rownames unisng a '.' as separator.")
           rownames(x) = make.unique(names = rownames(x), sep = ".")
@@ -95,6 +99,13 @@ load.counts =
       n.del.rows = pre.clean.nrow - nrow(cnt)
       message(paste("The counts matrix contained", n.del.rows, ifelse(n.del.rows == 1, yes = "row", no = "rows"), "with only NA values.\nThe latter", ifelse(n.del.rows == 1, yes = "has", no = "have"), "been removed from the matrix."))
     }
+
+
+    ### Check and align the protein annotation (protein.info)
+    protein.info = .check.protein.info(protein.info = protein.info,
+                                       protein.ids = rownames(cnt),
+                                       id.column = protein.info.id.column,
+                                       arg.name = "protein.info")
 
 
     ### Convert normalization method
@@ -266,6 +277,7 @@ load.counts =
     DEprot.object =
       new(Class = "DEprot",
           metadata = meta,
+          protein.info = protein.info,
           raw.counts = raw.counts,
           norm.counts = norm.counts,
           random.counts = NA,

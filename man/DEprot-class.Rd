@@ -12,6 +12,8 @@ DEprot class
 \describe{
 \item{\code{metadata}}{The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.}
 
+\item{\code{protein.info}}{A data.frame (or \code{NULL}) containing extra information about the proteins (e.g., gene symbol, description, number of peptides). It has one row per protein, row-by-row aligned with the counts tables, and the same row names. It is kept synchronized with the counts by all the functions that add or remove proteins. Class: \code{"ANY"}.}
+
 \item{\code{raw.counts}}{Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.}
 
 \item{\code{norm.counts}}{Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.}

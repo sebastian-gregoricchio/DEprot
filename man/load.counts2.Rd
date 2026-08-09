@@ -12,7 +12,9 @@ load.counts2(
   normalization.method = NA,
   randomization.method = NA,
   imputation.method = NA,
-  column.id = "column.id"
+  column.id = "column.id",
+  protein.info = NULL,
+  protein.info.id.column = NULL
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ load.counts2(
 \item{imputation.method}{A string indicating the imputation method used. If none, use the default value \code{NA}.}
 
 \item{column.id}{String indicating the name of the column to use as "column.id" from the metadata data.frame. This column must contain all the colnames of \code{counts}.}
+
+\item{protein.info}{Optional \code{data.frame} (or \code{matrix}) with one row per protein and any number of annotation columns (e.g., gene symbol, description, number of peptides). The protein IDs must be provided as row names, in a column called \code{prot.id}, or in the column indicated by \code{protein.info.id.column}; they must correspond to the row names of \code{counts}. The table is re-ordered to match the counts: proteins missing from the annotation are filled with \code{NA}, annotations of proteins absent from the counts are discarded. Default: \code{NULL} (no annotation).}
+
+\item{protein.info.id.column}{String indicating the name of the column of \code{protein.info} containing the protein IDs. If \code{NULL} (default), the row names are used (or a column called \code{prot.id} when the table has no explicit row names).}
 }
 \value{
 A \code{DEprot} object (S4 vector).
@@ -45,6 +51,9 @@ dpo <- load.counts2(counts = DEprot::unimputed.counts,
                     data.type = "raw")
 
 
+}
+\seealso{
+\link{add.protein.info}, \link{get.results}
 }
 \author{
 Sebastian Gregoricchio

@@ -4,7 +4,7 @@
 \alias{plot.PCoA.scatter}
 \title{plot.PCoA.scatter}
 \usage{
-\method{plot}{PCoA.scatter}(
+plot.PCoA.scatter(
   DEprot.PCoA.object,
   PCo.x = 2,
   PCo.y = 1,

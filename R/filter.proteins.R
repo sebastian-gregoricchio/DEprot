@@ -10,6 +10,7 @@
 #'
 #' @importFrom patchwork wrap_plots
 #' @importFrom purrr pmap
+#' @importFrom methods slot
 #' @import dplyr
 #'
 #' @name filter.proteins
@@ -45,6 +46,18 @@ filter.proteins =
     if (!(mode %in% c("keep", "k", "remove", "rm", "r", "rmv"))) {
       stop("The 'mode' must be one among: 'keep', 'remove'.")
       #return(DEprot.object)
+    }
+
+
+    # filter the protein annotation
+    # (kept aligned to the counts: the same selection is applied to all the tables)
+    protein.info = .get.protein.info(DEprot.object)
+    if (!is.null(protein.info)) {
+      if (tolower(mode) %in% c("keep","k")) {
+        methods::slot(DEprot.object, "protein.info") = protein.info[(rownames(protein.info) %in% proteins), , drop = FALSE]
+      } else {
+        methods::slot(DEprot.object, "protein.info") = protein.info[!(rownames(protein.info) %in% proteins), , drop = FALSE]
+      }
     }
 
 

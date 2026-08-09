@@ -563,6 +563,7 @@ diff.analyses =
     DEprot.object.analyses =
       new(Class = "DEprot.analyses",
           metadata = DEprot.object@metadata,
+          protein.info = .get.protein.info(DEprot.object),
           raw.counts = DEprot.object@raw.counts,
           norm.counts =  DEprot.object@norm.counts,
           random.counts =  DEprot.object@random.counts,

@@ -36,10 +36,11 @@ literally called \code{"batch"}. Default: \code{NULL}.}
 
 \item{diff.method}{String defining which differential-analyses engine should
 be used to recompute the contrasts of a \code{DEprot.analyses} object. One
-among \code{"auto"}, \code{"t.test"}, \code{"limma"} and \code{"prolfqua"}.
-With \code{"auto"} (default) the engine is read directly from the object
-(the \code{stat.test} entry of \code{differential.analyses.params} records
-whether \code{limma}, \code{prolfqua} or the t/Wilcoxon engine was used);
+among \code{"auto"}, \code{"t.test"}, \code{"limma"}, \code{"prolfqua"} and
+\code{"proDA"}. With \code{"auto"} (default) the engine is read directly
+from the object (the \code{stat.test} entry of
+\code{differential.analyses.params} records whether \code{limma},
+\code{prolfqua}, \code{proDA} or the t/Wilcoxon engine was used);
 for legacy objects that do not store it, \code{prolfqua} is still detected
 and the function otherwise falls back to \code{diff.analyses} (t/Wilcoxon).
 Set this argument explicitly only to override the stored engine. Default:
@@ -89,7 +90,7 @@ the original object's slots and re-using the existing DEprot functions
 (\link{normalize.counts}, \link{harmonize.batches},
 \link{randomize.missing.values}, \link{impute.counts} and, for
 \code{DEprot.analyses}, \link{diff.analyses} / \link{diff.analyses.limma} /
-\link{diff.analyses.prolfqua}).
+\link{diff.analyses.prolfqua} / \link{diff.analyses.proDA}).
 }
 \details{
 \strong{Parameter recovery.} The parameters of each step are collected from
@@ -115,11 +116,17 @@ the corresponding slot of the original object:
         \code{contrasts} slots): the contrasts, fold-change thresholds,
         p-value/FDR threshold, adjustment method and counts used are recovered.
         The engine is identified from the stored \code{stat.test}
-        (\code{"limma"}, \code{"prolfqua"} or the t/Wilcoxon test name); the
-        \code{replicate.column} is recovered for every engine, together with
-        the t/Wilcoxon \code{paired.test}, the limma \code{rep.model} /
-        \code{fitting.method}, and the prolfqua \code{strategy} /
-        \code{moderate.variance}.
+        (\code{"limma"}, \code{"prolfqua"}, \code{"proDA"} or the t/Wilcoxon
+        test name); the \code{replicate.column} is recovered for every engine,
+        together with the t/Wilcoxon \code{paired.test}, the limma
+        \code{rep.model} / \code{fitting.method}, the prolfqua
+        \code{strategy} / \code{moderate.variance} / \code{robust.scaling},
+        and the proDA \code{rep.model} / \code{moderate.location} /
+        \code{moderate.variance} / \code{min.detected} / \code{n.subsample} /
+        \code{max.iter}.
+  \item \emph{Protein annotation} (\code{protein.info} slot): the table is
+        carried over to the rebuilt object, since removing samples does not
+        change the proteins.
 }
 The seeds saved during the original randomization/imputation are re-used so
 the re-computation is as reproducible as possible on the reduced data.

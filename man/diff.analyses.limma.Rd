@@ -29,7 +29,7 @@
 
 \item{include.rep.model}{Logical value indicating whether the model should include the replicate information. Requires a 'replicate.column'. Default: \code{FALSE}.}
 
-\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is used only if \code{paired.test = TRUE}. Default: \code{NULL}.}
+\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only if \code{include.rep.model = TRUE}. Default: \code{NULL}.}
 
 \item{linear.FC.th}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}
 
@@ -39,7 +39,7 @@
 
 \item{padj.method}{String indicating the method to use to correct the p-values. One among: "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none", "fdrtool". Default: \code{BH}.}
 
-\item{fitting.method}{String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. Default: \code{"ls"} (least squares).}
+\item{fitting.method}{String indicating the method that limma should use to fit the model. Options: "ls" for least squares or "robust" for robust regression. The robust regression cannot be combined with \code{include.rep.model = TRUE}. Default: \code{"ls"} (least squares).}
 
 \item{up.color}{String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.}
 
@@ -66,18 +66,22 @@ The \code{results} table reports, for each group, the standard deviation (\code{
 error of the mean (\code{sem.<group>}) of the log2 expression values, together with \code{lfcSE}, the moderated
 (posterior) standard error of the contrast coefficient estimated by limma (\code{stdev.unscaled * sqrt(s2.post)}).
 This is the denominator of the moderated t-statistic reported in the \code{statistic} column and it is the direct
-equivalent of the \code{lfcSE} column returned by \code{DESeq2::results()}. The log2(FoldChange) column is computed as
-the difference between the group means, which coincides with the limma contrast coefficient for a least-squares fit of a
-\code{~ 0 + group} design, but not when \code{include.rep.model = TRUE} (generalized least squares) or when
-\code{fitting.method = "robust"}: in those cases \code{statistic} may differ slightly from \code{log2(FoldChange)/lfcSE}.
+equivalent of the \code{lfcSE} column returned by \code{DESeq2::results()}. The log2(FoldChange) column is the contrast
+coefficient estimated by limma, so that \code{statistic = log2(FoldChange)/lfcSE} holds in every case. For a
+least-squares fit of a \code{~ 0 + group} design the coefficient corresponds exactly to the difference between the group
+means reported in the \code{log2.mean.<group>} columns; when \code{include.rep.model = TRUE} the fit becomes a
+generalized least squares in which the samples are weighted through the consensus correlation between replicates, and
+the same is true of \code{fitting.method = "robust"}: in those cases the coefficient stays close to the difference of the
+means without coinciding with it.
 Note that, when imputed counts are used, the imputation compresses the variance and \code{sd}, \code{sem} and
 \code{lfcSE} are consequently under-estimated.
 
 When set to \code{"fdrtool"}, the moderated t-statistics returned by limma are passed to \code{fdrtool::fdrtool}
 (as normal deviates, \code{statistic = "normal"}), which estimates the proportion of null features and an empirical
 null: the resulting tail-area-based q-values are stored in the \code{padj} column, while the local false discovery rate
-(\code{lfdr}) is added as an extra column of the results table. If fewer than 200 proteins with a finite statistic are
-available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised).
+(\code{lfdr}) is appended as an extra column at the end of the results table. If fewer than 200 proteins with a finite statistic are
+available for a contrast, or the fit fails, a Benjamini-Hochberg correction is applied for that contrast (a warning is raised)
+and no \code{lfdr} column is returned.
 }
 \examples{
 # Basic differential analyses including replicate model

@@ -4,24 +4,45 @@
 \alias{get.results}
 \title{get.results}
 \usage{
-get.results(DEprot.analyses.object, contrast = 1)
+get.results(
+  DEprot.analyses.object,
+  contrast = 1,
+  protein.info.columns = "none",
+  protein.info.prefix = NULL
+)
 }
 \arguments{
 \item{DEprot.analyses.object}{An object of class \code{DEprot.analyses}.}
 
 \item{contrast}{Number indicating the position of the contrast to use for the plotting.}
+
+\item{protein.info.columns}{String vector indicating which columns of the \code{protein.info} slot should be appended to the results table. Two keywords are available: \code{"none"}, to return the results alone, and \code{"all"}, to append the whole annotation. Any other value is interpreted as the names of the columns to append. Ignored when no annotation is stored in the object. Default: \code{"none"}.}
+
+\item{protein.info.prefix}{String to prepend to the names of the appended annotation columns (e.g., \code{"info."}), useful to distinguish them from the columns of the results. If \code{NULL} (default), the original names are kept and only the ones colliding with the results columns are made unique.}
 }
 \value{
 A data frame.
 }
 \description{
-Simplifies the access to the differential expression results table
+Simplifies the access to the differential expression results table.
+When the object contains a protein annotation table (\code{protein.info} slot,
+see \link{load.counts2} and \link{add.protein.info}), the annotation columns can
+be appended to the results.
 }
 \examples{
+# Results alone
 get.results(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
             contrast = 1)
 
+# Results with the whole protein annotation (when available)
+get.results(DEprot.analyses.object = DEprot::test.toolbox$diff.exp.limma,
+            contrast = 1,
+            protein.info.columns = "all")
 
+
+}
+\seealso{
+\link{add.protein.info}, \link{load.counts2}
 }
 \author{
 Sebastian Gregoricchio

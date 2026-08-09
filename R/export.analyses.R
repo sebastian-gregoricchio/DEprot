@@ -194,7 +194,7 @@ export.analyses =
 
 
       ## Export diff table and n.diff
-      write.table(x = DEprot.analyses.object@analyses.result.list[[i]]$results,
+      write.table(x = DEprot::get.results(DEprot.analyses.object = DEprot.analyses.object, contrast = i, protein.info.columns = "all"),
                   file = paste0(outdir,"/differential_analyses/",contrast.id,"/RESULTS_",contrast.id,".tsv"),
                   sep = "\t", quote = FALSE, col.names = TRUE, row.names = FALSE)
 
@@ -239,7 +239,7 @@ export.analyses =
 
       ## add tick to progress bar
       if (isTRUE(verbose)) {pb$tick()}
-      } #end contrasts
+    } #end contrasts
 
 
 
