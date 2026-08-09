@@ -104,7 +104,7 @@ load.counts2 =
     cnt[is.nan(cnt)] = NA
 
     pre.clean.nrow = nrow(cnt)
-    cnt = cnt[rowSums(abs(cnt), na.rm = TRUE) > 0,]
+    cnt = cnt[rowSums(abs(cnt), na.rm = TRUE) > 0, , drop = FALSE]
 
     if (nrow(cnt) != pre.clean.nrow) {
       n.del.rows = pre.clean.nrow - nrow(cnt)

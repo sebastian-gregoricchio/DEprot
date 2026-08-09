@@ -34,6 +34,9 @@
   <ul class="dropdown-menu" role="menu"><li>
       <a href="../articles/DEprot.overview.vignette.html">*DEprot*: R-package for LFQ proteomics data normalization, imputation and Differential Expression analyses</a>
     </li>
+    <li>
+      <a href="../articles/DEprot.timecourse.vignette.html">*DEprot*: time-course analyses</a>
+    </li>
   </ul></li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -104,6 +107,14 @@
     <div id="value">
     <h2>Value</h2>
     <p>A <code>DEprot.PCA</code>, containing the PC values (<code>PCs</code>) and the importance summary (<code>importance</code>).</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The proteins that carry no information for the samples analyzed are excluded from the projection: the
+ones quantified in none of the samples (only NAs), and, when <code>scale.data = TRUE</code>, the ones showing
+the same value in every sample. A constant protein cannot be rescaled to unit variance and would make
+<code><a href="https://rdrr.io/r/stats/prcomp.html" class="external-link">stats::prcomp</a></code> stop: this happens easily on a subset of samples, for instance after
+<a href="filter.samples.html">filter.samples</a>, even when the full dataset was perfectly usable.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

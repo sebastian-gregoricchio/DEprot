@@ -1,23 +1,25 @@
 #' @title expression.boxplot
 #'
-#' @description Plots a boxplot of the expression of a specific protein. Samples can be groups depending on a metadata column. Optionally, the p-values of all the pairwise (2-by-2) comparisons between groups can be added on top of the plot.
+#' @description Plots a boxplot of the expression of one or more proteins. Samples can be grouped depending on a metadata column. Optionally, the p-values of all the pairwise (2-by-2) comparisons between groups can be added on top of the plot.
 #'
 #' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}.
-#' @param protein.id String indicating a protein for which plot the expression. The identifier must correspond to the full row.name of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object).
+#' @param protein.id String (or vector of strings) indicating the protein(s) for which plot the expression. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). When several proteins are provided the plot is faceted, one panel per protein.
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'randomized', 'random', 'imp'. Default: \code{"imputed"}.
 #' @param sample.subset Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).
 #' @param shape.column String indicating a column from the metadata table. This column will be used as factor for the shape of the points on the boxplot. Default: \code{NULL}: no different shapes.
 #' @param group.by.metadata.column String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{"column.id"} (no groups).
 #' @param group.levels Ordered string vector indicating the order to use for the groups. Default: \code{NULL}, counts table order will be applied
-#' @param scale.expression Logic value indicating whether Z-scores should be computed. Default: \code{FALSE} (no scaling).
+#' @param scale.expression Logic value indicating whether Z-scores should be computed. With several proteins the Z-score is computed protein by protein, so that the panels stay comparable. Default: \code{FALSE} (no scaling).
 #' @param x.label.angle Numeric value indicating the rotation angle to use for the x-axis labels. Default: \code{30}.
-#' @param pairwise.comparisons Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}. Default: \code{FALSE}.
+#' @param ncol Numeric value indicating the number of columns of the facet grid, used only when several proteins are plotted. Default: \code{NULL} (automatic).
+#' @param free.y Logic value indicating whether each panel should have its own y-axis, used only when several proteins are plotted. Proteins of different abundance are otherwise flattened onto a common scale. Default: \code{TRUE}.
+#' @param pairwise.comparisons Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}, independently within each protein. Default: \code{FALSE}.
 #' @param pairwise.test.type String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). Default: \code{"wilcox.test"}.
 #' @param pairwise.include.ns Logical value indicating whether the non-significant comparisons (p > 0.05) should be displayed. If \code{FALSE}, only the significant comparisons are shown. Default: \code{TRUE}.
 #' @param pairwise.p.label String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}, \code{*}, \code{**}, \code{***}, \code{****}) drawn directly by \code{ggpubr::stat_compare_means}, or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. Default: \code{"p.signif"}.
 #' @param pairwise.p.decimals Numeric value indicating the number of decimals used to approximate the numeric p-values (used only when \code{pairwise.p.label} shows the numeric value). Values below 0.1 are rendered in scientific notation with a superscript exponent, e.g. 3.20\out{&times;10<sup>-2</sup>}. The actual (real) p-value is always displayed, so the uninformative \code{p < 2.2e-16} is never shown. Default: \code{2}.
 #'
-#' @return A boxplot of class ggplot2.
+#' @return A boxplot of class ggplot2, faceted by protein when several proteins are provided.
 #'
 #' @import dplyr
 #' @import ggplot2
@@ -39,6 +41,13 @@
 #' expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                    protein.id = "protein.44",
 #'                    group.by.metadata.column = "combined.id")
+#'
+#'
+#' # Expression of several proteins: one panel per protein
+#' expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                    protein.id = c("protein.44", "protein.45", "protein.46"),
+#'                    group.by.metadata.column = "combined.id",
+#'                    ncol = 3)
 #'
 #'
 #' # Expression of protein 'protein.44' grouped by condition (combined.id) and Z-scored
@@ -81,6 +90,8 @@ expression.boxplot =
            group.levels = NULL,
            scale.expression = FALSE,
            x.label.angle = 30,
+           ncol = NULL,
+           free.y = TRUE,
            pairwise.comparisons = FALSE,
            pairwise.test.type = "wilcox.test",
            pairwise.include.ns = TRUE,
@@ -171,7 +182,7 @@ expression.boxplot =
 
 
 
-    ### Filter table of counts (samples and protein)
+    ### Filter table of counts (samples and proteins)
     if (!is.null(sample.subset)) {
       mat.filtered = mat[,which(colnames(mat) %in% sample.subset), drop=FALSE]
     } else {
@@ -180,23 +191,57 @@ expression.boxplot =
     check.matrix(mat.filtered)
 
 
-    if (protein.id %in% rownames(mat.filtered)) {
-      mat.filtered = mat.filtered[rownames(mat.filtered) == protein.id,,drop=FALSE]
-    } else {
-      stop(paste0("The protein '", protein.id,"' is not present in the dataset."))
+    ## the proteins are validated all at once: a single missing ID must not hide the others
+    protein.id = as.character(protein.id)
+
+    if (length(protein.id) == 0) {
+      stop("Provide at least one 'protein.id'.")
+      #return(invisible())
     }
+
+    missing.proteins = setdiff(protein.id, rownames(mat.filtered))
+
+    if (length(missing.proteins) > 0) {
+      stop(paste0("The following protein(s) are not present in the dataset: ",
+                  paste0(missing.proteins, collapse = ", "), "."))
+      #return(invisible())
+    }
+
+    mat.filtered = mat.filtered[protein.id, , drop = FALSE]
+
+    ## a single protein keeps the historical layout (title, no facet), several proteins are
+    ## displayed as a panel per protein
+    multiple.proteins = (length(protein.id) > 1)
 
 
 
     ### reshape table
-    exp.tb = as.data.frame(t(mat.filtered))
-    colnames(exp.tb)[1] = "expression"
-    exp.tb$column.id = rownames(exp.tb)
+    ## the Z-score is computed protein by protein: scaling all the proteins together would
+    ## simply re-center the panels on the average abundance of the set
+    exp.tb =
+      do.call(rbind,
+              lapply(protein.id,
+                     function(prot) {
+                       values = as.numeric(mat.filtered[prot,])
 
-    # scale/center (z.score)
-    if (scale.expression == TRUE) {
-      exp.tb = dplyr::mutate(exp.tb, expression = (expression - mean(expression, na.rm = TRUE)) / sd(expression, na.rm = TRUE))
-    }
+                       if (scale.expression == TRUE) {
+                         value.sd = sd(values, na.rm = TRUE)
+                         values =
+                           if (is.na(value.sd) | value.sd == 0) {
+                             values - mean(values, na.rm = TRUE)
+                           } else {
+                             (values - mean(values, na.rm = TRUE)) / value.sd
+                           }
+                       }
+
+                       data.frame(prot.id = prot,
+                                  column.id = colnames(mat.filtered),
+                                  expression = values,
+                                  stringsAsFactors = FALSE)
+                     }))
+
+    ## the panels follow the order in which the proteins were requested
+    exp.tb$prot.id = factor(exp.tb$prot.id, levels = protein.id)
 
 
 
@@ -246,9 +291,12 @@ expression.boxplot =
 
 
     ### Vertical offset for the global (Kruskal-Wallis/Wilcoxon) test label,
-    ### so that it does not overlap with the pairwise p-value brackets
+    ### so that it does not overlap with the pairwise p-value brackets.
+    ### With several panels the position is left to ggpubr: a single value computed on the
+    ### whole dataset would fall outside most of the panels.
     kw.label.y = NULL
-    if (isTRUE(pairwise.comparisons)) {
+
+    if (isTRUE(pairwise.comparisons) & !multiple.proteins) {
       if (is.factor(exp.tb$group)) {
         .pw.groups = levels(exp.tb$group)
       } else {
@@ -257,6 +305,7 @@ expression.boxplot =
       .pw.finite = exp.tb[is.finite(exp.tb$expression),,drop=F]
       .pw.sizes = table(as.character(.pw.finite$group))
       .pw.usable = .pw.groups[.pw.groups %in% names(.pw.sizes)[.pw.sizes >= 2]]
+
 
       if (length(.pw.usable) >= 2) {
         .pw.ncomparisons = choose(length(.pw.usable), 2)
@@ -314,7 +363,7 @@ expression.boxplot =
 
     boxplot =
       boxplot +
-      ggtitle(paste0("**",protein.id,"**")) +
+      ggtitle(switch(multiple.proteins + 1, paste0("**",protein.id,"**"), NULL)) +
       xlab(NULL) +
       ylab(ifelse(test = scale.expression == TRUE,
                   yes = paste0("centered log<sub>",DEprot.object@log.base,"</sub>(expression)"),
@@ -328,7 +377,21 @@ expression.boxplot =
             axis.text.x = element_text(color = "black", angle = x.label.angle, hjust = ifelse(x.label.angle %in% c(0), yes = 0.5, no = 1)),
             axis.text.y = element_text(color = "black"),
             axis.ticks.x = element_blank(),
-            axis.ticks.y = element_line(color = "black"))
+            axis.ticks.y = element_line(color = "black"),
+            ## naked facet labels, the protein name in bold
+            strip.background = element_blank(),
+            strip.text = element_text(face = "bold"))
+
+
+    ## one panel per protein: the proteins are rarely expressed in the same range, hence
+    ## each panel gets its own y-axis unless required otherwise
+    if (multiple.proteins) {
+      boxplot =
+        boxplot +
+        facet_wrap(~ prot.id,
+                   ncol = ncol,
+                   scales = ifelse(isTRUE(free.y), yes = "free_y", no = "fixed"))
+    }
 
 
 
@@ -398,7 +461,8 @@ expression.boxplot =
 
 
         if (label.style == "stars") {
-          ##### Significance symbols: drawn directly through ggpubr::stat_compare_means (unadjusted pairwise p-values)
+          ##### Significance symbols: drawn directly through ggpubr::stat_compare_means (unadjusted pairwise p-values).
+          #####                       The comparisons are recomputed within each panel, hence protein by protein.
           boxplot =
             boxplot +
             ggpubr::stat_compare_means(data = finite.tb,
@@ -413,7 +477,8 @@ expression.boxplot =
         } else {
           ##### Numeric p-value: computed exactly (the real value is always shown, never 'p < 2.2e-16'),
           #####                  formatted manually (custom decimals + scientific superscript when < 0.1),
-          #####                  and drawn with ggpubr::stat_pvalue_manual.
+          #####                  and drawn with ggpubr::stat_pvalue_manual. The p-values and the positions
+          #####                  of the brackets are computed independently for each protein.
 
           ## p-value formatter: returns a plain string using Unicode superscripts, e.g. "3.20\u00d710\u207b\u00b2"
           format.pairwise.p =
@@ -444,48 +509,75 @@ expression.boxplot =
             }
 
 
-          ## exact per-pair p-values
+          ## exact per-pair p-values, computed within each protein
           pairwise.tb =
             do.call(rbind,
-                    lapply(comparisons.list,
-                           function(pair) {
-                             d1 = finite.tb$expression[as.character(finite.tb$group) == pair[1]]
-                             d2 = finite.tb$expression[as.character(finite.tb$group) == pair[2]]
-                             pval = tryCatch(expr = suppressWarnings(do.call(two.sample$method, c(list(x = d1, y = d2), two.sample$args))$p.value),
-                                             error = function(e){return(NA_real_)})
-                             data.frame(group1 = pair[1], group2 = pair[2], p.value = pval, stringsAsFactors = FALSE)
+                    lapply(protein.id,
+                           function(prot) {
+                             prot.tb = finite.tb[as.character(finite.tb$prot.id) == prot,,drop=F]
+
+                             if (nrow(prot.tb) == 0) {return(NULL)}
+
+                             prot.pairs =
+                               do.call(rbind,
+                                       lapply(comparisons.list,
+                                              function(pair) {
+                                                d1 = prot.tb$expression[as.character(prot.tb$group) == pair[1]]
+                                                d2 = prot.tb$expression[as.character(prot.tb$group) == pair[2]]
+
+                                                if (length(d1) < 2 | length(d2) < 2) {return(NULL)}
+
+                                                pval = tryCatch(expr = suppressWarnings(do.call(two.sample$method, c(list(x = d1, y = d2), two.sample$args))$p.value),
+                                                                error = function(e){return(NA_real_)})
+                                                data.frame(prot.id = prot, group1 = pair[1], group2 = pair[2], p.value = pval, stringsAsFactors = FALSE)
+                                              }))
+
+                             if (is.null(prot.pairs)) {return(NULL)}
+
+                             ## keep only computable comparisons (and, if required, only the significant ones)
+                             prot.pairs = prot.pairs[!is.na(prot.pairs$p.value),,drop=F]
+                             if (!isTRUE(pairwise.include.ns)) {
+                               prot.pairs = prot.pairs[prot.pairs$p.value <= 0.05,,drop=F]
+                             }
+
+                             if (nrow(prot.pairs) == 0) {return(NULL)}
+
+                             ## y positions of the brackets (stacked above the data of THIS protein)
+                             y.range = range(prot.tb$expression, na.rm = TRUE)
+                             y.span = diff(y.range)
+                             if (!is.finite(y.span) || y.span == 0) {y.span = ifelse(y.range[2] == 0, 1, abs(y.range[2]))}
+                             prot.pairs$y.position = y.range[2] + (0.08 * y.span) + ((seq_len(nrow(prot.pairs)) - 1) * (0.09 * y.span))
+
+                             return(prot.pairs)
                            }))
 
-          ## keep only computable comparisons (and, if required, only the significant ones)
-          pairwise.tb = pairwise.tb[!is.na(pairwise.tb$p.value),,drop=F]
-          if (!isTRUE(pairwise.include.ns)) {
-            pairwise.tb = pairwise.tb[pairwise.tb$p.value <= 0.05,,drop=F]
-          }
 
+          if (!is.null(pairwise.tb)) {
+            if (nrow(pairwise.tb) > 0) {
+              ## formatted labels
+              pairwise.tb$p.label = vapply(X = pairwise.tb$p.value,
+                                           FUN = function(x){format.pairwise.p(p = x, decimals = p.dec)},
+                                           FUN.VALUE = character(1))
 
-          if (nrow(pairwise.tb) > 0) {
-            ## y positions of the brackets (stacked above the data)
-            y.range = range(finite.tb$expression, na.rm = TRUE)
-            y.span = diff(y.range)
-            if (!is.finite(y.span) || y.span == 0) {y.span = ifelse(y.range[2] == 0, 1, abs(y.range[2]))}
-            pairwise.tb$y.position = y.range[2] + (0.08 * y.span) + ((seq_len(nrow(pairwise.tb)) - 1) * (0.09 * y.span))
+              ## the facetting variable must be carried over, otherwise every bracket would be
+              ## drawn in every panel
+              pairwise.tb$prot.id = factor(pairwise.tb$prot.id, levels = protein.id)
 
-            ## formatted labels
-            pairwise.tb$p.label = vapply(X = pairwise.tb$p.value,
-                                         FUN = function(x){format.pairwise.p(p = x, decimals = p.dec)},
-                                         FUN.VALUE = character(1))
+              bracket.columns = c(switch(multiple.proteins + 1, NULL, "prot.id"),
+                                  "group1", "group2", "y.position", "p.label")
 
-            boxplot =
-              boxplot +
-              ggpubr::stat_pvalue_manual(data = pairwise.tb[,c("group1", "group2", "y.position", "p.label")],
-                                         label = "p.label",
-                                         xmin = "group1",
-                                         xmax = "group2",
-                                         y.position = "y.position",
-                                         tip.length = 0.01,
-                                         size = 3.3,
-                                         bracket.size = 0.3,
-                                         inherit.aes = FALSE)
+              boxplot =
+                boxplot +
+                ggpubr::stat_pvalue_manual(data = pairwise.tb[,bracket.columns,drop=FALSE],
+                                           label = "p.label",
+                                           xmin = "group1",
+                                           xmax = "group2",
+                                           y.position = "y.position",
+                                           tip.length = 0.01,
+                                           size = 3.3,
+                                           bracket.size = 0.3,
+                                           inherit.aes = FALSE)
+            }
           }
         }
       }

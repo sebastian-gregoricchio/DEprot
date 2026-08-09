@@ -14,6 +14,8 @@ expression.boxplot(
   group.levels = NULL,
   scale.expression = FALSE,
   x.label.angle = 30,
+  ncol = NULL,
+  free.y = TRUE,
   pairwise.comparisons = FALSE,
   pairwise.test.type = "wilcox.test",
   pairwise.include.ns = TRUE,
@@ -24,7 +26,7 @@ expression.boxplot(
 \arguments{
 \item{DEprot.object}{An object of class \code{DEprot} or \code{DEprot.analyses}.}
 
-\item{protein.id}{String indicating a protein for which plot the expression. The identifier must correspond to the full row.name of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object).}
+\item{protein.id}{String (or vector of strings) indicating the protein(s) for which plot the expression. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). When several proteins are provided the plot is faceted, one panel per protein.}
 
 \item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'imputed', 'randomized', 'random', 'imp'. Default: \code{"imputed"}.}
 
@@ -36,11 +38,15 @@ expression.boxplot(
 
 \item{group.levels}{Ordered string vector indicating the order to use for the groups. Default: \code{NULL}, counts table order will be applied}
 
-\item{scale.expression}{Logic value indicating whether Z-scores should be computed. Default: \code{FALSE} (no scaling).}
+\item{scale.expression}{Logic value indicating whether Z-scores should be computed. With several proteins the Z-score is computed protein by protein, so that the panels stay comparable. Default: \code{FALSE} (no scaling).}
 
 \item{x.label.angle}{Numeric value indicating the rotation angle to use for the x-axis labels. Default: \code{30}.}
 
-\item{pairwise.comparisons}{Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}. Default: \code{FALSE}.}
+\item{ncol}{Numeric value indicating the number of columns of the facet grid, used only when several proteins are plotted. Default: \code{NULL} (automatic).}
+
+\item{free.y}{Logic value indicating whether each panel should have its own y-axis, used only when several proteins are plotted. Proteins of different abundance are otherwise flattened onto a common scale. Default: \code{TRUE}.}
+
+\item{pairwise.comparisons}{Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}, independently within each protein. Default: \code{FALSE}.}
 
 \item{pairwise.test.type}{String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). Default: \code{"wilcox.test"}.}
 
@@ -51,10 +57,10 @@ expression.boxplot(
 \item{pairwise.p.decimals}{Numeric value indicating the number of decimals used to approximate the numeric p-values (used only when \code{pairwise.p.label} shows the numeric value). Values below 0.1 are rendered in scientific notation with a superscript exponent, e.g. 3.20\out{&times;10<sup>-2</sup>}. The actual (real) p-value is always displayed, so the uninformative \code{p < 2.2e-16} is never shown. Default: \code{2}.}
 }
 \value{
-A boxplot of class ggplot2.
+A boxplot of class ggplot2, faceted by protein when several proteins are provided.
 }
 \description{
-Plots a boxplot of the expression of a specific protein. Samples can be groups depending on a metadata column. Optionally, the p-values of all the pairwise (2-by-2) comparisons between groups can be added on top of the plot.
+Plots a boxplot of the expression of one or more proteins. Samples can be grouped depending on a metadata column. Optionally, the p-values of all the pairwise (2-by-2) comparisons between groups can be added on top of the plot.
 }
 \examples{
 # Expression for all samples of protein 'protein.44'
@@ -67,6 +73,13 @@ expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
 expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
                    protein.id = "protein.44",
                    group.by.metadata.column = "combined.id")
+
+
+# Expression of several proteins: one panel per protein
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = c("protein.44", "protein.45", "protein.46"),
+                   group.by.metadata.column = "combined.id",
+                   ncol = 3)
 
 
 # Expression of protein 'protein.44' grouped by condition (combined.id) and Z-scored

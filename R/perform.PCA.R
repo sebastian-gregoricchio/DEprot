@@ -9,12 +9,19 @@
 #' @param center.data Logical value indicating whether the data should be centered. Default: \code{TRUE}.
 #' @param scale.data Logical value indicating whether the data should be scaled. Default: \code{TRUE}.
 #'
+#' @details
+#' The proteins that carry no information for the samples analyzed are excluded from the projection: the
+#' ones quantified in none of the samples (only NAs), and, when \code{scale.data = TRUE}, the ones showing
+#' the same value in every sample. A constant protein cannot be rescaled to unit variance and would make
+#' \code{stats::prcomp} stop: this happens easily on a subset of samples, for instance after
+#' \link{filter.samples}, even when the full dataset was perfectly usable.
+#'
 #' @return A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance summary (\code{importance}).
 #'
 #' @import dplyr
 #' @import ggplot2
 #' @importFrom pcaMethods pca
-#' @importFrom stats prcomp
+#' @importFrom stats prcomp var
 #'
 #' @author Sebastian Gregoricchio
 #'
@@ -88,23 +95,38 @@ perform.PCA =
 
 
     ## Convert table to log2
+    ## The converted matrix is the one used for the projection: PCA on linear intensities would be
+    ## dominated by the most abundant proteins.
     if (!is.numeric(DEprot.object@log.base)) {
       message("The log.base is not numeric, linear counts are assumed. Counts matrix will be converted to log2(score+1) values to analyze the data.")
-      mat.log2 = log2(mat + 1)
+      mat = log2(mat + 1)
     } else if (as.numeric(DEprot.object@log.base) != 2) {
       message("The log.base is not 2, counts will be converted to log2 values to analyze the data.")
-      mat.log2 = log2(DEprot.object@log.base^mat)
-    } else {
-      mat.log2 = mat
+      mat = log2(DEprot.object@log.base^mat)
     }
+
 
     ### subset table
     if (!is.null(sample.subset)) {
-      mat = mat[,which(colnames(mat) %in% sample.subset)]
+      missing.samples = setdiff(sample.subset, colnames(mat))
+
+      if (length(missing.samples) > 0) {
+        stop(paste0("The following sample(s) indicated in the 'sample.subset' are not available in the counts table:\n",
+                    "       ", paste0(missing.samples, collapse = ", ")))
+        #return(DEprot.object)
+      }
+
+      mat = mat[, which(colnames(mat) %in% sample.subset), drop = FALSE]
       PCA.meta = dplyr::filter(DEprot.object@metadata, column.id %in% sample.subset)
     } else {
       PCA.meta = DEprot.object@metadata
     }
+
+    if (ncol(mat) < 2) {
+      stop(paste0("Only ", ncol(mat), " sample(s) available: at least 2 samples are required to compute a PCA."))
+      #return(DEprot.object)
+    }
+
 
     ### Convert all NaN/NA
     mat[is.nan(mat)] = NA
@@ -112,7 +134,27 @@ perform.PCA =
     # After subsetting certain rows might contain rows with only NA. Warning will be returned and rows removed for PCA
     if (ncol(mat) %in% rowSums(is.na(mat))) {
       warning("Data contain rows (proteins) with only NAs. These rows will be removed to perform PC analyses.")
-      mat = mat[rowSums(is.na(mat)) != ncol(mat),]
+      mat = mat[rowSums(is.na(mat)) != ncol(mat), , drop = FALSE]
+    }
+
+
+    # A protein showing the same value in all the samples analyzed carries no information and cannot be
+    # rescaled to unit variance: prcomp would stop. This is frequent on a subset of samples, hence these
+    # proteins are dropped rather than making the whole analysis fail.
+    if (isTRUE(scale.data)) {
+      row.variance = apply(X = mat, MARGIN = 1, FUN = function(x){stats::var(x, na.rm = TRUE)})
+      constant.rows = which(is.na(row.variance) | row.variance == 0)
+
+      if (length(constant.rows) > 0) {
+        warning(paste0("Data contain ", length(constant.rows), " row(s) (proteins) with a null variance across the samples analyzed. ",
+                       "These rows will be removed to perform PC analyses ('scale.data = TRUE')."))
+        mat = mat[-constant.rows, , drop = FALSE]
+      }
+    }
+
+    if (nrow(mat) < 2) {
+      stop(paste0("Only ", nrow(mat), " protein(s) are usable for the PC analyses: nothing can be projected."))
+      #return(DEprot.object)
     }
 
 

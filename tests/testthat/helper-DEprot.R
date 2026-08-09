@@ -231,3 +231,93 @@ make.msstats.lfq <-
 
     return(tb)
   }
+
+
+
+# ----------------------------------------------------------------------------------------
+
+
+#' First counts slot holding a real table
+#'
+#' 'load.counts'/'load.counts2' fill a single slot, the one matching the data type declared
+#' or detected, hence a test that does not control the type must read whichever is filled.
+#' The empty slots are not always NULL: 'load.counts' writes NA in 'random.counts'.
+
+any.counts <-
+  function(DEprot.object) {
+    for (slot in c("imputed.counts", "norm.counts", "random.counts", "raw.counts")) {
+      cnt <- methods::slot(DEprot.object, slot)
+      if (is.matrix(cnt) | is.data.frame(cnt)) {return(cnt)}
+    }
+    return(NULL)
+  }
+
+
+#' FragPipe / IonQuant combined_protein.tsv
+
+write.fragpipe <-
+  function(dir,
+           file = "combined_protein.tsv") {
+
+    tb <- data.frame(`Protein ID` = c("P00001", "P00002", "P00003", "contam_P99999"),
+                     `Entry Name` = c("PRT1_HUMAN", "PRT2_HUMAN", "PRT3_HUMAN", "CON_HUMAN"),
+                     Gene = c("GENE1", "GENE2", "GENE3", "CONT"),
+                     `Protein Probability` = 1,
+                     `sampleA MaxLFQ Intensity` = c(1000, 2000, 3000, 9000),
+                     `sampleB MaxLFQ Intensity` = c(1100, 2100, 3100, 9100),
+                     `sampleA Intensity` = c(10, 20, 30, 90),
+                     `sampleB Intensity` = c(11, 21, 31, 91),
+                     `sampleA Spectral Count` = c(2, 4, 6, 8),
+                     `sampleB Spectral Count` = c(3, 5, 7, 9),
+                     check.names = FALSE,
+                     stringsAsFactors = FALSE)
+
+    path <- file.path(dir, file)
+    utils::write.table(tb, path, sep = "\t", row.names = FALSE, quote = FALSE)
+    return(path)
+  }
+
+
+#' Proteome Discoverer protein-level export
+
+write.proteome.discoverer <-
+  function(dir,
+           file = "PD.proteins.txt") {
+
+    tb <- data.frame(Accession = c("P00001", "P00002", "P00003", "CON__P99999"),
+                     Description = "a protein",
+                     Contaminant = c("FALSE", "FALSE", "FALSE", "TRUE"),
+                     `Abundances (Normalized): F1: Sample, WT` = c(1000, 2000, 3000, 9000),
+                     `Abundances (Normalized): F2: Sample, KO` = c(1500, 2500, 3500, 9500),
+                     check.names = FALSE,
+                     stringsAsFactors = FALSE)
+
+    path <- file.path(dir, file)
+    utils::write.table(tb, path, sep = "\t", row.names = FALSE, quote = FALSE)
+    return(path)
+  }
+
+
+#' Spectronaut long report (one row per fragment/precursor and run)
+
+write.spectronaut.long <-
+  function(dir,
+           file = "spectronaut.report.tsv") {
+
+    tb <- expand.grid(R.FileName = c("[1] sampleA.raw", "[2] sampleB.raw"),
+                      PG.ProteinGroups = c("P00001", "P00002", "P00003"),
+                      EG.PrecursorId = c("PEPTIDEK.2", "PEPTIDER.2"),
+                      stringsAsFactors = FALSE)
+
+    tb$PG.Genes <- paste0("GENE", substr(tb$PG.ProteinGroups, 6, 6))
+    tb$EG.ModifiedSequence <- sub("\\.[0-9]$", "", tb$EG.PrecursorId)
+    tb$FG.Charge <- 2
+    tb$EG.Qvalue <- 0.001
+    tb$PG.Qvalue <- 0.001
+    tb$FG.Quantity <- seq_len(nrow(tb)) * 1000
+    tb$PG.Quantity <- rep(c(5000, 6000, 7000), each = 4)
+
+    path <- file.path(dir, file)
+    utils::write.table(tb, path, sep = "\t", row.names = FALSE, quote = FALSE)
+    return(path)
+  }

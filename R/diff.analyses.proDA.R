@@ -740,7 +740,7 @@ diff.analyses.proDA =
         geom_hline(yintercept = -log10(padj.th), linetype = 2, color = "gray40") +
         geom_vline(xintercept = c(-1,1)*log2(linear.FC.th), linetype = 2, color = "gray40") +
         ylab("-log<sub>10</sub>(*P<sub>adj</sub>*)") +
-        xlab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
+        xlab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>/<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
         guides(color = guide_legend(override.aes = list(size = 3))) +
         theme_classic() +
@@ -807,7 +807,7 @@ diff.analyses.proDA =
         geom_hline(yintercept = 0, linetype = 1, color = "steelblue") +
         theme_classic() +
         xlab("log<sub>2</sub>(Base Mean)") +
-        ylab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>&frasl;<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
+        ylab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info[[i]]$var.1,"</sup>/<sub>",contrasts.info[[i]]$var.2,"</sub></sub>)")) +
         ggtitle(paste0("**",contrasts.info[[i]]$var.1, "** *vs* **", contrasts.info[[i]]$var.2, "**")) +
         scale_x_continuous(expand = c(0,0)) +
         annotate(geom = "text",

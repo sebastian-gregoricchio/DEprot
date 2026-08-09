@@ -778,11 +778,17 @@ import.external =
 
     quant.prefix = if (identical(tolower(quantity), "auto")) "Abundances (Normalized)" else quantity
 
-    hits = grep(paste0("^", gsub("([().|\\[\\]])", "\\\\\\1", quant.prefix)), cn, value = TRUE)
+    ## the prefix is matched literally: the headers of Proteome Discoverer contain
+    ## parentheses ('Abundances (Normalized): F1: Sample, WT') which, escaped by hand and
+    ## handed to a regular expression, are read as a capturing group instead of as text
+    hits = cn[startsWith(cn, quant.prefix)]
+
     if (length(hits) == 0) {
+      ## any abundance column, whatever the flavour ('Abundance', 'Abundances (Grouped)', ...)
       quant.prefix = "Abundance"
-      hits = grep("^Abundances?[:.]", cn, value = TRUE)
+      hits = cn[startsWith(cn, quant.prefix)]
     }
+
     if (length(hits) == 0) {
       stop("No abundance column was found. Set 'quantity' explicitly.\nAvailable columns: ",
            paste(utils::head(cn, 20), collapse = ", "), call. = FALSE)

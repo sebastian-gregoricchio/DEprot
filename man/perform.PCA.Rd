@@ -32,6 +32,13 @@ A \code{DEprot.PCA}, containing the PC values (\code{PCs}) and the importance su
 \description{
 This function performs principal component analyses (PCA).
 }
+\details{
+The proteins that carry no information for the samples analyzed are excluded from the projection: the
+ones quantified in none of the samples (only NAs), and, when \code{scale.data = TRUE}, the ones showing
+the same value in every sample. A constant protein cannot be rescaled to unit variance and would make
+\code{stats::prcomp} stop: this happens easily on a subset of samples, for instance after
+\link{filter.samples}, even when the full dataset was perfectly usable.
+}
 \examples{
 pca <- perform.PCA(DEprot.object = DEprot::test.toolbox$dpo.imp)
 

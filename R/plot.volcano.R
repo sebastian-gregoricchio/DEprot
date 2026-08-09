@@ -180,7 +180,7 @@ plot.volcano =
       geom_hline(yintercept = -log10(DEprot.analyses.object@differential.analyses.params$padj.th), linetype = 2, color = "gray40") +
       geom_vline(xintercept = c(-1,1)*log2(DEprot.analyses.object@differential.analyses.params$linear.FC.th), linetype = 2, color = "gray40") +
       ylab(ifelse(use.uncorrected.pvalue == FALSE, yes = padj.label, no = "-log<sub>10</sub>(*P*)")) +
-      xlab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info$var.1,"</sup>&frasl;<sub>",contrasts.info$var.2,"</sub></sub>)")) +
+      xlab(paste0("log<sub>2</sub>(Fold Change<sub>",contrasts.info$var.1,"</sup>/<sub>",contrasts.info$var.2,"</sub></sub>)")) +
       ggtitle(ifelse(is.null(title), yes = paste0("**",contrasts.info$var.1, "** *vs* **", contrasts.info$var.2, "**"),no = title)) +
       guides(color = guide_legend(override.aes = list(size = max(c(point.size, 3))))) +
       theme_classic() +
