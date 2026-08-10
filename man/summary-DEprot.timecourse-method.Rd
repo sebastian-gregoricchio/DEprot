@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{summary,DEprot.timecourse-method}
 \alias{summary,DEprot.timecourse-method}
-\title{summary method for DEprot.timecourse objects}
+\title{DEprot.timecourse summary-method}
 \usage{
 \S4method{summary}{DEprot.timecourse}(object, ...)
 }
@@ -15,5 +15,5 @@
 A data.frame summarizing each cluster: size, dominant shape, median amplitude, median time to half-maximum, median peak time and best-ranked protein. The clusters are returned sorted by their median t.half, meaning in the order in which they respond.
 }
 \description{
-summary method for DEprot.timecourse objects
+DEprot.timecourse summary-method
 }

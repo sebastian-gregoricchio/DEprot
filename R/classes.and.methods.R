@@ -573,41 +573,61 @@ setClass(Class = "DEprot.timecourse",
 
 
 
-
-#' @title show method for DEprot.timecourse.enrichment objects
+#' @title DEprot.timecourse.enrichment class
 #'
-#' @param object An object of class \code{DEprot.timecourse.enrichment}.
-#'
-#' @return Prints a summary of the enrichment analyses.
+#' @slot results data.frame combining the enrichment results of all the clusters, with a 'cluster' column. Class: \code{"ANY"}.
+#' @slot enrichment.per.cluster named list containing the \code{enrichResult} object returned by \code{clusterProfiler::enricher} for each cluster. Class: \code{"ANY"}.
+#' @slot dotplot ggplot object showing, for each cluster, the enriched genesets; the number inside each dot corresponds to the count of proteins. Class: \code{"ANY"}.
+#' @slot universe vector containing the background gene list used for the tests. Class: \code{"ANY"}.
+#' @slot parameters a list containing the parameters used to run the analyses. Class: \code{"ANY"}.
 #'
 #' @export
 
-setMethod(f = "show",
-          signature = "DEprot.timecourse.enrichment",
-          definition =
-            function(object) {
+setClass(Class = "DEprot.timecourse.enrichment",
+         slots = list(results = "ANY",
+                      enrichment.per.cluster = "ANY",
+                      dotplot = "ANY",
+                      universe = "ANY",
+                      parameters = "ANY"))
 
-              p = object@parameters
 
-              cat("DEprot.timecourse.enrichment object:\n")
-              cat("  Clusters tested:  ", paste(p$clusters, collapse = ", "), "\n", sep = "")
-              cat("  Universe size:    ", length(object@universe), " proteins\n", sep = "")
-              cat("  Thresholds:       padj < ", p$pvalueCutoff, " (", p$pAdjustMethod,
-                  "), qvalue < ", p$qvalueCutoff, "\n", sep = "")
 
-              if (is.null(object@results)) {
-                cat("  Enriched genesets: none\n")
-              } else {
-                signif = object@results[object@results$p.adjust <= p$pvalueCutoff,]
-                cat("  Enriched genesets: ", nrow(signif), " (in ",
-                    length(unique(signif$cluster)), " cluster(s))\n", sep = "")
-              }
-            })
+
+
+#' @title DEprot.power class
+#'
+#' @slot power.table Data.frame reporting, for each sample size tested: the per-test significance level required to control the FDR, the average power, the expected number of true and false discoveries and the expected FDR. Class: \code{"ANY"}.
+#' @slot n.required Numeric value indicating the smallest number of samples per group reaching the target average power (\code{NA} when the target is not reached within the range tested). Class: \code{"ANY"}.
+#' @slot effect.size Numeric vector of the standardized effect sizes (|d|) used for the estimation. Class: \code{"ANY"}.
+#' @slot pi0 Numeric value indicating the proportion of non-differential proteins used for the estimation. Class: \code{"ANY"}.
+#' @slot power.plot Ggplot object showing the average power as function of the number of samples per group. Class: \code{"ANY"}.
+#' @slot discoveries.plot Ggplot object showing the expected number of true discoveries as function of the number of samples per group. Class: \code{"ANY"}.
+#' @slot effect.size.plot Ggplot object showing the distribution of the standardized effect sizes used. Class: \code{"ANY"}.
+#' @slot params List of the parameters used for the estimation. Class: \code{"ANY"}.
+#'
+#' @export
+
+setClass(Class = "DEprot.power",
+         slots = list(power.table = "ANY",
+                      n.required = "ANY",
+                      effect.size = "ANY",
+                      pi0 = "ANY",
+                      power.plot = "ANY",
+                      discoveries.plot = "ANY",
+                      effect.size.plot = "ANY",
+                      params = "ANY"))
+
+
 
 
 
 # ===================================================================================================================
-################# METHODS #################
+# ===================================================================================================================
+# ===================================================================================================================
+#                                     ################# METHODS #################
+# ===================================================================================================================
+# ===================================================================================================================
+# ===================================================================================================================
 
 #' @title DEprot show-method
 #' @param object Object of class \code{DEprot}
@@ -652,7 +672,7 @@ setMethod(
 #' @title DEprot plot-method
 #' @param x Object of class \code{DEprot}.
 #' @param y Not used.
-#' @param ... Not used.
+#' @param ... Further arguments passed to \code{patchwork::wrap_plots()} (e.g. \code{guides}, \code{widths}, \code{heights}, \code{design}). They must be named.
 #' @param ncol,nrow The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.
 #' @keywords internal
 #' @importFrom patchwork wrap_plots
@@ -663,16 +683,22 @@ setMethod(
   definition = function(x, y, ..., ncol = NULL, nrow = NULL) {
     boxplot.slots <- c("boxplot.raw", "boxplot.norm",
                        "boxplot.random", "boxplot.imputed")
-
     plot.list <- lapply(boxplot.slots, function(s) methods::slot(x, s))
     plot.list <- Filter(Negate(.deprot_slot_is_empty), plot.list)
-
     if (length(plot.list) == 0L) {
       message("No boxplots are available in this DEprot object.")
       return(invisible(NULL))
     }
 
-    p <- patchwork::wrap_plots(plot.list, ncol = ncol, nrow = nrow)
+    ## wrap_plots() reads its unnamed arguments as further plots to assemble: an unnamed
+    ## value passed through '...' would silently become a panel instead of an option
+    extra <- list(...)
+    if (length(extra) > 0L && (is.null(names(extra)) || any(names(extra) == ""))) {
+      stop("Only named arguments of 'patchwork::wrap_plots()' can be passed through '...'.",
+           call. = FALSE)
+    }
+
+    p <- patchwork::wrap_plots(plot.list, ncol = ncol, nrow = nrow, ...)
     print(p)
     invisible(p)
   }
@@ -741,7 +767,7 @@ setMethod(f = "summary",
 
               }
               recap
-            }#end definition
+            } #end definition
 ) #end method
 
 
@@ -749,7 +775,7 @@ setMethod(f = "summary",
 #' @title DEprot.analyses plot-method
 #' @param x Object of class \code{DEprot.analyses}
 #' @param y Not used.
-#' @param ... Not used.
+#' @param ... Further arguments passed to \code{patchwork::wrap_plots()} (e.g. \code{guides}, \code{widths}, \code{heights}, \code{design}). They must be named, and they are used only when several contrasts are assembled.
 #' @param plot.type String indicating which plots need to be summarized: 'volcano', 'MA', 'correlation', 'PCA'. Default: \code{"volcano"}.
 #' @param label.top.n Single integer value (or \code{NULL}) indicating the number of top differentially expressed proteins to label automatically. Differential proteins (up- or down-regulated) are ranked by \code{-log10(padj) * abs(log2FC)} and the top \code{N} are labeled; if fewer than \code{N} differential proteins are available, all of them are labeled. When \code{use.uncorrected.pvalue = TRUE}, the uncorrected p-value is used in the ranking instead of the adjusted one. Any IDs provided through \code{dot.labels} are added to the automatically selected ones, and \code{labels.in.boxes} together with the other label aesthetics apply to them as well. Default: \code{NULL} (no automatic labels).
 #' @param ncol,nrow The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.
@@ -761,33 +787,49 @@ setMethod(f = "plot",
           definition =
             function(x, y, ..., plot.type = "volcano", label.top.n = NULL, ncol = NULL, nrow = NULL) {
 
+              ## wrap_plots() reads its unnamed arguments as further plots to assemble: an
+              ## unnamed value passed through '...' would silently become a panel
+              extra = list(...)
+              if (length(extra) > 0L && (is.null(names(extra)) || any(names(extra) == ""))) {
+                stop("Only named arguments of 'patchwork::wrap_plots()' can be passed through '...'.", call. = FALSE)
+              }
+
               if (tolower(plot.type) %in% c("v", "volcano", "volcanos")) {
                 plots = lapply(seq_along(x$analyses.result.list),
                                function(i) {
                                  plot.volcano(DEprot.analyses.object = x, contrast = i, label.top.n = label.top.n)
                                }) }
-
               else if (tolower(plot.type) %in% c("m", "ma", "mas")) {
                 plots = lapply(seq_along(x$analyses.result.list),
                                function(i) {
                                  plot.MA(DEprot.analyses.object = x, contrast = i, label.top.n = label.top.n)
                                }) }
-
               else if (tolower(plot.type) %in% c("c", "cor", "corr", "cors", "corrs", "correlation", "correlations")) {
                 plots = lapply(seq_along(x$analyses.result.list),
                                function(i) {
                                  x$analyses.result.list[[i]]$correlations
                                }) }
-
               else if (tolower(plot.type) %in% c("p", "pc", "pcs", "pca", "pcas")) {
                 plots = lapply(seq_along(x$analyses.result.list),
                                function(i) {
                                  x$analyses.result.list[[i]]$PCA.plots
                                }) }
+              else {
+                stop(paste0("The 'plot.type' value ('", plot.type, "') is not recognized.\n",
+                            "       Please indicate one among: 'volcano', 'MA', 'correlation', 'PCA'."), call. = FALSE)
+              }
 
+              ## the correlations and the PCA panels are not stored by every differential
+              ## function: an empty element would be assembled as a blank panel
+              plots = Filter(Negate(.deprot_slot_is_empty), plots)
+
+              if (length(plots) == 0L) {
+                message(paste0("No '", plot.type, "' plot is available in this DEprot.analyses object."))
+                return(invisible(NULL))
+              }
 
               if (length(plots) > 1) {
-                p = patchwork::wrap_plots(plots, ncol = ncol, nrow = nrow)
+                p = patchwork::wrap_plots(plots, ncol = ncol, nrow = nrow, ...)
                 print(p)
                 invisible(p) }
               else {
@@ -923,7 +965,8 @@ setMethod(f = "show",
 #' @title DEprot.normality plot-method
 #' @param x Object of class \code{DEprot.normality}
 #' @param y Not used.
-#' @param ... Not used.
+#' @param ... Further arguments passed to \code{patchwork::wrap_plots()} (e.g. \code{guides}, \code{widths}, \code{heights}, \code{design}). They must be named, and they are used only when several contrasts are assembled.
+#' @param n.samples NUmber of samples to display (in order by metadata table). Default: \code{NULL} (all samples are shown).
 #' @keywords internal
 #' @importFrom patchwork wrap_plots
 #' @export
@@ -938,7 +981,7 @@ setMethod(f = "plot",
                 n = length(x@densities)
               }
 
-              plot = patchwork::wrap_plots(c(x@qqplots[1:n], x@densities[1:n]), byrow = FALSE, ncol = 2)
+              plot = patchwork::wrap_plots(c(x@qqplots[1:n], x@densities[1:n]), byrow = FALSE, ncol = 2, ...)
               print(plot)
               invisible(plot)
             })
@@ -1089,7 +1132,7 @@ setMethod(f = "summary",
 #' @title DEprot.missingness plot-method
 #' @param x Object of class \code{DEprot.missingness}.
 #' @param y Not used.
-#' @param ... Not used.
+#' @param ... Further arguments passed to \code{patchwork::wrap_plots()} (e.g. \code{guides}, \code{widths}, \code{heights}, \code{design}). They must be named, and they are used only when several contrasts are assembled.
 #' @param plot.type String indicating which plot(s) should be returned: 'summary' (default, combination of the four main
 #' diagnostics), 'density', 'dropout', 'heatmap', 'samples', 'frequency', 'classes', 'similarity', 'upset', 'contrasts', 'all'.
 #' @param contrast Index or name of a contrast (only when \code{plot.type = "contrasts"}). Default: \code{NULL} (all contrasts).
@@ -1145,7 +1188,7 @@ setMethod(f = "plot",
                 return(invisible(plot.list[[1]]))
               }
 
-              combined = patchwork::wrap_plots(plot.list, ncol = ncol, nrow = nrow)
+              combined = patchwork::wrap_plots(plot.list, ncol = ncol, nrow = nrow, ...)
               print(combined)
               invisible(combined)
             }#end definition
@@ -1197,7 +1240,7 @@ setMethod(f = "plot",
 
 
 
-#' @title show method for DEprot.timecourse objects
+#' @title DEprot.timecourse show-method
 #'
 #' @param object An object of class \code{DEprot.timecourse}.
 #'
@@ -1239,7 +1282,7 @@ setMethod(f = "show",
 
 
 
-#' @title summary method for DEprot.timecourse objects
+#' @title DEprot.timecourse summary-method
 #'
 #' @param object An object of class \code{DEprot.timecourse}.
 #' @param ... Not used.
@@ -1297,7 +1340,7 @@ setMethod(f = "summary",
 
 
 
-#' @title plot method for DEprot.timecourse objects
+#' @title DEprot.timecourse plot-method
 #'
 #' @param x An object of class \code{DEprot.timecourse}.
 #' @param y Not used.
@@ -1316,26 +1359,40 @@ setMethod(f = "plot",
 
 
 
-#' @title DEprot.timecourse.enrichment class
+#' @title DEprot.timecourse.enrichment show-method
 #'
-#' @slot results data.frame combining the enrichment results of all the clusters, with a 'cluster' column. Class: \code{"ANY"}.
-#' @slot enrichment.per.cluster named list containing the \code{enrichResult} object returned by \code{clusterProfiler::enricher} for each cluster. Class: \code{"ANY"}.
-#' @slot dotplot ggplot object showing, for each cluster, the enriched genesets; the number inside each dot corresponds to the count of proteins. Class: \code{"ANY"}.
-#' @slot universe vector containing the background gene list used for the tests. Class: \code{"ANY"}.
-#' @slot parameters a list containing the parameters used to run the analyses. Class: \code{"ANY"}.
+#' @param object An object of class \code{DEprot.timecourse.enrichment}.
+#'
+#' @return Prints a summary of the enrichment analyses.
 #'
 #' @export
 
-setClass(Class = "DEprot.timecourse.enrichment",
-         slots = list(results = "ANY",
-                      enrichment.per.cluster = "ANY",
-                      dotplot = "ANY",
-                      universe = "ANY",
-                      parameters = "ANY"))
+setMethod(f = "show",
+          signature = "DEprot.timecourse.enrichment",
+          definition =
+            function(object) {
+
+              p = object@parameters
+
+              cat("DEprot.timecourse.enrichment object:\n")
+              cat("  Clusters tested:  ", paste(p$clusters, collapse = ", "), "\n", sep = "")
+              cat("  Universe size:    ", length(object@universe), " proteins\n", sep = "")
+              cat("  Thresholds:       padj < ", p$pvalueCutoff, " (", p$pAdjustMethod,
+                  "), qvalue < ", p$qvalueCutoff, "\n", sep = "")
+
+              if (is.null(object@results)) {
+                cat("  Enriched genesets: none\n")
+              } else {
+                signif = object@results[object@results$p.adjust <= p$pvalueCutoff,]
+                cat("  Enriched genesets: ", nrow(signif), " (in ",
+                    length(unique(signif$cluster)), " cluster(s))\n", sep = "")
+              }
+            })
 
 
 
-#' @title plot method for DEprot.timecourse.enrichment objects
+
+#' @title DEprot.timecourse.enrichment plot-method
 #'
 #' @param x An object of class \code{DEprot.timecourse.enrichment}.
 #' @param y Not used.
@@ -1356,13 +1413,64 @@ setMethod(f = "plot",
 
 
 
+#' @title DEprot.power show-method
+#' @param object Object of class \code{DEprot.power}.
+#' @importFrom patchwork wrap_plots
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.power",
+          definition =
+            function(object) {
+              cat(paste0("        Contrast | ", object@params$contrast, ifelse(isTRUE(object@params$paired.test), " (paired)", ""), "\n"))
+              cat(paste0("     Counts used | ", object@params$counts.used, " (", object@params$stat.test, ")\n"))
+              cat(paste0(" Proteins tested | ", object@params$m, " (m1 = ", object@params$m1, ", pi0 = ", round(object@pi0, 3), ")\n"))
+              cat(paste0("     Effect size | ", object@params$effect.size.mode, ", median |d| = ", round(median(object@effect.size, na.rm = TRUE), 3), "\n"))
+              cat(paste0("             FDR | ", object@params$fdr, "\n"))
+              cat(paste0(" Current n/group | ", object@params$n.current, "\n"))
+              cat(paste0("Required n/group | ", ifelse(is.finite(object@n.required),
+                                                       paste0(object@n.required, " (average power ", object@params$target.power, ")"),
+                                                       paste0("not reached within the range tested")), "\n\n"))
+            })
+
+
+
+
+#' @title DEprot.power plot-method
+#'
+#' @param x An object of class \code{DEprot.power}.
+#' @param y Not used.
+#' @param ... Passed to \code{patchwork::wrap_plots()}.
+#'
+#' @importFrom patchwork wrap_plots
+#'
+#' @return The combination of all the plots available.
+#'
+#' @export
+
+setMethod(f = "plot",
+          signature = "DEprot.power",
+          definition =
+            function(x, y, ...) {
+              print(patchwork::wrap_plots(x@power.plot, x@discoveries.plot, x@effect.size.plot, ...))
+            })
+
+
+
+
+
 
 ## ================================================================================================
-## ================================================================= ##
+## ================================================================================================
+## ================================================================================================
+## ================================================================================================
 ##  Instance-aware slot completion for all DEprot S4 classes.
 ##  Only slots holding a real value (not NULL / not NA / not empty)
 ##  are offered after `$` and `@`.
-## ================================================================= ##
+## ================================================================================================
+## ================================================================================================
+## ================================================================================================
+## ================================================================================================
+
 
 # All DEprot S4 classes
 .deprot_classes <- c("DEprot", "DEprot.analyses", "DEprot.PCA", "DEprot.PCoA",
@@ -1371,7 +1479,8 @@ setMethod(f = "plot",
                      "DEprot.enrichResult", "DEprot.pvalues",
                      "DEprot.normality", "DEprot.RMSE", "DEprot.SAINTq",
                      "DEprot.missingness", "DEprot.outliers",
-                     "DEprot.timecourse", "DEprot.timecourse.enrichment")
+                     "DEprot.timecourse", "DEprot.timecourse.enrichment",
+                     "DEprot.power")
 
 # A slot counts as "empty" if it is NULL, zero-length, or a single NA.
 # Logical flags holding FALSE (e.g. `normalized`) are NOT empty and stay visible.
@@ -1409,7 +1518,8 @@ setMethod(f = "plot",
 #' @param x An object of one of the DEprot classes: \code{DEprot}, \code{DEprot.analyses},
 #' \code{DEprot.PCA}, \code{DEprot.PCoA}, \code{DEprot.correlation}, \code{DEprot.counts.heatmap},
 #' \code{DEprot.contrast.heatmap}, \code{DEprot.upset}, \code{DEprot.normality}, \code{DEprot.pvalues},
-#' \code{DEprot.enrichResult}, \code{DEprot.RMSE}, \code{DEprot.SAINTq}.
+#' \code{DEprot.enrichResult}, \code{DEprot.RMSE}, \code{DEprot.SAINTq}, \code{DEprot.missingness},
+#' \code{DEprot.outliers}, \code{DEprot.timecourse}, \code{DEprot.timecourse.enrichment}, \code{DEprot.power}.
 #' @param name Name of the slot to access or replace.
 #' @param value The value to assign to the slot (only for \code{$<-}).
 #'
@@ -1420,6 +1530,7 @@ setMethod(f = "plot",
 #'
 #' @author Sebastian Gregoricchio
 NULL
+
 
 
 
@@ -1439,3 +1550,5 @@ for (.cls in .deprot_classes) {
   })
 }
 rm(.cls)
+
+

@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{plot,DEprot.timecourse.enrichment,ANY-method}
 \alias{plot,DEprot.timecourse.enrichment,ANY-method}
-\title{plot method for DEprot.timecourse.enrichment objects}
+\title{DEprot.timecourse.enrichment plot-method}
 \usage{
 \S4method{plot}{DEprot.timecourse.enrichment,ANY}(x, y, ...)
 }
@@ -17,5 +17,5 @@
 The dotplot stored in the object.
 }
 \description{
-plot method for DEprot.timecourse.enrichment objects
+DEprot.timecourse.enrichment plot-method
 }

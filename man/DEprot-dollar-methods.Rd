@@ -7,7 +7,8 @@
 \item{x}{An object of one of the DEprot classes: \code{DEprot}, \code{DEprot.analyses},
 \code{DEprot.PCA}, \code{DEprot.PCoA}, \code{DEprot.correlation}, \code{DEprot.counts.heatmap},
 \code{DEprot.contrast.heatmap}, \code{DEprot.upset}, \code{DEprot.normality}, \code{DEprot.pvalues},
-\code{DEprot.enrichResult}, \code{DEprot.RMSE}, \code{DEprot.SAINTq}.}
+\code{DEprot.enrichResult}, \code{DEprot.RMSE}, \code{DEprot.SAINTq}, \code{DEprot.missingness},
+\code{DEprot.outliers}, \code{DEprot.timecourse}, \code{DEprot.timecourse.enrichment}, \code{DEprot.power}.}
 
 \item{name}{Name of the slot to access or replace.}
 

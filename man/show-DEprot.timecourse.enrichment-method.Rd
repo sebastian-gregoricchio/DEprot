@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{show,DEprot.timecourse.enrichment-method}
 \alias{show,DEprot.timecourse.enrichment-method}
-\title{show method for DEprot.timecourse.enrichment objects}
+\title{DEprot.timecourse.enrichment show-method}
 \usage{
 \S4method{show}{DEprot.timecourse.enrichment}(object)
 }
@@ -13,5 +13,5 @@
 Prints a summary of the enrichment analyses.
 }
 \description{
-show method for DEprot.timecourse.enrichment objects
+DEprot.timecourse.enrichment show-method
 }

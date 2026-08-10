@@ -19,7 +19,7 @@
 
 \item{y}{Not used.}
 
-\item{...}{Not used.}
+\item{...}{Further arguments passed to \code{patchwork::wrap_plots()} (e.g. \code{guides}, \code{widths}, \code{heights}, \code{design}). They must be named, and they are used only when several contrasts are assembled.}
 
 \item{plot.type}{String indicating which plots need to be summarized: 'volcano', 'MA', 'correlation', 'PCA'. Default: \code{"volcano"}.}
 

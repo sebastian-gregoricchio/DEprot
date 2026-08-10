@@ -7,6 +7,12 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+#### [v2.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0) - August 10<sup>th</sup> 2026
+- added `estimate.power` function to compute sample size and power estimation
+- updated overview vignette, manual and tests accordingly
+
+<br>
+
 #### [v2.0.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.0.0) - August 7<sup>th</sup> 2026
 - added the protein.info slot to the DEprot and DEprot.analyses objects: an optional annotation table with one row per protein (gene symbol, description, number of peptides, etc.), kept row-by-row aligned with the counts
 - `load.counts2()` (and `load.counts()`) accept a protein.info table at loading; the IDs can be given as row names, in a prot.id column or in any column indicated by protein.info.id.column. The table is re-ordered on the counts: unannotated proteins are filled with NA and annotations of proteins absent from the counts are discarded

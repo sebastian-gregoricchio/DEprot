@@ -786,6 +786,55 @@ ggpubr::ggscatter(data = sq_combo,
         plot.title = ggtext::element_markdown(hjust = 0.5),
         panel.border = element_rect(fill = NA, colour = "black"))
 
+## ----power_estimate, fig.width = 10, fig.height = 4---------------------------
+power.estimation <- estimate.power(DEprot.analyses.object = dpo_analyses,
+                                   contrast = 1,
+                                   sample.size.range = c(2, 30),
+                                   target.power = 0.8)
+
+power.estimation
+
+## ----power_plots, fig.width = 12, fig.height = 4------------------------------
+plot(power.estimation, nrow = 1)
+
+## ----power_table, eval = FALSE------------------------------------------------
+# head(power.estimation@power.table)
+
+## ----show_power_table, echo=FALSE---------------------------------------------
+knitr::kable(head(power.estimation@power.table), row.names = FALSE, caption = "**Power table results**")
+
+## ----power_desiredFC, fig.width = 10, fig.height = 4--------------------------
+power.FC1.5 <- estimate.power(DEprot.analyses.object = dpo_analyses,
+                              contrast = 1,
+                              desired.FC = 1.5,
+                              sd.quantile = 0.75,
+                              target.power = 0.8)
+
+power.FC1.5
+
+## ----power_complete_cases, eval = FALSE---------------------------------------
+# complete.proteins <- rownames(dpo_norm@norm.counts)[rowSums(is.na(dpo_norm@norm.counts)) == 0]
+# 
+# dpo_complete <- filter.proteins(DEprot.object = dpo_norm,
+#                                 proteins = complete.proteins,
+#                                 mode = "keep")
+# 
+# dpo_complete <- diff.analyses.limma(DEprot.object = dpo_complete,
+#                                     contrast.list = list(c("condition", "6h.10nM.E2", "6h.DMSO")),
+#                                     which.data = "normalized")
+# 
+# estimate.power(dpo_complete, contrast = 1)
+
+## ----power4peaks_conversion, eval = FALSE-------------------------------------
+# p4p.stats <- power4peaks::as.power4peaks(object = dpo_analyses,
+#                                          contrast = 1)
+# 
+# p4p.power <- power4peaks::compute.power(power4peaks.stats = p4p.stats,
+#                                         sample.size.range = c(2, 30),
+#                                         power.threshold = 0.8)
+# 
+# p4p.power
+
 ## ----protein_summary, fig.height=3, fig.width=10------------------------------
 protein.counts <-
   protein.summary(DEprot.object = dpo_analyses,

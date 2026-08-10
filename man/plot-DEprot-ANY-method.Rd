@@ -11,7 +11,7 @@
 
 \item{y}{Not used.}
 
-\item{...}{Not used.}
+\item{...}{Further arguments passed to \code{patchwork::wrap_plots()} (e.g. \code{guides}, \code{widths}, \code{heights}, \code{design}). They must be named.}
 
 \item{ncol, nrow}{The dimensions of the grid to create - if both are NULL (default) it will use the same logic as \code{facet_wrap()} to set the dimensions.}
 }

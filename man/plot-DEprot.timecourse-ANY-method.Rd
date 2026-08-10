@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{plot,DEprot.timecourse,ANY-method}
 \alias{plot,DEprot.timecourse,ANY-method}
-\title{plot method for DEprot.timecourse objects}
+\title{DEprot.timecourse plot-method}
 \usage{
 \S4method{plot}{DEprot.timecourse,ANY}(x, y, ...)
 }
@@ -17,5 +17,5 @@
 The cluster-profile plot stored in the object.
 }
 \description{
-plot method for DEprot.timecourse objects
+DEprot.timecourse plot-method
 }

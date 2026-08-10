@@ -2,7 +2,7 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{show,DEprot.timecourse-method}
 \alias{show,DEprot.timecourse-method}
-\title{show method for DEprot.timecourse objects}
+\title{DEprot.timecourse show-method}
 \usage{
 \S4method{show}{DEprot.timecourse}(object)
 }
@@ -13,5 +13,5 @@
 Prints a summary of the time-course analysis.
 }
 \description{
-show method for DEprot.timecourse objects
+DEprot.timecourse show-method
 }
