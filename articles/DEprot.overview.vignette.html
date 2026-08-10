@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@ Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eic
             <h4 data-toc-skip class="date">Last update: 10<sup>th</sup>
 August, 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/2.0.0/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
       <div class="hidden name"><code>DEprot.overview.vignette.Rmd</code></div>
 
     </div>
@@ -1392,14 +1392,14 @@ original data.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; tkNN                    tkNN 0.5132982         0.9852705            2.04    1
-&gt; corkNN                corkNN 0.5135173         0.9851722            1.96    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          120.00    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.04    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.88    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.24    6
-&gt; missForest        missForest 0.5664830         0.9813784           30.94    7
-&gt; LLS                      LLS 0.6326730         0.9684621            4.61    8</code></pre>
+&gt; tkNN                    tkNN 0.5132982         0.9852705            1.63    1
+&gt; corkNN                corkNN 0.5135173         0.9851722            1.61    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672          106.80    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            7.26    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.64    5
+&gt; SVD                      SVD 0.5442393         0.9791497            1.80    6
+&gt; missForest        missForest 0.5664830         0.9813784           23.86    7
+&gt; LLS                      LLS 0.6326730         0.9684621            3.27    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -4019,6 +4019,362 @@ scores obtained between the two methods.</p>
 </div>
 </div>
 <div class="section level2">
+<h2 id="power">
+<strong>Power and sample size</strong><a class="anchor" aria-label="anchor" href="#power"></a>
+</h2>
+<p>Every proteomics project starts with the same question, usually asked
+after the experiment has already been run: how many replicates are
+needed? The textbook answer, <code>power.t.test</code>, is written for a
+single comparison and returns a number that is far too small here,
+because a differential analysis is not one test but ten thousand of
+them, and the threshold that a protein has to cross is not 0.05 but
+whatever the multiple-testing correction leaves once the whole table has
+been adjusted. The two things are linked: the more responsive proteins
+there are, the more the correction can afford to relax, and the easier
+it becomes for each of them to be detected. A sample size computed while
+ignoring the link is not conservative, it is simply wrong in an unknown
+direction.</p>
+<p><a href="https://doi.org/10.1093/bioinformatics/bti456" class="external-link">Jung
+(Bioinformatics, 2005)</a> turned the link into an equation. If
+<code>m1</code> proteins truly respond and the average power over them
+is 1-β, the expected number of true discoveries is
+<code>m1(1-</code>β<code>)</code> and the expected number of false ones
+is <code>m0</code>α, so controlling the FDR at a level <em>f</em>
+means:</p>
+<p style="text-align:center">
+<i>α = f · m<sub>1</sub> · (1-β) / [(1 - f) · m<sub>0</sub>]</i>
+</p>
+<p>α depends on the power, the power depends on α, and the couple that
+satisfies both is found by root finding at each sample size. <a href="https://doi.org/10.1093/bioinformatics/btl664" class="external-link">Liu &amp; Hwang
+(Bioinformatics, 2007)</a> showed that the relation reduces to a closed
+form when a single effect size is assumed. The function
+<code>estimate.power</code> implements both: the responsive proteins can
+either keep the effect sizes they actually showed, or be collapsed onto
+one target fold change.</p>
+<p>Nothing else is needed. The results table of any of the four
+differential functions already stores the log2-FoldChanges and the
+per-group standard deviations, which is exactly what the calculation
+reads, so no external power package has to be installed.</p>
+<p><br></p>
+<div class="section level3">
+<h3 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
+</h3>
+<p>The only mandatory input is a <code>DEprot.analyses</code> object and
+the index of the contrast to use for the estimation:</p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a>power.estimation <span class="ot">&lt;-</span> <span class="fu">estimate.power</span>(<span class="at">DEprot.analyses.object =</span> dpo_analyses,</span>
+<span id="cb80-2"><a href="#cb80-2" tabindex="-1"></a>                                   <span class="at">contrast =</span> <span class="dv">1</span>,</span>
+<span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>                                   <span class="at">sample.size.range =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">30</span>),</span>
+<span id="cb80-4"><a href="#cb80-4" tabindex="-1"></a>                                   <span class="at">target.power =</span> <span class="fl">0.8</span>)</span>
+<span id="cb80-5"><a href="#cb80-5" tabindex="-1"></a></span>
+<span id="cb80-6"><a href="#cb80-6" tabindex="-1"></a>power.estimation</span>
+<span id="cb80-7"><a href="#cb80-7" tabindex="-1"></a><span class="sc">&gt;</span>         Contrast <span class="sc">|</span> <span class="dv">6</span><span class="fu">h.10nM.E2.vs.6h.DMSO</span> (paired)</span>
+<span id="cb80-8"><a href="#cb80-8" tabindex="-1"></a><span class="sc">&gt;</span>      Counts used <span class="sc">|</span> <span class="fu">imputed</span> (t.test)</span>
+<span id="cb80-9"><a href="#cb80-9" tabindex="-1"></a><span class="sc">&gt;</span>  Proteins tested <span class="sc">|</span> <span class="dv">12944</span> (<span class="at">m1 =</span> <span class="dv">1674</span>, <span class="at">pi0 =</span> <span class="fl">0.871</span>)</span>
+<span id="cb80-10"><a href="#cb80-10" tabindex="-1"></a><span class="sc">&gt;</span>      Effect size <span class="sc">|</span> empirical, median <span class="sc">|</span>d<span class="sc">|</span> <span class="er">=</span> <span class="fl">1.22</span></span>
+<span id="cb80-11"><a href="#cb80-11" tabindex="-1"></a><span class="sc">&gt;</span>              FDR <span class="sc">|</span> <span class="fl">0.05</span></span>
+<span id="cb80-12"><a href="#cb80-12" tabindex="-1"></a><span class="sc">&gt;</span>  Current n<span class="sc">/</span>group <span class="sc">|</span> <span class="dv">4</span></span>
+<span id="cb80-13"><a href="#cb80-13" tabindex="-1"></a><span class="sc">&gt;</span> Required n<span class="sc">/</span>group <span class="sc">|</span> <span class="dv">13</span> (average power <span class="fl">0.8</span>)</span></code></pre></div>
+<p>The <code>show</code> method prints the assumptions and the answer,
+while the three plots are obtained separately. The <code>...</code> are
+passed to <code><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">patchwork::wrap_plots</a></code>, so the layout can be
+arranged as needed:</p>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">power.estimation</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p><img src="DEprot.overview.vignette_files/figure-html/power_plots-1.png" class="r-plt" alt="" width="1152" style="display: block; margin: auto;"></p>
+<ul>
+<li>The first panel is the average power as a function of the number of
+replicates per group, with the target as a horizontal line and the size
+of the current experiment as a vertical dotted one.</li>
+<li>The second is the quantity most people are actually asking about,
+the expected number of true discoveries, which saturates at
+<code>m1</code> and shows how much is gained by adding replicates rather
+than whether an abstract threshold is crossed.</li>
+<li>The third is the distribution of the standardized effect sizes on
+which the whole calculation rests, and it deserves a look before the
+other two are believed.</li>
+</ul>
+<p>The numbers behind the curves are in the <code>power.table</code>
+slot:</p>
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">power.estimation</span><span class="op">@</span><span class="va">power.table</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<caption><strong>Power table results</strong></caption>
+<colgroup>
+<col width="12%">
+<col width="10%">
+<col width="14%">
+<col width="12%">
+<col width="12%">
+<col width="22%">
+<col width="13%">
+</colgroup>
+<thead><tr class="header">
+<th align="right">n.per.group</th>
+<th align="right">alpha</th>
+<th align="right">average.power</th>
+<th align="right">expected.TP</th>
+<th align="right">expected.FP</th>
+<th align="right">expected.discoveries</th>
+<th align="right">expected.FDR</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">2</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000167</td>
+<td align="right">0.0000009</td>
+<td align="right">0.0000176</td>
+<td align="right">0.05</td>
+</tr>
+<tr class="even">
+<td align="right">3</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000167</td>
+<td align="right">0.0000009</td>
+<td align="right">0.0000176</td>
+<td align="right">0.05</td>
+</tr>
+<tr class="odd">
+<td align="right">4</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000167</td>
+<td align="right">0.0000009</td>
+<td align="right">0.0000176</td>
+<td align="right">0.05</td>
+</tr>
+<tr class="even">
+<td align="right">5</td>
+<td align="right">0.0003057</td>
+<td align="right">0.0390982</td>
+<td align="right">65.4504412</td>
+<td align="right">3.4447601</td>
+<td align="right">68.8952012</td>
+<td align="right">0.05</td>
+</tr>
+<tr class="odd">
+<td align="right">6</td>
+<td align="right">0.0013049</td>
+<td align="right">0.1669139</td>
+<td align="right">279.4138026</td>
+<td align="right">14.7059896</td>
+<td align="right">294.1197922</td>
+<td align="right">0.05</td>
+</tr>
+<tr class="even">
+<td align="right">7</td>
+<td align="right">0.0024126</td>
+<td align="right">0.3086052</td>
+<td align="right">516.6050322</td>
+<td align="right">27.1897385</td>
+<td align="right">543.7947708</td>
+<td align="right">0.05</td>
+</tr>
+</tbody>
+</table>
+<table class="table">
+<colgroup>
+<col width="22%">
+<col width="77%">
+</colgroup>
+<thead><tr class="header">
+<th align="right">Column</th>
+<th align="left">Description</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right"><em>n.per.group</em></td>
+<td align="left">number of replicates per group tested</td>
+</tr>
+<tr class="even">
+<td align="right"><em>alpha</em></td>
+<td align="left">per-test significance level required to keep the FDR at
+the requested level</td>
+</tr>
+<tr class="odd">
+<td align="right"><em>average.power</em></td>
+<td align="left">power averaged over the responsive proteins</td>
+</tr>
+<tr class="even">
+<td align="right"><em>expected.TP</em></td>
+<td align="left">expected number of true discoveries, <code>m1</code> ×
+<em>average.power</em>
+</td>
+</tr>
+<tr class="odd">
+<td align="right"><em>expected.FP</em></td>
+<td align="left">expected number of false discoveries, <code>m0</code> ×
+α</td>
+</tr>
+<tr class="even">
+<td align="right"><em>expected.discoveries</em></td>
+<td align="left">total size of the list that would be reported</td>
+</tr>
+<tr class="odd">
+<td align="right"><em>expected.FDR</em></td>
+<td align="left">realized FDR, equal to the level requested by
+construction</td>
+</tr>
+</tbody>
+</table>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="two-ways-of-choosing-the-effect-size">Two ways of choosing the effect size<a class="anchor" aria-label="anchor" href="#two-ways-of-choosing-the-effect-size"></a>
+</h3>
+<p>By default (<code>effect.size = "empirical"</code>) the proportion of
+null proteins π<sub>0</sub> is estimated from the p-value distribution,
+the <code>m1</code> proteins with the smallest p-values are taken as the
+responsive ones, and the power is averaged over the effect sizes they
+showed. This uses all the information in the pilot experiment, and it
+inherits its optimism: those proteins were selected <em>because</em>
+they came out significant, so their effect sizes are the upper tail of a
+distribution rather than a sample from it. This is the winner’s curse,
+and it becomes more severe as π<sub>0</sub> approaches 1. The
+<code>min.effect.size</code> parameter blunts it by discarding the small
+effects, but does not remove it.</p>
+<p>The alternative is to state the effect worth detecting instead of
+measuring it. <code>desired.FC</code> takes a fold change on the linear
+scale and divides <code>log2(desired.FC)</code> by a quantile of the
+observed pooled standard deviations, which turns the question into
+<em>“how many replicates do I need to see a 1.5-fold change on a protein
+of typical variability”</em>:</p>
+<div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a>power.FC1<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">estimate.power</span>(<span class="at">DEprot.analyses.object =</span> dpo_analyses,</span>
+<span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>                              <span class="at">contrast =</span> <span class="dv">1</span>,</span>
+<span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a>                              <span class="at">desired.FC =</span> <span class="fl">1.5</span>,</span>
+<span id="cb83-4"><a href="#cb83-4" tabindex="-1"></a>                              <span class="at">sd.quantile =</span> <span class="fl">0.75</span>,</span>
+<span id="cb83-5"><a href="#cb83-5" tabindex="-1"></a>                              <span class="at">target.power =</span> <span class="fl">0.8</span>)</span>
+<span id="cb83-6"><a href="#cb83-6" tabindex="-1"></a></span>
+<span id="cb83-7"><a href="#cb83-7" tabindex="-1"></a>power.FC1<span class="fl">.5</span></span>
+<span id="cb83-8"><a href="#cb83-8" tabindex="-1"></a><span class="sc">&gt;</span>         Contrast <span class="sc">|</span> <span class="dv">6</span><span class="fu">h.10nM.E2.vs.6h.DMSO</span> (paired)</span>
+<span id="cb83-9"><a href="#cb83-9" tabindex="-1"></a><span class="sc">&gt;</span>      Counts used <span class="sc">|</span> <span class="fu">imputed</span> (t.test)</span>
+<span id="cb83-10"><a href="#cb83-10" tabindex="-1"></a><span class="sc">&gt;</span>  Proteins tested <span class="sc">|</span> <span class="dv">12944</span> (<span class="at">m1 =</span> <span class="dv">1674</span>, <span class="at">pi0 =</span> <span class="fl">0.871</span>)</span>
+<span id="cb83-11"><a href="#cb83-11" tabindex="-1"></a><span class="sc">&gt;</span>      Effect size <span class="sc">|</span> desired.FC <span class="ot">=</span> <span class="fl">1.5</span> (sd quantile<span class="sc">:</span> <span class="fl">0.75</span>), median <span class="sc">|</span>d<span class="sc">|</span> <span class="er">=</span> <span class="fl">1.367</span></span>
+<span id="cb83-12"><a href="#cb83-12" tabindex="-1"></a><span class="sc">&gt;</span>              FDR <span class="sc">|</span> <span class="fl">0.05</span></span>
+<span id="cb83-13"><a href="#cb83-13" tabindex="-1"></a><span class="sc">&gt;</span>  Current n<span class="sc">/</span>group <span class="sc">|</span> <span class="dv">4</span></span>
+<span id="cb83-14"><a href="#cb83-14" tabindex="-1"></a><span class="sc">&gt;</span> Required n<span class="sc">/</span>group <span class="sc">|</span> <span class="dv">11</span> (average power <span class="fl">0.8</span>)</span></code></pre></div>
+<p>Setting <code>sd.quantile = 0.75</code> plans for a protein noisier
+than three quarters of the proteome, which is the version of the
+calculation that survives contact with a grant reviewer. The median is
+the default and describes the typical protein.</p>
+<blockquote>
+<p>A single numeric value passed to <code>effect.size</code> does the
+same thing directly, on the standardized scale:
+<code>effect.size = 1</code> means one pooled standard deviation,
+regardless of what the fold change corresponds to.</p>
+</blockquote>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="what-inflates-the-estimate">What inflates the estimate<a class="anchor" aria-label="anchor" href="#what-inflates-the-estimate"></a>
+</h3>
+<p>Three things make the answer optimistic, and two of them are
+silent.</p>
+<p>The first is imputation. Every value drawn from the bottom of the
+distribution to fill a blank is similar to the other values drawn the
+same way, so the within-group variance shrinks, the standardized effect
+sizes grow, and the required sample size falls. The function checks
+<code>counts.used</code> and raises a warning when the differential
+analyses were run on imputed or randomized counts, but the warning
+cannot correct the numbers. The honest input is a differential analysis
+run on the normalized counts and restricted to the proteins quantified
+in all the samples of the contrast:</p>
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">complete.proteins</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">dpo_norm</span><span class="op">@</span><span class="va">norm.counts</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">dpo_norm</span><span class="op">@</span><span class="va">norm.counts</span><span class="op">)</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">]</span></span>
+<span></span>
+<span><span class="va">dpo_complete</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter.proteins.html">filter.proteins</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_norm</span>,</span>
+<span>                                proteins <span class="op">=</span> <span class="va">complete.proteins</span>,</span>
+<span>                                mode <span class="op">=</span> <span class="st">"keep"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dpo_complete</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diff.analyses.limma.html">diff.analyses.limma</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_complete</span>,</span>
+<span>                                    contrast.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"6h.10nM.E2"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                                    which.data <span class="op">=</span> <span class="st">"normalized"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/estimate.power.html">estimate.power</a></span><span class="op">(</span><span class="va">dpo_complete</span>, contrast <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
+<p>The second is the selection of the responsive set, discussed
+above.</p>
+<p>The third concerns <a href="#diff_proDA"><code>diff.analyses.proDA</code></a> and is worth
+stating explicitly, because the function is otherwise the one that
+handles missing values most honestly. <code>estimate.power</code> reads
+the per-protein standard deviations, and those are computed on the
+observed values only. For a protein affected by dropout, the observed
+values are the upper part of its intensity distribution, so the standard
+deviation is estimated on a truncated sample and comes out too small.
+The number of replicates in which the protein was actually quantified is
+taken from the <code>n.detected.&lt;group&gt;</code> columns, so the
+group sizes are correct, but the dispersion is not. On a proDA object
+the full-table estimate should be read as an optimistic bound, and the
+complete-cases version above as the realistic one.</p>
+<blockquote>
+<p>Objects generated with <code>stat.test = "wilcoxon"</code> are
+accepted, since the standard deviations are stored regardless of the
+test. The calculation nonetheless describes the power of a
+<em>t</em>-test in the planned experiment; for normally distributed data
+a rank test needs roughly 5% more samples to reach the same power, so
+the estimate is mildly optimistic in that case too.</p>
+</blockquote>
+<blockquote>
+<p>Relation with <code>MSstats::designSampleSize</code>:
+<code>MSstats</code> answers the same question with the same logic,
+converting the FDR into a per-test α under an assumed ratio between null
+and responsive features and then solving the two-sample non-central
+<em>t</em> equation. The difference is that it collapses the problem
+onto one <code>desiredFC</code> and one standard deviation taken from
+the fitted model, which is precisely the <code>desired.FC</code> mode
+described above.</p>
+</blockquote>
+<p><br></p>
+</div>
+<div class="section level3">
+<h3 id="extrapolating-with-power4peaks">Extrapolating with <code>power4peaks</code><a class="anchor" aria-label="anchor" href="#extrapolating-with-power4peaks"></a>
+</h3>
+<p><code>estimate.power</code> is deliberately parametric: it assumes
+the effect sizes observed in the pilot and asks what a larger experiment
+would do with them.<br>A complementary approach is to reconstruct the
+whole density of the effect sizes from the distribution of the test
+statistics, which is what <a href="https://sebastian-gregoricchio.github.io/power4peaks/" class="external-link"><code>power4peaks</code></a>
+does through the deconvolution of <a href="https://doi.org/10.2202/1557-4679.1018" class="external-link">Ferreira &amp; Zwinderman
+(The Int. J. of Biostat., 2006)</a>. Any <code>DEprot.analyses</code>
+object can be converted directly:</p>
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">p4p.stats</span> <span class="op">&lt;-</span> <span class="fu">power4peaks</span><span class="fu">::</span><span class="fu">as.power4peaks</span><span class="op">(</span>object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
+<span>                                         contrast <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p4p.power</span> <span class="op">&lt;-</span> <span class="fu">power4peaks</span><span class="fu">::</span><span class="fu">compute.power</span><span class="op">(</span>power4peaks.stats <span class="op">=</span> <span class="va">p4p.stats</span>,</span>
+<span>                                        sample.size.range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">30</span><span class="op">)</span>,</span>
+<span>                                        power.threshold <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p4p.power</span></span></code></pre></div>
+<p>The conversion covers all the differential functions of
+<code>DEprot</code>: the moderated and ordinary <em>t</em> statistics of
+<code>diff.analyses</code>, <code>diff.analyses.limma</code>,
+<code>diff.analyses.prolfqua</code> and <code>diff.analyses.proDA</code>
+are passed as such, while the rank statistics of a Wilcoxon test are
+converted into signed normal deviates through the p-values. For
+<code>proDA</code> the group sizes are rescaled to the effective sample
+size estimated by the dropout model (<code>n.approx</code>), since that,
+and not the nominal number of samples, is the amount of information the
+statistics were computed on.</p>
+<p>The two answers should be read together rather than one against the
+other. They disagree when π<sub>0</sub> is poorly determined, which is
+itself informative, and a difference of one or two replicates between
+them is a fair description of the uncertainty of the whole exercise.</p>
+<blockquote>
+<p>Neither method models the other half of the problem: in LFQ
+proteomics, adding samples does not only increase the power per protein,
+it also increases the number of proteins that pass the missing-value
+filter and reach the test at all. Both curves therefore describe the
+power over the proteins that were quantified in the pilot experiment,
+and both under-estimate what a larger experiment would actually
+return.</p>
+</blockquote>
+<p><br></p>
+<hr>
+</div>
+</div>
+<div class="section level2">
 <h2 id="othertools">
 <strong>Other tools</strong><a class="anchor" aria-label="anchor" href="#othertools"></a>
 </h2>
@@ -4035,7 +4391,7 @@ must belong to either <code>DEprot</code> or
 unimputed normalized data. Indeed, estimation of missing values is not
 possible on the imputed tables.</p>
 </blockquote>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  n.labels <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -4050,7 +4406,7 @@ possible on the imputed tables.</p>
 groups. A group can be defined using any column of the metadata table.
 In the output stacked bar plot, each color will show how many proteins
 in how many samples within a group were detected.</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">protein.counts.byCondition</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="../reference/protein.summary.html">protein.summary</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                  group.column <span class="op">=</span> <span class="st">"condition"</span>,</span>
@@ -4072,7 +4428,7 @@ expression can be grouped by a column of the metadata using the
 <code>group.by.metadata.column</code> parameter. Furthermore it is
 possible to scale the values using Z-scores (parameter
 <code>scale.expression = TRUE</code>).</p>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">### raw expression</span></span>
 <span><span class="va">protein.1733_raw</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/expression.boxplot.html">expression.boxplot</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
@@ -4157,7 +4513,7 @@ include the packages <code>AnnotationDbi</code> and
 </blockquote>
 <p><br></p>
 <p><strong>KEEP NUCLEAR PROTEINS</strong></p>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nucleus</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span><span class="fu">org.Hs.eg.db</span><span class="fu">::</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>                                 keytype <span class="op">=</span> <span class="st">"GOALL"</span>,</span>
 <span>                                 keys <span class="op">=</span> <span class="st">"GO:0005634"</span>, <span class="co">#nucleus</span></span>
@@ -4168,7 +4524,7 @@ include the packages <code>AnnotationDbi</code> and
 <span>                                        mode <span class="op">=</span> <span class="st">"keep"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
 <p><strong>REMOVE CYTOPLASMIC PROTEINS</strong></p>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cytoplasm</span> <span class="op">&lt;-</span> <span class="fu">AnnotationDbi</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/AnnotationDbi/man/AnnotationDb-class.html" class="external-link">select</a></span><span class="op">(</span><span class="fu">org.Hs.eg.db</span><span class="fu">::</span><span class="va">org.Hs.eg.db</span>,</span>
 <span>                                   keytype <span class="op">=</span> <span class="st">"GOALL"</span>,</span>
 <span>                                   keys <span class="op">=</span> <span class="st">"GO:0005737"</span>, <span class="co">#cytoplasm</span></span>
@@ -4194,7 +4550,7 @@ samples.</p>
 <code>DEprot.analyses</code>. In the case of the latter, also the
 differential analyses are re-performed using the same parameters (if
 possible).</p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo.clean</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filter.samples.html">filter.samples</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo.imputed</span>,</span>
 <span>                            samples <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sample_A"</span>, <span class="st">"Sample_B"</span><span class="op">)</span>,</span>
 <span>                            mode <span class="op">=</span> <span class="st">"remove"</span>,</span>
@@ -4212,35 +4568,35 @@ differentials from the beginning, the function
 <code>reapply.thresholds</code> can be used to re-compute the
 differential status, re-plot volcanoes and MA-plots, and re-compute the
 <code>n.diff</code> summary table.</p>
-<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">&lt;-</span></span>
-<span id="cb86-2"><a href="#cb86-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
-<span id="cb86-3"><a href="#cb86-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
-<span id="cb86-4"><a href="#cb86-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
-<span id="cb86-5"><a href="#cb86-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
-<span id="cb86-6"><a href="#cb86-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
-<span id="cb86-7"><a href="#cb86-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
-<span id="cb86-8"><a href="#cb86-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
-<span id="cb86-9"><a href="#cb86-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
-<span id="cb86-10"><a href="#cb86-10" tabindex="-1"></a></span>
-<span id="cb86-11"><a href="#cb86-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
-<span id="cb86-12"><a href="#cb86-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
-<span id="cb86-13"><a href="#cb86-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb86-14"><a href="#cb86-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb86-15"><a href="#cb86-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb86-16"><a href="#cb86-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
-<span id="cb86-17"><a href="#cb86-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb86-18"><a href="#cb86-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb86-19"><a href="#cb86-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb86-20"><a href="#cb86-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
-<span id="cb86-21"><a href="#cb86-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
-<span id="cb86-22"><a href="#cb86-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb86-23"><a href="#cb86-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
-<span id="cb86-24"><a href="#cb86-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8486</span>       <span class="fl">0.004313803</span></span>
-<span id="cb86-25"><a href="#cb86-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4458</span>       <span class="fl">0.150214925</span></span>
-<span id="cb86-26"><a href="#cb86-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">832</span>      <span class="sc">-</span><span class="fl">0.826587688</span></span>
-<span id="cb86-27"><a href="#cb86-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">732</span>       <span class="fl">0.922028515</span></span>
-<span id="cb86-28"><a href="#cb86-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2330</span>      <span class="sc">-</span><span class="fl">0.012852350</span></span>
-<span id="cb86-29"><a href="#cb86-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9050</span>      <span class="sc">-</span><span class="fl">0.181689350</span></span></code></pre></div>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" tabindex="-1"></a>dpo_analyses_fc1<span class="fl">.5</span> <span class="ot">&lt;-</span></span>
+<span id="cb92-2"><a href="#cb92-2" tabindex="-1"></a>  <span class="fu">reapply.thresholds</span>(dpo_analyses,</span>
+<span id="cb92-3"><a href="#cb92-3" tabindex="-1"></a>                     <span class="at">linear.FC =</span> <span class="fl">1.5</span>,</span>
+<span id="cb92-4"><a href="#cb92-4" tabindex="-1"></a>                     <span class="at">p.adjusted =</span> <span class="fl">0.05</span>,</span>
+<span id="cb92-5"><a href="#cb92-5" tabindex="-1"></a>                     <span class="at">linear.FC.unresp.range =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">/</span><span class="fl">1.1</span>, <span class="fl">1.1</span>),</span>
+<span id="cb92-6"><a href="#cb92-6" tabindex="-1"></a>                     <span class="at">up.color =</span> <span class="st">"indianred"</span>,</span>
+<span id="cb92-7"><a href="#cb92-7" tabindex="-1"></a>                     <span class="at">down.color =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb92-8"><a href="#cb92-8" tabindex="-1"></a>                     <span class="at">unresponsive.color =</span> <span class="st">"purple"</span>,</span>
+<span id="cb92-9"><a href="#cb92-9" tabindex="-1"></a>                     <span class="at">null.color =</span> <span class="st">"gray"</span>)</span>
+<span id="cb92-10"><a href="#cb92-10" tabindex="-1"></a></span>
+<span id="cb92-11"><a href="#cb92-11" tabindex="-1"></a><span class="fu">summary</span>(dpo_analyses_fc1<span class="fl">.5</span>)</span>
+<span id="cb92-12"><a href="#cb92-12" tabindex="-1"></a><span class="sc">&gt;</span>                        contrast.id group.factor     group1  group2 paired.test</span>
+<span id="cb92-13"><a href="#cb92-13" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb92-14"><a href="#cb92-14" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb92-15"><a href="#cb92-15" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb92-16"><a href="#cb92-16" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span> condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs <span class="dv">6</span>h.DMSO    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 <span class="dv">6</span>h.DMSO        <span class="cn">TRUE</span></span>
+<span id="cb92-17"><a href="#cb92-17" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb92-18"><a href="#cb92-18" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb92-19"><a href="#cb92-19" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb92-20"><a href="#cb92-20" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>     condition<span class="sc">:</span> <span class="dv">6</span>h<span class="fl">.10</span>nM.E2 vs FBS    condition <span class="dv">6</span>h<span class="fl">.10</span>nM.E2     FBS        <span class="cn">TRUE</span></span>
+<span id="cb92-21"><a href="#cb92-21" tabindex="-1"></a><span class="sc">&gt;</span>    diff.status    n median.FoldChange</span>
+<span id="cb92-22"><a href="#cb92-22" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">1</span>      <span class="dv">6</span>h.DMSO    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb92-23"><a href="#cb92-23" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">2</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2    <span class="dv">0</span>                <span class="cn">NA</span></span>
+<span id="cb92-24"><a href="#cb92-24" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">3</span> unresponsive <span class="dv">8486</span>       <span class="fl">0.004313803</span></span>
+<span id="cb92-25"><a href="#cb92-25" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">4</span>         null <span class="dv">4458</span>       <span class="fl">0.150214925</span></span>
+<span id="cb92-26"><a href="#cb92-26" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">5</span>          FBS  <span class="dv">832</span>      <span class="sc">-</span><span class="fl">0.826587688</span></span>
+<span id="cb92-27"><a href="#cb92-27" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">6</span>   <span class="dv">6</span>h<span class="fl">.10</span>nM.E2  <span class="dv">732</span>       <span class="fl">0.922028515</span></span>
+<span id="cb92-28"><a href="#cb92-28" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">7</span> unresponsive <span class="dv">2330</span>      <span class="sc">-</span><span class="fl">0.012852350</span></span>
+<span id="cb92-29"><a href="#cb92-29" tabindex="-1"></a><span class="sc">&gt;</span> <span class="dv">8</span>         null <span class="dv">9050</span>      <span class="sc">-</span><span class="fl">0.181689350</span></span></code></pre></div>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -4267,7 +4623,7 @@ from the CORUM data and use it for GSEA and ORA analyses.</p>
 <div class="section level4">
 <h4 id="define-geneset">Define geneSet<a class="anchor" aria-label="anchor" href="#define-geneset"></a>
 </h4>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## GeneSet Enrichment Analyses</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"corum_v5.0"</span>, package <span class="op">=</span> <span class="st">"DEprot"</span><span class="op">)</span></span>
 <span></span>
@@ -4343,7 +4699,7 @@ the two groups. Depending on the sample size, these two methods can lead
 to different rankings. To compare the two methods it is possible to plot
 the correlation of the two ranks and scores using
 <code>compare.ranking</code>:</p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/compare.ranking.html">compare.ranking</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                contrast <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/compare_ranking-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
@@ -4352,7 +4708,7 @@ the correlation of the two ranks and scores using
 <div class="section level5">
 <h5 id="geneset-enrichment-analyses-gsea">GeneSet Enrichment Analyses (GSEA)<a class="anchor" aria-label="anchor" href="#geneset-enrichment-analyses-gsea"></a>
 </h5>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GSEA.results</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -4373,7 +4729,7 @@ the <code>DEprot::test.toolbox$gsea.results</code> dummy example.</p>
 <div class="section level5">
 <h5 id="overrepresentation-analyses-ora">OverRepresentation Analyses (ORA)<a class="anchor" aria-label="anchor" href="#overrepresentation-analyses-ora"></a>
 </h5>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ORA.results</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -4461,7 +4817,7 @@ analyses</td>
 propagation method developed by <a href="https://doi.org/10.1093/nar/gkae456" class="external-link">Elizarraras <em>et
 al.</em></a> and implemented in <a href="https://www.webgestalt.org/" class="external-link">WebGestalt</a> online toolkit.<br>
 This reduces the size of redundant enrichment discoveries.</p>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">GSEA.results.simplified</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simplify.enrichment.html">simplify.enrichment</a></span><span class="op">(</span><span class="va">GSEA.results</span><span class="op">)</span></span>
 <span><span class="va">ORA.results.simplified</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simplify.enrichment.html">simplify.enrichment</a></span><span class="op">(</span><span class="va">ORA.results</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -4495,7 +4851,7 @@ x-axis and the genesets on the y-axis. The size of the dots corresponds
 to the fold enrichment (or to the gene ratio), their color to the
 significance, and the number written inside to the count of proteins
 found in that geneset.</p>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combined</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/combine.enrichments.html">combine.enrichments</a></span><span class="op">(</span>enrichment.list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>`E2 6h` <span class="op">=</span> <span class="va">ORA.results.6h</span>,</span>
 <span>                                             `E2 24h` <span class="op">=</span> <span class="va">ORA.results.24h</span>,</span>
@@ -4567,7 +4923,7 @@ comparison, for instance the ORA of the proteins up- and down-regulated
 in a contrast, <code>divergent.enrichment</code> plots them
 back-to-back: the first element of the list on the positive side, the
 second one with the sign inverted.</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ORA.E2</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/geneset.enrichment.html">geneset.enrichment</a></span><span class="op">(</span>DEprot.analyses.object <span class="op">=</span> <span class="va">dpo_analyses</span>,</span>
 <span>                     contrast <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -4661,7 +5017,7 @@ and decoys are dropped, q-value cutoffs are applied and the sample names
 are extracted from the raw-file paths. The object itself is then built
 internally by <code><a href="../reference/load.counts2.html">load.counts2()</a></code>, hence the result is
 equivalent to a manual loading.</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.external.html">import.external</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"report.pg_matrix.tsv"</span>,</span>
 <span>                       metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
 <span>                       source <span class="op">=</span> <span class="st">"diann.matrix"</span><span class="op">)</span></span></code></pre></div>
@@ -4731,7 +5087,7 @@ precursors of each protein group; <code>"none"</code> takes the
 protein-level column already present in the report
 (<code>PG.MaxLFQ</code> for DIA-NN, <code>PG.Quantity</code> for
 Spectronaut) without recomputing anything.</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.external.html">import.external</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"report.parquet"</span>,</span>
 <span>                       metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
 <span>                       source <span class="op">=</span> <span class="st">"diann"</span>,</span>
@@ -4765,7 +5121,7 @@ MaxLFQ summarization and <a href="https://cran.r-project.org/package=nanoparquet
 for the <code>.parquet</code> reports of DIA-NN 1.9 and above. They are
 requested only when actually needed, and the installation is never
 performed without an explicit confirmation.</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.missing: "ask" (default), "always" or "never"</span></span>
 <span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.external.html">import.external</a></span><span class="op">(</span>file <span class="op">=</span> <span class="st">"report.parquet"</span>,</span>
 <span>                       metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
@@ -4779,7 +5135,7 @@ command to run.</p>
 <code>read.spectronaut()</code>, <code>read.fragpipe()</code> and
 <code>read.maxquant()</code> simply call <code><a href="../reference/import.external.html">import.external()</a></code>
 with the corresponding <code>source</code>.</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu">read.fragpipe</span><span class="op">(</span>file <span class="op">=</span> <span class="st">"combined_protein.tsv"</span>,</span>
 <span>                     metadata <span class="op">=</span> <span class="va">sample.config</span>,</span>
 <span>                     quantity <span class="op">=</span> <span class="st">"MaxLFQ Intensity"</span><span class="op">)</span></span></code></pre></div>
@@ -4797,7 +5153,7 @@ on disk: their summarization functions return an R object. Hence these
 results are handled by a dedicated function,
 <code><a href="../reference/import.msstats.html">import.msstats()</a></code>, which takes the object itself rather than
 a file path.</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># label-free</span></span>
 <span><span class="va">summarized</span> <span class="op">&lt;-</span> <span class="fu">MSstats</span><span class="fu">::</span><span class="fu">dataProcess</span><span class="op">(</span><span class="va">raw</span><span class="op">)</span></span>
 <span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.msstats.html">import.msstats</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">summarized</span><span class="op">)</span></span>
@@ -4859,7 +5215,7 @@ from it, keeping the columns that are constant within each sample:
 <code>Condition</code>, <code>BioReplicate</code>, <code>Mixture</code>
 and <code>TechRepMixture</code> for TMT. The result is a usable metadata
 table and not a simple list of sample names.</p>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/import.msstats.html">import.msstats</a></span><span class="op">(</span>object <span class="op">=</span> <span class="va">summarized.tmt</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/get.metadata.html">get.metadata</a></span><span class="op">(</span><span class="va">dpo</span><span class="op">)</span></span></code></pre></div>
 <p>Two more points deserve attention. MSstats abundances are already
@@ -4889,7 +5245,7 @@ is therefore discouraged. The mixture effect, on the contrary, is a
 genuine batch effect and can be corrected with
 <code><a href="../reference/harmonize.batches.html">harmonize.batches()</a></code> using the <code>Mixture</code> column
 of the generated metadata.</p>
-<div class="sourceCode" id="cb100"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb106"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dpo</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/harmonize.batches.html">harmonize.batches</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
 <span>                         batch.column <span class="op">=</span> <span class="st">"Mixture"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -4911,7 +5267,7 @@ simply a plotting function of another package. Nothing has to be
 reassembled by hand, since all the count matrices available become
 assays, the metadata table becomes the column annotation, and the
 protein information becomes the row annotation.</p>
-<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/export.external.html">export.external</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>,</span>
 <span>                      format <span class="op">=</span> <span class="st">"SummarizedExperiment"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -4963,7 +5319,7 @@ object are exported. The one indicated by <code>counts.type</code> is
 placed first, so that it becomes the assay returned by
 <code>assay(se)</code> without further arguments; left to its default
 <code>"auto"</code>, the most processed matrix available is used.</p>
-<div class="sourceCode" id="cb102"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># imputed counts as primary assay, all the others still accessible</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/export.external.html">export.external</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>, counts.type <span class="op">=</span> <span class="st">"imputed"</span><span class="op">)</span></span>
 <span></span>
@@ -4986,7 +5342,7 @@ contrast, prefixed with the contrast name to keep them distinguishable
 <code>condition_treated.vs.untreated.padj</code>, and so on). A subset
 can be selected with <code>contrast.subset</code>, in the same way as in
 <code><a href="../reference/export.analyses.html">export.analyses()</a></code>.</p>
-<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb109"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/export.external.html">export.external</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo.analyses</span>,</span>
 <span>                      add.results <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                      contrast.subset <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
@@ -4999,7 +5355,7 @@ differential analyses. These parameters are written in the metadata list
 of the exported object rather than being dropped silently, and
 <code>keep.object = TRUE</code> stores the entire original object there
 too, which makes the round-trip lossless.</p>
-<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb110"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/export.external.html">export.external</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="va">dpo</span>, keep.object <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">S4Vectors</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/S4Vectors/man/Annotated-class.html" class="external-link">metadata</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">imputation.method</span></span>
@@ -5017,7 +5373,7 @@ never performed without an explicit confirmation
 <code><a href="../reference/as.MSnSet.html">as.MSnSet()</a></code> simply call <code><a href="../reference/export.external.html">export.external()</a></code> with
 the corresponding <code>format</code>, and accept all its other
 parameters.</p>
-<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb111"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as.SummarizedExperiment.html">as.SummarizedExperiment</a></span><span class="op">(</span><span class="va">dpo.analyses</span><span class="op">)</span></span>
 <span><span class="va">qf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/as.QFeatures.html">as.QFeatures</a></span><span class="op">(</span><span class="va">dpo</span>, assay.name <span class="op">=</span> <span class="st">"proteins"</span><span class="op">)</span></span></code></pre></div>
 <p><br></p>
@@ -5065,151 +5421,151 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <h2 id="session-info">
 <strong>Session info</strong><a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb106"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb106-2"><a href="#cb106-2" tabindex="-1"></a><span class="sc">&gt;</span> R version <span class="dv">4</span>.<span class="fl">6.1</span> (<span class="dv">2026-06-24</span>)</span>
-<span id="cb106-3"><a href="#cb106-3" tabindex="-1"></a><span class="sc">&gt;</span> Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span>gnu</span>
-<span id="cb106-4"><a href="#cb106-4" tabindex="-1"></a><span class="sc">&gt;</span> Running under<span class="sc">:</span> Ubuntu <span class="dv">24</span>.<span class="fl">04.4</span> LTS</span>
-<span id="cb106-5"><a href="#cb106-5" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb106-6"><a href="#cb106-6" tabindex="-1"></a><span class="er">&gt;</span> Matrix products<span class="sc">:</span> default</span>
-<span id="cb106-7"><a href="#cb106-7" tabindex="-1"></a><span class="sc">&gt;</span> BLAS<span class="sc">:</span>   <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libblas.so<span class="fl">.3</span> </span>
-<span id="cb106-8"><a href="#cb106-8" tabindex="-1"></a><span class="sc">&gt;</span> LAPACK<span class="sc">:</span> <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libopenblasp<span class="sc">-</span>r0.<span class="dv">3</span>.<span class="fl">26.</span>so;  LAPACK version <span class="dv">3</span>.<span class="fl">12.0</span></span>
-<span id="cb106-9"><a href="#cb106-9" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb106-10"><a href="#cb106-10" tabindex="-1"></a><span class="er">&gt;</span> locale<span class="sc">:</span></span>
-<span id="cb106-11"><a href="#cb106-11" tabindex="-1"></a><span class="er">&gt;</span>  [<span class="dv">1</span>] LC_CTYPE<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NUMERIC<span class="ot">=</span>C           LC_TIME<span class="ot">=</span>C.UTF<span class="dv">-8</span>       </span>
-<span id="cb106-12"><a href="#cb106-12" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">4</span>] LC_COLLATE<span class="ot">=</span>C.UTF<span class="dv">-8</span>     LC_MONETARY<span class="ot">=</span>C.UTF<span class="dv">-8</span>    LC_MESSAGES<span class="ot">=</span>C.UTF<span class="dv">-8</span>   </span>
-<span id="cb106-13"><a href="#cb106-13" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">7</span>] LC_PAPER<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NAME<span class="ot">=</span>C              LC_ADDRESS<span class="ot">=</span>C          </span>
-<span id="cb106-14"><a href="#cb106-14" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">10</span>] LC_TELEPHONE<span class="ot">=</span>C         LC_MEASUREMENT<span class="ot">=</span>C.UTF<span class="dv">-8</span> LC_IDENTIFICATION<span class="ot">=</span>C   </span>
-<span id="cb106-15"><a href="#cb106-15" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb106-16"><a href="#cb106-16" tabindex="-1"></a><span class="er">&gt;</span> time zone<span class="sc">:</span> UTC</span>
-<span id="cb106-17"><a href="#cb106-17" tabindex="-1"></a><span class="sc">&gt;</span> tzcode source<span class="sc">:</span> <span class="fu">system</span> (glibc)</span>
-<span id="cb106-18"><a href="#cb106-18" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb106-19"><a href="#cb106-19" tabindex="-1"></a><span class="er">&gt;</span> attached base packages<span class="sc">:</span></span>
-<span id="cb106-20"><a href="#cb106-20" tabindex="-1"></a><span class="er">&gt;</span> [<span class="dv">1</span>] stats     graphics  grDevices utils     datasets  methods   base     </span>
-<span id="cb106-21"><a href="#cb106-21" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb106-22"><a href="#cb106-22" tabindex="-1"></a><span class="er">&gt;</span> other attached packages<span class="sc">:</span></span>
-<span id="cb106-23"><a href="#cb106-23" tabindex="-1"></a><span class="er">&gt;</span> [<span class="dv">1</span>] doRNG_1.<span class="dv">8</span>.<span class="fl">6.3</span>  rngtools_1.<span class="fl">5.2</span> foreach_1.<span class="fl">5.2</span>  ggpubr_1.<span class="fl">0.0</span>   legendry_0.<span class="fl">3.0</span></span>
-<span id="cb106-24"><a href="#cb106-24" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">6</span>] ggplot2_4.<span class="fl">0.3</span>  dplyr_1.<span class="fl">2.1</span>    DEprot_2.<span class="fl">0.0</span>  </span>
-<span id="cb106-25"><a href="#cb106-25" tabindex="-1"></a><span class="sc">&gt;</span> </span>
-<span id="cb106-26"><a href="#cb106-26" tabindex="-1"></a><span class="er">&gt;</span> loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
-<span id="cb106-27"><a href="#cb106-27" tabindex="-1"></a><span class="er">&gt;</span>   [<span class="dv">1</span>] R.methodsS3_1.<span class="fl">8.2</span>           IRanges_2.<span class="fl">46.0</span>             </span>
-<span id="cb106-28"><a href="#cb106-28" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">3</span>] progress_1.<span class="fl">2.3</span>              MBQN_2.<span class="fl">24.0</span>                </span>
-<span id="cb106-29"><a href="#cb106-29" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">5</span>] nnet_7<span class="fl">.3</span><span class="dv">-20</span>                 Biostrings_2.<span class="fl">80.1</span>          </span>
-<span id="cb106-30"><a href="#cb106-30" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">7</span>] vctrs_0.<span class="fl">7.3</span>                 ggtangle_0.<span class="fl">1.2</span>             </span>
-<span id="cb106-31"><a href="#cb106-31" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">9</span>] digest_0.<span class="fl">6.39</span>               png_0<span class="fl">.1</span><span class="dv">-9</span>                  </span>
-<span id="cb106-32"><a href="#cb106-32" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">11</span>] shape_1.<span class="dv">4</span>.<span class="fl">6.1</span>               proxy_0<span class="fl">.4</span><span class="dv">-29</span>               </span>
-<span id="cb106-33"><a href="#cb106-33" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">13</span>] ggrepel_0.<span class="fl">9.8</span>               parallelly_1.<span class="fl">48.0</span>          </span>
-<span id="cb106-34"><a href="#cb106-34" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">15</span>] MASS_7<span class="fl">.3</span><span class="dv">-65</span>                 fontLiberation_0.<span class="fl">1.0</span>       </span>
-<span id="cb106-35"><a href="#cb106-35" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">17</span>] pkgdown_2.<span class="fl">2.1</span>               reshape2_1.<span class="fl">4.5</span>             </span>
-<span id="cb106-36"><a href="#cb106-36" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">19</span>] BiocGenerics_0.<span class="fl">58.1</span>         qvalue_2.<span class="fl">44.0</span>              </span>
-<span id="cb106-37"><a href="#cb106-37" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">21</span>] withr_3.<span class="fl">0.3</span>                 xfun_0<span class="fl">.60</span>                  </span>
-<span id="cb106-38"><a href="#cb106-38" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">23</span>] ggfun_0.<span class="fl">2.1</span>                 survival_3<span class="fl">.8</span><span class="dv">-6</span>             </span>
-<span id="cb106-39"><a href="#cb106-39" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">25</span>] commonmark_2.<span class="fl">0.0</span>            memoise_2.<span class="fl">0.1</span>              </span>
-<span id="cb106-40"><a href="#cb106-40" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">27</span>] prettydoc_0.<span class="fl">4.1</span>             clusterProfiler_4.<span class="fl">20.0</span>     </span>
-<span id="cb106-41"><a href="#cb106-41" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">29</span>] Seqinfo_1.<span class="fl">2.0</span>               gson_0.<span class="fl">2.1</span>                 </span>
-<span id="cb106-42"><a href="#cb106-42" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">31</span>] systemfonts_1.<span class="fl">3.2</span>           ragg_1.<span class="fl">5.2</span>                 </span>
-<span id="cb106-43"><a href="#cb106-43" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">33</span>] tidytree_0.<span class="fl">4.8</span>              zoo_1<span class="fl">.9</span><span class="dv">-0</span>                  </span>
-<span id="cb106-44"><a href="#cb106-44" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">35</span>] GlobalOptions_0.<span class="fl">1.4</span>         R.oo_1.<span class="fl">27.1</span>                </span>
-<span id="cb106-45"><a href="#cb106-45" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">37</span>] DEoptimR_1<span class="fl">.2</span><span class="dv">-0</span>              Formula_1<span class="fl">.2</span><span class="dv">-6</span>              </span>
-<span id="cb106-46"><a href="#cb106-46" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">39</span>] prettyunits_1.<span class="fl">2.0</span>           KEGGREST_1.<span class="fl">52.2</span>            </span>
-<span id="cb106-47"><a href="#cb106-47" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">41</span>] otel_0.<span class="fl">2.0</span>                  httr_1.<span class="fl">4.8</span>                 </span>
-<span id="cb106-48"><a href="#cb106-48" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">43</span>] rstatix_1.<span class="fl">1.0</span>               globals_0.<span class="fl">19.1</span>             </span>
-<span id="cb106-49"><a href="#cb106-49" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">45</span>] fitdistrplus_1<span class="fl">.2</span><span class="dv">-6</span>          ps_1.<span class="fl">9.3</span>                   </span>
-<span id="cb106-50"><a href="#cb106-50" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">47</span>] pan_2<span class="fl">.0</span>                     generics_0.<span class="fl">1.4</span>             </span>
-<span id="cb106-51"><a href="#cb106-51" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">49</span>] DOSE_4.<span class="fl">6.0</span>                  missForest_1.<span class="fl">6.1</span>           </span>
-<span id="cb106-52"><a href="#cb106-52" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">51</span>] processx_3.<span class="fl">9.0</span>              curl_7.<span class="fl">1.0</span>                 </span>
-<span id="cb106-53"><a href="#cb106-53" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">53</span>] S4Vectors_0.<span class="fl">50.1</span>            aPEAR_1.<span class="fl">0.0</span>                </span>
-<span id="cb106-54"><a href="#cb106-54" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">55</span>] polyclip_1<span class="fl">.10</span><span class="dv">-7</span>             randomForest_4<span class="fl">.7-1.2</span>       </span>
-<span id="cb106-55"><a href="#cb106-55" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">57</span>] lgr_0.<span class="fl">5.2</span>                   SparseArray_1.<span class="fl">12.2</span>         </span>
-<span id="cb106-56"><a href="#cb106-56" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">59</span>] stringr_1.<span class="fl">6.0</span>               desc_1.<span class="fl">4.3</span>                 </span>
-<span id="cb106-57"><a href="#cb106-57" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">61</span>] doParallel_1.<span class="fl">0.17</span>           evaluate_1.<span class="fl">0.5</span>             </span>
-<span id="cb106-58"><a href="#cb106-58" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">63</span>] S4Arrays_1.<span class="fl">12.0</span>             proDA_1.<span class="fl">26.0</span>               </span>
-<span id="cb106-59"><a href="#cb106-59" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">65</span>] hms_1.<span class="fl">1.4</span>                   glmnet_5<span class="fl">.0</span>                 </span>
-<span id="cb106-60"><a href="#cb106-60" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">67</span>] GenomicRanges_1.<span class="fl">64.0</span>        colorspace_2<span class="fl">.1</span><span class="dv">-3</span>           </span>
-<span id="cb106-61"><a href="#cb106-61" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">69</span>] apcluster_1.<span class="fl">4.14</span>            magrittr_2.<span class="fl">0.5</span>             </span>
-<span id="cb106-62"><a href="#cb106-62" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">71</span>] lmtest_0<span class="fl">.9</span><span class="dv">-40</span>               viridis_0.<span class="fl">6.5</span>              </span>
-<span id="cb106-63"><a href="#cb106-63" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">73</span>] ggtree_4.<span class="fl">2.0</span>                lattice_0<span class="fl">.22</span><span class="dv">-9</span>             </span>
-<span id="cb106-64"><a href="#cb106-64" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">75</span>] palmerpenguins_0.<span class="fl">1.1</span>        robustbase_0<span class="fl">.99</span><span class="dv">-7</span>          </span>
-<span id="cb106-65"><a href="#cb106-65" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">77</span>] cowplot_1.<span class="fl">2.0</span>               matrixStats_1.<span class="fl">5.0</span>          </span>
-<span id="cb106-66"><a href="#cb106-66" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">79</span>] class_7<span class="fl">.3</span><span class="dv">-23</span>                prolfqua_1.<span class="fl">7.0</span>             </span>
-<span id="cb106-67"><a href="#cb106-67" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">81</span>] pillar_1.<span class="fl">11.1</span>               nlme_3<span class="fl">.1</span><span class="dv">-169</span>               </span>
-<span id="cb106-68"><a href="#cb106-68" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">83</span>] iterators_1.<span class="fl">0.14</span>            compiler_4.<span class="fl">6.1</span>             </span>
-<span id="cb106-69"><a href="#cb106-69" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">85</span>] stringi_1.<span class="fl">8.9</span>               paradox_1.<span class="fl">0.1</span>              </span>
-<span id="cb106-70"><a href="#cb106-70" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">87</span>] jomo_2<span class="fl">.7</span><span class="dv">-6</span>                  minqa_1.<span class="fl">2.8</span>                </span>
-<span id="cb106-71"><a href="#cb106-71" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">89</span>] arules_1.<span class="fl">7.14</span>               SummarizedExperiment_1.<span class="fl">42.0</span></span>
-<span id="cb106-72"><a href="#cb106-72" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">91</span>] lubridate_1.<span class="fl">9.5</span>             HarmonizR_1.<span class="fl">10.0</span>           </span>
-<span id="cb106-73"><a href="#cb106-73" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">93</span>] plyr_1.<span class="fl">8.9</span>                  crayon_1.<span class="fl">5.3</span>               </span>
-<span id="cb106-74"><a href="#cb106-74" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">95</span>] abind_1<span class="fl">.4</span><span class="dv">-8</span>                 ggdendro_0.<span class="fl">2.0</span>             </span>
-<span id="cb106-75"><a href="#cb106-75" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">97</span>] gridGraphics_0<span class="fl">.5</span><span class="dv">-1</span>          ggtext_0.<span class="fl">1.2</span>               </span>
-<span id="cb106-76"><a href="#cb106-76" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">99</span>] nortest_1<span class="fl">.0</span><span class="dv">-4</span>               sp_2<span class="fl">.2</span><span class="dv">-3</span>                   </span>
-<span id="cb106-77"><a href="#cb106-77" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">101</span>] bit_4.<span class="fl">6.0</span>                   UpSetR_1.<span class="fl">4.1</span>               </span>
-<span id="cb106-78"><a href="#cb106-78" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">103</span>] pcaMethods_2.<span class="fl">4.0</span>            codetools_0<span class="fl">.2</span><span class="dv">-20</span>           </span>
-<span id="cb106-79"><a href="#cb106-79" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">105</span>] textshaping_1.<span class="fl">0.5</span>           bslib_0.<span class="fl">12.0</span>               </span>
-<span id="cb106-80"><a href="#cb106-80" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">107</span>] e1071_1<span class="fl">.7</span><span class="dv">-17</span>                GetoptLong_1.<span class="fl">1.1</span>           </span>
-<span id="cb106-81"><a href="#cb106-81" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">109</span>] plotly_4.<span class="fl">12.1</span>               splines_4.<span class="fl">6.1</span>              </span>
-<span id="cb106-82"><a href="#cb106-82" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">111</span>] markdown_2<span class="fl">.0</span>                circlize_0.<span class="fl">4.18</span>            </span>
-<span id="cb106-83"><a href="#cb106-83" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">113</span>] Rcpp_1.<span class="fl">1.2</span>                  tidydr_0.<span class="fl">0.6</span>               </span>
-<span id="cb106-84"><a href="#cb106-84" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">115</span>] gridtext_0.<span class="fl">1.6</span>              knitr_1<span class="fl">.51</span>                 </span>
-<span id="cb106-85"><a href="#cb106-85" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">117</span>] blob_1.<span class="fl">3.0</span>                  clue_0<span class="fl">.3</span><span class="dv">-68</span>                </span>
-<span id="cb106-86"><a href="#cb106-86" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">119</span>] lme4_2<span class="fl">.0</span><span class="dv">-6</span>                  itertools_0<span class="fl">.1</span><span class="dv">-3</span>            </span>
-<span id="cb106-87"><a href="#cb106-87" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">121</span>] fs_2.<span class="fl">1.0</span>                    listenv_1.<span class="fl">0.0</span>              </span>
-<span id="cb106-88"><a href="#cb106-88" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">123</span>] checkmate_2.<span class="fl">3.4</span>             Rdpack_2.<span class="fl">6.6</span>               </span>
-<span id="cb106-89"><a href="#cb106-89" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">125</span>] rvcheck_0.<span class="fl">2.1</span>               expm_1<span class="fl">.0</span><span class="dv">-0</span>                 </span>
-<span id="cb106-90"><a href="#cb106-90" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">127</span>] ggsignif_0.<span class="fl">6.4</span>              ggplotify_0.<span class="fl">1.3</span>            </span>
-<span id="cb106-91"><a href="#cb106-91" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">129</span>] MCL_1<span class="fl">.0</span>                     tibble_3.<span class="fl">3.1</span>               </span>
-<span id="cb106-92"><a href="#cb106-92" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">131</span>] Matrix_1<span class="fl">.7</span><span class="dv">-5</span>                callr_3.<span class="fl">8.0</span>                </span>
-<span id="cb106-93"><a href="#cb106-93" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">133</span>] statmod_1.<span class="fl">5.2</span>               tweenr_2.<span class="fl">0.3</span>               </span>
-<span id="cb106-94"><a href="#cb106-94" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">135</span>] pkgconfig_2.<span class="fl">0.3</span>             tools_4.<span class="fl">6.1</span>                </span>
-<span id="cb106-95"><a href="#cb106-95" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">137</span>] cachem_1.<span class="fl">1.0</span>                rbibutils_2.<span class="fl">4.1</span>            </span>
-<span id="cb106-96"><a href="#cb106-96" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">139</span>] RSQLite_3.<span class="fl">53.3</span>              viridisLite_0.<span class="fl">4.3</span>          </span>
-<span id="cb106-97"><a href="#cb106-97" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">141</span>] DBI_1.<span class="fl">3.0</span>                   fastmap_1.<span class="fl">2.0</span>              </span>
-<span id="cb106-98"><a href="#cb106-98" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">143</span>] rmarkdown_2<span class="fl">.31</span>              scales_1.<span class="fl">4.0</span>               </span>
-<span id="cb106-99"><a href="#cb106-99" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">145</span>] grid_4.<span class="fl">6.1</span>                  broom_1.<span class="fl">0.13</span>               </span>
-<span id="cb106-100"><a href="#cb106-100" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">147</span>] sass_0.<span class="fl">4.10</span>                 patchwork_1.<span class="fl">3.2</span>            </span>
-<span id="cb106-101"><a href="#cb106-101" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">149</span>] BiocManager_1.<span class="fl">30.27</span>         carData_3<span class="fl">.0</span><span class="dv">-6</span>              </span>
-<span id="cb106-102"><a href="#cb106-102" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">151</span>] rpart_4.<span class="fl">1.27</span>                farver_2.<span class="fl">1.2</span>               </span>
-<span id="cb106-103"><a href="#cb106-103" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">153</span>] moocore_0.<span class="fl">3.2</span>               reformulas_0.<span class="fl">4.4</span>           </span>
-<span id="cb106-104"><a href="#cb106-104" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">155</span>] scatterpie_0.<span class="fl">2.6</span>            mgcv_1<span class="fl">.9</span><span class="dv">-4</span>                 </span>
-<span id="cb106-105"><a href="#cb106-105" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">157</span>] yaml_2.<span class="fl">3.12</span>                 MatrixGenerics_1.<span class="fl">24.0</span>      </span>
-<span id="cb106-106"><a href="#cb106-106" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">159</span>] cli_3.<span class="fl">6.6</span>                   purrr_1.<span class="fl">2.2</span>                </span>
-<span id="cb106-107"><a href="#cb106-107" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">161</span>] stats4_4.<span class="fl">6.1</span>                lifecycle_1.<span class="fl">0.5</span>            </span>
-<span id="cb106-108"><a href="#cb106-108" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">163</span>] bbotk_1.<span class="fl">12.0</span>                Biobase_2.<span class="fl">72.0</span>             </span>
-<span id="cb106-109"><a href="#cb106-109" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">165</span>] backports_1.<span class="fl">5.1</span>             mlr3tuning_1.<span class="fl">6.1</span>           </span>
-<span id="cb106-110"><a href="#cb106-110" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">167</span>] timechange_0.<span class="fl">4.0</span>            gtable_0.<span class="fl">3.6</span>               </span>
-<span id="cb106-111"><a href="#cb106-111" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">169</span>] rjson_0.<span class="fl">2.23</span>                ggridges_0.<span class="fl">5.7</span>             </span>
-<span id="cb106-112"><a href="#cb106-112" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">171</span>] parallel_4.<span class="fl">6.1</span>              ape_5<span class="fl">.8</span><span class="dv">-1</span>                  </span>
-<span id="cb106-113"><a href="#cb106-113" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">173</span>] SnowballC_0.<span class="fl">7.1</span>             limma_3.<span class="fl">68.4</span>               </span>
-<span id="cb106-114"><a href="#cb106-114" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">175</span>] enrichit_0.<span class="fl">2.1</span>              jsonlite_2.<span class="fl">0.0</span>             </span>
-<span id="cb106-115"><a href="#cb106-115" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">177</span>] mitml_0<span class="fl">.4</span><span class="dv">-5</span>                 bit64_4.<span class="fl">8.2</span>                </span>
-<span id="cb106-116"><a href="#cb106-116" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">179</span>] yulab.utils_0.<span class="fl">2.4</span>           mlr3learners_0.<span class="fl">15.1</span>        </span>
-<span id="cb106-117"><a href="#cb106-117" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">181</span>] litedown_0<span class="fl">.10</span>               ranger_0.<span class="fl">18.0</span>              </span>
-<span id="cb106-118"><a href="#cb106-118" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">183</span>] aisdk_1.<span class="fl">4.12</span>                mice_3.<span class="fl">19.0</span>                </span>
-<span id="cb106-119"><a href="#cb106-119" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">185</span>] jquerylib_0.<span class="fl">1.4</span>             GOSemSim_2.<span class="fl">38.3</span>            </span>
-<span id="cb106-120"><a href="#cb106-120" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">187</span>] R.utils_2.<span class="fl">13.0</span>              lazyeval_0.<span class="fl">2.3</span>             </span>
-<span id="cb106-121"><a href="#cb106-121" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">189</span>] htmltools_0.<span class="fl">5.9</span>             enrichplot_1.<span class="fl">32.0</span>          </span>
-<span id="cb106-122"><a href="#cb106-122" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">191</span>] GO.db_3.<span class="fl">23.1</span>                rappdirs_0.<span class="fl">3.4</span>             </span>
-<span id="cb106-123"><a href="#cb106-123" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">193</span>] mlr3pipelines_0.<span class="fl">11.0</span>        glue_1.<span class="fl">8.1</span>                 </span>
-<span id="cb106-124"><a href="#cb106-124" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">195</span>] httr2_1.<span class="fl">3.0</span>                 XVector_0.<span class="fl">52.0</span>             </span>
-<span id="cb106-125"><a href="#cb106-125" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">197</span>] VIM_7.<span class="fl">0.0</span>                   gdtools_0.<span class="fl">5.1</span>              </span>
-<span id="cb106-126"><a href="#cb106-126" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">199</span>] treeio_1.<span class="fl">36.1</span>               ComplexUpset_1.<span class="fl">3.3</span>         </span>
-<span id="cb106-127"><a href="#cb106-127" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">201</span>] gridExtra_2.<span class="fl">3.1</span>             boot_1<span class="fl">.3</span><span class="dv">-32</span>                </span>
-<span id="cb106-128"><a href="#cb106-128" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">203</span>] igraph_2.<span class="fl">3.3</span>                mlr3_1.<span class="fl">7.1</span>                 </span>
-<span id="cb106-129"><a href="#cb106-129" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">205</span>] R6_2.<span class="fl">6.1</span>                    tidyr_1.<span class="fl">3.2</span>                </span>
-<span id="cb106-130"><a href="#cb106-130" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">207</span>] ggiraph_0.<span class="fl">9.6</span>               fdrtool_1.<span class="fl">2.18</span>             </span>
-<span id="cb106-131"><a href="#cb106-131" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">209</span>] labeling_0.<span class="fl">4.3</span>              forcats_1.<span class="fl">0.1</span>              </span>
-<span id="cb106-132"><a href="#cb106-132" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">211</span>] vcd_1<span class="fl">.4</span><span class="dv">-14</span>                  cluster_2.<span class="dv">1</span>.<span class="fl">8.2</span>            </span>
-<span id="cb106-133"><a href="#cb106-133" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">213</span>] aplot_0.<span class="fl">3.1</span>                 nloptr_2.<span class="fl">2.1</span>               </span>
-<span id="cb106-134"><a href="#cb106-134" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">215</span>] mlr3misc_0.<span class="fl">22.0</span>             DelayedArray_0.<span class="fl">38.2</span>        </span>
-<span id="cb106-135"><a href="#cb106-135" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">217</span>] tidyselect_1.<span class="fl">2.1</span>            ggforce_0.<span class="fl">5.0</span>              </span>
-<span id="cb106-136"><a href="#cb106-136" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">219</span>] operator.tools_1.<span class="dv">6</span>.<span class="fl">3.1</span>      xml2_1.<span class="fl">6.0</span>                 </span>
-<span id="cb106-137"><a href="#cb106-137" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">221</span>] fontBitstreamVera_0.<span class="fl">1.1</span>     car_3<span class="fl">.1</span><span class="dv">-5</span>                  </span>
-<span id="cb106-138"><a href="#cb106-138" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">223</span>] AnnotationDbi_1.<span class="fl">74.0</span>        future_1.<span class="fl">75.0</span>              </span>
-<span id="cb106-139"><a href="#cb106-139" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">225</span>] S7_0.<span class="fl">2.2</span>                    laeken_0.<span class="fl">5.3</span>               </span>
-<span id="cb106-140"><a href="#cb106-140" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">227</span>] fontquiver_0.<span class="fl">2.1</span>            data.table_1.<span class="fl">18.4</span>          </span>
-<span id="cb106-141"><a href="#cb106-141" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">229</span>] htmlwidgets_1.<span class="fl">6.4</span>           ComplexHeatmap_2.<span class="fl">28.0</span>      </span>
-<span id="cb106-142"><a href="#cb106-142" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">231</span>] RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>          rlang_1.<span class="fl">3.0</span>                </span>
-<span id="cb106-143"><a href="#cb106-143" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">233</span>] lsa_0.<span class="fl">73.4</span>                  uuid_1<span class="fl">.2</span><span class="dv">-2</span>                 </span>
-<span id="cb106-144"><a href="#cb106-144" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">235</span>] logistf_1.<span class="fl">26.1</span>              formula.tools_1.<span class="fl">7.1</span>        </span>
-<span id="cb106-145"><a href="#cb106-145" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">237</span>] ggnewscale_0.<span class="fl">5.2</span></span></code></pre></div>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb112-2"><a href="#cb112-2" tabindex="-1"></a><span class="sc">&gt;</span> R version <span class="dv">4</span>.<span class="fl">6.1</span> (<span class="dv">2026-06-24</span>)</span>
+<span id="cb112-3"><a href="#cb112-3" tabindex="-1"></a><span class="sc">&gt;</span> Platform<span class="sc">:</span> x86_64<span class="sc">-</span>pc<span class="sc">-</span>linux<span class="sc">-</span>gnu</span>
+<span id="cb112-4"><a href="#cb112-4" tabindex="-1"></a><span class="sc">&gt;</span> Running under<span class="sc">:</span> Ubuntu <span class="dv">24</span>.<span class="fl">04.4</span> LTS</span>
+<span id="cb112-5"><a href="#cb112-5" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb112-6"><a href="#cb112-6" tabindex="-1"></a><span class="er">&gt;</span> Matrix products<span class="sc">:</span> default</span>
+<span id="cb112-7"><a href="#cb112-7" tabindex="-1"></a><span class="sc">&gt;</span> BLAS<span class="sc">:</span>   <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libblas.so<span class="fl">.3</span> </span>
+<span id="cb112-8"><a href="#cb112-8" tabindex="-1"></a><span class="sc">&gt;</span> LAPACK<span class="sc">:</span> <span class="er">/</span>usr<span class="sc">/</span>lib<span class="sc">/</span>x86_64<span class="sc">-</span>linux<span class="sc">-</span>gnu<span class="sc">/</span>openblas<span class="sc">-</span>pthread<span class="sc">/</span>libopenblasp<span class="sc">-</span>r0.<span class="dv">3</span>.<span class="fl">26.</span>so;  LAPACK version <span class="dv">3</span>.<span class="fl">12.0</span></span>
+<span id="cb112-9"><a href="#cb112-9" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb112-10"><a href="#cb112-10" tabindex="-1"></a><span class="er">&gt;</span> locale<span class="sc">:</span></span>
+<span id="cb112-11"><a href="#cb112-11" tabindex="-1"></a><span class="er">&gt;</span>  [<span class="dv">1</span>] LC_CTYPE<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NUMERIC<span class="ot">=</span>C           LC_TIME<span class="ot">=</span>C.UTF<span class="dv">-8</span>       </span>
+<span id="cb112-12"><a href="#cb112-12" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">4</span>] LC_COLLATE<span class="ot">=</span>C.UTF<span class="dv">-8</span>     LC_MONETARY<span class="ot">=</span>C.UTF<span class="dv">-8</span>    LC_MESSAGES<span class="ot">=</span>C.UTF<span class="dv">-8</span>   </span>
+<span id="cb112-13"><a href="#cb112-13" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">7</span>] LC_PAPER<span class="ot">=</span>C.UTF<span class="dv">-8</span>       LC_NAME<span class="ot">=</span>C              LC_ADDRESS<span class="ot">=</span>C          </span>
+<span id="cb112-14"><a href="#cb112-14" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">10</span>] LC_TELEPHONE<span class="ot">=</span>C         LC_MEASUREMENT<span class="ot">=</span>C.UTF<span class="dv">-8</span> LC_IDENTIFICATION<span class="ot">=</span>C   </span>
+<span id="cb112-15"><a href="#cb112-15" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb112-16"><a href="#cb112-16" tabindex="-1"></a><span class="er">&gt;</span> time zone<span class="sc">:</span> UTC</span>
+<span id="cb112-17"><a href="#cb112-17" tabindex="-1"></a><span class="sc">&gt;</span> tzcode source<span class="sc">:</span> <span class="fu">system</span> (glibc)</span>
+<span id="cb112-18"><a href="#cb112-18" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb112-19"><a href="#cb112-19" tabindex="-1"></a><span class="er">&gt;</span> attached base packages<span class="sc">:</span></span>
+<span id="cb112-20"><a href="#cb112-20" tabindex="-1"></a><span class="er">&gt;</span> [<span class="dv">1</span>] stats     graphics  grDevices utils     datasets  methods   base     </span>
+<span id="cb112-21"><a href="#cb112-21" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb112-22"><a href="#cb112-22" tabindex="-1"></a><span class="er">&gt;</span> other attached packages<span class="sc">:</span></span>
+<span id="cb112-23"><a href="#cb112-23" tabindex="-1"></a><span class="er">&gt;</span> [<span class="dv">1</span>] doRNG_1.<span class="dv">8</span>.<span class="fl">6.3</span>  rngtools_1.<span class="fl">5.2</span> foreach_1.<span class="fl">5.2</span>  ggpubr_1.<span class="fl">0.0</span>   legendry_0.<span class="fl">3.0</span></span>
+<span id="cb112-24"><a href="#cb112-24" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">6</span>] ggplot2_4.<span class="fl">0.3</span>  dplyr_1.<span class="fl">2.1</span>    DEprot_2.<span class="fl">1.0</span>  </span>
+<span id="cb112-25"><a href="#cb112-25" tabindex="-1"></a><span class="sc">&gt;</span> </span>
+<span id="cb112-26"><a href="#cb112-26" tabindex="-1"></a><span class="er">&gt;</span> loaded via a <span class="fu">namespace</span> (and not attached)<span class="sc">:</span></span>
+<span id="cb112-27"><a href="#cb112-27" tabindex="-1"></a><span class="er">&gt;</span>   [<span class="dv">1</span>] R.methodsS3_1.<span class="fl">8.2</span>           IRanges_2.<span class="fl">46.0</span>             </span>
+<span id="cb112-28"><a href="#cb112-28" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">3</span>] progress_1.<span class="fl">2.3</span>              MBQN_2.<span class="fl">24.0</span>                </span>
+<span id="cb112-29"><a href="#cb112-29" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">5</span>] nnet_7<span class="fl">.3</span><span class="dv">-20</span>                 Biostrings_2.<span class="fl">80.1</span>          </span>
+<span id="cb112-30"><a href="#cb112-30" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">7</span>] vctrs_0.<span class="fl">7.3</span>                 ggtangle_0.<span class="fl">1.2</span>             </span>
+<span id="cb112-31"><a href="#cb112-31" tabindex="-1"></a><span class="sc">&gt;</span>   [<span class="dv">9</span>] digest_0.<span class="fl">6.39</span>               png_0<span class="fl">.1</span><span class="dv">-9</span>                  </span>
+<span id="cb112-32"><a href="#cb112-32" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">11</span>] shape_1.<span class="dv">4</span>.<span class="fl">6.1</span>               proxy_0<span class="fl">.4</span><span class="dv">-29</span>               </span>
+<span id="cb112-33"><a href="#cb112-33" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">13</span>] ggrepel_0.<span class="fl">9.8</span>               parallelly_1.<span class="fl">48.0</span>          </span>
+<span id="cb112-34"><a href="#cb112-34" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">15</span>] MASS_7<span class="fl">.3</span><span class="dv">-65</span>                 fontLiberation_0.<span class="fl">1.0</span>       </span>
+<span id="cb112-35"><a href="#cb112-35" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">17</span>] pkgdown_2.<span class="fl">2.1</span>               reshape2_1.<span class="fl">4.5</span>             </span>
+<span id="cb112-36"><a href="#cb112-36" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">19</span>] BiocGenerics_0.<span class="fl">58.1</span>         qvalue_2.<span class="fl">44.0</span>              </span>
+<span id="cb112-37"><a href="#cb112-37" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">21</span>] withr_3.<span class="fl">0.3</span>                 xfun_0<span class="fl">.60</span>                  </span>
+<span id="cb112-38"><a href="#cb112-38" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">23</span>] ggfun_0.<span class="fl">2.1</span>                 survival_3<span class="fl">.8</span><span class="dv">-6</span>             </span>
+<span id="cb112-39"><a href="#cb112-39" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">25</span>] commonmark_2.<span class="fl">0.0</span>            memoise_2.<span class="fl">0.1</span>              </span>
+<span id="cb112-40"><a href="#cb112-40" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">27</span>] prettydoc_0.<span class="fl">4.1</span>             clusterProfiler_4.<span class="fl">20.0</span>     </span>
+<span id="cb112-41"><a href="#cb112-41" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">29</span>] Seqinfo_1.<span class="fl">2.0</span>               gson_0.<span class="fl">2.1</span>                 </span>
+<span id="cb112-42"><a href="#cb112-42" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">31</span>] systemfonts_1.<span class="fl">3.2</span>           ragg_1.<span class="fl">5.2</span>                 </span>
+<span id="cb112-43"><a href="#cb112-43" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">33</span>] tidytree_0.<span class="fl">4.8</span>              zoo_1<span class="fl">.9</span><span class="dv">-0</span>                  </span>
+<span id="cb112-44"><a href="#cb112-44" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">35</span>] GlobalOptions_0.<span class="fl">1.4</span>         R.oo_1.<span class="fl">27.1</span>                </span>
+<span id="cb112-45"><a href="#cb112-45" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">37</span>] DEoptimR_1<span class="fl">.2</span><span class="dv">-0</span>              Formula_1<span class="fl">.2</span><span class="dv">-6</span>              </span>
+<span id="cb112-46"><a href="#cb112-46" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">39</span>] prettyunits_1.<span class="fl">2.0</span>           KEGGREST_1.<span class="fl">52.2</span>            </span>
+<span id="cb112-47"><a href="#cb112-47" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">41</span>] otel_0.<span class="fl">2.0</span>                  httr_1.<span class="fl">4.8</span>                 </span>
+<span id="cb112-48"><a href="#cb112-48" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">43</span>] rstatix_1.<span class="fl">1.0</span>               globals_0.<span class="fl">19.1</span>             </span>
+<span id="cb112-49"><a href="#cb112-49" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">45</span>] fitdistrplus_1<span class="fl">.2</span><span class="dv">-6</span>          ps_1.<span class="fl">9.3</span>                   </span>
+<span id="cb112-50"><a href="#cb112-50" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">47</span>] pan_2<span class="fl">.0</span>                     generics_0.<span class="fl">1.4</span>             </span>
+<span id="cb112-51"><a href="#cb112-51" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">49</span>] DOSE_4.<span class="fl">6.0</span>                  missForest_1.<span class="fl">6.1</span>           </span>
+<span id="cb112-52"><a href="#cb112-52" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">51</span>] processx_3.<span class="fl">9.0</span>              curl_7.<span class="fl">1.0</span>                 </span>
+<span id="cb112-53"><a href="#cb112-53" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">53</span>] S4Vectors_0.<span class="fl">50.1</span>            aPEAR_1.<span class="fl">0.0</span>                </span>
+<span id="cb112-54"><a href="#cb112-54" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">55</span>] polyclip_1<span class="fl">.10</span><span class="dv">-7</span>             randomForest_4<span class="fl">.7-1.2</span>       </span>
+<span id="cb112-55"><a href="#cb112-55" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">57</span>] lgr_0.<span class="fl">5.2</span>                   SparseArray_1.<span class="fl">12.2</span>         </span>
+<span id="cb112-56"><a href="#cb112-56" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">59</span>] stringr_1.<span class="fl">6.0</span>               desc_1.<span class="fl">4.3</span>                 </span>
+<span id="cb112-57"><a href="#cb112-57" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">61</span>] doParallel_1.<span class="fl">0.17</span>           evaluate_1.<span class="fl">0.5</span>             </span>
+<span id="cb112-58"><a href="#cb112-58" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">63</span>] S4Arrays_1.<span class="fl">12.0</span>             proDA_1.<span class="fl">26.0</span>               </span>
+<span id="cb112-59"><a href="#cb112-59" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">65</span>] hms_1.<span class="fl">1.4</span>                   glmnet_5<span class="fl">.0</span>                 </span>
+<span id="cb112-60"><a href="#cb112-60" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">67</span>] GenomicRanges_1.<span class="fl">64.0</span>        colorspace_2<span class="fl">.1</span><span class="dv">-3</span>           </span>
+<span id="cb112-61"><a href="#cb112-61" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">69</span>] apcluster_1.<span class="fl">4.14</span>            magrittr_2.<span class="fl">0.5</span>             </span>
+<span id="cb112-62"><a href="#cb112-62" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">71</span>] lmtest_0<span class="fl">.9</span><span class="dv">-40</span>               viridis_0.<span class="fl">6.5</span>              </span>
+<span id="cb112-63"><a href="#cb112-63" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">73</span>] ggtree_4.<span class="fl">2.0</span>                lattice_0<span class="fl">.22</span><span class="dv">-9</span>             </span>
+<span id="cb112-64"><a href="#cb112-64" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">75</span>] palmerpenguins_0.<span class="fl">1.1</span>        robustbase_0<span class="fl">.99</span><span class="dv">-7</span>          </span>
+<span id="cb112-65"><a href="#cb112-65" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">77</span>] cowplot_1.<span class="fl">2.0</span>               matrixStats_1.<span class="fl">5.0</span>          </span>
+<span id="cb112-66"><a href="#cb112-66" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">79</span>] class_7<span class="fl">.3</span><span class="dv">-23</span>                prolfqua_1.<span class="fl">7.0</span>             </span>
+<span id="cb112-67"><a href="#cb112-67" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">81</span>] pillar_1.<span class="fl">11.1</span>               nlme_3<span class="fl">.1</span><span class="dv">-169</span>               </span>
+<span id="cb112-68"><a href="#cb112-68" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">83</span>] iterators_1.<span class="fl">0.14</span>            compiler_4.<span class="fl">6.1</span>             </span>
+<span id="cb112-69"><a href="#cb112-69" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">85</span>] stringi_1.<span class="fl">8.9</span>               paradox_1.<span class="fl">0.1</span>              </span>
+<span id="cb112-70"><a href="#cb112-70" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">87</span>] jomo_2<span class="fl">.7</span><span class="dv">-6</span>                  minqa_1.<span class="fl">2.8</span>                </span>
+<span id="cb112-71"><a href="#cb112-71" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">89</span>] arules_1.<span class="fl">7.14</span>               SummarizedExperiment_1.<span class="fl">42.0</span></span>
+<span id="cb112-72"><a href="#cb112-72" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">91</span>] lubridate_1.<span class="fl">9.5</span>             HarmonizR_1.<span class="fl">10.0</span>           </span>
+<span id="cb112-73"><a href="#cb112-73" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">93</span>] plyr_1.<span class="fl">8.9</span>                  crayon_1.<span class="fl">5.3</span>               </span>
+<span id="cb112-74"><a href="#cb112-74" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">95</span>] abind_1<span class="fl">.4</span><span class="dv">-8</span>                 ggdendro_0.<span class="fl">2.0</span>             </span>
+<span id="cb112-75"><a href="#cb112-75" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">97</span>] gridGraphics_0<span class="fl">.5</span><span class="dv">-1</span>          ggtext_0.<span class="fl">1.2</span>               </span>
+<span id="cb112-76"><a href="#cb112-76" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">99</span>] nortest_1<span class="fl">.0</span><span class="dv">-4</span>               sp_2<span class="fl">.2</span><span class="dv">-3</span>                   </span>
+<span id="cb112-77"><a href="#cb112-77" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">101</span>] bit_4.<span class="fl">6.0</span>                   UpSetR_1.<span class="fl">4.1</span>               </span>
+<span id="cb112-78"><a href="#cb112-78" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">103</span>] pcaMethods_2.<span class="fl">4.0</span>            codetools_0<span class="fl">.2</span><span class="dv">-20</span>           </span>
+<span id="cb112-79"><a href="#cb112-79" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">105</span>] textshaping_1.<span class="fl">0.5</span>           bslib_0.<span class="fl">12.0</span>               </span>
+<span id="cb112-80"><a href="#cb112-80" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">107</span>] e1071_1<span class="fl">.7</span><span class="dv">-17</span>                GetoptLong_1.<span class="fl">1.1</span>           </span>
+<span id="cb112-81"><a href="#cb112-81" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">109</span>] plotly_4.<span class="fl">12.1</span>               splines_4.<span class="fl">6.1</span>              </span>
+<span id="cb112-82"><a href="#cb112-82" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">111</span>] markdown_2<span class="fl">.0</span>                circlize_0.<span class="fl">4.18</span>            </span>
+<span id="cb112-83"><a href="#cb112-83" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">113</span>] Rcpp_1.<span class="fl">1.2</span>                  tidydr_0.<span class="fl">0.6</span>               </span>
+<span id="cb112-84"><a href="#cb112-84" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">115</span>] gridtext_0.<span class="fl">1.6</span>              knitr_1<span class="fl">.51</span>                 </span>
+<span id="cb112-85"><a href="#cb112-85" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">117</span>] blob_1.<span class="fl">3.0</span>                  clue_0<span class="fl">.3</span><span class="dv">-68</span>                </span>
+<span id="cb112-86"><a href="#cb112-86" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">119</span>] lme4_2<span class="fl">.0</span><span class="dv">-6</span>                  itertools_0<span class="fl">.1</span><span class="dv">-3</span>            </span>
+<span id="cb112-87"><a href="#cb112-87" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">121</span>] fs_2.<span class="fl">1.0</span>                    listenv_1.<span class="fl">0.0</span>              </span>
+<span id="cb112-88"><a href="#cb112-88" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">123</span>] checkmate_2.<span class="fl">3.4</span>             Rdpack_2.<span class="fl">6.6</span>               </span>
+<span id="cb112-89"><a href="#cb112-89" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">125</span>] rvcheck_0.<span class="fl">2.1</span>               expm_1<span class="fl">.0</span><span class="dv">-0</span>                 </span>
+<span id="cb112-90"><a href="#cb112-90" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">127</span>] ggsignif_0.<span class="fl">6.4</span>              ggplotify_0.<span class="fl">1.3</span>            </span>
+<span id="cb112-91"><a href="#cb112-91" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">129</span>] MCL_1<span class="fl">.0</span>                     tibble_3.<span class="fl">3.1</span>               </span>
+<span id="cb112-92"><a href="#cb112-92" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">131</span>] Matrix_1<span class="fl">.7</span><span class="dv">-5</span>                callr_3.<span class="fl">8.0</span>                </span>
+<span id="cb112-93"><a href="#cb112-93" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">133</span>] statmod_1.<span class="fl">5.2</span>               tweenr_2.<span class="fl">0.3</span>               </span>
+<span id="cb112-94"><a href="#cb112-94" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">135</span>] pkgconfig_2.<span class="fl">0.3</span>             tools_4.<span class="fl">6.1</span>                </span>
+<span id="cb112-95"><a href="#cb112-95" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">137</span>] cachem_1.<span class="fl">1.0</span>                rbibutils_2.<span class="fl">4.1</span>            </span>
+<span id="cb112-96"><a href="#cb112-96" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">139</span>] RSQLite_3.<span class="fl">53.3</span>              viridisLite_0.<span class="fl">4.3</span>          </span>
+<span id="cb112-97"><a href="#cb112-97" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">141</span>] DBI_1.<span class="fl">3.0</span>                   fastmap_1.<span class="fl">2.0</span>              </span>
+<span id="cb112-98"><a href="#cb112-98" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">143</span>] rmarkdown_2<span class="fl">.31</span>              scales_1.<span class="fl">4.0</span>               </span>
+<span id="cb112-99"><a href="#cb112-99" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">145</span>] grid_4.<span class="fl">6.1</span>                  broom_1.<span class="fl">0.13</span>               </span>
+<span id="cb112-100"><a href="#cb112-100" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">147</span>] sass_0.<span class="fl">4.10</span>                 patchwork_1.<span class="fl">3.2</span>            </span>
+<span id="cb112-101"><a href="#cb112-101" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">149</span>] BiocManager_1.<span class="fl">30.27</span>         carData_3<span class="fl">.0</span><span class="dv">-6</span>              </span>
+<span id="cb112-102"><a href="#cb112-102" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">151</span>] rpart_4.<span class="fl">1.27</span>                farver_2.<span class="fl">1.2</span>               </span>
+<span id="cb112-103"><a href="#cb112-103" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">153</span>] moocore_0.<span class="fl">3.2</span>               reformulas_0.<span class="fl">4.4</span>           </span>
+<span id="cb112-104"><a href="#cb112-104" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">155</span>] scatterpie_0.<span class="fl">2.6</span>            mgcv_1<span class="fl">.9</span><span class="dv">-4</span>                 </span>
+<span id="cb112-105"><a href="#cb112-105" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">157</span>] yaml_2.<span class="fl">3.12</span>                 MatrixGenerics_1.<span class="fl">24.0</span>      </span>
+<span id="cb112-106"><a href="#cb112-106" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">159</span>] cli_3.<span class="fl">6.6</span>                   purrr_1.<span class="fl">2.2</span>                </span>
+<span id="cb112-107"><a href="#cb112-107" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">161</span>] stats4_4.<span class="fl">6.1</span>                lifecycle_1.<span class="fl">0.5</span>            </span>
+<span id="cb112-108"><a href="#cb112-108" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">163</span>] bbotk_1.<span class="fl">12.0</span>                Biobase_2.<span class="fl">72.0</span>             </span>
+<span id="cb112-109"><a href="#cb112-109" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">165</span>] backports_1.<span class="fl">5.1</span>             mlr3tuning_1.<span class="fl">6.1</span>           </span>
+<span id="cb112-110"><a href="#cb112-110" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">167</span>] timechange_0.<span class="fl">4.0</span>            gtable_0.<span class="fl">3.6</span>               </span>
+<span id="cb112-111"><a href="#cb112-111" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">169</span>] rjson_0.<span class="fl">2.23</span>                ggridges_0.<span class="fl">5.7</span>             </span>
+<span id="cb112-112"><a href="#cb112-112" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">171</span>] parallel_4.<span class="fl">6.1</span>              ape_5<span class="fl">.8</span><span class="dv">-1</span>                  </span>
+<span id="cb112-113"><a href="#cb112-113" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">173</span>] SnowballC_0.<span class="fl">7.1</span>             limma_3.<span class="fl">68.4</span>               </span>
+<span id="cb112-114"><a href="#cb112-114" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">175</span>] enrichit_0.<span class="fl">2.1</span>              jsonlite_2.<span class="fl">0.0</span>             </span>
+<span id="cb112-115"><a href="#cb112-115" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">177</span>] mitml_0<span class="fl">.4</span><span class="dv">-5</span>                 bit64_4.<span class="fl">8.2</span>                </span>
+<span id="cb112-116"><a href="#cb112-116" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">179</span>] yulab.utils_0.<span class="fl">2.4</span>           mlr3learners_0.<span class="fl">15.1</span>        </span>
+<span id="cb112-117"><a href="#cb112-117" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">181</span>] litedown_0<span class="fl">.10</span>               ranger_0.<span class="fl">18.0</span>              </span>
+<span id="cb112-118"><a href="#cb112-118" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">183</span>] aisdk_1.<span class="fl">4.12</span>                mice_3.<span class="fl">19.0</span>                </span>
+<span id="cb112-119"><a href="#cb112-119" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">185</span>] jquerylib_0.<span class="fl">1.4</span>             GOSemSim_2.<span class="fl">38.3</span>            </span>
+<span id="cb112-120"><a href="#cb112-120" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">187</span>] R.utils_2.<span class="fl">13.0</span>              lazyeval_0.<span class="fl">2.3</span>             </span>
+<span id="cb112-121"><a href="#cb112-121" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">189</span>] htmltools_0.<span class="fl">5.9</span>             enrichplot_1.<span class="fl">32.0</span>          </span>
+<span id="cb112-122"><a href="#cb112-122" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">191</span>] GO.db_3.<span class="fl">23.1</span>                rappdirs_0.<span class="fl">3.4</span>             </span>
+<span id="cb112-123"><a href="#cb112-123" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">193</span>] mlr3pipelines_0.<span class="fl">11.0</span>        glue_1.<span class="fl">8.1</span>                 </span>
+<span id="cb112-124"><a href="#cb112-124" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">195</span>] httr2_1.<span class="fl">3.0</span>                 XVector_0.<span class="fl">52.0</span>             </span>
+<span id="cb112-125"><a href="#cb112-125" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">197</span>] VIM_7.<span class="fl">0.0</span>                   gdtools_0.<span class="fl">5.1</span>              </span>
+<span id="cb112-126"><a href="#cb112-126" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">199</span>] treeio_1.<span class="fl">36.1</span>               ComplexUpset_1.<span class="fl">3.3</span>         </span>
+<span id="cb112-127"><a href="#cb112-127" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">201</span>] gridExtra_2.<span class="fl">3.1</span>             boot_1<span class="fl">.3</span><span class="dv">-32</span>                </span>
+<span id="cb112-128"><a href="#cb112-128" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">203</span>] igraph_2.<span class="fl">3.3</span>                mlr3_1.<span class="fl">7.1</span>                 </span>
+<span id="cb112-129"><a href="#cb112-129" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">205</span>] R6_2.<span class="fl">6.1</span>                    tidyr_1.<span class="fl">3.2</span>                </span>
+<span id="cb112-130"><a href="#cb112-130" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">207</span>] ggiraph_0.<span class="fl">9.6</span>               fdrtool_1.<span class="fl">2.18</span>             </span>
+<span id="cb112-131"><a href="#cb112-131" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">209</span>] labeling_0.<span class="fl">4.3</span>              forcats_1.<span class="fl">0.1</span>              </span>
+<span id="cb112-132"><a href="#cb112-132" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">211</span>] vcd_1<span class="fl">.4</span><span class="dv">-14</span>                  cluster_2.<span class="dv">1</span>.<span class="fl">8.2</span>            </span>
+<span id="cb112-133"><a href="#cb112-133" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">213</span>] aplot_0.<span class="fl">3.1</span>                 nloptr_2.<span class="fl">2.1</span>               </span>
+<span id="cb112-134"><a href="#cb112-134" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">215</span>] mlr3misc_0.<span class="fl">22.0</span>             DelayedArray_0.<span class="fl">38.2</span>        </span>
+<span id="cb112-135"><a href="#cb112-135" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">217</span>] tidyselect_1.<span class="fl">2.1</span>            ggforce_0.<span class="fl">5.0</span>              </span>
+<span id="cb112-136"><a href="#cb112-136" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">219</span>] operator.tools_1.<span class="dv">6</span>.<span class="fl">3.1</span>      xml2_1.<span class="fl">6.0</span>                 </span>
+<span id="cb112-137"><a href="#cb112-137" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">221</span>] fontBitstreamVera_0.<span class="fl">1.1</span>     car_3<span class="fl">.1</span><span class="dv">-5</span>                  </span>
+<span id="cb112-138"><a href="#cb112-138" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">223</span>] AnnotationDbi_1.<span class="fl">74.0</span>        future_1.<span class="fl">75.0</span>              </span>
+<span id="cb112-139"><a href="#cb112-139" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">225</span>] S7_0.<span class="fl">2.2</span>                    laeken_0.<span class="fl">5.3</span>               </span>
+<span id="cb112-140"><a href="#cb112-140" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">227</span>] fontquiver_0.<span class="fl">2.1</span>            data.table_1.<span class="fl">18.4</span>          </span>
+<span id="cb112-141"><a href="#cb112-141" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">229</span>] htmlwidgets_1.<span class="fl">6.4</span>           ComplexHeatmap_2.<span class="fl">28.0</span>      </span>
+<span id="cb112-142"><a href="#cb112-142" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">231</span>] RColorBrewer_1<span class="fl">.1</span><span class="dv">-3</span>          rlang_1.<span class="fl">3.0</span>                </span>
+<span id="cb112-143"><a href="#cb112-143" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">233</span>] lsa_0.<span class="fl">73.4</span>                  uuid_1<span class="fl">.2</span><span class="dv">-2</span>                 </span>
+<span id="cb112-144"><a href="#cb112-144" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">235</span>] logistf_1.<span class="fl">26.1</span>              formula.tools_1.<span class="fl">7.1</span>        </span>
+<span id="cb112-145"><a href="#cb112-145" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">237</span>] ggnewscale_0.<span class="fl">5.2</span></span></code></pre></div>
 </div>
   </div>
 

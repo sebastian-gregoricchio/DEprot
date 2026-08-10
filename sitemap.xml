@@ -24,6 +24,7 @@
 <url><loc>/reference/DEprot.missingness-class.html</loc></url>
 <url><loc>/reference/DEprot.normality-class.html</loc></url>
 <url><loc>/reference/DEprot.outliers-class.html</loc></url>
+<url><loc>/reference/DEprot.power-class.html</loc></url>
 <url><loc>/reference/DEprot.pvalues-class.html</loc></url>
 <url><loc>/reference/DEprot.timecourse-class.html</loc></url>
 <url><loc>/reference/DEprot.timecourse.enrichment-class.html</loc></url>
@@ -117,6 +118,7 @@
 <url><loc>/reference/dot-tc.zscore.html</loc></url>
 <url><loc>/reference/dot-wide.to.matrix.html</loc></url>
 <url><loc>/reference/dpo.imputed.counts.html</loc></url>
+<url><loc>/reference/estimate.power.html</loc></url>
 <url><loc>/reference/export.analyses.html</loc></url>
 <url><loc>/reference/export.external.html</loc></url>
 <url><loc>/reference/export.report.html</loc></url>
@@ -149,6 +151,7 @@
 <url><loc>/reference/plot-DEprot.missingness-ANY-method.html</loc></url>
 <url><loc>/reference/plot-DEprot.normality-ANY-method.html</loc></url>
 <url><loc>/reference/plot-DEprot.outliers-ANY-method.html</loc></url>
+<url><loc>/reference/plot-DEprot.power-ANY-method.html</loc></url>
 <url><loc>/reference/plot-DEprot.timecourse-ANY-method.html</loc></url>
 <url><loc>/reference/plot-DEprot.timecourse.enrichment-ANY-method.html</loc></url>
 <url><loc>/reference/plot.GSEA.html</loc></url>
@@ -190,6 +193,7 @@
 <url><loc>/reference/show-DEprot.missingness-method.html</loc></url>
 <url><loc>/reference/show-DEprot.normality-method.html</loc></url>
 <url><loc>/reference/show-DEprot.outliers-method.html</loc></url>
+<url><loc>/reference/show-DEprot.power-method.html</loc></url>
 <url><loc>/reference/show-DEprot.pvalues-method.html</loc></url>
 <url><loc>/reference/show-DEprot.timecourse-method.html</loc></url>
 <url><loc>/reference/show-DEprot.timecourse.enrichment-method.html</loc></url>
