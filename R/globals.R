@@ -35,5 +35,9 @@ utils::globalVariables(unique(c(
   "signed.value", "size.value",
 
   # --- outliers module ---
-  "metric.value", "flag", "n.flags", "outlier", "status", "mahalanobis.distance"
+  "metric.value", "flag", "n.flags", "outlier", "status", "mahalanobis.distance",
+
+  # --- estimate.power / diff.analyses / timecourse NSE ---
+  "logFC", "name", "adj_pval", "t_statistic",
+  "n.per.group", "average.power", "expected.TP", "facet.row"
 )))

@@ -412,14 +412,16 @@ estimate.power =
       scale_x_continuous(expand = c(0.01,0)) +
       xlab("Sample size (per group)") +
       ylab("Expected true discoveries") +
-      ggtitle(label = paste0("*m* = ", m, ", *m*<sub>1</sub> = ", m1, " (&pi;<sub>0</sub> = ", round(pi0, 3), ")"),
-              subtitle = subtitle.label) +
+      # ggtitle(label = paste0("*m* = ", m, ", *m*<sub>1</sub> = ", m1, " (&pi;<sub>0</sub> = ", round(pi0, 3), ")"),
+      #         subtitle = subtitle.label) +
+      ggtitle(label = bquote(italic(m) == .(m) ~ ", " ~ italic(m)[1] == .(m1) ~ " (" * pi[0] == .(round(pi0, 3)) * ")"),
+              subtitle = subtitle.label)
       theme_classic() +
       theme(axis.text = element_text(color = "black"),
             axis.ticks = element_line(color = "black"),
             axis.title.x = ggtext::element_markdown(),
             axis.title.y = ggtext::element_markdown(),
-            plot.title = ggtext::element_markdown(hjust = 0.5),
+            plot.title = element_text(hjust = 0.5),
             plot.subtitle = ggtext::element_markdown(hjust = 0.5),
             aspect.ratio = 0.6)
 
