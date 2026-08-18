@@ -30,6 +30,10 @@ vignette: >
 <style>
 body {
 text-align: justify}
+
+.author a[href^="mailto:"] {
+  color: #88D0FC;
+}
 </style>
 
 

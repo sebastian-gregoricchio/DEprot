@@ -30,6 +30,10 @@ vignette: >
 <style>
 body {
 text-align: justify}
+
+.author a[href^="mailto:"] {
+  color: #88D0FC;
+}
 </style>
 
 
@@ -435,21 +439,24 @@ The first panel compares the distribution of the average intensity of the protei
 <br>
 
 #### Dropout curve
-This is the panel that quantifies what the density plot shows qualitatively, and it deserves a longer explanation.
+This panel puts numbers on what the density plot shows qualitatively.
 
 Each point is a protein: on the x-axis its mean intensity computed over the samples in which it was measured, on the y-axis the percentage of samples in which it is missing. Proteins quantified everywhere sit on the bottom line, proteins detected only sporadically sit at the top. The black curve is a logistic regression of the number of missing values over the total number of samples as a function of the mean intensity (`glm(cbind(n.missing, n.detected) ~ mean.intensity, family = binomial)`), and the corresponding model is stored in the `dropout.model` slot.
 
-Three numbers summarize the fit, all available in `global.stats`:
+The fit is summarized by the following metrics, all available in `global.stats`:
 
-* **`dropout.slope`**: the slope of the logistic model, on the logit scale. A negative slope means that the probability of a value being missing decreases as the abundance increases, which is what a detection limit produces. A slope close to zero describes missing values scattered over the whole intensity range, independently of the abundance.
-* **`dropout.pvalue`**: the p-value of the slope. With several thousand proteins even a very shallow slope reaches significance, therefore the magnitude of the slope and the shape of the curve are more informative than the p-value alone.
-* **`LOD50`**: the intensity at which the model predicts 50% of missing values, computed as `-intercept/slope`. It is an empirical estimate of the limit of detection of the experiment and it is drawn as a vertical dashed line. It is reported only when it falls inside the range of the observed intensities; when the dropout is shallow the 50% point lies far outside the data and an extrapolated value would be meaningless, so `NA` is returned instead.
+* **`dropout.slope`**: the slope of the logistic model, on the logit scale. A negative slope means that the probability of a value being missing decreases as the abundance increases, the typical behavior of a detection limit. A slope close to zero describes missing values scattered over the whole intensity range, independently of the abundance.
+* **`dropout.pvalue`**: the p-value of the slope. With several thousand proteins even a very shallow slope reaches significance, therefore we suggest to look at the magnitude of the slope and at the shape of the curve, and not at the p-value alone.
+* **`LOD50`**: the intensity at which the model predicts 50% of missing values, computed as `-intercept/slope`. It is an empirical estimate of the limit of detection of the experiment and it is drawn as a vertical dashed line. It is reported only when it falls inside the range of the observed intensities: when the dropout is shallow the 50% point lies far outside the data and an extrapolated value would be meaningless, hence `NA` is returned instead.
+* **`intensity.shift.pvalue`**: the one-sided Wilcoxon test comparing the mean intensity of the incomplete proteins with that of the complete ones. The two medians are reported as well (`median.intensity.incomplete` and `median.intensity.complete`).
 
-A fourth number completes the picture: `intensity.shift.pvalue`, the one-sided Wilcoxon test comparing the mean intensity of the incomplete proteins with that of the complete ones, together with the two medians (`median.intensity.incomplete` and `median.intensity.complete`). The `show` method combines slope and p-value into a one-line interpretation of the dominant mechanism.
+The `show` method combines slope and p-value into a one-line interpretation of the dominant mechanism.
 
-Two comparisons make the numbers actionable. First, `LOD50` against the threshold of the randomization pool (`tail.threshold`, the dashed line of the density panel): when the pool sits at or below the estimated detection limit, the values drawn by `randomize.missing.values` fall in the region where the instrument stops detecting, which is what the method assumes. A pool sitting well above `LOD50` means that the randomized values are higher than the censoring point and the fold changes of the MNAR proteins will be compressed; lowering `tail.percentage` corrects it. Second, the fraction of missing values that are MNAR-like (`perc.missing.MNAR`): a steep dropout curve combined with a low MNAR fraction means that most of the censored values are scattered rather than concentrated within a group, so they will be handled by the imputation and not by the randomization.
+Of note, two comparisons make these values actionable. The first one is `LOD50` against the threshold of the randomization pool (`tail.threshold`, the dashed line of the density panel): when the pool sits at or below the estimated detection limit, the values drawn by `randomize.missing.values` fall in the region where the instrument stops detecting, which is the assumption on which the method is built. A pool sitting well above `LOD50` means that the randomized values are higher than the censoring point and the fold changes of the MNAR proteins will be compressed; lowering `tail.percentage` corrects it.
 
-One caveat when reading the top of the plot. The mean intensity is computed on the observed values only, so a protein missing in most of the samples has its abundance estimated from the few measurements that survived, which are the ones that happened to be above the detection limit. This inflates the abundance of the highly incomplete proteins and flattens the right tail of the curve, so the real dropout is usually somewhat steeper than the fitted one. `LOD50` is best used as an internal reference for comparing datasets processed in the same way, rather than as a physical property of the instrument.
+The second comparison involves the fraction of missing values that are MNAR-like (`perc.missing.MNAR`). A steep dropout curve combined with a low MNAR fraction indicates that most of the censored values are scattered instead of being concentrated within a group, hence they will be handled by the imputation and not by the randomization.
+
+>**NOTE**: pay attention when reading the top of the plot. The mean intensity is computed on the observed values only, so a protein missing in most of the samples has its abundance estimated from the few measurements that survived, i.e. the ones that happened to be above the detection limit. This inflates the abundance of the highly incomplete proteins and flattens the right tail of the curve, so the real dropout is usually somewhat steeper than the fitted one. For this reason `LOD50` is best used as an internal reference to compare datasets processed in the same way, and not as a physical property of the instrument.
 
 <br>
 
@@ -1852,15 +1859,15 @@ ggpubr::ggscatter(data = sq_combo,
 ---------------------
 
 # **Power and sample size** {#power}
-Every proteomics project starts with the same question, usually asked after the experiment has already been run: how many replicates are needed? The textbook answer, `power.t.test`, is written for a single comparison and returns a number that is far too small here, because a differential analysis is not one test but ten thousand of them, and the threshold that a protein has to cross is not 0.05 but whatever the multiple-testing correction leaves once the whole table has been adjusted. The two things are linked: the more responsive proteins there are, the more the correction can afford to relax, and the easier it becomes for each of them to be detected. A sample size computed while ignoring the link is not conservative, it is simply wrong in an unknown direction.
+A recurrent question in a proteomics project, often asked once the experiment has already been run, is how many replicates are needed. The textbook answer, `power.t.test`, is written for a single comparison and returns a number that is far too small here: a differential analysis consists of ten thousand tests, and the threshold that a protein has to cross is not 0.05, but whatever the multiple-testing correction leaves once the whole table has been adjusted. The two elements are linked: the more responsive proteins there are, the more the correction can afford to relax, and the easier it becomes for each of them to be detected. An estimate that ignores this link is not conservative, it is simply wrong in an unknown direction.
 
 [Jung (Bioinformatics, 2005)](https://doi.org/10.1093/bioinformatics/bti456) turned the link into an equation. If `m1` proteins truly respond and the average power over them is 1-&beta;, the expected number of true discoveries is `m1(1-`&beta;`)` and the expected number of false ones is `m0`&alpha;, so controlling the FDR at a level *f* means:
 
 <p style="text-align:center"><i>&alpha; = f &middot; m<sub>1</sub> &middot; (1-&beta;) / [(1 - f) &middot; m<sub>0</sub>]</i></p>
 
-&alpha; depends on the power, the power depends on &alpha;, and the couple that satisfies both is found by root finding at each sample size. [Liu & Hwang (Bioinformatics, 2007)](https://doi.org/10.1093/bioinformatics/btl664) showed that the relation reduces to a closed form when a single effect size is assumed. The function `estimate.power` implements both: the responsive proteins can either keep the effect sizes they actually showed, or be collapsed onto one target fold change.
+&alpha; depends on the power, the power depends on &alpha;, and the couple that satisfies both is found by root finding at each sample size. [Liu & Hwang (Bioinformatics, 2007)](https://doi.org/10.1093/bioinformatics/btl664) showed that the relation reduces to a closed form when a single effect size is assumed. The function `estimate.power` implements both approaches: the responsive proteins can either keep the effect sizes they actually showed, or be collapsed onto one target fold change.
 
-Nothing else is needed. The results table of any of the four differential functions already stores the log2-FoldChanges and the per-group standard deviations, which is exactly what the calculation reads, so no external power package has to be installed.
+No external power package has to be installed. Indeed, the results table of any of the four differential functions already stores the log2-FoldChanges and the per-group standard deviations, which are the only quantities read by the calculation.
 
 <br>
 
@@ -1882,9 +1889,9 @@ The `show` method prints the assumptions and the answer, while the three plots a
 plot(power.estimation, nrow = 1)
 ```
 
-* The first panel is the average power as a function of the number of replicates per group, with the target as a horizontal line and the size of the current experiment as a vertical dotted one.
-* The second is the quantity most people are actually asking about, the expected number of true discoveries, which saturates at `m1` and shows how much is gained by adding replicates rather than whether an abstract threshold is crossed.
-* The third is the distribution of the standardized effect sizes on which the whole calculation rests, and it deserves a look before the other two are believed.
+* The first panel shows the average power as a function of the number of replicates per group, with the target as a horizontal line and the size of the current experiment as a vertical dotted one.
+* The second one displays the expected number of true discoveries. This is usually the quantity of interest, since it saturates at `m1` and quantifies how much is gained by adding replicates.
+* The third one shows the distribution of the standardized effect sizes on which the whole calculation rests. We suggest to inspect this panel before trusting the other two.
 
 The numbers behind the curves are in the `power.table` slot:
 
@@ -1910,9 +1917,9 @@ knitr::kable(head(power.estimation@power.table), row.names = FALSE, caption = "*
 <br>
 
 ## Two ways of choosing the effect size
-By default (`effect.size = "empirical"`) the proportion of null proteins &pi;<sub>0</sub> is estimated from the p-value distribution, the `m1` proteins with the smallest p-values are taken as the responsive ones, and the power is averaged over the effect sizes they showed. This uses all the information in the pilot experiment, and it inherits its optimism: those proteins were selected *because* they came out significant, so their effect sizes are the upper tail of a distribution rather than a sample from it. This is the winner's curse, and it becomes more severe as &pi;<sub>0</sub> approaches 1. The `min.effect.size` parameter blunts it by discarding the small effects, but does not remove it.
+By default (`effect.size = "empirical"`) the proportion of null proteins &pi;<sub>0</sub> is estimated from the p-value distribution, the `m1` proteins with the smallest p-values are taken as the responsive ones, and the power is averaged over the effect sizes they showed. This uses all the information of the pilot experiment, and it inherits its optimism: those proteins were selected *because* they came out significant, so their effect sizes represent the upper tail of a distribution and not a sample from it. This is the winner's curse, and it becomes more severe as &pi;<sub>0</sub> approaches 1. The `min.effect.size` parameter blunts it by discarding the small effects, without removing it.
 
-The alternative is to state the effect worth detecting instead of measuring it. `desired.FC` takes a fold change on the linear scale and divides `log2(desired.FC)` by a quantile of the observed pooled standard deviations, which turns the question into *"how many replicates do I need to see a 1.5-fold change on a protein of typical variability"*:
+The alternative is to state the effect worth detecting instead of measuring it. `desired.FC` takes a fold change on the linear scale and divides `log2(desired.FC)` by a quantile of the observed pooled standard deviations. The question then becomes *"how many replicates do I need to see a 1.5-fold change on a protein of typical variability"*:
 
 ```{r power_desiredFC, fig.width = 10, fig.height = 4}
 power.FC1.5 <- estimate.power(DEprot.analyses.object = dpo_analyses,
@@ -1924,16 +1931,16 @@ power.FC1.5 <- estimate.power(DEprot.analyses.object = dpo_analyses,
 power.FC1.5
 ```
 
-Setting `sd.quantile = 0.75` plans for a protein noisier than three quarters of the proteome, which is the version of the calculation that survives contact with a grant reviewer. The median is the default and describes the typical protein.
+Setting `sd.quantile = 0.75` plans for a protein noisier than three quarters of the proteome, a conservative choice when the estimate has to be defended in a grant application. The median is the default and describes the typical protein.
 
 > A single numeric value passed to `effect.size` does the same thing directly, on the standardized scale: `effect.size = 1` means one pooled standard deviation, regardless of what the fold change corresponds to.
 
 <br>
 
 ## What inflates the estimate
-Three things make the answer optimistic, and two of them are silent.
+The estimate can be optimistic for three reasons, and only the first one raises a warning.
 
-The first is imputation. Every value drawn from the bottom of the distribution to fill a blank is similar to the other values drawn the same way, so the within-group variance shrinks, the standardized effect sizes grow, and the required sample size falls. The function checks `counts.used` and raises a warning when the differential analyses were run on imputed or randomized counts, but the warning cannot correct the numbers. The honest input is a differential analysis run on the normalized counts and restricted to the proteins quantified in all the samples of the contrast:
+The first one is imputation. Every value drawn from the bottom of the distribution to fill a blank is similar to the other values drawn in the same way, so the within-group variance shrinks, the standardized effect sizes grow, and the required sample size falls. The function checks `counts.used` and raises a warning when the differential analyses were run on imputed or randomized counts, but the warning cannot correct the numbers. The honest input is a differential analysis run on the normalized counts and restricted to the proteins quantified in all the samples of the contrast:
 
 ```{r power_complete_cases, eval = FALSE}
 complete.proteins <- rownames(dpo_norm@norm.counts)[rowSums(is.na(dpo_norm@norm.counts)) == 0]
@@ -1949,19 +1956,19 @@ dpo_complete <- diff.analyses.limma(DEprot.object = dpo_complete,
 estimate.power(dpo_complete, contrast = 1)
 ```
 
-The second is the selection of the responsive set, discussed above.
+The second one is the selection of the responsive set, discussed in the previous paragraph.
 
-The third concerns [`diff.analyses.proDA`](#diff_proDA) and is worth stating explicitly, because the function is otherwise the one that handles missing values most honestly. `estimate.power` reads the per-protein standard deviations, and those are computed on the observed values only. For a protein affected by dropout, the observed values are the upper part of its intensity distribution, so the standard deviation is estimated on a truncated sample and comes out too small. The number of replicates in which the protein was actually quantified is taken from the `n.detected.<group>` columns, so the group sizes are correct, but the dispersion is not. On a proDA object the full-table estimate should be read as an optimistic bound, and the complete-cases version above as the realistic one.
+The third one concerns [`diff.analyses.proDA`](#diff_proDA), and is worth stating explicitly since this function is otherwise the one handling the missing values most honestly. `estimate.power` reads the per-protein standard deviations, and these are computed on the observed values only. For a protein affected by dropout, the observed values correspond to the upper part of its intensity distribution, so the standard deviation is estimated on a truncated sample and comes out too small. The number of replicates in which the protein was actually quantified is taken from the `n.detected.<group>` columns, hence the group sizes are correct, while the dispersion is not. On a proDA object the full-table estimate should be read as an optimistic bound, and the complete-cases version above as the realistic one.
 
-> Objects generated with `stat.test = "wilcoxon"` are accepted, since the standard deviations are stored regardless of the test. The calculation nonetheless describes the power of a *t*-test in the planned experiment; for normally distributed data a rank test needs roughly 5% more samples to reach the same power, so the estimate is mildly optimistic in that case too.
+> Objects generated with `stat.test = "wilcoxon"` are accepted, since the standard deviations are stored regardless of the test. The calculation nonetheless describes the power of a *t*-test in the planned experiment; for normally distributed data a rank test needs roughly 5% more samples to reach the same power, so also in this case the estimate is mildly optimistic.
 
->Relation with `MSstats::designSampleSize`: `MSstats` answers the same question with the same logic, converting the FDR into a per-test &alpha; under an assumed ratio between null and responsive features and then solving the two-sample non-central *t* equation. The difference is that it collapses the problem onto one `desiredFC` and one standard deviation taken from the fitted model, which is precisely the `desired.FC` mode described above.
+>Relation with `MSstats::designSampleSize`: `MSstats` answers the same question with the same logic, converting the FDR into a per-test &alpha; under an assumed ratio between null and responsive features and then solving the two-sample non-central *t* equation. The difference is that it collapses the problem onto one `desiredFC` and one standard deviation taken from the fitted model, corresponding to the `desired.FC` mode described above.
 
 
 <br>
 
 ## Extrapolating with `power4peaks`
-`estimate.power` is deliberately parametric: it assumes the effect sizes observed in the pilot and asks what a larger experiment would do with them.<br>A complementary approach is to reconstruct the whole density of the effect sizes from the distribution of the test statistics, which is what [`power4peaks`](https://sebastian-gregoricchio.github.io/power4peaks/) does through the deconvolution of [Ferreira & Zwinderman (The Int. J. of Biostat., 2006)](https://doi.org/10.2202/1557-4679.1018). Any `DEprot.analyses` object can be converted directly:
+`estimate.power` is deliberately parametric: it assumes the effect sizes observed in the pilot and asks what a larger experiment would do with them.<br>A complementary approach consists in reconstructing the whole density of the effect sizes from the distribution of the test statistics. This is the strategy of [`power4peaks`](https://sebastian-gregoricchio.github.io/power4peaks/), based on the deconvolution of [Ferreira & Zwinderman (The Int. J. of Biostat., 2006)](https://doi.org/10.2202/1557-4679.1018). Any `DEprot.analyses` object can be converted directly:
 
 ```{r power4peaks_conversion, eval = FALSE}
 p4p.stats <- power4peaks::as.power4peaks(object = dpo_analyses,
@@ -1974,11 +1981,11 @@ p4p.power <- power4peaks::compute.power(power4peaks.stats = p4p.stats,
 p4p.power
 ```
 
-The conversion covers all the differential functions of `DEprot`: the moderated and ordinary *t* statistics of `diff.analyses`, `diff.analyses.limma`, `diff.analyses.prolfqua` and `diff.analyses.proDA` are passed as such, while the rank statistics of a Wilcoxon test are converted into signed normal deviates through the p-values. For `proDA` the group sizes are rescaled to the effective sample size estimated by the dropout model (`n.approx`), since that, and not the nominal number of samples, is the amount of information the statistics were computed on.
+The conversion covers all the differential functions of `DEprot`: the moderated and ordinary *t* statistics of `diff.analyses`, `diff.analyses.limma`, `diff.analyses.prolfqua` and `diff.analyses.proDA` are passed as such, while the rank statistics of a Wilcoxon test are converted into signed normal deviates through the p-values. For `proDA` the group sizes are rescaled to the effective sample size estimated by the dropout model (`n.approx`), since this, and not the nominal number of samples, is the amount of information on which the statistics were computed.
 
-The two answers should be read together rather than one against the other. They disagree when &pi;<sub>0</sub> is poorly determined, which is itself informative, and a difference of one or two replicates between them is a fair description of the uncertainty of the whole exercise.
+The two answers should be read together. A disagreement between them is in itself an informative result, and it typically occurs when &pi;<sub>0</sub> is poorly determined; a difference of one or two replicates describes fairly well the uncertainty of the whole exercise.
 
-> Neither method models the other half of the problem: in LFQ proteomics, adding samples does not only increase the power per protein, it also increases the number of proteins that pass the missing-value filter and reach the test at all. Both curves therefore describe the power over the proteins that were quantified in the pilot experiment, and both under-estimate what a larger experiment would actually return.
+> Neither method models the other half of the problem: in LFQ proteomics, adding samples increases the power per protein, but also the number of proteins that pass the missing-value filter and reach the test. Both curves therefore describe the power over the proteins quantified in the pilot experiment, and both under-estimate what a larger experiment would actually return.
 
 
 <br>
