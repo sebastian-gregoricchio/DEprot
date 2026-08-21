@@ -96,7 +96,7 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 10<sup>th</sup>
+            <h4 data-toc-skip class="date">Last update: 21<sup>th</sup>
 August, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
@@ -109,6 +109,10 @@ August, 2026</h4>
 <style>
 body {
 text-align: justify}
+
+.author a[href^="mailto:"] {
+  color: #88D0FC;
+}
 </style>
 <p><img src="https://img.shields.io/github/v/release/sebastian-gregoricchio/DEprot" alt="release"><img src="https://img.shields.io/badge/License-GPLv3-blue.png" alt="license"><a href="https://doi.org/10.5281/zenodo.17472993" class="external-link"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17472993.svg" alt="Zenodo"></a></p>
 <p><a href="https://sebastian-gregoricchio.github.io/DEprot" class="external-link"><img src="https://sebastian-gregoricchio.github.io/DEprot/DEprot_logo.png" align="right" height="150/"></a></p>
@@ -1088,8 +1092,8 @@ values.</p>
 <div class="section level5">
 <h5 id="dropout-curve">Dropout curve<a class="anchor" aria-label="anchor" href="#dropout-curve"></a>
 </h5>
-<p>This is the panel that quantifies what the density plot shows
-qualitatively, and it deserves a longer explanation.</p>
+<p>This panel puts numbers on what the density plot shows
+qualitatively.</p>
 <p>Each point is a protein: on the x-axis its mean intensity computed
 over the samples in which it was measured, on the y-axis the percentage
 of samples in which it is missing. Proteins quantified everywhere sit on
@@ -1099,62 +1103,66 @@ over the total number of samples as a function of the mean intensity
 (<code>glm(cbind(n.missing, n.detected) ~ mean.intensity, family = binomial)</code>),
 and the corresponding model is stored in the <code>dropout.model</code>
 slot.</p>
-<p>Three numbers summarize the fit, all available in
+<p>The fit is summarized by the following metrics, all available in
 <code>global.stats</code>:</p>
 <ul>
 <li>
 <strong><code>dropout.slope</code></strong>: the slope of the
 logistic model, on the logit scale. A negative slope means that the
 probability of a value being missing decreases as the abundance
-increases, which is what a detection limit produces. A slope close to
+increases, the typical behavior of a detection limit. A slope close to
 zero describes missing values scattered over the whole intensity range,
 independently of the abundance.</li>
 <li>
 <strong><code>dropout.pvalue</code></strong>: the p-value of the
 slope. With several thousand proteins even a very shallow slope reaches
-significance, therefore the magnitude of the slope and the shape of the
-curve are more informative than the p-value alone.</li>
+significance, therefore we suggest to look at the magnitude of the slope
+and at the shape of the curve, and not at the p-value alone.</li>
 <li>
 <strong><code>LOD50</code></strong>: the intensity at which the
 model predicts 50% of missing values, computed as
 <code>-intercept/slope</code>. It is an empirical estimate of the limit
 of detection of the experiment and it is drawn as a vertical dashed
 line. It is reported only when it falls inside the range of the observed
-intensities; when the dropout is shallow the 50% point lies far outside
-the data and an extrapolated value would be meaningless, so
+intensities: when the dropout is shallow the 50% point lies far outside
+the data and an extrapolated value would be meaningless, hence
 <code>NA</code> is returned instead.</li>
-</ul>
-<p>A fourth number completes the picture:
-<code>intensity.shift.pvalue</code>, the one-sided Wilcoxon test
-comparing the mean intensity of the incomplete proteins with that of the
-complete ones, together with the two medians
+<li>
+<strong><code>intensity.shift.pvalue</code></strong>: the one-sided
+Wilcoxon test comparing the mean intensity of the incomplete proteins
+with that of the complete ones. The two medians are reported as well
 (<code>median.intensity.incomplete</code> and
-<code>median.intensity.complete</code>). The <code>show</code> method
-combines slope and p-value into a one-line interpretation of the
-dominant mechanism.</p>
-<p>Two comparisons make the numbers actionable. First,
-<code>LOD50</code> against the threshold of the randomization pool
+<code>median.intensity.complete</code>).</li>
+</ul>
+<p>The <code>show</code> method combines slope and p-value into a
+one-line interpretation of the dominant mechanism.</p>
+<p>Of note, two comparisons make these values actionable. The first one
+is <code>LOD50</code> against the threshold of the randomization pool
 (<code>tail.threshold</code>, the dashed line of the density panel):
 when the pool sits at or below the estimated detection limit, the values
 drawn by <code>randomize.missing.values</code> fall in the region where
-the instrument stops detecting, which is what the method assumes. A pool
-sitting well above <code>LOD50</code> means that the randomized values
-are higher than the censoring point and the fold changes of the MNAR
-proteins will be compressed; lowering <code>tail.percentage</code>
-corrects it. Second, the fraction of missing values that are MNAR-like
-(<code>perc.missing.MNAR</code>): a steep dropout curve combined with a
-low MNAR fraction means that most of the censored values are scattered
-rather than concentrated within a group, so they will be handled by the
-imputation and not by the randomization.</p>
-<p>One caveat when reading the top of the plot. The mean intensity is
-computed on the observed values only, so a protein missing in most of
-the samples has its abundance estimated from the few measurements that
-survived, which are the ones that happened to be above the detection
-limit. This inflates the abundance of the highly incomplete proteins and
-flattens the right tail of the curve, so the real dropout is usually
-somewhat steeper than the fitted one. <code>LOD50</code> is best used as
-an internal reference for comparing datasets processed in the same way,
-rather than as a physical property of the instrument.</p>
+the instrument stops detecting, which is the assumption on which the
+method is built. A pool sitting well above <code>LOD50</code> means that
+the randomized values are higher than the censoring point and the fold
+changes of the MNAR proteins will be compressed; lowering
+<code>tail.percentage</code> corrects it.</p>
+<p>The second comparison involves the fraction of missing values that
+are MNAR-like (<code>perc.missing.MNAR</code>). A steep dropout curve
+combined with a low MNAR fraction indicates that most of the censored
+values are scattered instead of being concentrated within a group, hence
+they will be handled by the imputation and not by the randomization.</p>
+<blockquote>
+<p><strong>NOTE</strong>: pay attention when reading the top of the
+plot. The mean intensity is computed on the observed values only, so a
+protein missing in most of the samples has its abundance estimated from
+the few measurements that survived, i.e. the ones that happened to be
+above the detection limit. This inflates the abundance of the highly
+incomplete proteins and flattens the right tail of the curve, so the
+real dropout is usually somewhat steeper than the fitted one. For this
+reason <code>LOD50</code> is best used as an internal reference to
+compare datasets processed in the same way, and not as a physical
+property of the instrument.</p>
+</blockquote>
 <p><br></p>
 </div>
 <div class="section level5">
@@ -1392,14 +1400,14 @@ original data.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; tkNN                    tkNN 0.5132982         0.9852705            2.03    1
-&gt; corkNN                corkNN 0.5135173         0.9851722            2.02    2
-&gt; BPCA                    BPCA 0.5140276         0.9862672          127.20    3
-&gt; RegImpute          RegImpute 0.5190934         0.9861203            9.39    4
-&gt; PPCA                    PPCA 0.5359473         0.9813049            0.87    5
-&gt; SVD                      SVD 0.5442393         0.9791497            3.25    6
-&gt; missForest        missForest 0.5664830         0.9813784           29.42    7
-&gt; LLS                      LLS 0.6326730         0.9684621            3.68    8</code></pre>
+&gt; tkNN                    tkNN 0.5132982         0.9852705            1.18    1
+&gt; corkNN                corkNN 0.5135173         0.9851722            1.15    2
+&gt; BPCA                    BPCA 0.5140276         0.9862672           76.80    3
+&gt; RegImpute          RegImpute 0.5190934         0.9861203            5.75    4
+&gt; PPCA                    PPCA 0.5359473         0.9813049            0.56    5
+&gt; SVD                      SVD 0.5442393         0.9791497            1.78    6
+&gt; missForest        missForest 0.5664830         0.9813784           20.21    7
+&gt; LLS                      LLS 0.6326730         0.9684621            3.47    8</code></pre>
 <p><br></p>
 </div>
 <div class="section level3">
@@ -4022,17 +4030,17 @@ scores obtained between the two methods.</p>
 <h2 id="power">
 <strong>Power and sample size</strong><a class="anchor" aria-label="anchor" href="#power"></a>
 </h2>
-<p>Every proteomics project starts with the same question, usually asked
-after the experiment has already been run: how many replicates are
-needed? The textbook answer, <code>power.t.test</code>, is written for a
-single comparison and returns a number that is far too small here,
-because a differential analysis is not one test but ten thousand of
-them, and the threshold that a protein has to cross is not 0.05 but
-whatever the multiple-testing correction leaves once the whole table has
-been adjusted. The two things are linked: the more responsive proteins
+<p>A recurrent question in a proteomics project, often asked once the
+experiment has already been run, is how many replicates are needed. The
+textbook answer, <code>power.t.test</code>, is written for a single
+comparison and returns a number that is far too small here: a
+differential analysis consists of ten thousand tests, and the threshold
+that a protein has to cross is not 0.05, but whatever the
+multiple-testing correction leaves once the whole table has been
+adjusted. The two elements are linked: the more responsive proteins
 there are, the more the correction can afford to relax, and the easier
-it becomes for each of them to be detected. A sample size computed while
-ignoring the link is not conservative, it is simply wrong in an unknown
+it becomes for each of them to be detected. An estimate that ignores
+this link is not conservative, it is simply wrong in an unknown
 direction.</p>
 <p><a href="https://doi.org/10.1093/bioinformatics/bti456" class="external-link">Jung
 (Bioinformatics, 2005)</a> turned the link into an equation. If
@@ -4048,13 +4056,13 @@ means:</p>
 satisfies both is found by root finding at each sample size. <a href="https://doi.org/10.1093/bioinformatics/btl664" class="external-link">Liu &amp; Hwang
 (Bioinformatics, 2007)</a> showed that the relation reduces to a closed
 form when a single effect size is assumed. The function
-<code>estimate.power</code> implements both: the responsive proteins can
-either keep the effect sizes they actually showed, or be collapsed onto
-one target fold change.</p>
-<p>Nothing else is needed. The results table of any of the four
-differential functions already stores the log2-FoldChanges and the
-per-group standard deviations, which is exactly what the calculation
-reads, so no external power package has to be installed.</p>
+<code>estimate.power</code> implements both approaches: the responsive
+proteins can either keep the effect sizes they actually showed, or be
+collapsed onto one target fold change.</p>
+<p>No external power package has to be installed. Indeed, the results
+table of any of the four differential functions already stores the
+log2-FoldChanges and the per-group standard deviations, which are the
+only quantities read by the calculation.</p>
 <p><br></p>
 <div class="section level3">
 <h3 id="basic-usage">Basic usage<a class="anchor" aria-label="anchor" href="#basic-usage"></a>
@@ -4082,16 +4090,16 @@ arranged as needed:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">power.estimation</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="DEprot.overview.vignette_files/figure-html/power_plots-1.png" class="r-plt" alt="" width="1152" style="display: block; margin: auto;"></p>
 <ul>
-<li>The first panel is the average power as a function of the number of
-replicates per group, with the target as a horizontal line and the size
-of the current experiment as a vertical dotted one.</li>
-<li>The second is the quantity most people are actually asking about,
-the expected number of true discoveries, which saturates at
-<code>m1</code> and shows how much is gained by adding replicates rather
-than whether an abstract threshold is crossed.</li>
-<li>The third is the distribution of the standardized effect sizes on
-which the whole calculation rests, and it deserves a look before the
-other two are believed.</li>
+<li>The first panel shows the average power as a function of the number
+of replicates per group, with the target as a horizontal line and the
+size of the current experiment as a vertical dotted one.</li>
+<li>The second one displays the expected number of true discoveries.
+This is usually the quantity of interest, since it saturates at
+<code>m1</code> and quantifies how much is gained by adding
+replicates.</li>
+<li>The third one shows the distribution of the standardized effect
+sizes on which the whole calculation rests. We suggest to inspect this
+panel before trusting the other two.</li>
 </ul>
 <p>The numbers behind the curves are in the <code>power.table</code>
 slot:</p>
@@ -4228,19 +4236,19 @@ construction</td>
 null proteins π<sub>0</sub> is estimated from the p-value distribution,
 the <code>m1</code> proteins with the smallest p-values are taken as the
 responsive ones, and the power is averaged over the effect sizes they
-showed. This uses all the information in the pilot experiment, and it
+showed. This uses all the information of the pilot experiment, and it
 inherits its optimism: those proteins were selected <em>because</em>
-they came out significant, so their effect sizes are the upper tail of a
-distribution rather than a sample from it. This is the winner’s curse,
-and it becomes more severe as π<sub>0</sub> approaches 1. The
+they came out significant, so their effect sizes represent the upper
+tail of a distribution and not a sample from it. This is the winner’s
+curse, and it becomes more severe as π<sub>0</sub> approaches 1. The
 <code>min.effect.size</code> parameter blunts it by discarding the small
-effects, but does not remove it.</p>
+effects, without removing it.</p>
 <p>The alternative is to state the effect worth detecting instead of
 measuring it. <code>desired.FC</code> takes a fold change on the linear
 scale and divides <code>log2(desired.FC)</code> by a quantile of the
-observed pooled standard deviations, which turns the question into
-<em>“how many replicates do I need to see a 1.5-fold change on a protein
-of typical variability”</em>:</p>
+observed pooled standard deviations. The question then becomes <em>“how
+many replicates do I need to see a 1.5-fold change on a protein of
+typical variability”</em>:</p>
 <div class="sourceCode" id="cb83"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" tabindex="-1"></a>power.FC1<span class="fl">.5</span> <span class="ot">&lt;-</span> <span class="fu">estimate.power</span>(<span class="at">DEprot.analyses.object =</span> dpo_analyses,</span>
 <span id="cb83-2"><a href="#cb83-2" tabindex="-1"></a>                              <span class="at">contrast =</span> <span class="dv">1</span>,</span>
 <span id="cb83-3"><a href="#cb83-3" tabindex="-1"></a>                              <span class="at">desired.FC =</span> <span class="fl">1.5</span>,</span>
@@ -4256,9 +4264,9 @@ of typical variability”</em>:</p>
 <span id="cb83-13"><a href="#cb83-13" tabindex="-1"></a><span class="sc">&gt;</span>  Current n<span class="sc">/</span>group <span class="sc">|</span> <span class="dv">4</span></span>
 <span id="cb83-14"><a href="#cb83-14" tabindex="-1"></a><span class="sc">&gt;</span> Required n<span class="sc">/</span>group <span class="sc">|</span> <span class="dv">11</span> (average power <span class="fl">0.8</span>)</span></code></pre></div>
 <p>Setting <code>sd.quantile = 0.75</code> plans for a protein noisier
-than three quarters of the proteome, which is the version of the
-calculation that survives contact with a grant reviewer. The median is
-the default and describes the typical protein.</p>
+than three quarters of the proteome, a conservative choice when the
+estimate has to be defended in a grant application. The median is the
+default and describes the typical protein.</p>
 <blockquote>
 <p>A single numeric value passed to <code>effect.size</code> does the
 same thing directly, on the standardized scale:
@@ -4270,10 +4278,10 @@ regardless of what the fold change corresponds to.</p>
 <div class="section level3">
 <h3 id="what-inflates-the-estimate">What inflates the estimate<a class="anchor" aria-label="anchor" href="#what-inflates-the-estimate"></a>
 </h3>
-<p>Three things make the answer optimistic, and two of them are
-silent.</p>
-<p>The first is imputation. Every value drawn from the bottom of the
-distribution to fill a blank is similar to the other values drawn the
+<p>The estimate can be optimistic for three reasons, and only the first
+one raises a warning.</p>
+<p>The first one is imputation. Every value drawn from the bottom of the
+distribution to fill a blank is similar to the other values drawn in the
 same way, so the within-group variance shrinks, the standardized effect
 sizes grow, and the required sample size falls. The function checks
 <code>counts.used</code> and raises a warning when the differential
@@ -4293,27 +4301,28 @@ in all the samples of the contrast:</p>
 <span>                                    which.data <span class="op">=</span> <span class="st">"normalized"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/estimate.power.html">estimate.power</a></span><span class="op">(</span><span class="va">dpo_complete</span>, contrast <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p>The second is the selection of the responsive set, discussed
-above.</p>
-<p>The third concerns <a href="#diff_proDA"><code>diff.analyses.proDA</code></a> and is worth
-stating explicitly, because the function is otherwise the one that
-handles missing values most honestly. <code>estimate.power</code> reads
-the per-protein standard deviations, and those are computed on the
-observed values only. For a protein affected by dropout, the observed
-values are the upper part of its intensity distribution, so the standard
-deviation is estimated on a truncated sample and comes out too small.
-The number of replicates in which the protein was actually quantified is
-taken from the <code>n.detected.&lt;group&gt;</code> columns, so the
-group sizes are correct, but the dispersion is not. On a proDA object
-the full-table estimate should be read as an optimistic bound, and the
-complete-cases version above as the realistic one.</p>
+<p>The second one is the selection of the responsive set, discussed in
+the previous paragraph.</p>
+<p>The third one concerns <a href="#diff_proDA"><code>diff.analyses.proDA</code></a>, and is worth
+stating explicitly since this function is otherwise the one handling the
+missing values most honestly. <code>estimate.power</code> reads the
+per-protein standard deviations, and these are computed on the observed
+values only. For a protein affected by dropout, the observed values
+correspond to the upper part of its intensity distribution, so the
+standard deviation is estimated on a truncated sample and comes out too
+small. The number of replicates in which the protein was actually
+quantified is taken from the <code>n.detected.&lt;group&gt;</code>
+columns, hence the group sizes are correct, while the dispersion is not.
+On a proDA object the full-table estimate should be read as an
+optimistic bound, and the complete-cases version above as the realistic
+one.</p>
 <blockquote>
 <p>Objects generated with <code>stat.test = "wilcoxon"</code> are
 accepted, since the standard deviations are stored regardless of the
 test. The calculation nonetheless describes the power of a
 <em>t</em>-test in the planned experiment; for normally distributed data
 a rank test needs roughly 5% more samples to reach the same power, so
-the estimate is mildly optimistic in that case too.</p>
+also in this case the estimate is mildly optimistic.</p>
 </blockquote>
 <blockquote>
 <p>Relation with <code>MSstats::designSampleSize</code>:
@@ -4322,7 +4331,7 @@ converting the FDR into a per-test α under an assumed ratio between null
 and responsive features and then solving the two-sample non-central
 <em>t</em> equation. The difference is that it collapses the problem
 onto one <code>desiredFC</code> and one standard deviation taken from
-the fitted model, which is precisely the <code>desired.FC</code> mode
+the fitted model, corresponding to the <code>desired.FC</code> mode
 described above.</p>
 </blockquote>
 <p><br></p>
@@ -4332,10 +4341,10 @@ described above.</p>
 </h3>
 <p><code>estimate.power</code> is deliberately parametric: it assumes
 the effect sizes observed in the pilot and asks what a larger experiment
-would do with them.<br>A complementary approach is to reconstruct the
-whole density of the effect sizes from the distribution of the test
-statistics, which is what <a href="https://sebastian-gregoricchio.github.io/power4peaks/" class="external-link"><code>power4peaks</code></a>
-does through the deconvolution of <a href="https://doi.org/10.2202/1557-4679.1018" class="external-link">Ferreira &amp; Zwinderman
+would do with them.<br>A complementary approach consists in
+reconstructing the whole density of the effect sizes from the
+distribution of the test statistics. This is the strategy of <a href="https://sebastian-gregoricchio.github.io/power4peaks/" class="external-link"><code>power4peaks</code></a>,
+based on the deconvolution of <a href="https://doi.org/10.2202/1557-4679.1018" class="external-link">Ferreira &amp; Zwinderman
 (The Int. J. of Biostat., 2006)</a>. Any <code>DEprot.analyses</code>
 object can be converted directly:</p>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
@@ -4354,21 +4363,21 @@ object can be converted directly:</p>
 are passed as such, while the rank statistics of a Wilcoxon test are
 converted into signed normal deviates through the p-values. For
 <code>proDA</code> the group sizes are rescaled to the effective sample
-size estimated by the dropout model (<code>n.approx</code>), since that,
-and not the nominal number of samples, is the amount of information the
-statistics were computed on.</p>
-<p>The two answers should be read together rather than one against the
-other. They disagree when π<sub>0</sub> is poorly determined, which is
-itself informative, and a difference of one or two replicates between
-them is a fair description of the uncertainty of the whole exercise.</p>
+size estimated by the dropout model (<code>n.approx</code>), since this,
+and not the nominal number of samples, is the amount of information on
+which the statistics were computed.</p>
+<p>The two answers should be read together. A disagreement between them
+is in itself an informative result, and it typically occurs when
+π<sub>0</sub> is poorly determined; a difference of one or two
+replicates describes fairly well the uncertainty of the whole
+exercise.</p>
 <blockquote>
 <p>Neither method models the other half of the problem: in LFQ
-proteomics, adding samples does not only increase the power per protein,
-it also increases the number of proteins that pass the missing-value
-filter and reach the test at all. Both curves therefore describe the
-power over the proteins that were quantified in the pilot experiment,
-and both under-estimate what a larger experiment would actually
-return.</p>
+proteomics, adding samples increases the power per protein, but also the
+number of proteins that pass the missing-value filter and reach the
+test. Both curves therefore describe the power over the proteins
+quantified in the pilot experiment, and both under-estimate what a
+larger experiment would actually return.</p>
 </blockquote>
 <p><br></p>
 <hr>
@@ -5465,7 +5474,7 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <span id="cb112-42"><a href="#cb112-42" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">31</span>] systemfonts_1.<span class="fl">3.2</span>           ragg_1.<span class="fl">5.2</span>                 </span>
 <span id="cb112-43"><a href="#cb112-43" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">33</span>] tidytree_0.<span class="fl">4.8</span>              zoo_1<span class="fl">.9</span><span class="dv">-0</span>                  </span>
 <span id="cb112-44"><a href="#cb112-44" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">35</span>] GlobalOptions_0.<span class="fl">1.4</span>         R.oo_1.<span class="fl">27.1</span>                </span>
-<span id="cb112-45"><a href="#cb112-45" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">37</span>] DEoptimR_1<span class="fl">.2</span><span class="dv">-0</span>              Formula_1<span class="fl">.2</span><span class="dv">-6</span>              </span>
+<span id="cb112-45"><a href="#cb112-45" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">37</span>] DEoptimR_1<span class="fl">.2</span><span class="dv">-1</span>              Formula_1<span class="fl">.2</span><span class="dv">-6</span>              </span>
 <span id="cb112-46"><a href="#cb112-46" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">39</span>] prettyunits_1.<span class="fl">2.0</span>           KEGGREST_1.<span class="fl">52.2</span>            </span>
 <span id="cb112-47"><a href="#cb112-47" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">41</span>] otel_0.<span class="fl">2.0</span>                  httr_1.<span class="fl">4.8</span>                 </span>
 <span id="cb112-48"><a href="#cb112-48" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">43</span>] rstatix_1.<span class="fl">1.0</span>               globals_0.<span class="fl">19.1</span>             </span>
@@ -5533,9 +5542,9 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <span id="cb112-110"><a href="#cb112-110" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">167</span>] timechange_0.<span class="fl">4.0</span>            gtable_0.<span class="fl">3.6</span>               </span>
 <span id="cb112-111"><a href="#cb112-111" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">169</span>] rjson_0.<span class="fl">2.23</span>                ggridges_0.<span class="fl">5.7</span>             </span>
 <span id="cb112-112"><a href="#cb112-112" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">171</span>] parallel_4.<span class="fl">6.1</span>              ape_5<span class="fl">.8</span><span class="dv">-1</span>                  </span>
-<span id="cb112-113"><a href="#cb112-113" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">173</span>] SnowballC_0.<span class="fl">7.1</span>             limma_3.<span class="fl">68.4</span>               </span>
+<span id="cb112-113"><a href="#cb112-113" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">173</span>] SnowballC_0.<span class="fl">7.1</span>             limma_3.<span class="fl">68.5</span>               </span>
 <span id="cb112-114"><a href="#cb112-114" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">175</span>] enrichit_0.<span class="fl">2.1</span>              jsonlite_2.<span class="fl">0.0</span>             </span>
-<span id="cb112-115"><a href="#cb112-115" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">177</span>] mitml_0<span class="fl">.4</span><span class="dv">-5</span>                 bit64_4.<span class="fl">8.2</span>                </span>
+<span id="cb112-115"><a href="#cb112-115" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">177</span>] mitml_0<span class="fl">.4</span><span class="dv">-5</span>                 bit64_4.<span class="fl">8.4</span>                </span>
 <span id="cb112-116"><a href="#cb112-116" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">179</span>] yulab.utils_0.<span class="fl">2.4</span>           mlr3learners_0.<span class="fl">15.1</span>        </span>
 <span id="cb112-117"><a href="#cb112-117" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">181</span>] litedown_0<span class="fl">.10</span>               ranger_0.<span class="fl">18.0</span>              </span>
 <span id="cb112-118"><a href="#cb112-118" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">183</span>] aisdk_1.<span class="fl">4.12</span>                mice_3.<span class="fl">19.0</span>                </span>
