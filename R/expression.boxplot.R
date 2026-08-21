@@ -14,7 +14,7 @@
 #' @param ncol Numeric value indicating the number of columns of the facet grid, used only when several proteins are plotted. Default: \code{NULL} (automatic).
 #' @param free.y Logic value indicating whether each panel should have its own y-axis, used only when several proteins are plotted. Proteins of different abundance are otherwise flattened onto a common scale. Default: \code{TRUE}.
 #' @param pairwise.comparisons Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}, independently within each protein. Default: \code{FALSE}.
-#' @param pairwise.test.type String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). Default: \code{"wilcox.test"}.
+#' @param pairwise.test.type String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). When the pairwise brackets are displayed, the global p-value shown at the top of the plot is computed with the same test and the same arguments: with two groups the two labels report therefore the same value, while with more groups the multi-sample version of the family is used (\code{"anova"} or \code{"kruskal.test"}). Rank-based tests always rely on the normal approximation (\code{exact = FALSE}), which keeps the p-values stable in presence of ties. Default: \code{"wilcox.test"}.
 #' @param pairwise.include.ns Logical value indicating whether the non-significant comparisons (p > 0.05) should be displayed. If \code{FALSE}, only the significant comparisons are shown. Default: \code{TRUE}.
 #' @param pairwise.p.label String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}, \code{*}, \code{**}, \code{***}, \code{****}) drawn directly by \code{ggpubr::stat_compare_means}, or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. Default: \code{"p.signif"}.
 #' @param pairwise.p.decimals Numeric value indicating the number of decimals used to approximate the numeric p-values (used only when \code{pairwise.p.label} shows the numeric value). Values below 0.1 are rendered in scientific notation with a superscript exponent, e.g. 3.20\out{&times;10<sup>-2</sup>}. The actual (real) p-value is always displayed, so the uninformative \code{p < 2.2e-16} is never shown. Default: \code{2}.
@@ -117,6 +117,22 @@ expression.boxplot =
 
 
     is.nan_df = function(data.frame) {do.call(cbind, lapply(data.frame, is.nan))}
+
+
+
+    ## two-sample equivalent of each supported test family, with the arguments used to compute it.
+    ## Both the global p-value and the 2-by-2 brackets go through this function: the arguments must be
+    ## identical, otherwise with two groups wilcox.test() would fall back on its own default (exact test
+    ## when n < 50 and no ties) and return a p-value different from the one shown on the bracket.
+    ## For exactly two groups: one-way ANOVA == pooled (var.equal) t-test, Kruskal-Wallis == Wilcoxon rank-sum.
+    two.sample.equivalent =
+      function(test) {
+        switch(test,
+               "t.test"       = list(method = "t.test",      args = list()),
+               "wilcox.test"  = list(method = "wilcox.test", args = list(exact = FALSE)),
+               "anova"        = list(method = "t.test",      args = list(var.equal = TRUE)),
+               "kruskal.test" = list(method = "wilcox.test", args = list(exact = FALSE, correct = FALSE)))
+      }
 
     ######################################################################################
 
@@ -290,31 +306,79 @@ expression.boxplot =
 
 
 
-    ### Vertical offset for the global (Kruskal-Wallis/Wilcoxon) test label,
-    ### so that it does not overlap with the pairwise p-value brackets.
+    ### Values actually usable by a test: non-finite values (NA, NaN, and the -Inf coming from the
+    ### log of a zero count) are dropped once and the same table is used for the global p-value,
+    ### for the pairwise ones and for the positioning of the brackets.
+    finite.tb = exp.tb[is.finite(exp.tb$expression),,drop=F]
+
+    ## groups usable for a test = groups with at least two finite values (ordered as displayed)
+    if (is.factor(exp.tb$group)) {
+      ordered.groups = levels(exp.tb$group)
+    } else {
+      ordered.groups = unique(as.character(exp.tb$group))
+    }
+
+    group.sizes = table(as.character(finite.tb$group))
+    usable.groups = ordered.groups[ordered.groups %in% names(group.sizes)[group.sizes >= 2]]
+
+
+
+    ### Normalize the requested test type (case/format insensitive: dots, spaces, hyphens and apostrophes are ignored).
+    ### This happens before the plot is built because the global p-value shown at the top must be computed
+    ### with the very same test, and the very same arguments, used for the 2-by-2 comparisons.
+    .test.key = gsub("[[:space:]._'\u2019-]", "", tolower(trimws(pairwise.test.type)))
+
+    requested.test =
+      if (.test.key %in% c("ttest","t","student","students","studentt","studentst","welch","welcht","welchttest","unpairedttest","pairedttest","studentttest")) {
+        "t.test"
+      } else if (.test.key %in% c("wilcox","wilcoxon","wilcoxtest","wilcoxontest","mannwhitney","mannwhitneyu","mannwhitneyutest","mww","wmw","utest","u","ranksum","wilcoxonranksum")) {
+        "wilcox.test"
+      } else if (.test.key %in% c("anova","aov","onewayanova","oneway","ftest","f")) {
+        "anova"
+      } else if (.test.key %in% c("kruskal","kruskalwallis","kruskaltest","kruskalwallistest","kw")) {
+        "kruskal.test"
+      } else {
+        stop(paste0("The 'pairwise.test.type' value ('", pairwise.test.type, "') is not recognized.\n",
+                    "       Supported tests: 't.test', 'wilcox.test', 'anova', 'kruskal.test' (case/format insensitive)."))
+      }
+
+    ## two-sample equivalent applied to each 2-by-2 comparison (kept consistent between label styles)
+    two.sample = two.sample.equivalent(requested.test)
+
+
+    ### Test used for the global p-value displayed at the top of the plot.
+    ### With two groups it is exactly the pairwise test, arguments included, so that the two labels
+    ### cannot disagree; with more groups its multi-sample version is used (ANOVA or Kruskal-Wallis).
+    ### The family follows 'pairwise.test.type' only when the brackets are shown, otherwise the
+    ### historical Wilcoxon/Kruskal-Wallis behaviour is kept.
+    global.family = ifelse(test = isTRUE(pairwise.comparisons), yes = requested.test, no = "wilcox.test")
+
+    global.test =
+      if (length(unique(as.character(finite.tb$group))) == 2) {
+        two.sample.equivalent(global.family)
+      } else {
+        switch(global.family,
+               "t.test"       = list(method = "anova",        args = list()),
+               "wilcox.test"  = list(method = "kruskal.test", args = list()),
+               "anova"        = list(method = "anova",        args = list()),
+               "kruskal.test" = list(method = "kruskal.test", args = list()))
+      }
+
+
+
+    ### Vertical offset for the global test label, so that it does not overlap with the
+    ### pairwise p-value brackets.
     ### With several panels the position is left to ggpubr: a single value computed on the
     ### whole dataset would fall outside most of the panels.
     kw.label.y = NULL
 
-    if (isTRUE(pairwise.comparisons) & !multiple.proteins) {
-      if (is.factor(exp.tb$group)) {
-        .pw.groups = levels(exp.tb$group)
-      } else {
-        .pw.groups = unique(as.character(exp.tb$group))
-      }
-      .pw.finite = exp.tb[is.finite(exp.tb$expression),,drop=F]
-      .pw.sizes = table(as.character(.pw.finite$group))
-      .pw.usable = .pw.groups[.pw.groups %in% names(.pw.sizes)[.pw.sizes >= 2]]
-
-
-      if (length(.pw.usable) >= 2) {
-        .pw.ncomparisons = choose(length(.pw.usable), 2)
-        .pw.range = range(.pw.finite$expression, na.rm = TRUE)
-        .pw.span = diff(.pw.range)
-        if (!is.finite(.pw.span) || .pw.span == 0) {.pw.span = ifelse(.pw.range[2] == 0, 1, abs(.pw.range[2]))}
-        # reserve room above the highest bracket (covers both stars and numeric layouts)
-        kw.label.y = .pw.range[2] + (.pw.span * (0.10 + (0.13 * .pw.ncomparisons)))
-      }
+    if (isTRUE(pairwise.comparisons) & !multiple.proteins & length(usable.groups) >= 2) {
+      .pw.ncomparisons = choose(length(usable.groups), 2)
+      .pw.range = range(finite.tb$expression, na.rm = TRUE)
+      .pw.span = diff(.pw.range)
+      if (!is.finite(.pw.span) || .pw.span == 0) {.pw.span = ifelse(.pw.range[2] == 0, 1, abs(.pw.range[2]))}
+      # reserve room above the highest bracket (covers both stars and numeric layouts)
+      kw.label.y = .pw.range[2] + (.pw.span * (0.10 + (0.13 * .pw.ncomparisons)))
     }
 
 
@@ -368,7 +432,11 @@ expression.boxplot =
       ylab(ifelse(test = scale.expression == TRUE,
                   yes = paste0("centered log<sub>",DEprot.object@log.base,"</sub>(expression)"),
                   no = paste0("log<sub>",DEprot.object@log.base,"</sub>(expression)"))) +
-      ggpubr::stat_compare_means(method = ifelse(test = length(unique(exp.tb$group)) == 2, yes = "wilcox", no = "kruskal"), label.y = kw.label.y, show.legend = FALSE) +
+      ggpubr::stat_compare_means(data = finite.tb,
+                                 method = global.test$method,
+                                 method.args = global.test$args,
+                                 label.y = kw.label.y,
+                                 show.legend = FALSE) +
       guides(color = "none", fill = "none") +
       theme_classic() +
       theme(axis.title.x = ggtext::element_markdown(color = "black"),
@@ -398,32 +466,6 @@ expression.boxplot =
     ### Add pairwise (2-by-2) comparisons
     if (isTRUE(pairwise.comparisons)) {
 
-      ## normalize the requested test type (case/format insensitive: dots, spaces, hyphens and apostrophes are ignored)
-      .test.key = gsub("[[:space:]._'\u2019-]", "", tolower(trimws(pairwise.test.type)))
-
-      requested.test =
-        if (.test.key %in% c("ttest","t","student","students","studentt","studentst","welch","welcht","welchttest","unpairedttest","pairedttest","studentttest")) {
-          "t.test"
-        } else if (.test.key %in% c("wilcox","wilcoxon","wilcoxtest","wilcoxontest","mannwhitney","mannwhitneyu","mannwhitneyutest","mww","wmw","utest","u","ranksum","wilcoxonranksum")) {
-          "wilcox.test"
-        } else if (.test.key %in% c("anova","aov","onewayanova","oneway","ftest","f")) {
-          "anova"
-        } else if (.test.key %in% c("kruskal","kruskalwallis","kruskaltest","kruskalwallistest","kw")) {
-          "kruskal.test"
-        } else {
-          stop(paste0("The 'pairwise.test.type' value ('", pairwise.test.type, "') is not recognized.\n",
-                      "       Supported tests: 't.test', 'wilcox.test', 'anova', 'kruskal.test' (case/format insensitive)."))
-        }
-
-      ## two-sample equivalent applied to each 2-by-2 comparison (kept consistent between label styles).
-      ## For exactly two groups: one-way ANOVA == pooled (var.equal) t-test, Kruskal-Wallis == Wilcoxon rank-sum.
-      two.sample =
-        switch(requested.test,
-               "t.test"       = list(method = "t.test",      args = list()),
-               "wilcox.test"  = list(method = "wilcox.test", args = list(exact = FALSE)),
-               "anova"        = list(method = "t.test",      args = list(var.equal = TRUE)),
-               "kruskal.test" = list(method = "wilcox.test", args = list(exact = FALSE, correct = FALSE)))
-
       ## normalize the label style (significance symbols vs numeric p-value)
       .label.key = gsub("[[:space:]._'\u2019-]", "", tolower(trimws(pairwise.p.label)))
 
@@ -440,18 +482,8 @@ expression.boxplot =
       ## number of decimals to approximate the numeric p-value
       p.dec = max(0L, as.integer(round(pairwise.p.decimals)))
 
-      ## groups usable for a pairwise test = groups with at least two finite values (ordered as displayed)
-      if (is.factor(exp.tb$group)) {
-        ordered.groups = levels(exp.tb$group)
-      } else {
-        ordered.groups = unique(as.character(exp.tb$group))
-      }
-
-      finite.tb = exp.tb[is.finite(exp.tb$expression),,drop=F]
-      group.sizes = table(as.character(finite.tb$group))
-      usable.groups = ordered.groups[ordered.groups %in% names(group.sizes)[group.sizes >= 2]]
-
-
+      ## 'finite.tb' and 'usable.groups' come from the section above: the pairwise brackets
+      ## and the global label must rely on the same values and on the same groups
       if (length(usable.groups) < 2) {
         warning("Pairwise comparisons were requested but less than two groups with at least two values are available: no comparison is shown.")
       } else {
