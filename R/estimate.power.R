@@ -415,7 +415,7 @@ estimate.power =
       # ggtitle(label = paste0("*m* = ", m, ", *m*<sub>1</sub> = ", m1, " (&pi;<sub>0</sub> = ", round(pi0, 3), ")"),
       #         subtitle = subtitle.label) +
       ggtitle(label = bquote(italic(m) == .(m) ~ ", " ~ italic(m)[1] == .(m1) ~ " (" * pi[0] == .(round(pi0, 3)) * ")"),
-              subtitle = subtitle.label)
+              subtitle = subtitle.label) +
       theme_classic() +
       theme(axis.text = element_text(color = "black"),
             axis.ticks = element_line(color = "black"),
