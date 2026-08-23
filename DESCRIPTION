@@ -15,9 +15,11 @@ Depends:
 Imports:
 	aPEAR (>= 1.0.0),
 	apcluster,
+	circlize,
 	cluster (>= 2.1.0),
 	clusterProfiler,
 	colorspace,
+  ComplexHeatmap,
 	ComplexUpset,
 	curl,
 	data.table,

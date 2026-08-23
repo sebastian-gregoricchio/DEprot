@@ -7,8 +7,11 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
-#### [v2.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0) - August 10<sup>th</sup> 2026
+#### [v2.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0) - August 23<sup>rd</sup> 2026
 - added `estimate.power` function to compute sample size and power estimation
+- updated overview vignette, manual and tests accordingly
+- added `heatmap.counts.anno()`: the heatmap of `heatmap.counts()`, with the same data selection (`which.data`, `contrast`, `top.n`, `sample.subset`, `protein.subset`, `group.by.metadata.column`, `scale`), drawn with `ComplexHeatmap` instead of `ggplot2`. It returns the usual `DEprot.counts.heatmap` object, whose `heatmap` slot contains a `Heatmap` object, hence it can be customized, drawn and concatenated with the standard `ComplexHeatmap` syntax
+- `ComplexHeatmap` and `circlize` added to the dependencies
 - updated overview vignette, manual and tests accordingly
 
 <br>

@@ -4,7 +4,7 @@
 \alias{compare.imp.methods}
 \title{compare.imp.methods}
 \usage{
-\method{compare}{imp.methods}(
+compare.imp.methods(
   DEprot.object,
   percentage.test = 30,
   correlation.method = "pearson",

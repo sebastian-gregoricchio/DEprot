@@ -1526,9 +1526,10 @@ contrast_LFQ
 
 
 #### Heatmaps
-To plot results heatmaps there are two functions available:
-
+To plot results heatmaps there are three functions available:
+  
 - `heatmap.counts`: allows for the plotting of raw, normalized or imputed counts.
+- `heatmap.counts.anno`: same as `heatmap.counts`, but drawn with `ComplexHeatmap` and with annotations for samples and proteins.
 - `heatmap.contrasts`: allows for the plotting of log~2~(FoldChange) values.
 
 <br>
@@ -1644,6 +1645,152 @@ imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition <-
                  title = "condition: **6h.10nM.E2** *vs* **6h.DMSO** (all)<br>Imputed counts Z-score")
 
 imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition@heatmap
+```
+
+
+<br>
+
+##### Annotated counts
+The function `heatmap.counts.anno` builds the same heatmap of `heatmap.counts`, and shares with it all the parameters controlling the data selection (`which.data`, `contrast`, `top.n`, `sample.subset`, `protein.subset`, `group.by.metadata.column`, `scale`). The difference is that the plot is drawn with `ComplexHeatmap` instead of `ggplot2`: the columns (samples) can be annotated with any column of the metadata table, the rows (proteins) with any column of the *protein.info* table, and the heatmap can be split in blocks.<br></br>
+The object returned is of class `DEprot.counts.heatmap`, as for `heatmap.counts`, but the `heatmap` slot contains a `Heatmap` object instead of a ggplot. Row and column clusters are the usual `hclust` objects, always computed on the full matrix.
+
+```{r heatmap_counts_anno, fig.width=7, fig.height=6}
+counts_heatmap_annotated <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses,
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 15,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = c("condition", "replicate"),
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]",
+                      title = "condition: 6h.10nM.E2 vs 6h.DMSO (top 15)")
+
+counts_heatmap_annotated
+```
+
+<br>
+
+The colors of the annotations are defined through `annotation.colors`, using the same syntax of `pheatmap`: a named list with one element per annotation column, each of them a vector of colors named after the values of that column. The columns that are not listed get an automatic palette, hence only the annotations that matter have to be defined.<br></br>
+With `column.split` the samples are divided in blocks: either the name of a metadata column, or a number of blocks in which the column dendrogram should be cut (equivalent of `cutree`). The same applies to the proteins with `row.split`.
+
+```{r heatmap_counts_anno_colors, fig.width=7, fig.height=6}
+counts_heatmap_annotated_split <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses,
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 15,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = c("condition", "replicate"),
+                      column.split = "condition",
+                      annotation.colors = list(condition = c("6h.10nM.E2" = "indianred",
+                                                             "6h.DMSO" = "steelblue",
+                                                             "FBS" = "forestgreen")),
+                      high.color = "purple4",
+                      low.color = "darkorange",
+                      mid.color = "white",
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]")
+
+counts_heatmap_annotated_split
+```
+
+<br>
+
+The proteins are annotated in the same way, using the columns of the table stored in the *protein.info* slot (see [protein annotation](#deprot-object)). Any table can be attached to an object with `add.protein.info`: in the next example the differential status and the fold change of the first contrast are used as row annotation, and the proteins are split by their differential status.
+
+```{r heatmap_counts_anno_rows, fig.width=7, fig.height=6.5}
+## Protein annotation built on the results of the first contrast
+results_contrast.1 <- get.results(DEprot.analyses.object = dpo_analyses, contrast = 1)
+
+protein.annotation_contrast.1 <-
+  data.frame(diff.status = results_contrast.1$diff.status,
+             log2FC = results_contrast.1[,grep("^log2.Fold", colnames(results_contrast.1))],
+             row.names = results_contrast.1$prot.id)
+
+dpo_analyses_annotated <-
+  add.protein.info(DEprot.object = dpo_analyses,
+                   protein.info = protein.annotation_contrast.1,
+                   overwrite = TRUE)
+
+
+counts_heatmap_annotated_rows <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses_annotated,
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 20,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = "condition",
+                      row.annotation = c("diff.status", "log2FC"),
+                      row.split = "diff.status",
+                      annotation.colors = list(condition = c("6h.10nM.E2" = "indianred",
+                                                             "6h.DMSO" = "steelblue",
+                                                             "FBS" = "forestgreen"),
+                                               diff.status = c("6h.10nM.E2" = "indianred",
+                                                               "6h.DMSO" = "steelblue",
+                                                               "unresponsive" = "gray70",
+                                                               "null" = "gray90"),
+                                               log2FC = c("darkorange", "white", "purple4")),
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]")
+
+counts_heatmap_annotated_rows
+```
+
+<br>
+
+Numeric annotations, such as the `log2FC` of the example above, are displayed as a continuous scale: the vector of colors provided is spread between the minimum and the maximum of the values. To center the scale on a specific value, a color function can be passed instead of the vector of colors:
+
+```{r heatmap_counts_anno_colorRamp, eval=FALSE}
+annotation.colors <-
+  list(log2FC = circlize::colorRamp2(breaks = c(-2, 0, 2),
+                                     colors = c("darkorange", "white", "purple4")))
+```
+
+<br>
+
+As for `heatmap.counts`, the counts can be averaged by the values of a metadata column. In this case each column of the heatmap is a group and not a sample anymore, hence only the annotations taking a single value in each group can be displayed: in the next example `condition` and `cell` are constant within each `combined.id`, while asking for `replicate` would drop it with a warning.
+
+```{r heatmap_counts_anno_groups, fig.width=5.5, fig.height=6.5}
+counts_heatmap_annotated_grouped <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses_annotated,
+                      group.by.metadata.column = "combined.id",
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 20,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = c("condition", "cell"),
+                      row.annotation = "diff.status",
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]")
+
+counts_heatmap_annotated_grouped
+```
+
+<br>
+
+Since the `heatmap` slot contains a `Heatmap` object, everything that `ComplexHeatmap` offers can be applied on top of it: the drawing parameters, the concatenation of multiple heatmaps (`+` for the columns, `%v%` for the rows), or the addition of further annotations.
+
+```{r heatmap_counts_anno_draw, eval=FALSE}
+## Legends on the left, all of them merged in a single block
+ComplexHeatmap::draw(counts_heatmap_annotated_rows@heatmap,
+                     heatmap_legend_side = "left",
+                     merge_legend = TRUE)
+
+## Two heatmaps sharing the rows, one next to the other
+ComplexHeatmap::draw(counts_heatmap_annotated_rows@heatmap + counts_heatmap_annotated_grouped@heatmap)
+```
+
+These objects are drawn by `grid`, hence they cannot be combined with ggplots by `patchwork` directly. To mix the two, the heatmap has to be captured first:
+
+```{r heatmap_counts_anno_grab, eval=FALSE}
+heatmap_grob <- grid::grid.grabExpr(ComplexHeatmap::draw(counts_heatmap_annotated@heatmap))
+
+patchwork::wrap_plots(heatmap_grob, imputed_counts_heatmap@heatmap)
 ```
 
 

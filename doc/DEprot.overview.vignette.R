@@ -699,6 +699,115 @@ imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition <-
 
 imputed_counts_heatmap_diffProteins_rowScaled_grouped.by.condition@heatmap
 
+## ----heatmap_counts_anno, fig.width=7, fig.height=6---------------------------
+counts_heatmap_annotated <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses,
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 15,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = c("condition", "replicate"),
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]",
+                      title = "condition: 6h.10nM.E2 vs 6h.DMSO (top 15)")
+
+counts_heatmap_annotated
+
+## ----heatmap_counts_anno_colors, fig.width=7, fig.height=6--------------------
+counts_heatmap_annotated_split <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses,
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 15,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = c("condition", "replicate"),
+                      column.split = "condition",
+                      annotation.colors = list(condition = c("6h.10nM.E2" = "indianred",
+                                                             "6h.DMSO" = "steelblue",
+                                                             "FBS" = "forestgreen")),
+                      high.color = "purple4",
+                      low.color = "darkorange",
+                      mid.color = "white",
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]")
+
+counts_heatmap_annotated_split
+
+## ----heatmap_counts_anno_rows, fig.width=7, fig.height=6.5--------------------
+## Protein annotation built on the results of the first contrast
+results_contrast.1 <- get.results(DEprot.analyses.object = dpo_analyses, contrast = 1)
+
+protein.annotation_contrast.1 <-
+  data.frame(diff.status = results_contrast.1$diff.status,
+             log2FC = results_contrast.1[,grep("^log2.Fold", colnames(results_contrast.1))],
+             row.names = results_contrast.1$prot.id)
+
+dpo_analyses_annotated <-
+  add.protein.info(DEprot.object = dpo_analyses,
+                   protein.info = protein.annotation_contrast.1,
+                   overwrite = TRUE)
+
+
+counts_heatmap_annotated_rows <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses_annotated,
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 20,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = "condition",
+                      row.annotation = c("diff.status", "log2FC"),
+                      row.split = "diff.status",
+                      annotation.colors = list(condition = c("6h.10nM.E2" = "indianred",
+                                                             "6h.DMSO" = "steelblue",
+                                                             "FBS" = "forestgreen"),
+                                               diff.status = c("6h.10nM.E2" = "indianred",
+                                                               "6h.DMSO" = "steelblue",
+                                                               "unresponsive" = "gray70",
+                                                               "null" = "gray90"),
+                                               log2FC = c("darkorange", "white", "purple4")),
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]")
+
+counts_heatmap_annotated_rows
+
+## ----heatmap_counts_anno_colorRamp, eval=FALSE--------------------------------
+# annotation.colors <-
+#   list(log2FC = circlize::colorRamp2(breaks = c(-2, 0, 2),
+#                                      colors = c("darkorange", "white", "purple4")))
+
+## ----heatmap_counts_anno_groups, fig.width=5.5, fig.height=6.5----------------
+counts_heatmap_annotated_grouped <-
+  heatmap.counts.anno(DEprot.object = dpo_analyses_annotated,
+                      group.by.metadata.column = "combined.id",
+                      which.data = "imputed",
+                      contrast = 1,
+                      top.n = 20,
+                      scale = "row",
+                      use.uncorrected.pvalue = TRUE,
+                      column.annotation = c("condition", "cell"),
+                      row.annotation = "diff.status",
+                      show.protein.names = TRUE,
+                      protein.names.pattern = "protein[.]")
+
+counts_heatmap_annotated_grouped
+
+## ----heatmap_counts_anno_draw, eval=FALSE-------------------------------------
+# ## Legends on the left, all of them merged in a single block
+# ComplexHeatmap::draw(counts_heatmap_annotated_rows@heatmap,
+#                      heatmap_legend_side = "left",
+#                      merge_legend = TRUE)
+# 
+# ## Two heatmaps sharing the rows, one next to the other
+# ComplexHeatmap::draw(counts_heatmap_annotated_rows@heatmap + counts_heatmap_annotated_grouped@heatmap)
+
+## ----heatmap_counts_anno_grab, eval=FALSE-------------------------------------
+# heatmap_grob <- grid::grid.grabExpr(ComplexHeatmap::draw(counts_heatmap_annotated@heatmap))
+# 
+# patchwork::wrap_plots(heatmap_grob, imputed_counts_heatmap@heatmap)
+
 ## ----heatmap_foldchanges, fig.width = 4, fig.height = 6-----------------------
 FC_heatmap <-
   heatmap.contrasts(DEprot.analyses.object = dpo_analyses,
