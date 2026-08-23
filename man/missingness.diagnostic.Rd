@@ -76,7 +76,7 @@ Default: \code{"black"}.}
 \item{verbose}{Logical value to define whether messages should be printed. Default: \code{TRUE}.}
 }
 \value{
-An object of class \code{\link{DEprot.missingness}}.
+An object of class \code{DEprot.missingness}.
 }
 \description{
 Diagnostics of the missing-value structure of a proteomics dataset, aimed at

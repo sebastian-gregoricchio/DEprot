@@ -43,7 +43,7 @@
 #' @param seed Numeric value indicating the random seed used to subsample the proteins in the heatmap. Default: \code{20240101}.
 #' @param verbose Logical value to define whether messages should be printed. Default: \code{TRUE}.
 #'
-#' @return An object of class \code{\link{DEprot.missingness}}.
+#' @return An object of class \code{DEprot.missingness}.
 #'
 #' @details
 #' Six families of diagnostics are computed:
