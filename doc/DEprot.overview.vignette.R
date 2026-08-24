@@ -1147,6 +1147,23 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 # 
 # divergent$divergent.plot
 
+## ----mat_and_methods----------------------------------------------------------
+mm <- generate.mm(dpo_analyses, verbose = TRUE)
+
+## ----mat_and_methods_extended, eval = FALSE-----------------------------------
+# generate.mm(DEprot.object = dpo_analyses,
+#             enrichment.object = GSEA.results.simplified,
+#             geneset.database = "CORUM v5.0",
+#             geneset.reference = paste0("Tsitsiridis et al., CORUM: the comprehensive resource ",
+#                                        "of mammalian protein complexes–2022, Nucleic Acids Research, ",
+#                                        "Volume 51, Issue D1, 6 January 2023, Pages D539–D545, ",
+#                                        "doi: 10.1093/nar/gkac1015"),
+#             quantification.software = "MaxQuant (v2.4.2)",
+#             quantification.reference = paste0("Cox J., Mann M. MaxQuant enables high peptide ",
+#                                               "identification rates. Nature Biotechnology 26, ",
+#                                               "1367-1372, 2008. doi: 10.1038/nbt.1511"),
+#             output.file = "material.and.methods.txt")
+
 ## ----import_external, eval=F--------------------------------------------------
 # dpo <- import.external(file = "report.pg_matrix.tsv",
 #                        metadata = sample.config,
