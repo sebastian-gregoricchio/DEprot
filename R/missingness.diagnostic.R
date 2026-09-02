@@ -119,6 +119,9 @@ missingness.diagnostic =
       stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
     }
 
+    ## the contrasts exist only in DEprot.analyses objects: NULL for a plain DEprot
+    stored.contrasts = .deprot_analysis_slot(DEprot.object, "contrasts")
+
     ### Check colors
     required.colors = c("detected", "MNAR", "MCAR", "all.missing")
     if (!all(required.colors %in% names(colors))) {
@@ -216,7 +219,6 @@ missingness.diagnostic =
 
     ## group.column fallback: first contrast of a DEprot.analyses object
     if (is.null(group.column)) {
-      stored.contrasts = .deprot_analysis_slot(DEprot.object, "contrasts")
       if (!.deprot_slot_is_empty(stored.contrasts)) {
         group.column = stored.contrasts[[1]]$metadata.column
         if (verbose == TRUE) {
@@ -390,11 +392,10 @@ missingness.diagnostic =
     ##--------------------------------------------------------------------##
     contrast.stats = NULL
 
-    if (methods::is(DEprot.object, "DEprot.analyses") &
-        !.deprot_slot_is_empty(DEprot.object@contrasts) &
+    if (!.deprot_slot_is_empty(stored.contrasts) &
         !(length(contrasts) == 1 && (identical(contrasts, NA) | identical(tolower(as.character(contrasts)), "none")))) {
 
-      contrast.list = DEprot.object@contrasts
+      contrast.list = stored.contrasts
 
       if (is.null(contrasts)) {
         contrast.ids = seq_along(contrast.list)

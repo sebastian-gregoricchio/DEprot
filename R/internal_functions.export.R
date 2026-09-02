@@ -250,8 +250,8 @@
            randomization.method = DEprot.object@randomization.method,
            imputed = DEprot.object@imputed,
            imputation.method = DEprot.object@imputation.method,
-           contrasts = DEprot.object@contrasts,
-           differential.analyses.params = DEprot.object@differential.analyses.params)
+           contrasts = .deprot_analysis_slot(DEprot.object, "contrasts", default = NA),
+           differential.analyses.params = .deprot_analysis_slot(DEprot.object, "differential.analyses.params"))
 
     if (isTRUE(keep.object)) {
       obj.metadata$DEprot.object = DEprot.object
