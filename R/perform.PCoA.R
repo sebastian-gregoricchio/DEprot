@@ -474,7 +474,7 @@ perform.PCoA =
            coordinates,
            verbose = TRUE) {
 
-    if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       warning("The 'DEprot.object' provided is not of class 'DEprot'. The protein projections will not be computed.")
       return(NULL)
     }

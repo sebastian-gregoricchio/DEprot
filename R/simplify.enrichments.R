@@ -72,7 +72,7 @@ simplify.enrichment =
       #return(invisible())
     }
 
-    # if (!("DEprot.analyses" %in% class(dpo.analyses.object))) {
+    # if (!(methods::is(dpo.analyses.object, "DEprot.analyses"))) {
     #   stop("The 'dpo.analyses.object' must be an object of calss 'DEprot.analyses'.")
     #   #return(invisible())
     # }

@@ -37,7 +37,7 @@ filter.proteins =
            mode = "keep") {
 
     ### check object
-    if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       stop("The input must be an object of class 'DEprot'.")
       #return(DEprot.object)
     }
@@ -140,7 +140,7 @@ filter.proteins =
 
 
     ### FILTER ANALYSES ##################
-    if ("DEprot.analyses" %in% class(DEprot.object)) {
+    if (methods::is(DEprot.object, "DEprot.analyses")) {
       ## Filter the protein names
       DEprot.object@analyses.result.list =
         lapply(DEprot.object@analyses.result.list,

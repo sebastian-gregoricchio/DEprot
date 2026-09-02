@@ -21,9 +21,6 @@ NULL
 #' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.random Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.
 #' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
-#' @slot analyses.result.list For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
-#' @slot contrasts For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
-#' @slot differential.analyses.params For this type of object the value is \code{NULL}. Class: \code{"ANY"}.
 #'
 #' @export
 
@@ -45,10 +42,7 @@ setClass(Class = "DEprot",
                       boxplot.raw = "ANY",
                       boxplot.norm = "ANY",
                       boxplot.random = "ANY",
-                      boxplot.imputed = "ANY",
-                      analyses.result.list = "ANY",
-                      contrasts = "ANY",
-                      differential.analyses.params = "ANY"))
+                      boxplot.imputed = "ANY"))
 
 
 
@@ -57,24 +51,10 @@ setClass(Class = "DEprot",
 
 #' @title DEprot.analyses class
 #'
-#' @slot metadata The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.
-#' @slot protein.info A data.frame (or \code{NULL}) containing extra information about the proteins (e.g., gene symbol, description, number of peptides). It has one row per protein, row-by-row aligned with the counts tables, and the same row names. It is kept synchronized with the counts by all the functions that add or remove proteins. Class: \code{"ANY"}.
-#' @slot raw.counts Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.
-#' @slot norm.counts Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.
-#' @slot random.counts Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.
-#' @slot imputed.counts Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.
-#' @slot log.base Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.
-#' @slot log.transformed Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.
-#' @slot normalized Logical value indicating whether the data are normalized. Class: \code{"logical"}.
-#' @slot normalization.method String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.
-#' @slot randomized Logical value indicating whether the bottom distribution randomization has been applied. Class: \code{"logical"}.
-#' @slot randomization.method List indicating the parameters used for the randomization (bottom distribution). Class" \code{"ANY"}.
-#' @slot imputed Logical value indicating whether the data are imputed. Class: \code{"logical"}.
-#' @slot imputation.method String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.
-#' @slot boxplot.raw Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.
-#' @slot boxplot.norm Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.
-#' @slot boxplot.random Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.
-#' @slot boxplot.imputed Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.
+#' @description Extension of the \linkS4class{DEprot} class: it stores the same data and
+#'   pre-processing information, plus the results of the differential analyses.
+#'   All the slots of \linkS4class{DEprot} are inherited and behave identically.
+#'
 #' @slot analyses.result.list List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
 #'      \describe{
 #'        \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, test statistic, degrees of freedom and differential.status}
@@ -90,25 +70,8 @@ setClass(Class = "DEprot",
 #' @export
 
 setClass(Class = "DEprot.analyses",
-         slots = list(metadata = "ANY",
-                      protein.info = "ANY",
-                      raw.counts = "ANY",
-                      norm.counts = "ANY",
-                      random.counts = "ANY",
-                      imputed.counts = "ANY",
-                      log.base = "numeric",
-                      log.transformed = "logical",
-                      randomized = "logical",
-                      randomization.method = "ANY",
-                      normalized = "logical",
-                      normalization.method = "ANY",
-                      imputed = "logical",
-                      imputation.method = "ANY",
-                      boxplot.raw = "ANY",
-                      boxplot.norm = "ANY",
-                      boxplot.random = "ANY",
-                      boxplot.imputed = "ANY",
-                      analyses.result.list = "ANY",
+         contains = "DEprot",
+         slots = list(analyses.result.list = "ANY",
                       contrasts = "ANY",
                       differential.analyses.params = "ANY"))
 
@@ -628,6 +591,71 @@ setClass(Class = "DEprot.power",
 # ===================================================================================================================
 # ===================================================================================================================
 # ===================================================================================================================
+
+## ------------------------------------------------------------------------- ##
+## Internal helpers for the analysis slots
+## ------------------------------------------------------------------------- ##
+
+## analyses.result.list, contrasts and differential.analyses.params exist only in
+## DEprot.analyses objects: this returns the value they used to have in a plain
+## DEprot object (NULL, or NA for the contrasts), so that the functions accepting
+## both classes do not need to branch on the class before reading them
+.deprot_analysis_slot = function(object,
+                                 slot.name,
+                                 default = NULL) {
+  if (methods::is(object, "DEprot.analyses")) {
+    methods::slot(object, slot.name)
+  } else {
+    default
+  }
+}
+
+
+#' @title DEprot updateObject-method
+#' @description Drops the analysis slots from the \code{DEprot} objects built with DEprot <= 2.1.0,
+#'   where they were declared but never filled. Run it on the objects restored from an old
+#'   \code{.rds} file: \code{dpo = updateObject(dpo)}.
+#' @param object Object of class \code{DEprot}.
+#' @param ... Not used.
+#' @param verbose Logical value indicating whether a message should be printed when the object is updated. Default: \code{FALSE}.
+#' @return An object of class \code{DEprot}.
+#' @author Sebastian Gregoricchio
+#' @export
+setGeneric(name = "updateObject",
+           def = function(object, ..., verbose = FALSE) {standardGeneric("updateObject")})
+
+
+#' @rdname updateObject
+#' @exportMethod updateObject
+setMethod(
+  f = "updateObject",
+  signature = "DEprot",
+  definition = function(object, ..., verbose = FALSE) {
+    ## objects written by an older class definition keep their slots in the
+    ## attributes: rebuilding from the current definition is enough to drop them
+    if (methods::is(object, "DEprot.analyses")) {
+      return(object)
+    }
+
+    obsolete = c("analyses.result.list", "contrasts", "differential.analyses.params")
+    stored = attributes(object)
+
+    if (!any(obsolete %in% names(stored))) {
+      return(object)
+    }
+
+    if (verbose == TRUE) {
+      message("The object was built with DEprot <= 2.1.0: the unused analysis slots are removed.")
+    }
+
+    keep = setdiff(methods::slotNames("DEprot"), obsolete)
+    args = lapply(keep, function(x) {stored[[x]]})
+    names(args) = keep
+
+    do.call(methods::new, c(list(Class = "DEprot"), args))
+  }
+)
+
 
 #' @title DEprot show-method
 #' @param object Object of class \code{DEprot}

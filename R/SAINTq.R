@@ -107,10 +107,8 @@ SAINTq =
     if (missing(control) || length(control) > 1) {stop("Provide one 'control' group.", call. = FALSE)}
 
     ### check object and parameters
-    if (!("DEprot" %in% class(DEprot.object))) {
-      if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        stop("The `DEprot.object` must be an object of class 'DEprot' or 'DEprot.analyses'.")
-      }
+    if (!methods::is(DEprot.object, "DEprot")) {
+      stop("The `DEprot.object` must be an object of class 'DEprot' or 'DEprot.analyses'.")
     }
 
 

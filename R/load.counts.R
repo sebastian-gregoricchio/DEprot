@@ -293,10 +293,7 @@ load.counts =
           boxplot.raw = boxplot.raw,
           boxplot.norm = boxplot.norm,
           boxplot.random = NA,
-          boxplot.imputed = boxplot.imputed,
-          analyses.result.list = NULL,
-          contrasts = NA,
-          differential.analyses.params = NULL)
+          boxplot.imputed = boxplot.imputed)
 
 
     return(DEprot.object)

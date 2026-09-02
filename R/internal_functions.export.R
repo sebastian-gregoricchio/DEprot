@@ -151,7 +151,7 @@
 
 
     ### ------------------------------------------------------------------- differential results
-    if (isTRUE(add.results) && ("DEprot.analyses" %in% class(DEprot.object))) {
+    if (isTRUE(add.results) && (methods::is(DEprot.object, "DEprot.analyses"))) {
       result.list = DEprot.object@analyses.result.list
 
       if (!is.null(contrast.subset)) {

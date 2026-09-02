@@ -23,9 +23,7 @@ get.metadata =
   function(DEprot.object) {
 
     ### check object
-    if ("DEprot" %in% class(DEprot.object)) {
-      return(DEprot.object@metadata)
-    } else if ("DEprot.analyses" %in% class(DEprot.object)) {
+    if (methods::is(DEprot.object, "DEprot")) {
       return(DEprot.object@metadata)
     } else if ("DEprot.PCA" %in% class(DEprot.object)) {
       return(DEprot.object@PCA.metadata)

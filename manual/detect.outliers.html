@@ -22,7 +22,7 @@ The vector of flagged samples can be passed directly to filter.samples."><!-- ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
       </span>
     </div>
 
@@ -199,7 +199,7 @@ collapse to the few proteins quantified in all the samples. All the Z-scores are
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">outliers</span> <span class="op">&lt;-</span> <span class="fu">detect.outliers</span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
 <span class="r-in"><span>                            which.data <span class="op">=</span> <span class="st">"imputed"</span>,</span></span>
 <span class="r-in"><span>                            group.column <span class="op">=</span> <span class="st">"condition"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 0 sample(s) flagged as outlier out of 12.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 1 sample(s) flagged as outlier out of 12: Sample_K.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">outliers</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> DEprot.outliers object:</span>
@@ -207,35 +207,35 @@ collapse to the few proteins quantified in all the samples. All the Z-scores are
 <span class="r-out co"><span class="r-pr">#&gt;</span>          Data used:  imputed (log2)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Metrics available:  correlation, mahalanobis, missingness</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     Flags required:  2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           Outliers:  none</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           Outliers:  Sample_K</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sample metrics:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    column.id      group median.correlation correlation.z mahalanobis.distance</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   Sample_G        FBS          0.9571194   -2.28323106          13.11027189</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   Sample_D        FBS          0.9674753   -0.69085677          11.04656514</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   Sample_K    6h.DMSO          0.9658027   -0.94804552           6.44929673</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   Sample_J        FBS          0.9568579   -2.32343631           5.85340192</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   Sample_A        FBS          0.9571194   -2.28323106           5.46679120</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   Sample_C 6h.10nM.E2          0.9718504   -0.01812733           3.37997454</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   Sample_H    6h.DMSO          0.9757909    0.58778255           1.42720076</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   Sample_B    6h.DMSO          0.9762484    0.65812475           1.41423352</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   Sample_L 6h.10nM.E2          0.9720862    0.01812733           1.31680501</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  Sample_F 6h.10nM.E2          0.9720862    0.01812733           1.22750168</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  Sample_E    6h.DMSO          0.9757909    0.58778255           0.67154454</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  Sample_I 6h.10nM.E2          0.9798880    1.21775794           0.09353897</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   Sample_K    6h.DMSO          0.9628344   -2.99405297           14.7360271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   Sample_G        FBS          0.9570289   -4.75964798           11.4284787</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   Sample_J        FBS          0.9503157   -6.80131705            5.9296615</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   Sample_A        FBS          0.9570289   -4.75964798            5.5126646</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   Sample_D        FBS          0.9739932    0.39966563            8.9944516</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   Sample_H    6h.DMSO          0.9725011   -0.05412522            5.1489019</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   Sample_C 6h.10nM.E2          0.9723594   -0.09723496            3.7721677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   Sample_B    6h.DMSO          0.9753817    0.82194590            3.3411822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   Sample_F 6h.10nM.E2          0.9728571    0.05412522            0.9067030</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  Sample_E    6h.DMSO          0.9744120    0.52703562            0.8958717</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  Sample_L 6h.10nM.E2          0.9728571    0.05412522            0.8843751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  Sample_I 6h.10nM.E2          0.9794946    2.07277332            0.2887230</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    mahalanobis.padj missing.rate missingness.z n.flags outlier</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        0.05284925         0.12     1.1241513       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        0.06886036         0.02    -1.1241513       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        0.33753220         0.10     0.6744908       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        0.33753220         0.06    -0.2248303       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        0.33753220         0.06    -0.2248303       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        0.67333177         0.02    -1.1241513       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        0.89569933         0.12     1.1241513       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        0.89569933         0.06    -0.2248303       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9        0.89569933         0.08     0.2248303       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10       0.89569933         0.06    -0.2248303       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11       0.95986436         0.12     1.1241513       0   FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12       0.99260134         0.10     0.6744908       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        0.02468050         0.10     0.6744908       2    TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        0.05772506         0.12     1.1241513       1   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        0.32242585         0.06    -0.2248303       1   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        0.32242585         0.06    -0.2248303       1   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        0.11745898         0.02    -1.1241513       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        0.32242585         0.12     1.1241513       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        0.49224023         0.02    -1.1241513       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        0.51292777         0.06    -0.2248303       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9        0.90457824         0.06    -0.2248303       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10       0.90457824         0.12     1.1241513       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       0.90457824         0.08     0.2248303       0   FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12       0.96213523         0.10     0.6744908       0   FALSE</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">outliers</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="detect.outliers-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
@@ -253,7 +253,7 @@ collapse to the few proteins quantified in all the samples. All the Z-scores are
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

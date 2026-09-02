@@ -167,12 +167,10 @@ filter.samples =
     ############################################################################
     ### Check input object
     ############################################################################
-    obj.class = class(DEprot.object)
-
-    if (!any(c("DEprot", "DEprot.analyses") %in% obj.class)) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.", call. = FALSE)
     }
-    is.analyses = "DEprot.analyses" %in% obj.class
+    is.analyses = methods::is(DEprot.object, "DEprot.analyses")
 
     mode = tolower(mode[1])
     if (!(mode %in% c("remove", "keep"))) {

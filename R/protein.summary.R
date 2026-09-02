@@ -54,11 +54,9 @@ protein.summary =
 
 
     ### check object and extract metadata table
-    if (!("DEprot" %in% class(DEprot.object))) {
-      if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
-        #return(DEprot.object)
-      }
+    if (!methods::is(DEprot.object, "DEprot")) {
+      stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
+      #return(DEprot.object)
     }
 
 

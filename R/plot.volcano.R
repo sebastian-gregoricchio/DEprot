@@ -87,7 +87,7 @@ plot.volcano =
 
 
     ### check object
-    if (!("DEprot.analyses" %in% class(DEprot.analyses.object))) {
+    if (!(methods::is(DEprot.analyses.object, "DEprot.analyses"))) {
       stop("The input must be an object of class 'DEprot.analyses'.")
       #return()
     } else {

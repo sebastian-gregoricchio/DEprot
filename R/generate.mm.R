@@ -76,7 +76,7 @@ generate.mm =
            verbose = TRUE) {
 
     ### check object
-    if (!any(c("DEprot", "DEprot.analyses") %in% class(DEprot.object))) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
     }
 
@@ -628,7 +628,7 @@ generate.mm =
                       no = paste0(" The random seed was set to ", number.to.text(imputation.seed), ".")),
                OOB.text)
 
-    } else if ("DEprot.analyses" %in% class(DEprot.object)) {
+    } else if (methods::is(DEprot.object, "DEprot.analyses")) {
       if (identical(tolower(as.character(get.param(DEprot.object@differential.analyses.params,
                                                    "stat.test", default = ""))), "proda")) {
         imputation.text =
@@ -650,7 +650,7 @@ generate.mm =
     differential.text = NULL
     results.text = NULL
 
-    if ("DEprot.analyses" %in% class(DEprot.object)) {
+    if (methods::is(DEprot.object, "DEprot.analyses")) {
       diff.parameters = DEprot.object@differential.analyses.params
       contrasts.info = DEprot.object@contrasts
 

@@ -7,12 +7,18 @@ title: "changeLog"
 [![forks](https://img.shields.io/github/forks/sebastian-gregoricchio/DEprot?style=social)](https://github.com/sebastian-gregoricchio/DEprot/fork)
 
 
+<br>
+
 #### [v2.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0) - August 24<sup>th</sup> 2026
 - added `estimate.power` function to compute sample size and power estimation
 - updated overview vignette, manual and tests accordingly
 - added `heatmap.counts.anno()`: the heatmap of `heatmap.counts()`, with the same data selection (`which.data`, `contrast`, `top.n`, `sample.subset`, `protein.subset`, `group.by.metadata.column`, `scale`), drawn with `ComplexHeatmap` instead of `ggplot2`. It returns the usual `DEprot.counts.heatmap` object, whose `heatmap` slot contains a `Heatmap` object, hence it can be customized, drawn and concatenated with the standard `ComplexHeatmap` syntax
 - `ComplexHeatmap` and `circlize` added to the dependencies
 - added function `generate.mm` to generate materials and methods paragraph
+- `DEprot.analyses` is now defined as an extension of the `DEprot` class (`contains = "DEprot"`) instead of repeating its slot list: the two classes cannot drift apart anymore
+- `analyses.result.list`, `contrasts` and `differential.analyses.params` are no longer slots of `DEprot`, where they were declared but never filled
+- the functions accepting both classes test the input with `methods::is(x, "DEprot")`, which is satisfied by `DEprot.analyses` objects as well
+- added an `updateObject()` method for `DEprot`: it removes the three unused slots from the objects restored from a `.rds` file written with a previous version
 - updated overview vignette, manual and tests accordingly
 
 <br>

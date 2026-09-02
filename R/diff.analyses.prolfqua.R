@@ -102,10 +102,8 @@ diff.analyses.prolfqua =
 
 
     ### check object and extract metadata table
-    if (!("DEprot" %in% class(DEprot.object))) {
-      if (!("DEprot.analyses" %in% class(DEprot.object))) {
-        stop("The input must be an object of class 'DEprot' or 'DEprot.analyses.")
-      }
+    if (!methods::is(DEprot.object, "DEprot")) {
+      stop("The input must be an object of class 'DEprot' or 'DEprot.analyses.")
     }
 
     meta.tb = DEprot.object@metadata
@@ -113,7 +111,9 @@ diff.analyses.prolfqua =
 
 
     ### Check contrasts
-    if (all(is.na(DEprot.object@contrasts))) {
+    stored.contrasts = .deprot_analysis_slot(DEprot.object, "contrasts", default = NA)
+
+    if (all(is.na(stored.contrasts))) {
       if ("character" %in% class(contrast.list)) {
         contrasts = list(contrast.list)
       } else if ("list" %in% class(contrast.list)) {
@@ -124,7 +124,6 @@ diff.analyses.prolfqua =
       }
 
     } else if (overwrite.analyses == FALSE) {
-      DEprot.object@contrasts
       stop("The DEprot object contains already a contrast list.\n",
            "       To overwrite the contrast list set the parameter `overwrite.analyses = TRUE`")
       #return(DEprot.object)

@@ -104,7 +104,7 @@ export.external =
       stop("Provide 'DEprot.object': an object of class 'DEprot' or 'DEprot.analyses'.", call. = FALSE)
     }
 
-    if (!any(c("DEprot", "DEprot.analyses") %in% class(DEprot.object))) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.", call. = FALSE)
     }
 

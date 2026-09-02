@@ -115,7 +115,7 @@ missingness.diagnostic =
 
 
     ### Check object
-    if (!any(c("DEprot", "DEprot.analyses") %in% class(DEprot.object))) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       stop("The input must be an object of class 'DEprot' or 'DEprot.analyses'.")
     }
 
@@ -216,8 +216,9 @@ missingness.diagnostic =
 
     ## group.column fallback: first contrast of a DEprot.analyses object
     if (is.null(group.column)) {
-      if (!.deprot_slot_is_empty(DEprot.object@contrasts)) {
-        group.column = DEprot.object@contrasts[[1]]$metadata.column
+      stored.contrasts = .deprot_analysis_slot(DEprot.object, "contrasts")
+      if (!.deprot_slot_is_empty(stored.contrasts)) {
+        group.column = stored.contrasts[[1]]$metadata.column
         if (verbose == TRUE) {
           message(paste0("No 'group.column' provided: the metadata column of the first contrast ('",
                          group.column, "') will be used."))
@@ -389,7 +390,7 @@ missingness.diagnostic =
     ##--------------------------------------------------------------------##
     contrast.stats = NULL
 
-    if ("DEprot.analyses" %in% class(DEprot.object) &
+    if (methods::is(DEprot.object, "DEprot.analyses") &
         !.deprot_slot_is_empty(DEprot.object@contrasts) &
         !(length(contrasts) == 1 && (identical(contrasts, NA) | identical(tolower(as.character(contrasts)), "none")))) {
 

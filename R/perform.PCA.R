@@ -45,7 +45,7 @@ perform.PCA =
 
 
     ### check object
-    if (!("DEprot" %in% class(DEprot.object)) & !("DEprot.analyses" %in% class(DEprot.object))) {
+    if (!methods::is(DEprot.object, "DEprot")) {
       stop("The input must be an object of class 'DEprot'.")
     }
 

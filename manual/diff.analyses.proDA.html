@@ -20,7 +20,7 @@ left-censored observations instead of replacing them. Includes means, Fold Chang
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DEprot</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.1.0</span>
       </span>
     </div>
 
@@ -271,7 +271,7 @@ have a detection limit of their own and should be inspected.</p>
 <span class="r-in"><span>                                                <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"condition"</span>, <span class="st">"6h.10nM.E2"</span>, <span class="st">"6h.DMSO"</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                           linear.FC.th <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Counts available: raw, normalized | counts used: normalized.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in which(unlist(lapply(X = fit.cache, FUN = function(x) {    identical(x$id, cache.id) &amp; identical(sort(x$prot), sort(prot.fit))}))):</span> argument to 'which' is not logical</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contain 1 row(s) (proteins) with a null variance across the samples analyzed. These rows will be removed to perform PC analyses ('scale.data = TRUE').</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Including the replicate as a blocking factor</span></span></span>
@@ -282,7 +282,7 @@ have a detection limit of their own and should be inspected.</p>
 <span class="r-in"><span>                           replicate.column <span class="op">=</span> <span class="st">"replicate"</span>,</span></span>
 <span class="r-in"><span>                           linear.FC.th <span class="op">=</span> <span class="fl">1.5</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Counts available: raw, normalized | counts used: normalized.</span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in which(unlist(lapply(X = fit.cache, FUN = function(x) {    identical(x$id, cache.id) &amp; identical(sort(x$prot), sort(prot.fit))}))):</span> argument to 'which' is not logical</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Data contain 1 row(s) (proteins) with a null variance across the samples analyzed. These rows will be removed to perform PC analyses ('scale.data = TRUE').</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -301,7 +301,7 @@ have a detection limit of their own and should be inspected.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
       </footer></div>

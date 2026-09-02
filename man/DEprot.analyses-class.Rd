@@ -5,47 +5,13 @@
 \alias{DEprot.analyses-class}
 \title{DEprot.analyses class}
 \description{
-DEprot.analyses class
+Extension of the \linkS4class{DEprot} class: it stores the same data and
+  pre-processing information, plus the results of the differential analyses.
+  All the slots of \linkS4class{DEprot} are inherited and behave identically.
 }
 \section{Slots}{
 
 \describe{
-\item{\code{metadata}}{The data.frame corresponding to the metadata table describing the samples. Class: \code{"ANY"}.}
-
-\item{\code{protein.info}}{A data.frame (or \code{NULL}) containing extra information about the proteins (e.g., gene symbol, description, number of peptides). It has one row per protein, row-by-row aligned with the counts tables, and the same row names. It is kept synchronized with the counts by all the functions that add or remove proteins. Class: \code{"ANY"}.}
-
-\item{\code{raw.counts}}{Numeric matrix (rows: proteins, columns: samples) of the raw counts. Class: \code{"ANY"}.}
-
-\item{\code{norm.counts}}{Numeric matrix (rows: proteins, columns: samples) of the normalized counts. Class: \code{"ANY"}.}
-
-\item{\code{random.counts}}{Numeric matrix (rows: proteins, columns: samples) of the randomized counts. Class: \code{"ANY"}.}
-
-\item{\code{imputed.counts}}{Numeric matrix (rows: proteins, columns: samples) of the imputed counts. Class: \code{"ANY"}.}
-
-\item{\code{log.base}}{Numeric value indicating the base of the logarithm expressing the values in the loaded data. Class: \code{"ANY"}.}
-
-\item{\code{log.transformed}}{Logical value indicating whether the data are log-transformed or not. Class: \code{"logical"}.}
-
-\item{\code{normalized}}{Logical value indicating whether the data are normalized. Class: \code{"logical"}.}
-
-\item{\code{normalization.method}}{String (or any other class) value indicating the normalization method. Class: \code{"ANY"}. Class: \code{"ANY"}.}
-
-\item{\code{randomized}}{Logical value indicating whether the bottom distribution randomization has been applied. Class: \code{"logical"}.}
-
-\item{\code{randomization.method}}{List indicating the parameters used for the randomization (bottom distribution). Class" \code{"ANY"}.}
-
-\item{\code{imputed}}{Logical value indicating whether the data are imputed. Class: \code{"logical"}.}
-
-\item{\code{imputation.method}}{String (or any other class) value indicating the imputation method. Class: \code{"ANY"}.}
-
-\item{\code{boxplot.raw}}{Ggplot object showing the distribution of the raw values per sample. Class: \code{"ANY"}.}
-
-\item{\code{boxplot.norm}}{Ggplot object showing the distribution of the normalized values per sample. Class: \code{"ANY"}.}
-
-\item{\code{boxplot.random}}{Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.}
-
-\item{\code{boxplot.imputed}}{Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.}
-
 \item{\code{analyses.result.list}}{List containing the differential results for each contrast. Class: \code{"ANY"}. The list contains the following elements:
 \describe{
   \item{\code{results}: }{a data.frame containing the results of the analyses; includes average expression of each group, basemean, foldchange, pvalue and p.adj, test statistic, degrees of freedom and differential.status}

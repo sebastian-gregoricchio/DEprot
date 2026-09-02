@@ -45,11 +45,5 @@ DEprot class
 \item{\code{boxplot.random}}{Ggplot object showing the distribution of the randomized values per sample. Class: \code{"ANY"}.}
 
 \item{\code{boxplot.imputed}}{Ggplot object showing the distribution of the imputed values per sample. Class: \code{"ANY"}.}
-
-\item{\code{analyses.result.list}}{For this type of object the value is \code{NULL}. Class: \code{"ANY"}.}
-
-\item{\code{contrasts}}{For this type of object the value is \code{NULL}. Class: \code{"ANY"}.}
-
-\item{\code{differential.analyses.params}}{For this type of object the value is \code{NULL}. Class: \code{"ANY"}.}
 }}
 

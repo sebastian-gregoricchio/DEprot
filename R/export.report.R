@@ -104,8 +104,7 @@ export.report <- function(DEprot.object,
          "Install RStudio or a standalone Pandoc (see rmarkdown::find_pandoc()).",
          call. = FALSE)
   }
-  if (!methods::is(DEprot.object, "DEprot") &&
-      !methods::is(DEprot.object, "DEprot.analyses")) {
+  if (!methods::is(DEprot.object, "DEprot")) {
     stop("'DEprot.object' must be an object of class 'DEprot' or 'DEprot.analyses'.",
          call. = FALSE)
   }
