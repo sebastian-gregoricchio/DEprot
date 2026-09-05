@@ -7,15 +7,16 @@
 .ordination.slots(object)
 }
 \arguments{
-\item{object}{An object of class \code{DEprot.PCA} or \code{DEprot.PCoA}.}
+\item{object}{An object of class \code{DEprot.PCA}, \code{DEprot.PCoA} or \code{DEprot.sPLSDA}.}
 }
 \value{
 A list with the elements: \code{coordinates}, \code{metadata}, \code{importance},
-\code{axis.prefix}, \code{axis.title}, \code{positive.axis} (\code{NULL} for a PCA, a logical
+\code{axis.prefix}, \code{axis.title}, \code{positive.axis} (\code{NULL} for a PCA and a sPLS-DA, a logical
 vector for a PCoA) and \code{object.class}.
 }
 \description{
-Internal. Harmonizes the access to a \code{DEprot.PCA} or a \code{DEprot.PCoA} object,
-returning the elements needed by the shared plotting helpers under a common set of names.
+Internal. Harmonizes the access to a \code{DEprot.PCA}, a \code{DEprot.PCoA} or a
+\code{DEprot.sPLSDA} object, returning the elements needed by the shared plotting helpers under
+a common set of names.
 }
 \keyword{internal}

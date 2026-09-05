@@ -50,6 +50,7 @@ Imports:
 	MBQN,
 	methods,
 	missForest,
+	mixOmics,
 	nortest,
 	patchwork,
 	pcaMethods,

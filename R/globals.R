@@ -34,6 +34,11 @@ utils::globalVariables(unique(c(
   "label.color", "log10.padj", "order.value", "p.adjust", "set.size", "significant",
   "signed.value", "size.value",
 
+  # --- sPLS-DA module ---
+  "comp", "component", "component.label", "keepX", "error.rate", "error.rate.sd",
+  "loading", "abs.loading", "selected", "contrib.group", "vip",
+  "frequency", "retained", "AUC", "AUC.sd", "comparison", "distance", "metric",
+
   # --- outliers module ---
   "metric.value", "flag", "n.flags", "outlier", "status", "mahalanobis.distance",
 

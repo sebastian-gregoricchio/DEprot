@@ -108,21 +108,21 @@
     } else if (is.data.frame(protein.info)) {
       protein.info = as.data.frame(protein.info, stringsAsFactors = FALSE)
     } else {
-      stop(paste0("The '", arg.name, "' must be a data.frame (or a matrix) with one row per protein.\n",
-                  "The protein IDs must be provided as row names or in a dedicated column (see 'id.column')."),
+      stop("The '", arg.name, "' must be a data.frame (or a matrix) with one row per protein.\n",
+           "The protein IDs must be provided as row names or in a dedicated column (see 'id.column').",
            call. = FALSE)
     }
 
     if (ncol(protein.info) == 0) {
-      stop(paste0("The '", arg.name, "' table does not contain any column."), call. = FALSE)
+      stop("The '", arg.name, "' table does not contain any column.", call. = FALSE)
     }
 
 
     ### Recover the protein IDs: dedicated column > row names > 'prot.id' column
     if (!is.null(id.column)) {
       if (!(id.column %in% colnames(protein.info))) {
-        stop(paste0("The column '", id.column, "' is not present in the '", arg.name, "' table.\n",
-                    "Available columns: ", paste0(colnames(protein.info), collapse = ", "), "."),
+        stop("The column '", id.column, "' is not present in the '", arg.name, "' table.\n",
+             "Available columns: ", paste0(colnames(protein.info), collapse = ", "), ".",
              call. = FALSE)
       }
       info.ids = as.character(protein.info[, id.column])
@@ -136,28 +136,28 @@
       protein.info = protein.info[, setdiff(colnames(protein.info), "prot.id"), drop = FALSE]
 
     } else {
-      stop(paste0("The '", arg.name, "' table has no protein IDs: provide them as row names, ",
-                  "in a column called 'prot.id', or indicate the column to use through 'id.column'."),
+      stop("The '", arg.name, "' table has no protein IDs: provide them as row names, ",
+           "in a column called 'prot.id', or indicate the column to use through 'id.column'.",
            call. = FALSE)
     }
 
     if (ncol(protein.info) == 0) {
-      stop(paste0("The '", arg.name, "' table contains only the protein IDs and no annotation column."), call. = FALSE)
+      stop("The '", arg.name, "' table contains only the protein IDs and no annotation column.", call. = FALSE)
     }
 
 
     ### Check the IDs
     if (any(is.na(info.ids)) | any(info.ids == "")) {
-      stop(paste0("The protein IDs of the '", arg.name, "' table contain missing values ('') or NAs. ",
-                  "Replace them with actual values."), call. = FALSE)
+      stop("The protein IDs of the '", arg.name, "' table contain missing values ('') or NAs. ",
+           "Replace them with actual values.", call. = FALSE)
     }
 
     if (any(duplicated(info.ids))) {
       dup.ids = unique(info.ids[duplicated(info.ids)])
-      stop(paste0("The '", arg.name, "' table contains duplicated protein IDs (n=", length(dup.ids), "): ",
-                  paste0(dup.ids[1:min(10, length(dup.ids))], collapse = ", "),
-                  ifelse(length(dup.ids) > 10, ", ...", ""), ".\n",
-                  "Only one row per protein is allowed."),
+      stop("The '", arg.name, "' table contains duplicated protein IDs (n=", length(dup.ids), "): ",
+           paste0(dup.ids[1:min(10, length(dup.ids))], collapse = ", "),
+           ifelse(length(dup.ids) > 10, ", ...", ""), ".\n",
+           "Only one row per protein is allowed.",
            call. = FALSE)
     }
 
@@ -174,27 +174,137 @@
 
     ### Report
     if (length(missing.ids) == length(protein.ids)) {
-      warning(paste0("None of the protein IDs of the '", arg.name, "' table matches the proteins of the object: ",
-                     "the annotation columns will contain only NAs.\n",
-                     "Check that the IDs used in the annotation correspond to the row names of the counts table."),
+      warning("None of the protein IDs of the '", arg.name, "' table matches the proteins of the object: ",
+              "the annotation columns will contain only NAs.\n",
+              "Check that the IDs used in the annotation correspond to the row names of the counts table.",
               call. = FALSE, immediate. = TRUE)
 
     } else if (isTRUE(verbose)) {
       if (length(missing.ids) > 0) {
-        message(paste0("[", arg.name, "] ", length(missing.ids), " protein(s) of the object ",
-                       ifelse(length(missing.ids) == 1, "is", "are"),
-                       " not annotated and will be filled with NAs: ",
-                       paste0(missing.ids[1:min(5, length(missing.ids))], collapse = ", "),
-                       ifelse(length(missing.ids) > 5, ", ...", ""), "."))
+        message("[", arg.name, "] ", length(missing.ids), " protein(s) of the object ",
+                ifelse(length(missing.ids) == 1, "is", "are"),
+                " not annotated and will be filled with NAs: ",
+                paste0(missing.ids[1:min(5, length(missing.ids))], collapse = ", "),
+                ifelse(length(missing.ids) > 5, ", ...", ""), ".")
       }
 
       if (length(extra.ids) > 0) {
-        message(paste0("[", arg.name, "] ", length(extra.ids), " annotated protein(s) ",
-                       ifelse(length(extra.ids) == 1, "is", "are"),
-                       " not present in the object and ",
-                       ifelse(length(extra.ids) == 1, "has", "have"), " been discarded."))
+        message("[", arg.name, "] ", length(extra.ids), " annotated protein(s) ",
+                ifelse(length(extra.ids) == 1, "is", "are"),
+                " not present in the object and ",
+                ifelse(length(extra.ids) == 1, "has", "have"), " been discarded.")
       }
     }
 
     return(aligned.info)
+  } # END function
+
+
+
+
+# ----------------------------------------------------------------------------------------
+
+
+#' @title .append.protein.info
+#'
+#' @description Internal. Appends the columns of the \code{protein.info} table to a results table,
+#' matching the rows by protein ID rather than by position, since the results might have been
+#' re-ordered or filtered.
+#'
+#' @param data data.frame containing a \code{prot.id} column.
+#' @param DEprot.object An object of class \code{DEprot} or \code{DEprot.analyses}, or \code{NULL}.
+#' @param protein.info.columns String vector of the columns to append, or one of the keywords \code{"none"} and \code{"all"}.
+#' @param protein.info.prefix String to prepend to the names of the appended columns, or \code{NULL}.
+#'
+#' @return The input data.frame, with the annotation columns appended when available.
+#'
+#' @author Sebastian Gregoricchio
+#'
+#' @keywords internal
+
+.append.protein.info =
+  function(data,
+           DEprot.object = NULL,
+           protein.info.columns = "none",
+           protein.info.prefix = NULL) {
+
+    if (is.null(protein.info.columns)) {protein.info.columns = "none"}
+
+    if (!is.character(protein.info.columns) | length(protein.info.columns) == 0) {
+      stop("The 'protein.info.columns' must be a string vector indicating the annotation columns to append, ",
+           "or one of the keywords 'none' (default) and 'all'.",
+           call. = FALSE)
+    }
+
+    keyword = "custom"
+
+    if (length(protein.info.columns) == 1) {
+      if (tolower(protein.info.columns[1]) %in% c("none", "all")) {
+        keyword = tolower(protein.info.columns[1])
+      }
+    }
+
+    if (keyword == "none") {return(data)}
+
+    if (is.null(DEprot.object)) {
+      warning("No 'DEprot.object' was provided: the protein annotation cannot be appended.",
+              call. = FALSE, immediate. = TRUE)
+      return(data)
+    }
+
+    protein.info = .get.protein.info(DEprot.object)
+
+    if (is.null(protein.info)) {
+      warning("No 'protein.info' table is stored in this object: the requested columns cannot be appended.\n",
+              "An annotation can be added with `add.protein.info()`.",
+              call. = FALSE, immediate. = TRUE)
+      return(data)
+    }
+
+
+    ### Subset the columns, if required
+    if (keyword == "custom") {
+      missing.columns = setdiff(protein.info.columns, colnames(protein.info))
+
+      if (length(missing.columns) > 0) {
+        stop("The following 'protein.info.columns' are not available in the annotation table: ",
+             paste(missing.columns, collapse = ", "), ".\n",
+             "Available columns: ", paste(colnames(protein.info), collapse = ", "), ".",
+             call. = FALSE)
+      }
+
+      protein.info = protein.info[, protein.info.columns, drop = FALSE]
+    }
+
+
+    ### Add the prefix, if required
+    if (!is.null(protein.info.prefix)) {
+      colnames(protein.info) = paste0(protein.info.prefix, colnames(protein.info))
+    }
+
+
+    ### Resolve the collisions with the columns of the results table
+    # only the annotation columns are renamed, the results columns are left untouched
+    colliding.columns = intersect(colnames(protein.info), colnames(data))
+
+    if (length(colliding.columns) > 0) {
+      unique.names = make.unique(c(colnames(data), colnames(protein.info)), sep = ".")
+      colnames(protein.info) = unique.names[(ncol(data) + 1):length(unique.names)]
+
+      warning("Some columns of the 'protein.info' table have the same name as columns of the results table (",
+              paste(colliding.columns, collapse = ", "), ").\n",
+              "The annotation columns have been renamed. Use 'protein.info.prefix' to control their naming.",
+              call. = FALSE, immediate. = TRUE)
+    }
+
+
+    ### Bind by protein ID and not by position
+    aligned.info = protein.info[match(as.character(data$prot.id), rownames(protein.info)), , drop = FALSE]
+    rownames(aligned.info) = NULL
+
+    original.rownames = rownames(data)
+    data = cbind(data, aligned.info)
+    rownames(data) = original.rownames
+
+    return(data)
   } # END function

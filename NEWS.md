@@ -19,6 +19,19 @@ title: "changeLog"
 - `analyses.result.list`, `contrasts` and `differential.analyses.params` are no longer slots of `DEprot`, where they were declared but never filled
 - the functions accepting both classes test the input with `methods::is(x, "DEprot")`, which is satisfied by `DEprot.analyses` objects as well
 - added an `updateObject()` method for `DEprot`: it removes the three unused slots from the objects restored from a `.rds` file written with a previous version
+- added `perform.sPLSDA()`: sparse Partial Least Squares Discriminant Analysis (sPLS-DA) on a `DEprot` object. Differently from the PCA and the PCoA, which show the largest source of variability whatever its origin, it looks for the directions separating a set of classes given by the user and selects the proteins responsible for that separation
+- the tuning of `keepX` and the estimation of the classification performances happen inside `perform.sPLSDA()`: neither of them changes as long as the model does not change. The tuning runs when `keepX = NULL`, the validation when `validate = TRUE`
+- `ncomp` is raised to 3 when a lower value is requested, and the number of folds is capped to the size of the smallest class (leave-one-out below 3 samples per class)
+- the sign of each component is fixed so that `reference.group` always sits on the positive side: the orientation returned by `mixOmics` is arbitrary and would change from one run to the next. The object stored in the `splsda` slot keeps the original mixOmics orientation
+- alongside the sparse model, a plain PLS-DA is fitted on the same data: it involves no resampling, and its loading vector covers every protein of the matrix, which is what a GSEA needs. The sparse loadings are zero for every protein that was not selected, hence a ranking made mostly of ties
+- added the `DEprot.sPLSDA` class, with its `show`, `summary` and `plot` methods
+- added `get.sPLSDA.results()`, `get.sPLSDA.proteins()` and `get.sPLSDA.ranking()`
+- added `sPLSDA.enrichment()`: GSEA on the complete ranking, over-representation on the selected proteins, using as background the proteins that entered the model. It returns the usual `DEprot.enrichResult` object, hence `NES.plot()`, `plot.GSEA()`, `simplify.enrichment()`, `combine.enrichments()` and `divergent.enrichment()` work on it unchanged
+- added `plot.sPLSDA.scatter()`, `plot.sPLSDA.scatter.123()`, `plot.sPLSDA.cumulative()`, `plot.sPLSDA.biplot()`, `plot.sPLSDA.loadings()`, `plot.sPLSDA.tuning()`, `plot.sPLSDA.performance()`, `plot.sPLSDA.stability()` and `plot.sPLSDA.auroc()`
+- `.ordination.slots()` accepts `DEprot.sPLSDA` objects
+- added the internal `.append.protein.info()`, used by `get.sPLSDA.results()` to append the `protein.info` annotation
+- `mixOmics` added to the dependencies
+- `stop()`, `warning()` and `message()` no longer wrap their arguments in `paste0()` in `classes.and.methods.R`, `internal_functions.R` and `internal_functions.protein.info.R`
 - updated overview vignette, manual and tests accordingly
 
 <br>

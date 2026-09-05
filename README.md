@@ -115,7 +115,7 @@ if (!require("DEprot", quietly = TRUE)) {
 ## Documentation
 With the package there are available:
 
-* [web-manual](https://sebastian-gregoricchio.github.io/DEprot/manual/index.html): technical manual of each function;
+* [web-manual](https://sebastian-gregoricchio.github.io/DEprot/docs/reference/index.html): technical manual of each function;
 * [overview vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.overview.vignette.html): presents most of the tools and analyses workflow;
 * [time-course vignette](https://sebastian-gregoricchio.github.io/DEprot/doc/DEprot.timecourse.vignette.html): shows how to perform time-course analyses within `DEprot` using splines modelling.
 

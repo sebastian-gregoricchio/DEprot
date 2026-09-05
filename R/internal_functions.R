@@ -47,13 +47,14 @@
 
 #' @title .ordination.slots
 #'
-#' @description Internal. Harmonizes the access to a \code{DEprot.PCA} or a \code{DEprot.PCoA} object,
-#' returning the elements needed by the shared plotting helpers under a common set of names.
+#' @description Internal. Harmonizes the access to a \code{DEprot.PCA}, a \code{DEprot.PCoA} or a
+#' \code{DEprot.sPLSDA} object, returning the elements needed by the shared plotting helpers under
+#' a common set of names.
 #'
-#' @param object An object of class \code{DEprot.PCA} or \code{DEprot.PCoA}.
+#' @param object An object of class \code{DEprot.PCA}, \code{DEprot.PCoA} or \code{DEprot.sPLSDA}.
 #'
 #' @return A list with the elements: \code{coordinates}, \code{metadata}, \code{importance},
-#' \code{axis.prefix}, \code{axis.title}, \code{positive.axis} (\code{NULL} for a PCA, a logical
+#' \code{axis.prefix}, \code{axis.title}, \code{positive.axis} (\code{NULL} for a PCA and a sPLS-DA, a logical
 #' vector for a PCoA) and \code{object.class}.
 #'
 #' @keywords internal
@@ -79,8 +80,19 @@
                   positive.axis = object@importance$Positive.eigenvalue,
                   object.class = "DEprot.PCoA"))
 
+    } else if ("DEprot.sPLSDA" %in% class(object)) {
+      ## a supervised component has no eigenvalue to be negative, so 'positive.axis' stays NULL
+      ## exactly as for a PCA
+      return(list(coordinates = object@components,
+                  metadata = object@sPLSDA.metadata,
+                  importance = object@importance,
+                  axis.prefix = "comp",
+                  axis.title = "Component",
+                  positive.axis = NULL,
+                  object.class = "DEprot.sPLSDA"))
+
     } else {
-      stop("The input must be an object of class 'DEprot.PCA' or 'DEprot.PCoA'.")
+      stop("The input must be an object of class 'DEprot.PCA', 'DEprot.PCoA' or 'DEprot.sPLSDA'.")
     }
   }
 
@@ -119,9 +131,9 @@
     available.columns = colnames(coordinates)[!grepl(axis.pattern, colnames(coordinates))]
 
     .aes.error = function(what, value) {
-      stop(paste0("The ", what, " column '", value, "' is not present in the ",
-                  axis.prefix, " analyses table.\n",
-                  "       Available columns: ", paste0(available.columns, collapse = ", ")))
+      stop("The ", what, " column '", value, "' is not present in the ",
+           axis.prefix, " analyses table.\n",
+           "       Available columns: ", paste0(available.columns, collapse = ", "))
     }
 
 
@@ -187,16 +199,16 @@
 
     if (!(paste0(axis.prefix, axis.x) %in% available.axes) |
         !(paste0(axis.prefix, axis.y) %in% available.axes)) {
-      stop(paste0("The axes requested (", axis.prefix, axis.x, ", ", axis.prefix, axis.y,
-                  ") are not available.\n",
-                  "       Available axes: ", paste0(available.axes, collapse = ", ")))
+      stop("The axes requested (", axis.prefix, axis.x, ", ", axis.prefix, axis.y,
+           ") are not available.\n",
+           "       Available axes: ", paste0(available.axes, collapse = ", "))
     }
 
     if (!is.null(positive.axis)) {
       if (FALSE %in% positive.axis[c(axis.x, axis.y)]) {
-        stop(paste0("At least one of the axes requested (", axis.prefix, axis.x, ", ",
-                    axis.prefix, axis.y, ") corresponds to a negative eigenvalue and cannot be plotted.\n",
-                    "       Re-run 'perform.PCoA' using 'distance.transformation = \"sqrt\"' or a 'correction'."))
+        stop("At least one of the axes requested (", axis.prefix, axis.x, ", ",
+             axis.prefix, axis.y, ") corresponds to a negative eigenvalue and cannot be plotted.\n",
+             "       Re-run 'perform.PCoA' using 'distance.transformation = \"sqrt\"' or a 'correction'.")
       }
     }
 
@@ -389,10 +401,10 @@
                                  axis.prefix = axis.prefix))
 
     if (!(paste0(axis.prefix, "3") %in% colnames(coordinates))) {
-      stop(paste0("At least 3 axes are required to generate the combined scatter.\n",
-                  "       Available axes: ",
-                  paste0(grep(paste0("^", axis.prefix, "[0-9]+$"), colnames(coordinates), value = TRUE),
-                         collapse = ", ")))
+      stop("At least 3 axes are required to generate the combined scatter.\n",
+           "       Available axes: ",
+           paste0(grep(paste0("^", axis.prefix, "[0-9]+$"), colnames(coordinates), value = TRUE),
+                  collapse = ", "))
     }
 
 
@@ -405,8 +417,8 @@
 
     if (is.null(dot.colors) | length(dot.colors) < length(color.labels)) {
       if (!is.null(dot.colors)) {
-        message(paste0("The number of 'dot.colors' provided is lower the required values (",
-                       length(color.labels), ").\nValues will be assigned automatically."))
+        message("The number of 'dot.colors' provided is lower the required values (",
+                length(color.labels), ").\nValues will be assigned automatically.")
       }
       scatter.colors = rainbow(n = length(color.labels), s = 0.5)
     } else {
@@ -512,7 +524,7 @@
 
     ### harmonize the name of the axis column ('PC' for a PCA, 'PCo' for a PCoA)
     if (!(axis.prefix %in% colnames(tb))) {
-      stop(paste0("The importance table does not contain the axis column '", axis.prefix, "'."))
+      stop("The importance table does not contain the axis column '", axis.prefix, "'.")
     }
     tb$axis.id = factor(as.character(tb[,axis.prefix]),
                         levels = as.character(tb[,axis.prefix]))

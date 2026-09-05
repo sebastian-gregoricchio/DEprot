@@ -373,6 +373,107 @@ PCoA_biplot_1.2 <- plot.PCoA.biplot(DEprot.PCoA.object = PCoA.ERa.active,
                                     n.loadings = 5)
 PCoA_biplot_1.2
 
+## ----splsda_compute-----------------------------------------------------------
+## Perform the analyses (DEprot.sPLSDA object)
+splsda <- perform.sPLSDA(DEprot.object = dpo,
+                         group.column = "condition",
+                         which.data = "imputed",
+                         ncomp = 3,
+                         keepX = NULL,                          # tuned by cross-validation
+                         test.keepX = c(10, 20, 50, 100),
+                         reference.group = "FBS",
+                         validate = TRUE,
+                         folds = 4,
+                         nrepeat = 5,
+                         seed = 1234)
+
+## ----splsda_summary, eval=FALSE-----------------------------------------------
+# summary(splsda)
+
+## ----print_splsda_summary, echo=FALSE-----------------------------------------
+knitr::kable(summary(splsda), row.names = FALSE, caption = "**sPLS-DA summary, component by component**")
+
+## ----splsda_tuning, fig.width=7, fig.height=4.5-------------------------------
+## equivalent to `splsda@tuning.plot`
+plot.sPLSDA.tuning(DEprot.sPLSDA.object = splsda)
+
+## ----splsda_fixed, eval=FALSE-------------------------------------------------
+# splsda.fixed <- perform.sPLSDA(DEprot.object = dpo,
+#                                group.column = "condition",
+#                                keepX = c(20, 20, 10),
+#                                reference.group = "FBS",
+#                                folds = 4,
+#                                nrepeat = 5)
+
+## ----splsda_scatter, fig.width=9, fig.height=4.5------------------------------
+## Combined comp1-vs-comp2 and comp3-vs-comp2 scatters
+#### equivalent to `splsda@scatter.plot.123`
+plot.sPLSDA.scatter.123(DEprot.sPLSDA.object = splsda,
+                        shape.column = "replicate",
+                        dot.colors = c("6h.10nM.E2" = "indianred",
+                                       "6h.DMSO" = "steelblue",
+                                       "FBS" = "forestgreen"))
+
+## ----splsda_biplot, fig.width=6.5, fig.height=5.5-----------------------------
+plot.sPLSDA.biplot(DEprot.sPLSDA.object = splsda,
+                   comp.x = 1,
+                   comp.y = 2,
+                   shape.column = "replicate",
+                   n.loadings = 8)
+
+## ----splsda_performance, fig.width=8, fig.height=4----------------------------
+## equivalent to `splsda@performance.plot`
+plot.sPLSDA.performance(DEprot.sPLSDA.object = splsda)
+
+## ----splsda_auroc, fig.width=7, fig.height=3.5--------------------------------
+plot.sPLSDA.auroc(DEprot.sPLSDA.object = splsda)
+
+## ----splsda_loadings, fig.width=6.5, fig.height=6-----------------------------
+plot.sPLSDA.loadings(DEprot.sPLSDA.object = splsda,
+                     component = 1,
+                     n.proteins = 20,
+                     protein.names.pattern = "protein[.]",
+                     group.colors = c("6h.10nM.E2" = "indianred",
+                                      "6h.DMSO" = "steelblue",
+                                      "FBS" = "forestgreen"))
+
+## ----splsda_stability, fig.width=6.5, fig.height=6----------------------------
+plot.sPLSDA.stability(DEprot.sPLSDA.object = splsda,
+                      component = 1,
+                      n.proteins = 20,
+                      protein.names.pattern = "protein[.]")
+
+## ----splsda_extract, eval=FALSE-----------------------------------------------
+# ## Full table of the loadings of the first component
+# get.sPLSDA.results(DEprot.sPLSDA.object = splsda, component = 1)
+# 
+# ## Proteins retained on the first component, higher in the reference group
+# markers <- get.sPLSDA.proteins(DEprot.sPLSDA.object = splsda,
+#                                component = 1,
+#                                direction = "positive",
+#                                top.n = 15)
+# markers
+
+## ----print_splsda_extract, echo=FALSE-----------------------------------------
+knitr::kable(head(get.sPLSDA.results(DEprot.sPLSDA.object = splsda, component = 1), 6),
+             row.names = FALSE,
+             caption = "**Loadings of the first component (best-ranked proteins)**")
+
+markers <- get.sPLSDA.proteins(DEprot.sPLSDA.object = splsda,
+                               component = 1,
+                               direction = "positive",
+                               top.n = 15)
+
+## ----splsda_heatmap, fig.width=7, fig.height=6--------------------------------
+heatmap.counts(DEprot.object = dpo,
+               which.data = "imputed",
+               protein.subset = markers,
+               scale = "row",
+               show.protein.names = TRUE,
+               protein.names.pattern = "protein[.]",
+               cell.border.color = "white",
+               title = "Proteins selected on component 1 (higher in FBS)")
+
 ## ----detect_outliers----------------------------------------------------------
 outliers <- detect.outliers(DEprot.object = dpo,
                             which.data = "imputed",
@@ -1107,6 +1208,29 @@ compare.ranking(DEprot.analyses.object = dpo_analyses,
 ## ----simplify_enrichment, eval = FALSE----------------------------------------
 # GSEA.results.simplified <- simplify.enrichment(GSEA.results)
 # ORA.results.simplified <- simplify.enrichment(ORA.results)
+
+## ----splsda_ora, eval = FALSE-------------------------------------------------
+# ## Over-representation of the selected proteins
+# splsda.ora <- sPLSDA.enrichment(DEprot.sPLSDA.object = splsda,
+#                                 TERM2GENE = corum_geneSet,
+#                                 enrichment.type = "ORA",
+#                                 component = 1,
+#                                 direction = "both")
+
+## ----splsda_gsea, eval = FALSE------------------------------------------------
+# ## GSEA on the complete ranking
+# splsda.gsea <- sPLSDA.enrichment(DEprot.sPLSDA.object = splsda,
+#                                  TERM2GENE = corum_geneSet,
+#                                  enrichment.type = "GSEA",
+#                                  component = 1,
+#                                  gsea.rank.method = "loading")
+
+## ----splsda_ranking, eval = FALSE---------------------------------------------
+# ranking <- get.sPLSDA.ranking(DEprot.sPLSDA.object = splsda,
+#                               component = 1,
+#                               metric = "loading")
+# 
+# head(ranking)
 
 ## ----combine_enrichments, eval = FALSE----------------------------------------
 # combined <-

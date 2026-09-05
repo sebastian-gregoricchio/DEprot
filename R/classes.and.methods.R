@@ -183,6 +183,58 @@ setClass(Class = "DEprot.PCoA",
 
 
 
+#' @title DEprot.sPLSDA class
+#'
+#' @slot sPLSDA.metadata metadata of the samples used in the model (subset of the original \code{DEprot@@metadata}). Class: \code{"ANY"}.
+#' @slot sample.subset vector containing the list of samples analyzed. Class: \code{"ANY"}.
+#' @slot data.used vector indicating the type of counts used (imputed, normalized, raw). Class: \code{"ANY"}.
+#' @slot group.column string indicating the metadata column holding the classes that the model discriminates. Class: \code{"ANY"}.
+#' @slot groups factor of the classes, in the same order as the samples. Class: \code{"ANY"}.
+#' @slot splsda object of class \code{mixo_splsda} corresponding to the full output of \code{mixOmics::splsda}. It keeps the original mixOmics orientation of the components. Class: \code{"ANY"}.
+#' @slot plsda object of class \code{mixo_plsda} corresponding to the companion non-sparse model, fitted on the same data and used to rank all the proteins. Class: \code{"ANY"}.
+#' @slot components data.frame combining the sample scores and the metadata table, useful for replotting. Class: \code{"ANY"}.
+#' @slot loadings data.frame of the loadings of the sparse model, one row per protein and component, with the class in which each selected protein is the highest (\code{contrib.group}). Class: \code{"ANY"}.
+#' @slot full.loadings data.frame of the loadings and of the VIP scores of the non-sparse model, covering every protein of the matrix. This is the table used to build a ranking for a GSEA. Class: \code{"ANY"}.
+#' @slot selected.proteins named list of the proteins retained on each component. Class: \code{"ANY"}.
+#' @slot importance summary table of the proportion of variance explained by each component, for the protein block (X) and for the class block (Y). Class: \code{"ANY"}.
+#' @slot counts.used the counts matrix (log2) effectively used to fit the model, after the removal of the proteins carrying no information. Class: \code{"ANY"}.
+#' @slot tuning list with the grid of \code{keepX} tested, the cross-validated error over that grid and the values retained; \code{NULL} when \code{keepX} was provided by the user. Class: \code{"ANY"}.
+#' @slot performance list with the cross-validated error rates, the selection frequencies across the folds and the AUC; \code{NULL} when \code{validate = FALSE}. Class: \code{"ANY"}.
+#' @slot cumulative.plot ggplot object corresponding to the output of \link{plot.sPLSDA.cumulative} for this object. Class: \code{"ANY"}.
+#' @slot scatter.plot.123 patchwork object combining the comp1-vs-comp2 and comp3-vs-comp2 scatters. Class: \code{"ANY"}.
+#' @slot tuning.plot ggplot object showing the error over the \code{keepX} grid; \code{NULL} when no tuning was performed. Class: \code{"ANY"}.
+#' @slot performance.plot ggplot object showing the cross-validated error per number of components; \code{NULL} when no validation was performed. Class: \code{"ANY"}.
+#' @slot parameters list of the parameters used to fit the model. Class: \code{"ANY"}.
+#'
+#' @export
+
+setClass(Class = "DEprot.sPLSDA",
+         slots = list(sPLSDA.metadata = "ANY",
+                      sample.subset = "ANY",
+                      data.used = "ANY",
+                      group.column = "ANY",
+                      groups = "ANY",
+                      splsda = "ANY",
+                      plsda = "ANY",
+                      components = "ANY",
+                      loadings = "ANY",
+                      full.loadings = "ANY",
+                      selected.proteins = "ANY",
+                      importance = "ANY",
+                      counts.used = "ANY",
+                      tuning = "ANY",
+                      performance = "ANY",
+                      cumulative.plot = "ANY",
+                      scatter.plot.123 = "ANY",
+                      tuning.plot = "ANY",
+                      performance.plot = "ANY",
+                      parameters = "ANY"))
+
+
+
+
+
+
 #' @title DEprot.upset class
 #'
 #' @slot upset Ggplot object corresponding to upset plot displaying the overlaps of differential proteins between contrasts. Class: \code{"ANY"}.
@@ -843,8 +895,8 @@ setMethod(f = "plot",
                                  x$analyses.result.list[[i]]$PCA.plots
                                }) }
               else {
-                stop(paste0("The 'plot.type' value ('", plot.type, "') is not recognized.\n",
-                            "       Please indicate one among: 'volcano', 'MA', 'correlation', 'PCA'."), call. = FALSE)
+                stop("The 'plot.type' value ('", plot.type, "') is not recognized.\n",
+                     "       Please indicate one among: 'volcano', 'MA', 'correlation', 'PCA'.", call. = FALSE)
               }
 
               ## the correlations and the PCA panels are not stored by every differential
@@ -852,7 +904,7 @@ setMethod(f = "plot",
               plots = Filter(Negate(.deprot_slot_is_empty), plots)
 
               if (length(plots) == 0L) {
-                message(paste0("No '", plot.type, "' plot is available in this DEprot.analyses object."))
+                message("No '", plot.type, "' plot is available in this DEprot.analyses object.")
                 return(invisible(NULL))
               }
 
@@ -912,6 +964,135 @@ setMethod(f = "show",
               cat("\n")
               cat("Principal coordinates:\n")
               print(object@PCos)})
+
+
+
+#' @title DEprot.sPLSDA show-method
+#' @param object Object of class \code{DEprot.sPLSDA}
+#' @export
+setMethod(f = "show",
+          signature = "DEprot.sPLSDA",
+          definition =
+            function(object) {
+
+              p = object@parameters
+
+              cat("DEprot.sPLSDA object:")
+              cat("\n  Samples analyzed: ", p$n.samples)
+              cat("\n         Data used: ", paste(object@data.used, "(log2)"))
+              cat("\n          Proteins: ", p$n.proteins)
+              cat("\n           Classes: ", paste0(p$group.column, ": ", paste(p$groups, collapse = ", ")))
+              cat("\n         Reference: ", p$reference.group)
+              cat("\n        Components: ", p$ncomp)
+              cat("\n             keepX: ", paste(p$keepX, collapse = ", "),
+                  ifelse(p$tuned == TRUE, yes = "(tuned)", no = "(user-defined)"))
+              cat("\n")
+
+              if (!is.null(object@performance)) {
+                error = object@performance$error.rate
+
+                if (!is.null(error)) {
+                  ber = error[error$metric == "Balanced error rate" &
+                                error$distance == p$dist &
+                                error$component == p$ncomp, ]
+
+                  if (nrow(ber) > 0) {
+                    cat("\n  Balanced error rate: ", paste0(round(ber$error.rate[1] * 100, 1), "% (",
+                                                            p$ncomp, " components, ", p$dist, ")"))
+                    cat("\n")
+                  }
+                }
+              } else {
+                cat("\n  No performance estimation available ('validate = FALSE').")
+                cat("\n")
+              }
+
+              cat("\n")
+              cat("Sample scores:\n")
+              print(object@components)})
+
+
+
+
+
+
+#' @title DEprot.sPLSDA summary-method
+#' @param object Object of class \code{DEprot.sPLSDA}
+#' @export
+setMethod(f = "summary",
+          signature = "DEprot.sPLSDA",
+          definition =
+            function(object) {
+
+              p = object@parameters
+
+              tb = data.frame(component = seq_len(p$ncomp),
+                              keepX = p$keepX[seq_len(p$ncomp)],
+                              n.selected = vapply(X = object@selected.proteins,
+                                                  FUN = length,
+                                                  FUN.VALUE = integer(1),
+                                                  USE.NAMES = FALSE),
+                              perc.variance.X = round(object@importance$Percentage.of.Variance, 2),
+                              perc.variance.Y = round(object@importance$Percentage.of.Variance.Y, 2),
+                              stringsAsFactors = FALSE)
+
+              ## the error rates are appended only for the distance used during the tuning,
+              ## the others staying available in the 'performance' slot
+              if (!is.null(object@performance)) {
+                error = object@performance$error.rate
+
+                if (!is.null(error)) {
+                  error = error[error$distance == p$dist, , drop = FALSE]
+
+                  overall = error[error$metric == "Overall error rate", c("component", "error.rate")]
+                  ber = error[error$metric == "Balanced error rate", c("component", "error.rate")]
+
+                  colnames(overall)[2] = "overall.error"
+                  colnames(ber)[2] = "balanced.error"
+
+                  tb = merge(tb, overall, by = "component", all.x = TRUE)
+                  tb = merge(tb, ber, by = "component", all.x = TRUE)
+                }
+              }
+
+              return(tb)}
+) #end method
+
+
+
+
+
+
+#' @title DEprot.sPLSDA plot-method
+#' @param x Object of class \code{DEprot.sPLSDA}
+#' @param y Not used.
+#' @param ... Further arguments passed to the corresponding plotting function.
+#' @param what String indicating which plot to display. One among: 'scatter' (comp1-vs-comp2 and comp3-vs-comp2), 'cumulative', 'tuning', 'performance'. Default: \code{"scatter"}.
+#' @keywords internal
+#' @export
+setMethod(f = "plot",
+          signature = "DEprot.sPLSDA",
+          definition =
+            function(x, y, ..., what = "scatter") {
+
+              if (!(tolower(what) %in% c("scatter", "cumulative", "tuning", "performance"))) {
+                stop("The 'what' must be one among: 'scatter', 'cumulative', 'tuning', 'performance'.")
+              }
+
+              plot.object =
+                switch(tolower(what),
+                       "scatter" = x@scatter.plot.123,
+                       "cumulative" = x@cumulative.plot,
+                       "tuning" = x@tuning.plot,
+                       "performance" = x@performance.plot)
+
+              if (is.null(plot.object)) {
+                stop("The '", tolower(what), "' plot is not available in this object.")
+              }
+
+              print(plot.object)
+              invisible(plot.object)
+            })
 
 
 
@@ -983,8 +1164,8 @@ setMethod(f = "show",
 
               } else {
                 normality = sapply(X = object@norm.AD.tests, FUN = function(x){x$p.value < object@p.threshold}, USE.NAMES = TRUE)
-                message(paste0("The following samples do not display a normal distribution: ",
-                               paste0(names(normality)[isFALSE(normality)], collapse = ", "), "."))
+                message("The following samples do not display a normal distribution: ",
+                        paste0(names(normality)[isFALSE(normality)], collapse = ", "), ".")
               }
             })
 
@@ -1189,8 +1370,8 @@ setMethod(f = "plot",
                        "upset" = list(p$upset),
                        "all" = p,
                        "contrasts" = NULL,
-                       stop(paste0("The 'plot.type' is not recognized. Choose among: 'summary', 'density', 'dropout', ",
-                                   "'heatmap', 'samples', 'frequency', 'classes', 'similarity', 'upset', 'contrasts', 'all'.")))
+                       stop("The 'plot.type' is not recognized. Choose among: 'summary', 'density', 'dropout', ",
+                            "'heatmap', 'samples', 'frequency', 'classes', 'similarity', 'upset', 'contrasts', 'all'."))
 
               if (tolower(plot.type) == "contrasts") {
                 if (is.null(x@contrast.stats)) {
@@ -1502,7 +1683,7 @@ setMethod(f = "plot",
 
 # All DEprot S4 classes
 .deprot_classes <- c("DEprot", "DEprot.analyses", "DEprot.PCA", "DEprot.PCoA",
-                     "DEprot.correlation", "DEprot.upset",
+                     "DEprot.sPLSDA", "DEprot.correlation", "DEprot.upset",
                      "DEprot.contrast.heatmap", "DEprot.counts.heatmap",
                      "DEprot.enrichResult", "DEprot.pvalues",
                      "DEprot.normality", "DEprot.RMSE", "DEprot.SAINTq",
@@ -1544,7 +1725,7 @@ setMethod(f = "plot",
 #' auto-completion in interactive sessions.
 #'
 #' @param x An object of one of the DEprot classes: \code{DEprot}, \code{DEprot.analyses},
-#' \code{DEprot.PCA}, \code{DEprot.PCoA}, \code{DEprot.correlation}, \code{DEprot.counts.heatmap},
+#' \code{DEprot.PCA}, \code{DEprot.PCoA}, \code{DEprot.sPLSDA}, \code{DEprot.correlation}, \code{DEprot.counts.heatmap},
 #' \code{DEprot.contrast.heatmap}, \code{DEprot.upset}, \code{DEprot.normality}, \code{DEprot.pvalues},
 #' \code{DEprot.enrichResult}, \code{DEprot.RMSE}, \code{DEprot.SAINTq}, \code{DEprot.missingness},
 #' \code{DEprot.outliers}, \code{DEprot.timecourse}, \code{DEprot.timecourse.enrichment}, \code{DEprot.power}.
@@ -1578,5 +1759,3 @@ for (.cls in .deprot_classes) {
   })
 }
 rm(.cls)
-
-

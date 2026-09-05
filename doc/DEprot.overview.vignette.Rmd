@@ -880,6 +880,193 @@ Unlike the PCA biplot, these arrows represent the a-posteriori correlation betwe
 <br>
 
 
+
+## Sparse PLS-DA {#splsda}
+PCA and PCoA are unsupervised: they show the largest source of variability in the data, whatever it is. On a proteomics dataset that is often a batch, a difference in identification depth, or one sample that behaves badly, and the treatment ends up on the third or fourth component when it appears at all. A sparse Partial Least Squares Discriminant Analysis (sPLS-DA) asks the opposite question: given the groups, which directions separate them, and which proteins are responsible.
+
+The "sparse" part is what makes the method useful here. A plain PLS-DA gives every one of the thousands of quantified proteins a non-null coefficient, which is not a result one can act on. The sparsity penalty keeps only `keepX` proteins per component and sets the others to exactly zero, so the model returns a short candidate list along with the separation.
+
+```{r splsda_compute}
+## Perform the analyses (DEprot.sPLSDA object)
+splsda <- perform.sPLSDA(DEprot.object = dpo,
+                         group.column = "condition",
+                         which.data = "imputed",
+                         ncomp = 3,
+                         keepX = NULL,                          # tuned by cross-validation
+                         test.keepX = c(10, 20, 50, 100),
+                         reference.group = "FBS",
+                         validate = TRUE,
+                         folds = 4,
+                         nrepeat = 5,
+                         seed = 1234)
+```
+
+Two things happen inside that call besides the fit itself. When `keepX` is left to `NULL`, the number of proteins to retain on each component is chosen by cross-validation over the grid given in `test.keepX`; and when `validate = TRUE`, a second resampling round estimates how well the model actually classifies. Neither of the two changes as long as the model does not change, which is why they are not separate functions: keeping them apart would only mean carrying three objects that must be kept in sync by hand. Both steps resample the samples, so they are the expensive part of the call; `validate = FALSE` skips the second one while exploring.
+
+The design has 4 replicates per condition, hence `folds = 4`: asking for more folds than the samples available in a class produces empty folds, and the function caps the value on its own rather than returning an error rate estimated on nothing.
+
+The data must be complete. A missing value would be handled differently at every fold, which makes the error rates incomparable, and `perform.sPLSDA` stops rather than returning a number that looks fine and is not. Use `which.data = "imputed"`, and see the [imputation](#imputation) section if the object does not carry an imputed table yet.
+
+`ncomp` is raised to 3 when a lower value is asked for. A two-group design does not stop at one component: the following ones keep being extracted from the deflated matrix, and they are what shows whether the separation rests on a single protein module or on several. The third component is also what tells whether the tidy picture of the first two is the whole story.
+
+```{r splsda_summary, eval=FALSE}
+summary(splsda)
+```
+```{r print_splsda_summary, echo=FALSE}
+knitr::kable(summary(splsda), row.names = FALSE, caption = "**sPLS-DA summary, component by component**")
+```
+
+<br>
+
+The `DEprot.sPLSDA` object contains the following slots:
+
+| Slot | Description |
+| ---: | :--- |
+| *sPLSDA.metadata* | metadata of the samples used in the model |
+| *group.column* / *groups* | the metadata column holding the classes, and the classes themselves |
+| *splsda* | the `mixo_splsda` object returned by `mixOmics`, in its original orientation |
+| *plsda* | the companion non-sparse model, fitted on the same data (see below) |
+| *components* | data.frame combining the sample scores and the metadata, useful for replotting |
+| *loadings* | loadings of the sparse model, with the class in which each selected protein is the highest (`contrib.group`) |
+| *full.loadings* | loadings and VIP scores of the non-sparse model, over every protein of the matrix |
+| *selected.proteins* | named list of the proteins retained on each component |
+| *importance* | proportion of variance explained by each component, for the protein block (X) and the class block (Y) |
+| *counts.used* | the log2 matrix effectively used, after removal of the proteins carrying no information |
+| *tuning* | grid of `keepX` tested and the corresponding error; `NULL` when `keepX` was given |
+| *performance* | cross-validated error rates, selection frequencies across the folds and AUC; `NULL` when `validate = FALSE` |
+| *cumulative.plot*, *scatter.plot.123*, *tuning.plot*, *performance.plot* | ready-made plots |
+| *parameters* | list of the parameters used to fit the model |
+
+<br>
+
+### Orientation of the components
+`mixOmics` returns an arbitrary sign for each component, so the same data fitted twice can put the same group on opposite sides. `perform.sPLSDA` fixes the sign so that `reference.group` always sits on the positive side, which also gives the loadings a stable reading: a protein with a positive coefficient is a protein pulling the samples towards that group. Here `FBS` was chosen, so a positive loading marks a protein higher in full media. The object stored in the `splsda` slot keeps the original mixOmics orientation, so anything computed on it directly stays consistent with the mixOmics documentation.
+
+<br>
+
+### Reading the tuning
+```{r splsda_tuning, fig.width=7, fig.height=4.5}
+## equivalent to `splsda@tuning.plot`
+plot.sPLSDA.tuning(DEprot.sPLSDA.object = splsda)
+```
+
+The curves are usually flat over a wide range of values: many different numbers of proteins classify the samples equally well, and the minimum picked by the tuning is one point on a plateau rather than an optimum. This is worth a look, because a value at the left edge of that plateau gives a shorter and far more interpretable protein list at no cost in error rate. Once a value has been chosen, it can be passed directly and the tuning skipped:
+
+```{r splsda_fixed, eval=FALSE}
+splsda.fixed <- perform.sPLSDA(DEprot.object = dpo,
+                               group.column = "condition",
+                               keepX = c(20, 20, 10),
+                               reference.group = "FBS",
+                               folds = 4,
+                               nrepeat = 5)
+```
+
+<br>
+
+### Visualize the model
+```{r splsda_scatter, fig.width=9, fig.height=4.5}
+## Combined comp1-vs-comp2 and comp3-vs-comp2 scatters
+#### equivalent to `splsda@scatter.plot.123`
+plot.sPLSDA.scatter.123(DEprot.sPLSDA.object = splsda,
+                        shape.column = "replicate",
+                        dot.colors = c("6h.10nM.E2" = "indianred",
+                                       "6h.DMSO" = "steelblue",
+                                       "FBS" = "forestgreen"))
+```
+
+A single pair of components can be drawn on its own with `plot.sPLSDA.scatter`, and `plot.sPLSDA.biplot` adds the loading arrows of the selected proteins on top of it, in the same way as `plot.PC.biplot` does for a PCA. Only the proteins retained on at least one of the two components displayed can appear: a protein dropped by the sparsity penalty has a coefficient of exactly zero and no direction to point to.
+
+```{r splsda_biplot, fig.width=6.5, fig.height=5.5}
+plot.sPLSDA.biplot(DEprot.sPLSDA.object = splsda,
+                   comp.x = 1,
+                   comp.y = 2,
+                   shape.column = "replicate",
+                   n.loadings = 8)
+```
+
+<br>
+
+> The ellipses drawn around the groups are a reading aid, not a test. A supervised model is fitted precisely to separate those samples, so the groups will look tidy on the training data even when the model classifies no better than chance. This is the single most common way of over-reading a PLS-DA, and the reason why the error rates below are not optional.
+
+```{r splsda_performance, fig.width=8, fig.height=4}
+## equivalent to `splsda@performance.plot`
+plot.sPLSDA.performance(DEprot.sPLSDA.object = splsda)
+```
+
+Two error rates are reported. The overall one is the fraction of misclassified samples; the balanced one (BER) is the average of the per-class error rates, and it is the value to read on an unbalanced design, where a model assigning everything to the largest group already scores well on the overall error. The dashed gray line marks the error of a random assignment, and a model sitting on it is not discriminating anything however clean its scatter looks. The three curves correspond to the three prediction distances that `mixOmics` computes; they usually agree, and a strong disagreement between them is itself worth investigating.
+
+The area under the ROC curve, computed over the same resampling, gives the same message on a scale that does not depend on the class sizes. On a design with more than two classes each curve compares one class against all the others pooled.
+
+```{r splsda_auroc, fig.width=7, fig.height=3.5}
+plot.sPLSDA.auroc(DEprot.sPLSDA.object = splsda)
+```
+
+<br>
+
+### The proteins behind the separation
+```{r splsda_loadings, fig.width=6.5, fig.height=6}
+plot.sPLSDA.loadings(DEprot.sPLSDA.object = splsda,
+                     component = 1,
+                     n.proteins = 20,
+                     protein.names.pattern = "protein[.]",
+                     group.colors = c("6h.10nM.E2" = "indianred",
+                                      "6h.DMSO" = "steelblue",
+                                      "FBS" = "forestgreen"))
+```
+
+Each bar is the coefficient of a selected protein, colored by the class in which that protein has the highest median. The color carries the information the coefficient alone does not: a large loading says a protein weighs on the component, not in which group it is abundant.
+
+```{r splsda_stability, fig.width=6.5, fig.height=6}
+plot.sPLSDA.stability(DEprot.sPLSDA.object = splsda,
+                      component = 1,
+                      n.proteins = 20,
+                      protein.names.pattern = "protein[.]")
+```
+
+This second plot is the one to read before writing anybody's name in a figure legend. The list returned by a sparse model is much less stable than it looks: on a small design, resampling the samples is often enough to swap half of it. A protein re-selected in nearly every fold is a candidate worth following up; one appearing in a third of them is a property of that particular split. Proteins frequently selected during the resampling but absent from the final model are shown as well, since they are exactly the ones a slightly different dataset would have picked.
+
+<br>
+
+The loadings come out as an ordinary table, and the selected proteins as a plain character vector, which is what the rest of the package expects. `get.sPLSDA.results` also accepts a `DEprot.object` and a `protein.info.columns` argument, to append the protein annotation in the same way as `get.results` does for the differential tables.
+
+```{r splsda_extract, eval=FALSE}
+## Full table of the loadings of the first component
+get.sPLSDA.results(DEprot.sPLSDA.object = splsda, component = 1)
+
+## Proteins retained on the first component, higher in the reference group
+markers <- get.sPLSDA.proteins(DEprot.sPLSDA.object = splsda,
+                               component = 1,
+                               direction = "positive",
+                               top.n = 15)
+markers
+```
+```{r print_splsda_extract, echo=FALSE}
+knitr::kable(head(get.sPLSDA.results(DEprot.sPLSDA.object = splsda, component = 1), 6),
+             row.names = FALSE,
+             caption = "**Loadings of the first component (best-ranked proteins)**")
+
+markers <- get.sPLSDA.proteins(DEprot.sPLSDA.object = splsda,
+                               component = 1,
+                               direction = "positive",
+                               top.n = 15)
+```
+
+```{r splsda_heatmap, fig.width=7, fig.height=6}
+heatmap.counts(DEprot.object = dpo,
+               which.data = "imputed",
+               protein.subset = markers,
+               scale = "row",
+               show.protein.names = TRUE,
+               protein.names.pattern = "protein[.]",
+               cell.border.color = "white",
+               title = "Proteins selected on component 1 (higher in FBS)")
+```
+
+The same vector can be crossed with the differential results through `plot.upset`, which is usually the most informative check of all: proteins that are both differential and selected are the solid core of the signature, while proteins selected but not differential are the ones the multivariate model sees and a protein-by-protein test does not, typically because they move together with others rather than far on their own.
+
+<br>
+
+
 ## Automatic outlier detection {#outliers}
 PCAs, PCoAs and correlation heatmaps show which samples behave oddly, but the call is left to the eye of the analyst. The function `detect.outliers` turns that judgement into a reproducible one: it computes three per-sample quality metrics and flags a sample when at least `min.flags` of them are triggered.
 
@@ -2429,6 +2616,48 @@ This reduces the size of redundant enrichment discoveries.
 GSEA.results.simplified <- simplify.enrichment(GSEA.results)
 ORA.results.simplified <- simplify.enrichment(ORA.results)
 ```
+
+<br>
+
+### Enrichments on a sPLS-DA {#splsdaenrichments}
+The results of a [sPLS-DA](#splsda) can be tested for geneset enrichment with `sPLSDA.enrichment`, which returns the same `DEprot.enrichResult` class produced by `geneset.enrichment`. Everything downstream therefore works unchanged: `NES.plot`, `plot.GSEA`, `simplify.enrichment`, `combine.enrichments` and `divergent.enrichment`.
+
+```{r splsda_ora, eval = FALSE}
+## Over-representation of the selected proteins
+splsda.ora <- sPLSDA.enrichment(DEprot.sPLSDA.object = splsda,
+                                TERM2GENE = corum_geneSet,
+                                enrichment.type = "ORA",
+                                component = 1,
+                                direction = "both")
+```
+
+The background is the list of proteins that entered the model, which is the only sensible universe: a protein that was never quantified had no chance of being selected. This is the analysis the sparse model is built for, and the one to prefer.
+
+```{r splsda_gsea, eval = FALSE}
+## GSEA on the complete ranking
+splsda.gsea <- sPLSDA.enrichment(DEprot.sPLSDA.object = splsda,
+                                 TERM2GENE = corum_geneSet,
+                                 enrichment.type = "GSEA",
+                                 component = 1,
+                                 gsea.rank.method = "loading")
+```
+
+A GSEA needs a complete ranking, and the sparse loadings are not one: every protein that was not selected has a coefficient of exactly zero, which leaves a handful of ranked entries followed by thousands of ties. The running-sum statistic walks those ties in whatever order they happen to be sorted in, so the enrichment score is not even reproducible. On top of that, the sparsity penalty keeps one member of a pair of correlated proteins and drops the other, which is precisely the situation inside a pathway, so the aggregation at the set level is deflated in a way that has nothing to do with biology.
+
+This is why `perform.sPLSDA` also fits a plain, non-sparse PLS-DA on the same data and the same number of components. It involves no resampling, so it costs nothing, and its loading vector covers every protein of the matrix: complete, free of ties, and signed towards the `reference.group`. That vector, stored in the `full.loadings` slot, is what `gsea.rank.method = "loading"` uses. The unsigned VIP scores of the same model are available with `gsea.rank.method = "vip"`, keeping in mind that only a positive NES is interpretable on an unsigned ranking.
+
+The ranking can also be pulled out and used on its own:
+
+```{r splsda_ranking, eval = FALSE}
+ranking <- get.sPLSDA.ranking(DEprot.sPLSDA.object = splsda,
+                              component = 1,
+                              metric = "loading")
+
+head(ranking)
+```
+
+> On a design with more than two classes, a component separates the reference group from a mixture of the others rather than reproducing a pairwise contrast. The sign should be read as "towards the reference group", not as a fold change, and a differential contrast remains the cleaner input for a GSEA whenever the question is really about two groups. The sPLS-DA ranking earns its place when a component captures structure that the pairwise comparisons miss.
+
 
 
 <br>
