@@ -202,6 +202,23 @@ generate.mm =
       }
 
 
+    ## Optional clause built around a number
+    ## Returns an empty string when the value was not recorded in the object, so that a
+    ## parameter the pipeline did not store does not surface as a bare "NA" in the middle of
+    ## a sentence: the clause it belongs to simply disappears.
+    with.value <-
+      function(value,
+               before = "",
+               after = "",
+               digits = 3) {
+
+        text = number.to.text(value, digits = digits)
+        if (is.na(text)) {return("")}
+
+        return(paste0(before, text, after))
+      }
+
+
     ## turns a vector of citation numbers into the compact form used in the text: runs of three or
     ## more consecutive numbers become ranges (e.g., '1,3-6')
     collapse.numbers <-
@@ -357,8 +374,13 @@ generate.mm =
              " were processed in R (v", R.version.text, ")[[R]] with the DEprot package",
              ifelse(is.na(DEprot.version.text), yes = "", no = paste0(" (v", DEprot.version.text, ")")),
              "[[DEprot]][[DEprot.zenodo]]. ",
-             "The matrix used for the analyses covers ", n.proteins, " proteins across ",
-             n.samples, " samples and the intensities are ", log.text, ".")
+             ## a size can be reported only when the object carries a counts table: without
+             ## one the clause is dropped rather than filled with NA
+             ifelse(is.null(counts),
+                    yes = paste0("The intensities are ", log.text, "."),
+                    no = paste0("The matrix used for the analyses covers ", n.proteins,
+                                " proteins across ", n.samples,
+                                " samples and the intensities are ", log.text, ".")))
 
     ## the metadata columns are the only trace of the experimental design in the object
     metadata.columns = setdiff(colnames(DEprot.object@metadata), "column.id")
@@ -464,7 +486,8 @@ generate.mm =
       ## objects imported from other tools can be flagged as randomized without carrying the
       ## settings: in that case the sentence stays generic instead of printing NA
       randomization.text =
-        if (is.na(group.column) | is.na(number.to.text(tail.percentage))) {
+        if (is.na(group.column) | is.na(number.to.text(tail.percentage)) |
+            is.na(number.to.text(percentage.missing))) {
           paste0("Proteins missing in a whole condition were assigned random values drawn from ",
                  "the bottom of the intensity distribution of each sample, so that they are not ",
                  "treated as missing at random by the imputation.")
@@ -514,8 +537,8 @@ generate.mm =
 
                  paste0("missForest[[missForest]], a non-parametric random-forest procedure that ",
                         "predicts each protein from all the others and iterates until the change in ",
-                        "the imputed values stops decreasing (at most ", number.to.text(max.iterations),
-                        " iterations)")
+                        "the imputed values stops decreasing",
+                        with.value(max.iterations, before = " (at most ", after = " iterations)"))
                },
 
                "regimpute" = {
@@ -529,18 +552,22 @@ generate.mm =
                  add.param(step = "imputation", param = "NRMSE convergence", value = convergence)
 
                  paste0("RegImpute, the iterative ridge-regression algorithm distributed with ",
-                        "DreamAI[[DreamAI]], initialized with the '", fillmethod, "' strategy and run ",
-                        "for at most ", number.to.text(max.iterations), " iterations or until the ",
-                        "normalized RMSE between two consecutive rounds dropped below ",
-                        number.to.text(convergence))
+                        "DreamAI[[DreamAI]]",
+                        ifelse(is.na(fillmethod),
+                               yes = "",
+                               no = paste0(", initialized with the '", fillmethod, "' strategy")),
+                        with.value(max.iterations, before = ", run for at most ", after = " iterations"),
+                        with.value(convergence,
+                                   before = " or until the normalized RMSE between two consecutive rounds dropped below "))
                },
 
                "knn" = {
                  k = get.param(imputation, "n.nearest.neighbours")
                  add.param(step = "imputation", param = "nearest neighbours", value = k)
 
-                 paste0("k-nearest neighbours as implemented in VIM[[VIM]], with k = ", number.to.text(k),
-                        " neighbours and a weighted mean as aggregating function")
+                 paste0("k-nearest neighbours as implemented in VIM[[VIM]]",
+                        with.value(k, before = ", with k = ", after = " neighbours"),
+                        " and a weighted mean as aggregating function")
                },
 
                "tknn" = {
@@ -548,7 +575,8 @@ generate.mm =
                  add.param(step = "imputation", param = "nearest neighbours", value = k)
 
                  paste0("truncation-distance k-nearest neighbours (tkNN) from the imputomics ",
-                        "collection[[imputomics]], with k = ", number.to.text(k), " neighbours")
+                        "collection[[imputomics]]",
+                        with.value(k, before = ", with k = ", after = " neighbours"))
                },
 
                "corknn" = {
@@ -556,7 +584,8 @@ generate.mm =
                  add.param(step = "imputation", param = "nearest neighbours", value = k)
 
                  paste0("correlation-distance k-nearest neighbours (corkNN) from the imputomics ",
-                        "collection[[imputomics]], with k = ", number.to.text(k), " neighbours")
+                        "collection[[imputomics]]",
+                        with.value(k, before = ", with k = ", after = " neighbours"))
                },
 
                "lls" = {
@@ -564,7 +593,8 @@ generate.mm =
                  add.param(step = "imputation", param = "cluster size (k)", value = cluster.size)
 
                  paste0("local least squares (LLS)[[LLS]], as implemented in pcaMethods",
-                        "[[pcaMethods]], regressing each protein on the ", number.to.text(cluster.size),
+                        "[[pcaMethods]], regressing each protein on the",
+                        with.value(cluster.size, before = " "),
                         " most correlated ones (Pearson correlation)")
                },
 
@@ -573,8 +603,8 @@ generate.mm =
                  add.param(step = "imputation", param = "PCs tested", value = PCs.tested)
 
                  paste0("svdImpute[[SVDimpute]], as implemented in pcaMethods[[pcaMethods]], with the ",
-                        "number of principal components chosen by cross-validation (Q2) among the ",
-                        "first ", number.to.text(PCs.tested))
+                        "number of principal components chosen by cross-validation (Q2)",
+                        with.value(PCs.tested, before = " among the first "))
                },
 
                "bpca" = {
@@ -582,8 +612,8 @@ generate.mm =
                  add.param(step = "imputation", param = "PCs tested", value = PCs.tested)
 
                  paste0("Bayesian PCA (BPCA)[[BPCA]], as implemented in pcaMethods[[pcaMethods]], with ",
-                        "the number of principal components chosen by cross-validation (Q2) among the ",
-                        "first ", number.to.text(PCs.tested))
+                        "the number of principal components chosen by cross-validation (Q2)",
+                        with.value(PCs.tested, before = " among the first "))
                },
 
                "ppca" = {
@@ -591,8 +621,8 @@ generate.mm =
                  add.param(step = "imputation", param = "PCs tested", value = PCs.tested)
 
                  paste0("probabilistic PCA (PPCA)[[PPCA]], as implemented in pcaMethods[[pcaMethods]], ",
-                        "with the number of principal components chosen by cross-validation (Q2) among ",
-                        "the first ", number.to.text(PCs.tested))
+                        "with the number of principal components chosen by cross-validation (Q2)",
+                        with.value(PCs.tested, before = " among the first "))
                },
 
                ifelse(imputation.method == "unknown",
