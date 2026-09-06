@@ -184,6 +184,7 @@ importFrom(laeken,weightedMean)
 importFrom(legendry,scale_y_dendro)
 importFrom(lubridate,as.duration)
 importFrom(methods,
+  "slot<-",
   .hasSlot,
   is,
   new,

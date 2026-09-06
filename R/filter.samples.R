@@ -441,25 +441,35 @@ filter.samples =
       # otherwise fall back to the closest available lower level
       rand.avail = c(raw = non_empty(dpo@raw.counts),
                      normalized = non_empty(dpo@norm.counts))
-      if (rand.which %in% c("raw") && !isTRUE(rand.avail[["raw"]])) {rand.which = "normalized"}
-      if (rand.which %in% c("normalized", "norm") && !isTRUE(rand.avail[["normalized"]])) {rand.which = "raw"}
 
-      say("[filter.samples] Re-randomizing missing values (group.column = '", group.col,
-          "', which.data = '", rand.which, "')...")
-      dpo = DEprot::randomize.missing.values(DEprot.object = dpo,
-                                             group.column = group.col,
-                                             percentage.missing = random.params$percentage.missing %||% 100,
-                                             tail.percentage = random.params$tail.percentage %||% 3,
-                                             which.data = rand.which,
-                                             seed = random.params$seed %||% floor(stats::runif(1, 0, 50000)),
-                                             verbose = verbose)
+      if (!any(unlist(rand.avail))) {
+        # the rebuild started at (or above) the randomized counts: the random values are
+        # already part of the table that has been sub-set and there is nothing to replay.
+        # Falling through would send 'which.data' to a slot that does not exist.
+        say("[filter.samples] The random values are already part of the counts used as starting point: ",
+            "the randomization is not replayed.")
+
+      } else {
+        if (rand.which %in% c("raw") && !isTRUE(rand.avail[["raw"]])) {rand.which = "normalized"}
+        if (rand.which %in% c("normalized", "norm") && !isTRUE(rand.avail[["normalized"]])) {rand.which = "raw"}
+
+        say("[filter.samples] Re-randomizing missing values (group.column = '", group.col,
+            "', which.data = '", rand.which, "')...")
+        dpo = DEprot::randomize.missing.values(DEprot.object = dpo,
+                                               group.column = group.col,
+                                               percentage.missing = random.params$percentage.missing %||% 100,
+                                               tail.percentage = random.params$tail.percentage %||% 3,
+                                               which.data = rand.which,
+                                               seed = random.params$seed %||% floor(stats::runif(1, 0, 50000)),
+                                               verbose = verbose)
+      }
     }
 
 
     ############################################################################
     ### Re-impute
     ############################################################################
-    if (was.imputed) {
+    if (was.imputed && !non_empty(dpo@imputed.counts)) {
       if (!is.list(imp.params) || is.null(imp.params$method)) {
         stop("The object is flagged as imputed but the 'imputation.method' slot does not contain the expected list of parameters.", call. = FALSE)
       }
@@ -471,6 +481,18 @@ filter.samples =
       # same order impute.counts would have used by default).
       imp.which = imp.params$data.used %||%
         (if (was.randomized) {"randomized"} else if (was.normalized) {"normalized"} else {"raw"})
+
+      # the level recorded may not exist in the rebuilt object (the randomization can have
+      # been skipped, or the rebuild can have started above the raw counts): the imputation
+      # then runs on the lowest level actually available, and is skipped altogether when the
+      # starting table was already the imputed one
+      imp.avail = c(randomized = non_empty(dpo@random.counts),
+                    normalized = non_empty(dpo@norm.counts),
+                    raw        = non_empty(dpo@raw.counts))
+
+      if (!isTRUE(imp.avail[[imp.which]])) {
+        imp.which = names(imp.avail)[which(unlist(imp.avail))[1]]
+      }
 
       # base arguments common to every method
       imp.args = list(DEprot.object = dpo,

@@ -30,6 +30,7 @@
 #'
 #' @import dplyr
 #' @import ggplot2
+#' @importFrom methods is slot slot<-
 #' @importFrom HarmonizR harmonizR
 #'
 #' @author Sebastian Gregoricchio
@@ -125,12 +126,49 @@ harmonize.batches =
                                                   verbosity = as.numeric(verbose))
 
     ### Reset original order of the columns
-    batch.corrected.counts = batch.corrected.counts[,colnames(data.frame(DEprot.object@raw.counts, check.names = FALSE))]
+    # HarmonizR does not return the samples it could not model (e.g. a batch left with a
+    # single sample): re-ordering on the full list of original columns would select
+    # undefined ones, hence only the samples actually returned are kept.
+    original.samples = colnames(data.frame(DEprot.object@raw.counts, check.names = FALSE))
+    corrected.samples = intersect(original.samples, colnames(batch.corrected.counts))
+
+    if (length(corrected.samples) == 0) {
+      stop(paste0("HarmonizR returned no usable sample: the batch design is too sparse for '", algorithm, "'.\n",
+                  " Check the batch composition with `table(<dpo.object>@metadata[['", batch.column, "']])`",
+                  " and, if using ComBat (default), try to set `algorithm = 'limma'` or a mean-only `ComBat.mode` (i.e., 2 or 4)."),
+           call. = FALSE)
+    }
+
+    if (length(corrected.samples) < length(original.samples)) {
+      warning(paste0(length(original.samples) - length(corrected.samples),
+                     " sample(s) could not be batch-corrected by HarmonizR",
+                     " (usually a batch holding too few samples) and have been removed from the object:\n  ",
+                     paste(setdiff(original.samples, corrected.samples), collapse = ", ")),
+              call. = FALSE, immediate. = TRUE)
+    }
+
+    batch.corrected.counts = batch.corrected.counts[, corrected.samples, drop = FALSE]
 
 
 
     ### Update DEprot object
+    # the samples dropped by HarmonizR are removed from every table of the object, so that
+    # the counts, the metadata and the boxplots keep describing the same experiment
     batch.corrected.DEprot = DEprot.object
+
+    if (length(corrected.samples) < length(original.samples)) {
+      batch.corrected.DEprot@metadata =
+        batch.corrected.DEprot@metadata[match(corrected.samples,
+                                              as.character(batch.corrected.DEprot@metadata$column.id)), , drop = FALSE]
+      rownames(batch.corrected.DEprot@metadata) = NULL
+
+      for (slot.name in c("raw.counts", "norm.counts", "random.counts", "imputed.counts")) {
+        slot.counts = methods::slot(batch.corrected.DEprot, slot.name)
+        if (!is.null(slot.counts)) {
+          methods::slot(batch.corrected.DEprot, slot.name) = slot.counts[, corrected.samples, drop = FALSE]
+        }
+      }
+    }
 
     batch.corrected.DEprot@norm.counts = as.matrix(batch.corrected.counts)
     batch.corrected.DEprot@normalized = TRUE
