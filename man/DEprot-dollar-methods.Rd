@@ -2,6 +2,44 @@
 % Please edit documentation in R/classes.and.methods.R
 \name{DEprot-dollar-methods}
 \alias{DEprot-dollar-methods}
+\alias{$,DEprot-method}
+\alias{$<-,DEprot-method}
+\alias{$,DEprot.analyses-method}
+\alias{$<-,DEprot.analyses-method}
+\alias{$,DEprot.PCA-method}
+\alias{$<-,DEprot.PCA-method}
+\alias{$,DEprot.PCoA-method}
+\alias{$<-,DEprot.PCoA-method}
+\alias{$,DEprot.correlation-method}
+\alias{$<-,DEprot.correlation-method}
+\alias{$,DEprot.upset-method}
+\alias{$<-,DEprot.upset-method}
+\alias{$,DEprot.contrast.heatmap-method}
+\alias{$<-,DEprot.contrast.heatmap-method}
+\alias{$,DEprot.counts.heatmap-method}
+\alias{$<-,DEprot.counts.heatmap-method}
+\alias{$,DEprot.enrichResult-method}
+\alias{$<-,DEprot.enrichResult-method}
+\alias{$,DEprot.pvalues-method}
+\alias{$<-,DEprot.pvalues-method}
+\alias{$,DEprot.normality-method}
+\alias{$<-,DEprot.normality-method}
+\alias{$,DEprot.RMSE-method}
+\alias{$<-,DEprot.RMSE-method}
+\alias{$,DEprot.SAINTq-method}
+\alias{$<-,DEprot.SAINTq-method}
+\alias{$,DEprot.missingness-method}
+\alias{$<-,DEprot.missingness-method}
+\alias{$,DEprot.outliers-method}
+\alias{$<-,DEprot.outliers-method}
+\alias{$,DEprot.power-method}
+\alias{$<-,DEprot.power-method}
+\alias{$,DEprot.sPLSDA-method}
+\alias{$<-,DEprot.sPLSDA-method}
+\alias{$,DEprot.timecourse-method}
+\alias{$<-,DEprot.timecourse-method}
+\alias{$,DEprot.timecourse.enrichment-method}
+\alias{$<-,DEprot.timecourse.enrichment-method}
 \title{Slot access for DEprot classes}
 \arguments{
 \item{x}{An object of one of the DEprot classes: \code{DEprot}, \code{DEprot.analyses},

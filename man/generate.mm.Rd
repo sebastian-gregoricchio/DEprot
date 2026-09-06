@@ -81,9 +81,12 @@ mm <- generate.mm(DEprot.object = DEprot::test.toolbox$diff.exp.limma)
 \dontrun{
 mm <- generate.mm(DEprot.object = DEprot::test.toolbox$diff.exp.limma,
                   quantification.software = "MaxQuant (v2.4.2)",
-                  quantification.reference = paste0("Cox J., Mann M. MaxQuant enables high peptide ",
-                                                    "identification rates. Nature Biotechnology 26, ",
-                                                    "1367-1372, 2008. doi: 10.1038/nbt.1511"),
+                  quantification.reference = paste0("Cox J., Mann M. MaxQuant ",
+                                                    "enables high peptide ",
+                                                    "identification rates. ",
+                                                    "Nature Biotechnology 26, ",
+                                                    "1367-1372, 2008. ",
+                                                    "doi: 10.1038/nbt.1511"),
                   output.file = "material.and.methods.txt")
 }
 

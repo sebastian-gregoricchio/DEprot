@@ -52,7 +52,7 @@ Proteins that were not retained in the final model but were frequently selected 
 splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
                          group.column = "condition",
                          keepX = 5,
-                         validate = TRUE,
+                         validate = "loo",
                          folds = 3,
                          nrepeat = 1)
 

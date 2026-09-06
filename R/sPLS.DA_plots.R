@@ -831,7 +831,7 @@ plot.sPLSDA.tuning =
 #' splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                          group.column = "condition",
 #'                          keepX = 5,
-#'                          validate = TRUE,
+#'                          validate = "loo",
 #'                          folds = 3,
 #'                          nrepeat = 1)
 #'
@@ -970,7 +970,7 @@ plot.sPLSDA.performance =
 #' splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                          group.column = "condition",
 #'                          keepX = 5,
-#'                          validate = TRUE,
+#'                          validate = "loo",
 #'                          folds = 3,
 #'                          nrepeat = 1)
 #'
@@ -1102,7 +1102,7 @@ plot.sPLSDA.stability =
 #' splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                          group.column = "condition",
 #'                          keepX = 5,
-#'                          validate = TRUE,
+#'                          validate = "loo",
 #'                          folds = 3,
 #'                          nrepeat = 1)
 #'

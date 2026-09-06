@@ -1734,6 +1734,26 @@ setMethod(f = "plot",
 #'
 #' @return For \code{$}, the content of the corresponding slot. For \code{$<-}, the object with the updated slot.
 #'
+#' @aliases $,DEprot-method $<-,DEprot-method
+#' @aliases $,DEprot.analyses-method $<-,DEprot.analyses-method
+#' @aliases $,DEprot.PCA-method $<-,DEprot.PCA-method
+#' @aliases $,DEprot.PCoA-method $<-,DEprot.PCoA-method
+#' @aliases $,DEprot.correlation-method $<-,DEprot.correlation-method
+#' @aliases $,DEprot.upset-method $<-,DEprot.upset-method
+#' @aliases $,DEprot.contrast.heatmap-method $<-,DEprot.contrast.heatmap-method
+#' @aliases $,DEprot.counts.heatmap-method $<-,DEprot.counts.heatmap-method
+#' @aliases $,DEprot.enrichResult-method $<-,DEprot.enrichResult-method
+#' @aliases $,DEprot.pvalues-method $<-,DEprot.pvalues-method
+#' @aliases $,DEprot.normality-method $<-,DEprot.normality-method
+#' @aliases $,DEprot.RMSE-method $<-,DEprot.RMSE-method
+#' @aliases $,DEprot.SAINTq-method $<-,DEprot.SAINTq-method
+#' @aliases $,DEprot.missingness-method $<-,DEprot.missingness-method
+#' @aliases $,DEprot.outliers-method $<-,DEprot.outliers-method
+#' @aliases $,DEprot.power-method $<-,DEprot.power-method
+#' @aliases $,DEprot.sPLSDA-method $<-,DEprot.sPLSDA-method
+#' @aliases $,DEprot.timecourse-method $<-,DEprot.timecourse-method
+#' @aliases $,DEprot.timecourse.enrichment-method $<-,DEprot.timecourse.enrichment-method
+#'
 #' @name DEprot-dollar-methods
 #' @rdname DEprot-dollar-methods
 #'

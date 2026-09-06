@@ -40,7 +40,7 @@ The comparisons are one class against all the others pooled, which is how mixOmi
 splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
                          group.column = "condition",
                          keepX = 5,
-                         validate = TRUE,
+                         validate = "loo",
                          folds = 3,
                          nrepeat = 1)
 

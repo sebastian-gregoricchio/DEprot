@@ -33,7 +33,6 @@ Imports:
 	foreach,
 	ggplot2 (>= 3.3.3),
 	ggdendro,
-	ggraph,
 	glmnet,
 	ggtext,
 	ggrepel,
@@ -72,6 +71,7 @@ Imports:
 	utils
 Suggests:
   BiocManager,
+  arrow,
   covr,
   cowplot,
   devtools,

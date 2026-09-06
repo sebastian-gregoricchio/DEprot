@@ -40,7 +40,7 @@ The dashed gray line marks the error of a random assignment, that is one minus t
 splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
                          group.column = "condition",
                          keepX = 5,
-                         validate = TRUE,
+                         validate = "loo",
                          folds = 3,
                          nrepeat = 1)
 
