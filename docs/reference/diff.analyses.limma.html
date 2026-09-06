@@ -164,7 +164,7 @@ Includes means, Fold Changes, and p-values.</p>
 error of the mean (<code>sem.&lt;group&gt;</code>) of the log2 expression values, together with <code>lfcSE</code>, the moderated
 (posterior) standard error of the contrast coefficient estimated by limma (<code>stdev.unscaled * sqrt(s2.post)</code>).
 This is the denominator of the moderated t-statistic reported in the <code>statistic</code> column and it is the direct
-equivalent of the <code>lfcSE</code> column returned by <code>DESeq2::results()</code>. The log2(FoldChange) column is the contrast
+equivalent of the <code>lfcSE</code> column returned by <code><a href="https://rdrr.io/pkg/DESeq2/man/results.html" class="external-link">DESeq2::results()</a></code>. The log2(FoldChange) column is the contrast
 coefficient estimated by limma, so that <code>statistic = log2(FoldChange)/lfcSE</code> holds in every case. For a
 least-squares fit of a <code>~ 0 + group</code> design the coefficient corresponds exactly to the difference between the group
 means reported in the <code>log2.mean.&lt;group&gt;</code> columns; when <code>include.rep.model = TRUE</code> the fit becomes a

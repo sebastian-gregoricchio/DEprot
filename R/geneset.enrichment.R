@@ -8,7 +8,8 @@
 #' @param enrichment.type String indicating the type of analyses to perform. One among: GSEA, ORA. No default.
 #' @param gsea.rank.method String indicating the type of gene ranking to use for GSEA analyses. Possible options: \code{"foldchange"} (log2FC value of the contrast), \code{"correlation"} (spearman's correlation coefficient of the imputed counts between the two groups in the contrast), \code{"statistic"} (statistic column of the results). Default: \code{"foldchange"}.
 #' @param diff.status.category String indicating a diff.status among the ones present in the results table of the specific contrast. Used only one 'ORA' is performed. Default: \code{NULL}.
-#' @param gsub.pattern.prot.id String indicating a pattern to be passed to gsub and to remove from the prot.id. Default: \code{NULL} (non changes in the IDs).
+#' @param universe Character vector indicating the background gene list of the ORA. Default: \code{NULL}, meaning that all the unique proteins present in the counts used for the differential analyses are taken. This is almost always the correct background for a proteomics experiment, since only the quantified proteins could have been called as differential. Ignored when \code{enrichment.type = "GSEA"}.
+#' @param gsub.pattern.prot.id String indicating a pattern to be passed to gsub and to remove from the prot.id. The same pattern is removed from the IDs of the \code{universe}. Default: \code{NULL} (non changes in the IDs).
 #' @param pvalueCutoff Numeric value indicating the adjusted pvalue cutoff on enrichment tests to report. Default: \code{0.05}.
 #' @param qvalueCutoff Numeric value indicating the qvalue cutoff on enrichment tests to report as significant (only for ORA). Tests must pass i) pvalueCutoff on unadjusted pvalues, ii) pvalueCutoff on adjusted pvalues and iii) qvalueCutoff on qvalues to be reported. Default: \code{0.05}.
 #' @param pAdjustMethod String indicating the method to use for the p-value adjustment. One mong "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{"BH"}.
@@ -56,6 +57,7 @@ geneset.enrichment =
            enrichment.type,
            gsea.rank.method = "foldchange",
            diff.status.category = NULL,
+           universe = NULL,
            gsub.pattern.prot.id = NULL,
            pvalueCutoff = 0.05,
            qvalueCutoff = 0.05,
@@ -256,15 +258,41 @@ geneset.enrichment =
     }
 
 
+    ### define the background (universe) of the ORA
+    ## the correct background is the list of the QUANTIFIED proteins: using the whole proteome
+    ## would make almost every geneset look enriched, since only the proteins present in the
+    ## counts could have been called as differential
+    if (is.null(universe)) {
+      counts.used = switch(tolower(as.character(DEprot.analyses.object@differential.analyses.params$counts.used)[1]),
+                           "raw" = DEprot.analyses.object@raw.counts,
+                           "normalized" = DEprot.analyses.object@norm.counts,
+                           "randomized" = DEprot.analyses.object@random.counts,
+                           "imputed" = DEprot.analyses.object@imputed.counts,
+                           DEprot.analyses.object@imputed.counts)
+
+      ## objects built by import.external could carry only part of the count tables
+      if (is.null(counts.used)) {counts.used = DEprot.analyses.object@imputed.counts}
+      if (is.null(counts.used)) {counts.used = DEprot.analyses.object@norm.counts}
+      if (is.null(counts.used)) {counts.used = DEprot.analyses.object@raw.counts}
+
+      ## last resort: the results table, which lists all the proteins that were tested
+      if (is.null(counts.used)) {universe = data$prot.id} else {universe = rownames(counts.used)}
+    }
+
+
     ### gsub the protein.id if necessary
     if (!is.null(gsub.pattern.prot.id)) {
       data$prot.id = gsub(gsub.pattern.prot.id, "", data$prot.id)
+      universe = gsub(gsub.pattern.prot.id, "", universe)
 
       ### Check that no empty names ("") are present
       if ("" %in% data$prot.id) {
         warning("Upon pattern.prot.id removal some proteins have empty names ''. The latter will be removed.")
       }
     }
+
+    ## the pattern removal can collapse several IDs into the same one, hence the unique()
+    universe = unique(universe[!is.na(universe) & universe != ""])
 
 
 
@@ -287,6 +315,10 @@ geneset.enrichment =
 
         corr_scores = sapply(1:nrow(counts_var1), function(x){suppressWarnings(cor.test(x = group_idx, y = c(counts_var2[x,],counts_var1[x,]), method = "spearman"))$estimate}, USE.NAMES = F)
         names(corr_scores) = rownames(counts_var1)
+
+        ## here the IDs come from the counts and not from the results table, the pattern must be removed as well
+        if (!is.null(gsub.pattern.prot.id)) {names(corr_scores) = gsub(gsub.pattern.prot.id, "", names(corr_scores))}
+
         gene_list = sort(corr_scores, decreasing = TRUE)
 
         rank.method = "correlation"
@@ -337,17 +369,25 @@ geneset.enrichment =
 
       dotplot_fold.enrichment = NULL
 
+      ## the universe is a concept of the ORA only: the GSEA ranks all the proteins tested
+      used.universe = NULL
+
       ## --------- OverRepresentation Anlyses (ORA)
     } else {
       rank.method = NA #no ranking applied for ORA
 
-      enrichment.discovery = tryCatch(clusterProfiler::enricher(gene = dplyr::filter(.data = data,
-                                                                                     diff.status == diff.status.category)$prot.id,
+      genes = dplyr::filter(.data = data, diff.status == diff.status.category)$prot.id
+      genes = genes[!is.na(genes) & genes != ""]
+
+      enrichment.discovery = tryCatch(clusterProfiler::enricher(gene = genes,
+                                                                universe = universe,
                                                                 pvalueCutoff = pvalueCutoff,
                                                                 qvalueCutoff = qvalueCutoff,
                                                                 pAdjustMethod = pAdjustMethod,
                                                                 TERM2GENE = TERM2GENE),
                                       error = function(x)(return(NULL)))
+
+      used.universe = universe
 
       ## plot pathway networks
       pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
@@ -398,6 +438,8 @@ geneset.enrichment =
           parameters = list(enrichment.type = toupper(enrichment.type),
                             contrast = contrasts.info,
                             diff.status.category = diff.status.category,
+                            universe = used.universe,
+                            universe.size = length(used.universe),
                             gsub.pattern.prot.id = gsub.pattern.prot.id,
                             gsea.rank.method = rank.method,
                             pvalueCutoff = pvalueCutoff,

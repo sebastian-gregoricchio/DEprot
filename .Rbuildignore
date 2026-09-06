@@ -29,3 +29,5 @@
 ^cran-comments.md$
 ^citation.cff$
 ^manual$
+^rstudio-export\.zip$
+^.*\.zip$

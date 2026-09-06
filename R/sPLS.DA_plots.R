@@ -827,13 +827,13 @@ plot.sPLSDA.tuning =
 #'
 #' @examples
 #' \donttest{
-#' # the performances are estimated by resampling the samples
+#' # the performances are estimated by resampling the samples: with 12 samples in 3 groups
+#' # the leave-one-out scheme is the only one leaving enough samples in each fold
 #' splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                          group.column = "condition",
 #'                          keepX = 5,
-#'                          validate = "loo",
-#'                          folds = 3,
-#'                          nrepeat = 1)
+#'                          validate = TRUE,
+#'                          validation = "loo")
 #'
 #' plot.sPLSDA.performance(DEprot.sPLSDA.object = splsda)
 #' }
@@ -966,13 +966,13 @@ plot.sPLSDA.performance =
 #'
 #' @examples
 #' \donttest{
-#' # the performances are estimated by resampling the samples
+#' # the performances are estimated by resampling the samples: with 12 samples in 3 groups
+#' # the leave-one-out scheme is the only one leaving enough samples in each fold
 #' splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                          group.column = "condition",
 #'                          keepX = 5,
-#'                          validate = "loo",
-#'                          folds = 3,
-#'                          nrepeat = 1)
+#'                          validate = TRUE,
+#'                          validation = "loo")
 #'
 #' plot.sPLSDA.stability(DEprot.sPLSDA.object = splsda, component = 1)
 #' }
@@ -1098,13 +1098,13 @@ plot.sPLSDA.stability =
 #'
 #' @examples
 #' \donttest{
-#' # the performances are estimated by resampling the samples
+#' # the performances are estimated by resampling the samples: with 12 samples in 3 groups
+#' # the leave-one-out scheme is the only one leaving enough samples in each fold
 #' splsda <- perform.sPLSDA(DEprot.object = DEprot::test.toolbox$dpo.imp,
 #'                          group.column = "condition",
 #'                          keepX = 5,
-#'                          validate = "loo",
-#'                          folds = 3,
-#'                          nrepeat = 1)
+#'                          validate = TRUE,
+#'                          validation = "loo")
 #'
 #' plot.sPLSDA.auroc(DEprot.sPLSDA.object = splsda)
 #' }

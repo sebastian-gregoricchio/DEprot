@@ -120,16 +120,17 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># the performances are estimated by resampling the samples</span></span></span>
+<span class="r-in"><span><span class="co"># the performances are estimated by resampling the samples: with 12 samples in 3 groups</span></span></span>
+<span class="r-in"><span><span class="co"># the leave-one-out scheme is the only one leaving enough samples in each fold</span></span></span>
 <span class="r-in"><span><span class="va">splsda</span> <span class="op">&lt;-</span> <span class="fu"><a href="perform.sPLSDA.html">perform.sPLSDA</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
 <span class="r-in"><span>                         group.column <span class="op">=</span> <span class="st">"condition"</span>,</span></span>
 <span class="r-in"><span>                         keepX <span class="op">=</span> <span class="fl">5</span>,</span></span>
-<span class="r-in"><span>                         validate <span class="op">=</span> <span class="st">"loo"</span>,</span></span>
-<span class="r-in"><span>                         folds <span class="op">=</span> <span class="fl">3</span>,</span></span>
-<span class="r-in"><span>                         nrepeat <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                         validate <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                         validation <span class="op">=</span> <span class="st">"loo"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating the classification performances by cross-validation...</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plot.sPLSDA.auroc</span><span class="op">(</span>DEprot.sPLSDA.object <span class="op">=</span> <span class="va">splsda</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plot.sPLSDA.auroc(DEprot.sPLSDA.object = splsda):</span> This object does not contain any performance estimation: re-run `perform.sPLSDA` with 'validate = TRUE'.</span>
+<span class="r-plt img"><img src="plot.sPLSDA.auroc-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

@@ -105,9 +105,15 @@ impute.counts =
         cnt = DEprot.object@random.counts
         data.used = "randomized"
       }
+    } else if (tolower(which.data) %in% c("raw", "r")) {
+      if (.deprot_slot_is_empty(DEprot.object@raw.counts)) {
+        stop("You asked to use raw data for the imputation, but raw data are not available.\n")
+      } else {
+        cnt = DEprot.object@raw.counts
+        data.used = "raw"
+      }
     } else {
-      cnt = DEprot.object@raw.counts
-      data.used = "raw"
+      stop("Indicate a data type among: 'raw', 'normalized' and 'randomized'.\n")
     }
 
 

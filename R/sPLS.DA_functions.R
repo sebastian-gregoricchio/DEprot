@@ -707,6 +707,22 @@ perform.sPLSDA =
     }
 
 
+    ### check the validation switch
+    ## 'validate' only says WHETHER the performances are estimated, the scheme being chosen
+    ## through 'validation'. A resampling name given here would silently be read as FALSE and
+    ## the 'performance' slot would be left empty, which surfaces much later as an error
+    ## raised by the plotting functions.
+    if (!is.logical(validate) | length(validate) != 1) {
+      stop(paste0("'validate' must be a single logical value (TRUE/FALSE).\n",
+                  "       The resampling scheme is chosen through 'validation' ('Mfold' or 'loo')."),
+           call. = FALSE)
+    }
+
+    if (is.na(validate)) {
+      stop("'validate' must be either TRUE or FALSE, not NA.", call. = FALSE)
+    }
+
+
     ### Prepare the counts and the classes
     prepared = .splsda.prepare(DEprot.object = DEprot.object,
                                which.data = which.data,

@@ -11,3 +11,4 @@
 .httr-oauth
 .DS_Store
 .quarto
+^rstudio-export\.zip$

@@ -60,10 +60,10 @@ randomize.missing.values =
         counts = DEprot.object@norm.counts
       }
     } else if (tolower(which.data) %in% c("raw", "r")) {
-      if (is.null(DEprot.object@raw.counts)) {
+      if (.deprot_slot_is_empty(DEprot.object@raw.counts)) {
         stop("The 'DEprot' object does not contain raw counts.")
       } else {
-        counts = DEprot.object@random.counts
+        counts = DEprot.object@raw.counts
       }
     } else {
       stop("Indicate a data type among: 'raw' and 'normalized.")
