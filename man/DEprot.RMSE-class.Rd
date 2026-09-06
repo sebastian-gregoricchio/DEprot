@@ -37,5 +37,13 @@ DEprot.RMSE class
 \item{\code{correlation.plots}}{A list of ggplot objects with the correlation between observed/expected and imputed values. Class: \code{"ANY"}.}
 
 \item{\code{density.residuals}}{A list of ggplot objects depicting the distribution of the residuals. Class: \code{"ANY"}.}
+
+\item{\code{masking}}{List describing how the values of the test dataset have been hidden, containing the following elements (Class: \code{"ANY"}.):
+\describe{
+  \item{\code{mode}: }{masking actually applied, \code{"MCAR"} or \code{"intensity"}. It reports \code{"MCAR"} also when the intensity-dependent masking was required but none of the dropout curves could be estimated}
+  \item{\code{dropout.by}: }{level at which the dropout curves have been estimated, \code{"group"} or \code{"sample"}}
+  \item{\code{dropout.curves}: }{list with the intercept and the slope of the logistic curve estimated for each group of replicates (or each sample), \code{NULL} when the masking is \code{"MCAR"}}
+  \item{\code{max.NA.per.row}: }{maximum number of missing values that a protein could already have to enter the test dataset}
+  \item{\code{max.NA.fraction}: }{maximum fraction of missing values that a protein could reach after the masking}}}
 }}
 

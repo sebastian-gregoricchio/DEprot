@@ -11,6 +11,7 @@ geneset.enrichment(
   enrichment.type,
   gsea.rank.method = "foldchange",
   diff.status.category = NULL,
+  universe = NULL,
   gsub.pattern.prot.id = NULL,
   pvalueCutoff = 0.05,
   qvalueCutoff = 0.05,
@@ -31,7 +32,9 @@ geneset.enrichment(
 
 \item{diff.status.category}{String indicating a diff.status among the ones present in the results table of the specific contrast. Used only one 'ORA' is performed. Default: \code{NULL}.}
 
-\item{gsub.pattern.prot.id}{String indicating a pattern to be passed to gsub and to remove from the prot.id. Default: \code{NULL} (non changes in the IDs).}
+\item{universe}{Character vector indicating the background gene list of the ORA. Default: \code{NULL}, meaning that all the unique proteins present in the counts used for the differential analyses are taken. This is almost always the correct background for a proteomics experiment, since only the quantified proteins could have been called as differential. Ignored when \code{enrichment.type = "GSEA"}.}
+
+\item{gsub.pattern.prot.id}{String indicating a pattern to be passed to gsub and to remove from the prot.id. The same pattern is removed from the IDs of the \code{universe}. Default: \code{NULL} (non changes in the IDs).}
 
 \item{pvalueCutoff}{Numeric value indicating the adjusted pvalue cutoff on enrichment tests to report. Default: \code{0.05}.}
 

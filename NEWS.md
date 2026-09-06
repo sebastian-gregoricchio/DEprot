@@ -31,7 +31,13 @@ title: "changeLog"
 - `.ordination.slots()` accepts `DEprot.sPLSDA` objects
 - added the internal `.append.protein.info()`, used by `get.sPLSDA.results()` to append the `protein.info` annotation
 - `mixOmics` added to the dependencies
-- `stop()`, `warning()` and `message()` no longer wrap their arguments in `paste0()` in `classes.and.methods.R`, `internal_functions.R` and `internal_functions.protein.info.R`
+- `compare.imp.methods()` gains `masking`, which defines how the values of the test dataset are hidden. With `"MCAR"` (default, previous behaviour) every measured value has the same probability of being masked; with `"intensity"` the probability follows a logistic dropout curve estimated on the data, so that the masked values come from the low-intensity range at the rate at which the values are really lost
+- one dropout curve is estimated for each group of replicates (`dropout.by = "group"`) or for each sample (`dropout.by = "sample"`): an IgG control and an IP do not have the same detection depth and cannot be masked with the same curve. The curves are fitted on the complete table, since the proteins absent from an entire group carry the information about the detection limit and cannot belong to the test dataset
+- `max.NA.per.row` defines how many missing values a protein can already have to be usable in the test dataset. The error is computed only on the masked cells, hence a protein does not need to be complete: keeping only the complete ones restricted the comparison to the abundant proteins, which hold less than a fifth of the values of the bottom 3% of the distribution. `max.NA.fraction` caps the missingness reached after the masking, so that the table stays usable by `missForest` and by the other methods needing a minimum number of values per protein
+- the number of missing values to introduce per group is now read from the names of the missingness table instead of the position in it: a group containing proteins missing in 0 and in all the replicates, without any of the intermediate cases, received 1 missing value where the pattern required all of them
+- the proteins that do not have enough measured values left in a group are excluded from the candidates, and a value already missing can no longer be selected for the masking
+- the settings and the estimated curves are stored in the new `masking` slot of the `DEprot.RMSE` objects
+- the default parameters reproduce exactly the draw of the previous versions for a given `seed`
 - updated overview vignette, manual and tests accordingly
 
 <br>

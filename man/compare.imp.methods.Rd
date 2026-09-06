@@ -4,12 +4,16 @@
 \alias{compare.imp.methods}
 \title{compare.imp.methods}
 \usage{
-compare.imp.methods(
+\method{compare}{imp.methods}(
   DEprot.object,
   percentage.test = 30,
   correlation.method = "pearson",
   sample.group.column = NULL,
   which.data = "randomized",
+  masking = "MCAR",
+  max.NA.per.row = 0,
+  max.NA.fraction = 0.5,
+  dropout.by = "group",
   run.missForest = TRUE,
   run.kNN = TRUE,
   run.tkNN = TRUE,
@@ -46,6 +50,14 @@ compare.imp.methods(
 \item{sample.group.column}{String indicating the ID of any column of the metadata table. This will be used to introduce the same frequencies of n-missing values for a protein and therefore not introducing the NAs completely at random in the dataset. Default: \code{NULL}, NAs are assigned randomly (same percentage of NAs present in the original table).}
 
 \item{which.data}{String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random'. Default: \code{"randomized"}.}
+
+\item{masking}{String indicating how the values to hide are chosen. With \code{"MCAR"} every measured value has the same probability of being masked; with \code{"intensity"} the probability follows a logistic dropout curve estimated on the data, so that the masked values are drawn preferentially from the low-intensity range. One among: 'MCAR', 'intensity'. Default: \code{"MCAR"}.}
+
+\item{max.NA.per.row}{Numeric value indicating the maximum number of missing values that a protein can already have to be usable in the test dataset. The RMSE is computed only on the artificially masked cells, hence a protein does not need to be complete: it is enough that the masked value was measured. Raising this threshold recovers the low-abundance proteins, which are rarely complete. Default: \code{0} (only complete proteins, as in the previous versions).}
+
+\item{max.NA.fraction}{Numeric value between 0 and 1 indicating the maximum fraction of missing values that a protein can reach after the masking. It prevents the test dataset from becoming unusable for the algorithms that need a minimum number of measured values per protein. Ignored when \code{max.NA.per.row = 0}. Default: \code{0.5}.}
+
+\item{dropout.by}{String indicating the level at which the dropout curves are estimated when \code{masking = "intensity"}. With \code{"group"} one curve is estimated for each level of \code{sample.group.column}, with \code{"sample"} one curve is estimated for each sample. One among: 'group', 'sample'. Default: \code{"group"}.}
 
 \item{run.missForest}{Logical values indicating whether the test for the \code{missForest} imputation should be performed. Default: \code{TRUE}.}
 

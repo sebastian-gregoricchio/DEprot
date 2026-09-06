@@ -8,6 +8,10 @@
 #' @param correlation.method String indicating the method to use for the correlations. One among: 'pearson', 'spearman'. Default: \code{"pearson"}.
 #' @param sample.group.column String indicating the ID of any column of the metadata table. This will be used to introduce the same frequencies of n-missing values for a protein and therefore not introducing the NAs completely at random in the dataset. Default: \code{NULL}, NAs are assigned randomly (same percentage of NAs present in the original table).
 #' @param which.data String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random'. Default: \code{"randomized"}.
+#' @param masking String indicating how the values to hide are chosen. With \code{"MCAR"} every measured value has the same probability of being masked; with \code{"intensity"} the probability follows a logistic dropout curve estimated on the data, so that the masked values are drawn preferentially from the low-intensity range. One among: 'MCAR', 'intensity'. Default: \code{"MCAR"}.
+#' @param max.NA.per.row Numeric value indicating the maximum number of missing values that a protein can already have to be usable in the test dataset. The RMSE is computed only on the artificially masked cells, hence a protein does not need to be complete: it is enough that the masked value was measured. Raising this threshold recovers the low-abundance proteins, which are rarely complete. Default: \code{0} (only complete proteins, as in the previous versions).
+#' @param max.NA.fraction Numeric value between 0 and 1 indicating the maximum fraction of missing values that a protein can reach after the masking. It prevents the test dataset from becoming unusable for the algorithms that need a minimum number of measured values per protein. Ignored when \code{max.NA.per.row = 0}. Default: \code{0.5}.
+#' @param dropout.by String indicating the level at which the dropout curves are estimated when \code{masking = "intensity"}. With \code{"group"} one curve is estimated for each level of \code{sample.group.column}, with \code{"sample"} one curve is estimated for each sample. One among: 'group', 'sample'. Default: \code{"group"}.
 #' @param run.missForest Logical values indicating whether the test for the \code{missForest} imputation should be performed. Default: \code{TRUE}.
 #' @param run.kNN Logical values indicating whether the test for the \code{kNN} imputation method should be performed. Default: \code{TRUE}.
 #' @param run.corkNN Logical values indicating whether the test for the \code{corkNN} imputation method should be performed. Default: \code{TRUE}.
@@ -72,6 +76,10 @@ compare.imp.methods =
            correlation.method = "pearson",
            sample.group.column = NULL,
            which.data = "randomized",
+           masking = "MCAR",
+           max.NA.per.row = 0,
+           max.NA.fraction = 0.5,
+           dropout.by = "group",
            run.missForest = TRUE,
            run.kNN = TRUE,
            run.tkNN = TRUE,
@@ -97,10 +105,6 @@ compare.imp.methods =
            seed = NULL,
            verbose = FALSE) {
 
-    # ### libraries
-    # require(dplyr)
-    # require(ggplot2)
-
 
     ### Check that at least one imputation is running
     if (all(c(run.missForest, run.kNN, run.LLS, run.SVD, run.tkNN, run.BPCA, run.PPCA, run.RegImpute) == FALSE)) {
@@ -122,6 +126,35 @@ compare.imp.methods =
       percentage.test = 100
       warning("The `percentage.test` must be a number at maximum equal to 100.\nThe `percentage.test` value has been set to 100.")
     }
+
+    ### check masking mode
+    if (tolower(masking) %in% c("mcar", "random", "uniform")) {
+      masking = "MCAR"
+    } else if (tolower(masking) %in% c("intensity", "intensity-dependent", "mnar", "dropout")) {
+      masking = "intensity"
+    } else {
+      stop("The `masking` must be one among: 'MCAR' and 'intensity'.")
+    }
+
+    ### check dropout level
+    if (tolower(dropout.by) %in% c("group", "groups", "condition")) {
+      dropout.by = "group"
+    } else if (tolower(dropout.by) %in% c("sample", "samples", "column")) {
+      dropout.by = "sample"
+    } else {
+      stop("The `dropout.by` must be one among: 'group' and 'sample'.")
+    }
+
+    ### check the missingness thresholds
+    if (max.NA.per.row < 0) {
+      stop("The `max.NA.per.row` must be a positive number, or 0 to keep only the complete proteins.")
+    }
+
+    if (max.NA.fraction <= 0 | max.NA.fraction > 1) {
+      stop("The `max.NA.fraction` must be a number between 0 (excluded) and 1.")
+    }
+
+
 
 
     ### Check if normalized/raw data are available
@@ -148,6 +181,7 @@ compare.imp.methods =
     } else {
       stop("Indicate a data type among: 'raw', 'normalized' and 'randomized'.\n")
     }
+
 
 
 
@@ -187,8 +221,18 @@ compare.imp.methods =
     ### Number of proteins for test
     n.test.prot = min(c(ceiling(nrow(cnt) * (percentage.test/100)), nrow(cnt)))
 
-    ### Get the counts of only known data
-    cnt.known = cnt[rowSums(is.na(cnt)) == 0,]
+    ### Get the counts usable as ground truth
+    # the imputation is scored only on the cells that are masked here, hence a protein does not need to
+    # be complete to enter the test dataset: what is required is that the masked value was measured.
+    # Keeping only the complete proteins (max.NA.per.row = 0) restricts the test to the most abundant
+    # part of the table, which is where the missing values are the rarest.
+    cnt.known = cnt[rowSums(is.na(cnt)) <= max.NA.per.row, , drop = FALSE]
+
+    if (max.NA.per.row > 0) {
+      max.NA.after.masking = floor(max.NA.fraction * ncol(cnt))
+    } else {
+      max.NA.after.masking = ncol(cnt)
+    }
 
     ### Get the sample data set
     if (n.test.prot < nrow(cnt.known)) {
@@ -204,6 +248,53 @@ compare.imp.methods =
     }
 
 
+    # -------------------- MASKING WEIGHTS ----------------------- #
+    ### Define the sets of samples sharing a dropout curve
+    if (dropout.by == "sample" | is.null(sample.group.column)) {
+      column.sets = lapply(1:ncol(cnt), function(x){return(x)})
+      names(column.sets) = colnames(cnt)
+    } else {
+      column.sets = list()
+      for (i in 1:length(sample.groups)) {
+        samples.in.set = DEprot.object@metadata[DEprot.object@metadata[, sample.group.column] == sample.groups[i], "column.id"]
+        column.sets[[i]] = c(1:ncol(cnt))[colnames(cnt) %in% samples.in.set]
+      }
+      names(column.sets) = as.character(sample.groups)
+    }
+
+    ### Estimate one dropout curve per set of samples
+    # the curves are estimated on the whole table, not on the test subset: the proteins missing everywhere
+    # in a group are the ones carrying the information about the detection limit, and they are excluded
+    # from the test dataset by construction
+    if (masking == "intensity") {
+      if (isTRUE(verbose)) {message("Estimating the dropout curves...")}
+      dropout.fits = .estimate.dropout(counts = cnt, column.sets = column.sets)
+
+      not.estimated = names(dropout.fits)[sapply(dropout.fits, function(x){any(is.na(x)) | isTRUE(x["slope"] >= 0)})]
+      if (length(not.estimated) == length(dropout.fits)) {
+        warning(paste0("None of the dropout curves could be estimated: the masking falls back to 'MCAR'.\n",
+                       "         Verify that the data contain missing values and that they depend on the intensity (see `missingness.diagnostic`)."))
+        masking = "MCAR"
+      } else if (length(not.estimated) > 0) {
+        warning(paste0("The dropout curve could not be estimated for: ", paste0(not.estimated, collapse = ", "), ".\n",
+                       "         The corresponding samples are masked uniformly."))
+      }
+    } else {
+      dropout.fits = NULL
+    }
+
+    ### Weight of each cell of the test dataset
+    masking.weights = .dropout.weights(test.counts = sample.data,
+                                       abundance = rowMeans(cnt[rownames(sample.data), , drop = FALSE], na.rm = TRUE),
+                                       fits = dropout.fits,
+                                       column.sets = column.sets,
+                                       flat = (masking == "MCAR"))
+
+    # when all the cells are measured and the masking is uniform the weights are not needed:
+    # keeping them out of `sample` preserves the draw of the previous versions for a given seed
+    use.weights = !(masking == "MCAR" & !anyNA(sample.data))
+
+
     ######## Just overall missing values ########
     if (is.null(sample.group.column)) {
       if (isTRUE(verbose)) {message("Simulating NAs in the known data subset (random-mode)...")}
@@ -215,8 +306,19 @@ compare.imp.methods =
       n.na = floor((ncol(sample.data) * nrow(sample.data)) * fraction.missing)
 
       # Define the combination of row x column that will define the cells in which the NAs will be introduced
-      cells.na = list(rows = sample(1:nrow(sample.data), size = n.na, replace = TRUE),
-                      cols = sample(1:ncol(sample.data), size = n.na, replace = TRUE))
+      if (isFALSE(use.weights)) {
+        cells.na = list(rows = sample(1:nrow(sample.data), size = n.na, replace = TRUE),
+                        cols = sample(1:ncol(sample.data), size = n.na, replace = TRUE))
+      } else {
+        # the cells are drawn from the flattened matrix without replacement, so that the same value is not
+        # masked twice and the cells that are already missing (null weight) are never selected
+        cells.idx = .sample.idx(x = 1:(nrow(sample.data) * ncol(sample.data)),
+                                size = n.na,
+                                prob = as.vector(masking.weights))
+
+        cells.na = list(rows = ((cells.idx - 1) %% nrow(sample.data)) + 1,
+                        cols = ((cells.idx - 1) %/% nrow(sample.data)) + 1)
+      }
 
       ###### use the proportions per sample group #####
     } else {
@@ -247,12 +349,40 @@ compare.imp.methods =
         cells.na.rows.group = c()
         cells.na.cols.group = c()
 
-        if (length(na.count.in.group.per.row) > 1) {
-          for (j in 2:length(na.count.in.group.per.row)){
-            n.rows = max(1, floor(na.count.in.group.per.row[j] * effective.percentage.test))
-            cells.na.rows.group.j = sample(c(1:nrow(sample.data))[!(c(1:nrow(sample.data)) %in% unique(cells.na.rows.group))], size = n.rows, replace = FALSE)
-            cells.na.rows.group = c(cells.na.rows.group, rep(cells.na.rows.group.j, each = j-1))
-            cells.na.cols.group = c(cells.na.cols.group, sapply(1:n.rows, function(x){sample(original.col.idx, size = j-1, replace = FALSE)}, USE.NAMES = FALSE))
+        # number of missing values per protein observed in this group: the values are read from the names of
+        # the table and not from the position in it, because a group can very well contain proteins missing
+        # in 0 and in all the replicates without containing any of the intermediate cases
+        n.NA.values = as.numeric(names(na.count.in.group.per.row))
+
+        # weight of each protein in this group, averaged over its samples
+        row.weights.group = rowMeans(masking.weights[, original.col.idx, drop = FALSE])
+        measured.in.group = rowSums(!is.na(sample.data[, original.col.idx, drop = FALSE]))
+
+        for (j in which(n.NA.values > 0)) {
+          n.NA.j = n.NA.values[j]
+          n.rows = max(1, floor(na.count.in.group.per.row[j] * effective.percentage.test))
+
+          # a protein can host the pattern only if it still has enough measured values in this group
+          candidate.rows = c(1:nrow(sample.data))[!(c(1:nrow(sample.data)) %in% unique(cells.na.rows.group))]
+          candidate.rows = candidate.rows[measured.in.group[candidate.rows] >= n.NA.j]
+
+          if (length(candidate.rows) == 0) {next}
+
+          if (isTRUE(use.weights)) {
+            cells.na.rows.group.j = .sample.idx(x = candidate.rows, size = n.rows, prob = row.weights.group[candidate.rows])
+          } else {
+            cells.na.rows.group.j = .sample.idx(x = candidate.rows, size = n.rows)
+          }
+
+          for (r in cells.na.rows.group.j) {
+            if (isTRUE(use.weights)) {
+              cols.r = .sample.idx(x = original.col.idx, size = n.NA.j, prob = masking.weights[r, original.col.idx])
+            } else {
+              cols.r = .sample.idx(x = original.col.idx, size = n.NA.j)
+            }
+
+            cells.na.rows.group = c(cells.na.rows.group, rep(r, length(cols.r)))
+            cells.na.cols.group = c(cells.na.cols.group, cols.r)
           }
         }
 
@@ -261,6 +391,29 @@ compare.imp.methods =
       }
 
       fraction.missing = do.call(rbind, fraction.missing.group)
+    }
+
+
+    ### Keep the test dataset usable by the algorithms that need a minimum of measured values per protein
+    if (max.NA.per.row > 0 & length(cells.na$rows) > 0) {
+      already.NA = rowSums(is.na(sample.data))
+      added.NA = rep(0, nrow(sample.data))
+      keep.cell = rep(TRUE, length(cells.na$rows))
+
+      for (i in 1:length(cells.na$rows)) {
+        if ((already.NA[cells.na$rows[i]] + added.NA[cells.na$rows[i]] + 1) > max.NA.after.masking) {
+          keep.cell[i] = FALSE
+        } else {
+          added.NA[cells.na$rows[i]] = added.NA[cells.na$rows[i]] + 1
+        }
+      }
+
+      if (isTRUE(verbose) & any(!keep.cell)) {
+        message(paste0(sum(!keep.cell), " masked values discarded to keep the missingness per protein below ", max.NA.fraction*100, "%."))
+      }
+
+      cells.na = list(rows = cells.na$rows[keep.cell],
+                      cols = cells.na$cols[keep.cell])
     }
 
 
@@ -647,7 +800,12 @@ compare.imp.methods =
           RMSE.tables = RMSE.tables,
           RMSE.scores = RMSE.scores.tb,
           correlation.plots = correlations,
-          density.residuals = density.residuals)
+          density.residuals = density.residuals,
+          masking = list(mode = masking,
+                         dropout.by = dropout.by,
+                         dropout.curves = dropout.fits,
+                         max.NA.per.row = max.NA.per.row,
+                         max.NA.fraction = max.NA.fraction))
 
     return(DEprot.RMSE.object)
 

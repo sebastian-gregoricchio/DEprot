@@ -68,12 +68,17 @@ A new dataset containing only proteins with known values is created, a certain p
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compare.imp.methods</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'imp.methods'</span></span>
+<span><span class="fu">compare</span><span class="op">(</span></span>
 <span>  <span class="va">DEprot.object</span>,</span>
 <span>  percentage.test <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  correlation.method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
 <span>  sample.group.column <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  which.data <span class="op">=</span> <span class="st">"randomized"</span>,</span>
+<span>  masking <span class="op">=</span> <span class="st">"MCAR"</span>,</span>
+<span>  max.NA.per.row <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  max.NA.fraction <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  dropout.by <span class="op">=</span> <span class="st">"group"</span>,</span>
 <span>  run.missForest <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  run.kNN <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  run.tkNN <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -123,6 +128,22 @@ A new dataset containing only proteins with known values is created, a certain p
 
 <dt id="arg-which-data">which.data<a class="anchor" aria-label="anchor" href="#arg-which-data"></a></dt>
 <dd><p>String indicating which type of counts should be used. One among: 'raw', 'normalized', 'norm', 'randomized', 'random'. Default: <code>"randomized"</code>.</p></dd>
+
+
+<dt id="arg-masking">masking<a class="anchor" aria-label="anchor" href="#arg-masking"></a></dt>
+<dd><p>String indicating how the values to hide are chosen. With <code>"MCAR"</code> every measured value has the same probability of being masked; with <code>"intensity"</code> the probability follows a logistic dropout curve estimated on the data, so that the masked values are drawn preferentially from the low-intensity range. One among: 'MCAR', 'intensity'. Default: <code>"MCAR"</code>.</p></dd>
+
+
+<dt id="arg-max-na-per-row">max.NA.per.row<a class="anchor" aria-label="anchor" href="#arg-max-na-per-row"></a></dt>
+<dd><p>Numeric value indicating the maximum number of missing values that a protein can already have to be usable in the test dataset. The RMSE is computed only on the artificially masked cells, hence a protein does not need to be complete: it is enough that the masked value was measured. Raising this threshold recovers the low-abundance proteins, which are rarely complete. Default: <code>0</code> (only complete proteins, as in the previous versions).</p></dd>
+
+
+<dt id="arg-max-na-fraction">max.NA.fraction<a class="anchor" aria-label="anchor" href="#arg-max-na-fraction"></a></dt>
+<dd><p>Numeric value between 0 and 1 indicating the maximum fraction of missing values that a protein can reach after the masking. It prevents the test dataset from becoming unusable for the algorithms that need a minimum number of measured values per protein. Ignored when <code>max.NA.per.row = 0</code>. Default: <code>0.5</code>.</p></dd>
+
+
+<dt id="arg-dropout-by">dropout.by<a class="anchor" aria-label="anchor" href="#arg-dropout-by"></a></dt>
+<dd><p>String indicating the level at which the dropout curves are estimated when <code>masking = "intensity"</code>. With <code>"group"</code> one curve is estimated for each level of <code>sample.group.column</code>, with <code>"sample"</code> one curve is estimated for each sample. One among: 'group', 'sample'. Default: <code>"group"</code>.</p></dd>
 
 
 <dt id="arg-run-missforest">run.missForest<a class="anchor" aria-label="anchor" href="#arg-run-missforest"></a></dt>
@@ -250,9 +271,9 @@ A new dataset containing only proteins with known values is created, a certain p
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        imputation.method      RMSE correlation.coeff processing.time rank</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PPCA                PPCA 0.5129987         0.9886472            0.40    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> corkNN            corkNN 0.5258991         0.9826647            0.01    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> corkNN            corkNN 0.5258991         0.9826647            0.00    2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> BPCA                BPCA 0.5296139         0.9853896            0.65    3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> LLS                  LLS 0.6850651         0.9211051            0.02    4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> LLS                  LLS 0.6850651         0.9211051            0.01    4</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">comparison</span></span></span>
 <span class="r-plt img"><img src="compare.imp.methods-1.png" alt="" width="700" height="433"></span>

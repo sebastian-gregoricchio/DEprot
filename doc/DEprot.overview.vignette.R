@@ -153,7 +153,10 @@ imp.comparison <- compare.imp.methods(DEprot.object = dpo,
                                       percentage.test = 30,
                                       sample.group.column = "combined.id",
                                       which.data = "normalized",
-                                      seed = 1234,
+                                      masking = "intensity",
+                                      max.NA.per.row = 4,
+                                      dropout.by = "group",
+                                      seed = 42,
                                       run.kNN = FALSE, # time consuming
                                       verbose = FALSE)
 
@@ -162,6 +165,15 @@ patchwork::wrap_plots(c(imp.comparison@correlation.plots,
 
 ## ----summary_impute_comparison, echo=FALSE------------------------------------
 summary(imp.comparison)
+
+## ----masking_slot, eval = FALSE-----------------------------------------------
+# data.frame(do.call(rbind, imp.comparison@masking$dropout.curves))
+
+## ----masking_slot_print, echo=FALSE-------------------------------------------
+knitr::kable(data.frame(do.call(rbind, imp.comparison@masking$dropout.curves)),
+             digits = 3,
+             row.names = TRUE,
+             caption = "**Dropout curves estimated for each group of replicates**")
 
 ## ----imputation_example, eval = F---------------------------------------------
 # ## Without parallelization

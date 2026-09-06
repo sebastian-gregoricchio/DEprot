@@ -509,15 +509,33 @@ The `DEprot.missingness` object contains the following slots:
 
 
 ## Choice of the imputation method
-We implemented the function `compare.imp.methods` to compare the different imputation methods and choose the best one for your data type. Indeed, your dataset is subsampled and NAs are introduced simulating the distribution and the proportion of the original data.
+We implemented the function `compare.imp.methods` to compare the different imputation methods and choose the most suitable one for your data type. A subset of the table is taken, part of the measured values is hidden reproducing the proportion and the pattern of the missing values of the original data, the hidden values are imputed with each method and then compared with the measurements. What the score describes is therefore the reconstruction of values that had been measured and were removed on purpose, which is not the same question as *which method reconstructs best the values that are actually missing*: those have no measurement to be compared with, and no benchmark can reach them.<br></br>
 
+The distinction is not only formal, because it decides which part of the intensity range the comparison is run on. Until version 2.1.0 the test dataset was built exclusively from the proteins measured in every sample. In `unimputed.counts` these are 10,646 proteins out of 13,239, an apparently generous 80%, and yet they hold less than a fifth of the values falling in the bottom 3% of the intensity distribution: a protein detected in all the samples is, most of the time, an abundant protein. The low-intensity region, which is where the dropout actually happens, was almost absent from the test, and the imputation methods were ranked on the range where the imputation is the easiest.
+
+Two parameters address the two halves of the problem.
+
+The first is `max.NA.per.row`. Since the error is computed only on the cells that are masked, a protein does not need to be complete to be usable: it is enough that the masked value was measured, and the missing values elsewhere in the same protein are handled by the algorithms exactly as they would be in the real table. Allowing a few of them recovers the low-abundance proteins: with `max.NA.per.row = 4` the usable proteins of `unimputed.counts` go from 10,646 to 11,975, and the fraction of the bottom 3% of the values that the masking can reach rises from 19% to 69%. The ceiling is set by `max.NA.fraction`: the masked cells that would push a protein above it are discarded, which keeps the test dataset usable by the algorithms that require a minimum number of measured values per protein, `missForest` in the first place.
+
+The second is `masking`. With the default, `"MCAR"`, every measured value has the same probability of being hidden. With `"intensity"` the probability follows a logistic dropout curve estimated on the data,
+
+$$P(\text{missing}) = \frac{1}{1 + e^{-(a\, +\, b \cdot \text{abundance})}}$$
+
+and the masked values are consequently drawn from the bottom of the distribution with the same rate at which the values are really lost. One curve is estimated for each group of replicates (`dropout.by = "group"`, the levels of `sample.group.column`) or for each sample (`dropout.by = "sample"`). This is where the structure of the experiment enters the simulation: an IgG control and an IP do not have the same detection depth, they do not lose the values in the same intensity range, and a single curve fitted on all the samples together would describe neither of the two. The curves are estimated on the complete table and not on the test subset, because the proteins absent from an entire group are the ones carrying the information about the detection limit and they cannot, by construction, belong to a test dataset made of measured values. When a curve cannot be estimated, or when it increases with the abundance, the samples concerned fall back to the uniform masking and a warning reports which ones.
+
+The pattern of the missing values per group is preserved in both modes: the number of proteins missing in 1, 2, ... n replicates of each group is reproduced in the test dataset, and only the choice of *which* proteins and *which* replicates is weighted by the dropout curves.
+
+<br>
 
 ```{r choice_of_imp, fig.width = 15, fig.height = 12, message=FALSE, warning=FALSE}
 imp.comparison <- compare.imp.methods(DEprot.object = dpo,
                                       percentage.test = 30,
                                       sample.group.column = "combined.id",
                                       which.data = "normalized",
-                                      seed = 1234,
+                                      masking = "intensity",
+                                      max.NA.per.row = 4,
+                                      dropout.by = "group",
+                                      seed = 42,
                                       run.kNN = FALSE, # time consuming
                                       verbose = FALSE)
 
@@ -531,6 +549,26 @@ patchwork::wrap_plots(c(imp.comparison@correlation.plots,
 ```{r summary_impute_comparison, echo=FALSE}
 summary(imp.comparison)
 ```
+
+<br>
+
+The masking settings and the estimated curves are stored in the `masking` slot of the `DEprot.RMSE` object, so that a comparison can be reproduced and, above all, so that the range on which it was run can be reported. The slope is negative when the probability of losing a value decreases with the abundance, and its magnitude describes how sharply: here the three groups behave in the same way, while a control and an enrichment would not.
+
+```{r masking_slot, eval = FALSE}
+data.frame(do.call(rbind, imp.comparison@masking$dropout.curves))
+```
+
+```{r masking_slot_print, echo=FALSE}
+knitr::kable(data.frame(do.call(rbind, imp.comparison@masking$dropout.curves)),
+             digits = 3,
+             row.names = TRUE,
+             caption = "**Dropout curves estimated for each group of replicates**")
+```
+
+<br>
+
+Two remarks on how to read the ranking. The score is the reconstruction error of the masked intensities, not the performance of the differential analysis that follows: a lower RMSE does not automatically give a better balance between true and false positives in `diff.analyses`, and the comparison is more useful to discard the methods that behave badly on your data than to declare a winner by a small margin. And whichever mode is used, the values missing at the very bottom of the distribution remain out of reach, because a value that was never measured cannot be put back and scored. If the missingness of your dataset is largely structured, the alternative is not a better imputation but a model that keeps the missing values as such, such as the one used by `diff.analyses.proDA`.
+
 
 
 <br>
