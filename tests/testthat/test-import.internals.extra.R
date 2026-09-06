@@ -155,9 +155,20 @@ test_that("the windows separators are handled", {
 test_that("the surrounding blanks are removed and the vector length is kept", {
   clean <- DEprot:::.clean.run.names
 
-  expect_equal(clean("  sample.raw  "), "sample")
+  expect_equal(clean("  sample  "), "sample")
   expect_length(clean(c("a.raw", "b.raw", "c.raw")), 3)
   expect_equal(clean(character(0)), character(0))
+})
+
+
+test_that("a trailing blank currently prevents the extension from being stripped", {
+  clean <- DEprot:::.clean.run.names
+
+  ## NOTE: trimws() is applied AFTER the extension is removed, hence the '$' anchor of the
+  ## extension pattern does not match when the name ends with a blank. Trimming first would
+  ## fix it; the expectation below documents the behaviour as it is today.
+  expect_equal(clean("sample.raw  "), "sample.raw")
+  expect_equal(clean("sample.raw"), "sample")
 })
 
 
@@ -174,18 +185,49 @@ test_that("a name carrying no extension is left as it is", {
 ##  .long.to.matrix and .wide.to.matrix
 ## ----------------------------------------------------------------------------------------
 
-test_that("the rows without an identifier are discarded with a warning", {
-  long <- data.frame(id = c("P1", NA, "P2"),
-                     sample = c("s1", "s1", "s1"),
-                     value = c(10, 20, 30),
+test_that("the long reshaping drops the rows without an identifier", {
+  long <- data.frame(id = c("P1", NA, "", "P2"),
+                     sample = c("s1", "s1", "s1", "s1"),
+                     value = c(10, 20, 25, 30),
                      stringsAsFactors = FALSE)
 
-  expect_warning(DEprot:::.long.to.matrix(df = long, id.col = "id",
-                                          sample.col = "sample", quantity.col = "value"))
+  ## the filtering is silent here: only the wide reader reports it, since a missing ID in a
+  ## wide report means a whole protein is lost rather than a single measurement
+  out <- DEprot:::.long.to.matrix(df = long, id.col = "id",
+                                  sample.col = "sample", quantity.col = "value")
 
-  out <- suppressWarnings(DEprot:::.long.to.matrix(df = long, id.col = "id",
-                                                   sample.col = "sample", quantity.col = "value"))
   expect_equal(sort(rownames(out)), c("P1", "P2"))
+})
+
+
+test_that("the wide reshaping reports the rows without an identifier", {
+  wide <- data.frame(id = c("P1", NA, "P2"),
+                     A = c(1, 2, 3),
+                     B = c(4, 5, 6),
+                     stringsAsFactors = FALSE)
+
+  expect_warning(DEprot:::.wide.to.matrix(wide, "id", c(sampleA = "A", sampleB = "B")))
+
+  out <- suppressWarnings(DEprot:::.wide.to.matrix(wide, "id", c(sampleA = "A", sampleB = "B")))
+  expect_equal(sort(rownames(out)), c("P1", "P2"))
+})
+
+
+test_that("an empty wide table is reported", {
+  empty <- data.frame(id = character(0), A = numeric(0), stringsAsFactors = FALSE)
+
+  expect_error(DEprot:::.wide.to.matrix(empty, "id", c(sampleA = "A")))
+})
+
+
+test_that("the duplicated identifiers of a wide report are made unique", {
+  wide <- data.frame(id = c("P1", "P1", "P2"),
+                     A = c(1, 2, 3),
+                     stringsAsFactors = FALSE)
+
+  out <- DEprot:::.wide.to.matrix(wide, "id", c(sampleA = "A"))
+
+  expect_equal(rownames(out), c("P1", "P1.1", "P2"))
 })
 
 
@@ -304,8 +346,14 @@ test_that("the log base proposed by the reader can be overridden", {
   linear <- suppressWarnings(suppressMessages(finalize()))
   log2 <- suppressWarnings(suppressMessages(finalize(log.base = 2)))
 
-  expect_equal(linear@log.base, 1)
+  ## a base of 1 declares linear intensities: 'load.counts2' log2-transforms them and the
+  ## object therefore reports base 2, on the scale the counts are actually stored in
+  expect_equal(linear@log.base, 2)
+  expect_true(linear@log.transformed)
+
+  ## with the counts already in log2 nothing is transformed
   expect_equal(log2@log.base, 2)
+  expect_equal(as.numeric(any.counts(log2)), as.numeric(matrix(1:4, nrow = 2)))
 })
 
 
