@@ -131,6 +131,25 @@
 <dd><p>A list of ggplot objects depicting the distribution of the residuals. Class: <code>"ANY"</code>.</p></dd>
 
 
+<dt><code>masking</code></dt>
+<dd><p>List describing how the values of the test dataset have been hidden, containing the following elements (Class: <code>"ANY"</code>.):</p><dl><dt><code>mode</code>: </dt>
+<dd><p>masking actually applied, <code>"MCAR"</code> or <code>"intensity"</code>. It reports <code>"MCAR"</code> also when the intensity-dependent masking was required but none of the dropout curves could be estimated</p></dd>
+
+  <dt><code>dropout.by</code>: </dt>
+<dd><p>level at which the dropout curves have been estimated, <code>"group"</code> or <code>"sample"</code></p></dd>
+
+  <dt><code>dropout.curves</code>: </dt>
+<dd><p>list with the intercept and the slope of the logistic curve estimated for each group of replicates (or each sample), <code>NULL</code> when the masking is <code>"MCAR"</code></p></dd>
+
+  <dt><code>max.NA.per.row</code>: </dt>
+<dd><p>maximum number of missing values that a protein could already have to enter the test dataset</p></dd>
+
+  <dt><code>max.NA.fraction</code>: </dt>
+<dd><p>maximum fraction of missing values that a protein could reach after the masking</p></dd>
+
+</dl></dd>
+
+
 </dl></div>
 
   </div>

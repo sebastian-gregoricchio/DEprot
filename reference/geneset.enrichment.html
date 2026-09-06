@@ -73,6 +73,7 @@
 <span>  <span class="va">enrichment.type</span>,</span>
 <span>  gsea.rank.method <span class="op">=</span> <span class="st">"foldchange"</span>,</span>
 <span>  diff.status.category <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  universe <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  gsub.pattern.prot.id <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  qvalueCutoff <span class="op">=</span> <span class="fl">0.05</span>,</span>
@@ -109,8 +110,12 @@
 <dd><p>String indicating a diff.status among the ones present in the results table of the specific contrast. Used only one 'ORA' is performed. Default: <code>NULL</code>.</p></dd>
 
 
+<dt id="arg-universe">universe<a class="anchor" aria-label="anchor" href="#arg-universe"></a></dt>
+<dd><p>Character vector indicating the background gene list of the ORA. Default: <code>NULL</code>, meaning that all the unique proteins present in the counts used for the differential analyses are taken. This is almost always the correct background for a proteomics experiment, since only the quantified proteins could have been called as differential. Ignored when <code>enrichment.type = "GSEA"</code>.</p></dd>
+
+
 <dt id="arg-gsub-pattern-prot-id">gsub.pattern.prot.id<a class="anchor" aria-label="anchor" href="#arg-gsub-pattern-prot-id"></a></dt>
-<dd><p>String indicating a pattern to be passed to gsub and to remove from the prot.id. Default: <code>NULL</code> (non changes in the IDs).</p></dd>
+<dd><p>String indicating a pattern to be passed to gsub and to remove from the prot.id. The same pattern is removed from the IDs of the <code>universe</code>. Default: <code>NULL</code> (non changes in the IDs).</p></dd>
 
 
 <dt id="arg-pvaluecutoff">pvalueCutoff<a class="anchor" aria-label="anchor" href="#arg-pvaluecutoff"></a></dt>

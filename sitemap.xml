@@ -72,6 +72,8 @@
 <url><loc>/reference/dot-corum.reshape.html</loc></url>
 <url><loc>/reference/dot-cumulative.plot.html</loc></url>
 <url><loc>/reference/dot-detect.source.html</loc></url>
+<url><loc>/reference/dot-dropout.weights.html</loc></url>
+<url><loc>/reference/dot-estimate.dropout.html</loc></url>
 <url><loc>/reference/dot-extract.msstats.table.html</loc></url>
 <url><loc>/reference/dot-filter.long.report.html</loc></url>
 <url><loc>/reference/dot-finalize.import.html</loc></url>
@@ -106,6 +108,7 @@
 <url><loc>/reference/dot-read.spectronaut.pivot.html</loc></url>
 <url><loc>/reference/dot-read.table.any.html</loc></url>
 <url><loc>/reference/dot-require.package.html</loc></url>
+<url><loc>/reference/dot-sample.idx.html</loc></url>
 <url><loc>/reference/dot-scale.loadings.html</loc></url>
 <url><loc>/reference/dot-simulate.timecourse.html</loc></url>
 <url><loc>/reference/dot-splsda.auc.html</loc></url>
