@@ -661,7 +661,7 @@
 #' @import dplyr
 #' @import ggplot2
 #' @importFrom mixOmics splsda plsda perf vip tune.splsda
-#' @importFrom methods new
+#' @importFrom methods is new
 #'
 #' @author Sebastian Gregoricchio
 #'
