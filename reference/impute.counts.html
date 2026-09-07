@@ -114,11 +114,11 @@
 
 
 <dt id="arg-missforest-cores">missForest.cores<a class="anchor" aria-label="anchor" href="#arg-missforest-cores"></a></dt>
-<dd><p>Number of cores used to run the <code>missForest</code> algorithm. If <code>missForest.cores</code> is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter <code>missForest.parallel.mode</code>. Default: <code>1</code>.</p></dd>
+<dd><p>Number of cores used to run the <code>missForest</code> algorithm. If <code>missForest.cores</code> is higher than 1, the imputation will be run in parallel. Two modes are possible and can be defined by the parameter <code>missForest.parallel.mode</code>. Default: <code>1</code>.</p></dd>
 
 
 <dt id="arg-missforest-parallel-mode">missForest.parallel.mode<a class="anchor" aria-label="anchor" href="#arg-missforest-parallel-mode"></a></dt>
-<dd><p>Define the mode to use for the parallelization, ignored when <code>cores</code> is more than 1. One among: 'variables', 'forests'. Default: <code>"variables"</code>. See also the documentation of the <a href="https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest" class="external-link">missForest function</a>.</p></dd>
+<dd><p>Define the mode to use for the parallelization, ignored when <code>missForest.cores</code> is 1 or lower. One among: 'variables', 'forests'. Default: <code>"variables"</code>. See also the documentation of the <a href="https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest" class="external-link">missForest function</a>.</p></dd>
 
 
 <dt id="arg-knn-n-nearest-neighbours">kNN.n.nearest.neighbours<a class="anchor" aria-label="anchor" href="#arg-knn-n-nearest-neighbours"></a></dt>
