@@ -35,9 +35,9 @@ impute.counts(
 
 \item{missForest.variable.wise.OOBerror}{Logical value to define whether the OOB error is returned for each variable separately. Default: \code{TRUE}.}
 
-\item{missForest.cores}{Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.}
+\item{missForest.cores}{Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is higher than 1, the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.}
 
-\item{missForest.parallel.mode}{Define the mode to use for the parallelization, ignored when \code{cores} is more than 1. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.}
+\item{missForest.parallel.mode}{Define the mode to use for the parallelization, ignored when \code{missForest.cores} is 1 or lower. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.}
 
 \item{kNN.n.nearest.neighbours}{Numeric value indicating the number of nearest neighbors to use to perform the \code{kNN} imputation. Default: \code{10}.}
 

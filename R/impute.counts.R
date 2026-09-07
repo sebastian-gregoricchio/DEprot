@@ -8,8 +8,8 @@
 #' @param overwrite.imputation Logical value to indicate whether, in the case already available, the table of imputed counts should be overwritten. Default: \code{FALSE}.
 #' @param missForest.max.iterations Max number of iterations for the missForest algorithm. Default: \code{100}.
 #' @param missForest.variable.wise.OOBerror Logical value to define whether the OOB error is returned for each variable separately. Default: \code{TRUE}.
-#' @param missForest.cores Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is 1 (or lower), the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.
-#' @param missForest.parallel.mode Define the mode to use for the parallelization, ignored when \code{cores} is more than 1. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.
+#' @param missForest.cores Number of cores used to run the \code{missForest} algorithm. If \code{missForest.cores} is higher than 1, the imputation will be run in parallel. Two modes are possible and can be defined by the parameter \code{missForest.parallel.mode}. Default: \code{1}.
+#' @param missForest.parallel.mode Define the mode to use for the parallelization, ignored when \code{missForest.cores} is 1 or lower. One among: 'variables', 'forests'. Default: \code{"variables"}. See also the documentation of the \href{https://www.rdocumentation.org/packages/missForest/versions/1.5/topics/missForest}{missForest function}.
 #' @param kNN.n.nearest.neighbours Numeric value indicating the number of nearest neighbors to use to perform the \code{kNN} imputation. Default: \code{10}.
 #' @param LLS.k Cluster size, this is the number of similar genes used for regression. Default: \code{2}.
 #' @param pcaMethods.nPCs.to.test Numeric value indicating the number of Principal Components to test in order to find the optimal number of PCs to used in the imputation methods from the \code{pcaMethods} package. This includes: 'LLS', 'SVD' (a.k.a 'svdImpute'), 'BPCA-pcaMethods', and 'PPCA'. Default: \code{5}.
@@ -31,7 +31,8 @@
 #' @importFrom laeken weightedMean
 #' @importFrom pcaMethods pca Q2 llsImpute
 #' @importFrom reshape2 melt
-#' @importFrom doParallel registerDoParallel
+#' @importFrom doParallel registerDoParallel stopImplicitCluster
+#' @importFrom foreach registerDoSEQ
 #' @importFrom reshape2 melt
 #' @importFrom foreach foreach
 #' @importFrom ggpubr theme_pubr
@@ -105,15 +106,9 @@ impute.counts =
         cnt = DEprot.object@random.counts
         data.used = "randomized"
       }
-    } else if (tolower(which.data) %in% c("raw", "r")) {
-      if (.deprot_slot_is_empty(DEprot.object@raw.counts)) {
-        stop("You asked to use raw data for the imputation, but raw data are not available.\n")
-      } else {
-        cnt = DEprot.object@raw.counts
-        data.used = "raw"
-      }
     } else {
-      stop("Indicate a data type among: 'raw', 'normalized' and 'randomized'.\n")
+      cnt = DEprot.object@raw.counts
+      data.used = "raw"
     }
 
 
@@ -558,10 +553,22 @@ impute.counts =
       start.time = Sys.time()
 
       cores = ifelse(test = missForest.cores > 1, yes = min(c(missForest.cores, nrow(cnt))), no = 1)
-      doParallel::registerDoParallel(cores = cores)
-      #getDoParWorkers()
-      doRNG::registerDoRNG(seed = 1.618)
-      DoRNG.check = try(invisible(foreach::foreach(i=1:3) %dorng% sqrt(i)))
+
+      if (cores > 1) {
+        # on Windows `registerDoParallel` opens a PSOCK cluster, and a further registration replaces it
+        # without closing the previous one: the workers survive the function, they leave their files in the
+        # temporary directory and they make the R session abort at the exit. The cluster is therefore closed
+        # here, whichever the way the function terminates
+        doParallel::registerDoParallel(cores = cores)
+        on.exit(expr = {doParallel::stopImplicitCluster(); foreach::registerDoSEQ()}, add = TRUE)
+        #getDoParWorkers()
+
+        doRNG::registerDoRNG(seed = 1.618)
+        DoRNG.check = try(invisible(foreach::foreach(i=1:3) %dorng% sqrt(i)))
+      } else {
+        # a single core does not need a backend: `missForest` is called with parallelize = "no"
+        DoRNG.check = NULL
+      }
 
 
       if (!("list" %in% class(DoRNG.check)) | cores <= 1) {
@@ -673,83 +680,83 @@ impute.counts =
 
       #########################################################################################
 
-      } else if (tolower(method) %in% c("bpca", "bpca-pcamethods")) {
+    } else if (tolower(method) %in% c("bpca", "bpca-pcamethods")) {
 
-        start.time = Sys.time()
+      start.time = Sys.time()
 
-        PC.estimation = estimate.PCs(mat = t(cnt), method = "bpca", nPcs = pcaMethods.nPCs.to.test)
-        imputed.cnt = (pcaMethods::pca(object = t(cnt), method = "bpca", nPcs = PC.estimation$optimal.nPcs, verbose = verbose))@completeObs
+      PC.estimation = estimate.PCs(mat = t(cnt), method = "bpca", nPcs = pcaMethods.nPCs.to.test)
+      imputed.cnt = (pcaMethods::pca(object = t(cnt), method = "bpca", nPcs = PC.estimation$optimal.nPcs, verbose = verbose))@completeObs
 
-        end.time = Sys.time()
-        time.taken = round(end.time - start.time,2)
+      end.time = Sys.time()
+      time.taken = round(end.time - start.time,2)
 
-        ## Define imputation method list
-        imputation = list(method = "BPCA",
-                          PC.estimation = PC.estimation,
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
-                          PCs.tested = pcaMethods.nPCs.to.test,
-                          data.used = data.used,
-                          seed = seed)
+      ## Define imputation method list
+      imputation = list(method = "BPCA",
+                        PC.estimation = PC.estimation,
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        PCs.tested = pcaMethods.nPCs.to.test,
+                        data.used = data.used,
+                        seed = seed)
 
 
-        #########################################################################################
+      #########################################################################################
 
-      } else if (tolower(method) %in% c("ppca", "ppca-pcamethods")) {
+    } else if (tolower(method) %in% c("ppca", "ppca-pcamethods")) {
 
-        start.time = Sys.time()
+      start.time = Sys.time()
 
-        PC.estimation = estimate.PCs(mat = t(cnt), method = "ppca", nPcs = pcaMethods.nPCs.to.test)
-        imputed.cnt = (pcaMethods::pca(object = t(cnt), method = "ppca", nPcs = PC.estimation$optimal.nPcs, verbose = verbose))@completeObs
+      PC.estimation = estimate.PCs(mat = t(cnt), method = "ppca", nPcs = pcaMethods.nPCs.to.test)
+      imputed.cnt = (pcaMethods::pca(object = t(cnt), method = "ppca", nPcs = PC.estimation$optimal.nPcs, verbose = verbose))@completeObs
 
-        end.time = Sys.time()
-        time.taken = round(end.time - start.time,2)
+      end.time = Sys.time()
+      time.taken = round(end.time - start.time,2)
 
-        ## Define imputation method list
-        imputation = list(method = "PPCA",
-                          PC.estimation = PC.estimation,
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
-                          PCs.tested = pcaMethods.nPCs.to.test,
-                          data.used = data.used,
-                          seed = seed)
+      ## Define imputation method list
+      imputation = list(method = "PPCA",
+                        PC.estimation = PC.estimation,
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        PCs.tested = pcaMethods.nPCs.to.test,
+                        data.used = data.used,
+                        seed = seed)
 
-        #########################################################################################
+      #########################################################################################
 
-      } else if (tolower(method) %in% c("regimpute-dreamai", "regimpute")) {
+    } else if (tolower(method) %in% c("regimpute-dreamai", "regimpute")) {
 
-        start.time = Sys.time()
+      start.time = Sys.time()
 
-        imputed.cnt = t(impute.RegImpute(data = cnt, fillmethod = RegImpute.fillmethod, maxiter_RegImpute = RegImpute.max.iterations, conv_nrmse = 1e-6))
+      imputed.cnt = t(impute.RegImpute(data = cnt, fillmethod = RegImpute.fillmethod, maxiter_RegImpute = RegImpute.max.iterations, conv_nrmse = 1e-6))
 
-        end.time = Sys.time()
-        time.taken = round(end.time - start.time,2)
+      end.time = Sys.time()
+      time.taken = round(end.time - start.time,2)
 
-        ## Define imputation method list
-        imputation = list(method = "RegImpute",
-                          parameters = list(fillmethod = RegImpute.fillmethod,
-                                            maxiter_RegImpute = RegImpute.max.iterations,
-                                            conv_nrmse = 1e-6),
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
-                          data.used = data.used,
-                          seed = seed)
+      ## Define imputation method list
+      imputation = list(method = "RegImpute",
+                        parameters = list(fillmethod = RegImpute.fillmethod,
+                                          maxiter_RegImpute = RegImpute.max.iterations,
+                                          conv_nrmse = 1e-6),
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        data.used = data.used,
+                        seed = seed)
 
-        #########################################################################################
+      #########################################################################################
 
-      } else if (tolower(method) == "corknn") {
+    } else if (tolower(method) == "corknn") {
 
-        start.time = Sys.time()
+      start.time = Sys.time()
 
-        imputed.cnt = t(suppressWarnings(imputeKNN(as.matrix(cnt), k = ceiling(nrow(cnt)*0.05) + 1, distance = "correlation", rm.na = TRUE, rm.nan = FALSE, rm.inf = FALSE)))
+      imputed.cnt = t(suppressWarnings(imputeKNN(as.matrix(cnt), k = ceiling(nrow(cnt)*0.05) + 1, distance = "correlation", rm.na = TRUE, rm.nan = FALSE, rm.inf = FALSE)))
 
-        end.time = Sys.time()
-        time.taken = round(end.time - start.time,2)
+      end.time = Sys.time()
+      time.taken = round(end.time - start.time,2)
 
-        ## Define imputation method list
-        imputation = list(method = "corkNN",
-                          n.nearest.neighbours = ceiling(nrow(cnt)*0.05),
-                          processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
-                          data.used = data.used,
-                          seed = seed)
-      }
+      ## Define imputation method list
+      imputation = list(method = "corkNN",
+                        n.nearest.neighbours = ceiling(nrow(cnt)*0.05),
+                        processing.time = paste(gsub("Time difference of ", "",as.character(time.taken)), attributes(time.taken)$units),
+                        data.used = data.used,
+                        seed = seed)
+    }
 
 
     ##########################################################################################
