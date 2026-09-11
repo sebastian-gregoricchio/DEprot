@@ -27,7 +27,7 @@
 
 \item{contrast.list}{List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.}
 
-\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (\code{"lmer"} and \code{"logistf"}). Default: \code{NULL}.}
+\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (\code{"lmer"}). Default: \code{NULL}.}
 
 \item{linear.FC.th}{Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.}
 
@@ -35,7 +35,7 @@
 
 \item{FDR.th}{Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.}
 
-\item{strategy}{String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).}
+\item{strategy}{String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "rlm" (robust lm). Default: \code{"lm"} (linear model).}
 
 \item{moderate.variance}{String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.}
 
@@ -78,6 +78,12 @@ normalized within \emph{DEprot} this is a second normalization that has not been
 \code{robust.scaling = FALSE}. The effect is stronger on imputed counts, since the imputation shrinks the MAD of a
 sample proportionally to the number of values that were replaced, which makes the rescaling follow the pattern of the
 missing values.
+
+The counts are handed to \code{prolfqua} directly in log2 scale and flagged as already transformed, so that the model is
+fitted on the same values that are stored in the object. Firth's bias-reduced logistic regression
+(\code{prolfqua::strategy_logistf}) is not among the available strategies: it models the detection of a protein
+(presence/absence) through a binary response and does not return a fold change, which makes it incompatible with the
+contrast table produced here.
 
 The scaling factor applied to each sample is stored, for every contrast, in the \code{scaling.factors} element of
 \code{prolfqua.out}. A factor of 1 indicates a sample whose dispersion corresponds to the average of the samples of the

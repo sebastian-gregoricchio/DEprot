@@ -4,11 +4,11 @@
 #'
 #' @param DEprot.object An object of class \code{DEprot}.
 #' @param contrast.list List of 3-elements vectors indicating (in order): metadata_column, variable_1, variable_2.
-#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (\code{"lmer"} and \code{"logistf"}). Default: \code{NULL}.
+#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (\code{"lmer"}). Default: \code{NULL}.
 #' @param linear.FC.th Number indicating the (absolute) fold change threshold (linear scale) to use to define differential proteins. Default: \code{2}.
 #' @param linear.FC.unresp.range A numeric 2-elements vector indicating the range (linear scale) used to define the unresponsive fold changes. Default: \code{c(1/1.1, 1.1)}.
 #' @param FDR.th Numeric value indicating the FDR threshold to apply to the differential analyses. Default: \code{0.05}.
-#' @param strategy String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: \code{"lm"} (linear model).
+#' @param strategy String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "rlm" (robust lm). Default: \code{"lm"} (linear model).
 #' @param moderate.variance String indicating whether the variance should be moderated in the evaluation of the contrast. Default: \code{FALSE}.
 #' @param robust.scaling Logical value indicating whether the robust scaling of \code{prolfqua} (median centering and MAD scaling of each sample) should be applied to the intensities before the fit. Default: \code{TRUE}.
 #' @param up.color String indicating the color to use for up-regulated proteins in the plots. Default: \code{"indianred"}.
@@ -36,6 +36,12 @@
 #' \code{robust.scaling = FALSE}. The effect is stronger on imputed counts, since the imputation shrinks the MAD of a
 #' sample proportionally to the number of values that were replaced, which makes the rescaling follow the pattern of the
 #' missing values.
+#'
+#' The counts are handed to \code{prolfqua} directly in log2 scale and flagged as already transformed, so that the model is
+#' fitted on the same values that are stored in the object. Firth's bias-reduced logistic regression
+#' (\code{prolfqua::strategy_logistf}) is not among the available strategies: it models the detection of a protein
+#' (presence/absence) through a binary response and does not return a fold change, which makes it incompatible with the
+#' contrast table produced here.
 #'
 #' The scaling factor applied to each sample is stored, for every contrast, in the \code{scaling.factors} element of
 #' \code{prolfqua.out}. A factor of 1 indicates a sample whose dispersion corresponds to the average of the samples of the
@@ -167,6 +173,12 @@ diff.analyses.prolfqua =
 
 
     ## Check strategy compatibility
+    if (!(tolower(strategy) %in% c("lm", "glm", "rlm", "lmer"))) {
+      stop(paste0("The `strategy` is not recognized. Please indicate a strategy among 'lm', 'glm', 'rlm', 'lmer'.\n",
+                  "Firth's bias-reduced logistic regression ('logistf') models the detection of a protein (presence/absence) through a binary response ",
+                  "and does not return a fold change, so it cannot be used to compute this contrast."))
+    }
+
     if (is.null(replicate.column)) {
       if (!(tolower(strategy) %in% c("lm", "glm", "rlm"))) {
         stop("The `replicate.column` is not provided. Which means that only linear models ('lm', 'rlm') can be applied.\nChange the `strategy` to 'lm' or 'rlm', or provide the column of the metadata corresponsing to the replicates.")
@@ -257,7 +269,6 @@ diff.analyses.prolfqua =
                            glm = prolfqua::strategy_lm("log_protein_abundance ~ Group"),
                            lm = prolfqua::strategy_lm("log_protein_abundance ~ Group"),
                            lmer = prolfqua::strategy_lmer("log_protein_abundance ~ Group + (1|rep)"),
-                           logistf = prolfqua::strategy_logistf("log_protein_abundance ~ Group + rep"),
                            rlm = prolfqua::strategy_rlm("log_protein_abundance ~ Group"))
 
     diff.analyses.list = list()
@@ -285,21 +296,11 @@ diff.analyses.prolfqua =
       # Filter matrix
       mat.filt = data.frame(mat.log2[,c(contrasts.info[[i]]$group.1, contrasts.info[[i]]$group.2)], check.names = FALSE)
       mat.filt$protein_Id = rownames(mat.filt)
-      mat.filt.long = reshape2::melt(data = mat.filt, value.name = "Intensity.log2", variable.name = "Sample", id.vars = "protein_Id")
-
-
-      # Convert intensities in linear scale
-      mat.filt.long$Intensity = 2^(mat.filt.long$Intensity.log2) - 1
-
-      if (TRUE %in% (mat.filt.long$Intensity < 0)) {
-        mat.filt.long$Intensity = 2^(mat.filt.long$Intensity.log2)
-      }
-
-      mat.filt.long = mat.filt.long %>% dplyr::select(-Intensity.log2)
+      mat.filt.long = reshape2::melt(data = mat.filt, value.name = "Intensity", variable.name = "Sample", id.vars = "protein_Id")
 
 
 
-      # Combine metadata and linear matrix
+      # Combine metadata and log2 matrix
       combo.table.long = dplyr::inner_join(meta.filt, mat.filt.long, by = "Sample")
       combo.table.long$Group = make.names(combo.table.long$Group)
       combo.table.long$isotopeLabel = "light"
@@ -355,14 +356,18 @@ diff.analyses.prolfqua =
       analysis_data = suppressMessages(suppressWarnings(prolfqua::setup_analysis(combo.table.long, config)))
       lfqdata = suppressWarnings(prolfqua::LFQData$new(analysis_data, config))
 
+      ## The counts are handed to prolfqua already in log2 scale. Declaring it here avoids a second
+      ## log2 transformation on top of the first one: the values are used for the fit as they are
+      ## stored in the object, without passing through the linear scale.
+      lfqdata$is_transformed(TRUE)
+
 
       ## transform intensities
       ## Before the fit prolfqua re-normalizes each sample: the median of the sample is subtracted and the
       ## values are divided by its MAD, expressed relatively to the average MAD of the samples. On counts
       ## already normalized within DEprot this is a second normalization applied on top of the first one,
-      ## and it is skipped when 'robust.scaling = FALSE'. The log2 transformation is instead always
-      ## required, since the intensities are handed to prolfqua in linear scale.
-      transformer = suppressMessages(suppressWarnings(lfqdata$get_Transformer()$log2()))
+      ## and it is skipped when 'robust.scaling = FALSE'.
+      transformer = suppressMessages(suppressWarnings(lfqdata$get_Transformer()))
 
       ## Scaling factors that the robust scaling applies to each sample, collected before the
       ## transformation: a factor of 1 corresponds to a sample whose dispersion is the average one, while

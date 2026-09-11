@@ -146,6 +146,12 @@ load.counts =
     }
 
 
+    ### Reorder counts columns following the sample order of the metadata
+    if (!identical(colnames(cnt), as.character(meta$column.id))) {
+      cnt = cnt[, as.character(meta$column.id), drop = FALSE]
+      message("The columns of the counts table have been reordered to match the sample order of the metadata.")
+    }
+
 
 
     ### Generate boxplot of counts

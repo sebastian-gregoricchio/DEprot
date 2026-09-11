@@ -40,9 +40,9 @@ heatmap.counts(
 
 \item{top.n}{Numeric value indicated the top differentially expressed proteins to consider for the contrast selected. The rank is based on the product of log2Fc and -log10Padj. Option available only for an object of class \code{DEprot.analyses}. Default: \code{NULL} (all differential proteins of that contrast).}
 
-\item{sample.subset}{Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. Default: \code{NULL} (all samples are shown).}
+\item{sample.subset}{Character vector indicating a subset of samples to display. The identifiers must correspond to a IDs in the \code{column.id} column of the object's metadata. The samples are displayed in the order provided when the columns are not clustered. Default: \code{NULL} (all samples are shown).}
 
-\item{protein.subset}{Character vector indicating a subset of proteins to display. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).}
+\item{protein.subset}{Character vector indicating a subset of proteins to display. The identifiers must correspond to the full row.names of the counts table (equivalent to the \code{prot.id} column of the fold change table of \code{DEprot.analyses} object). The proteins are displayed in the order provided when the rows are not clustered. This options is can be used in combination with \code{contrast} and \code{top.n}. Default: \code{NULL} (all proteins are shown).}
 
 \item{group.by.metadata.column}{String indicating a column from the metadata table. This column will be used to define sample groups, and for each group it will be computed a mean of the counts. Default: \code{NULL} (no groups).}
 

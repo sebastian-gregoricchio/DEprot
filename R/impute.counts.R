@@ -121,12 +121,15 @@ impute.counts =
 
 
     ### Set seed
+    # an integer is required: `set.seed` and `registerDoRNG` truncate their argument, so a decimal value
+    # would be stored in the object without being the one that actually generated the results
     if (is.null(seed)) {
-      seed = runif(n = 1, min = 0, max = 2^31-1)
-      set.seed(I(seed))
+      seed = sample.int(n = 2^31-1, size = 1)
     } else {
-      set.seed(I(seed))
+      seed = as.integer(seed)
     }
+
+    set.seed(seed)
 
 
 
@@ -563,7 +566,9 @@ impute.counts =
         on.exit(expr = {doParallel::stopImplicitCluster(); foreach::registerDoSEQ()}, add = TRUE)
         #getDoParWorkers()
 
-        doRNG::registerDoRNG(seed = 1.618)
+        # the stream of the parallel loops must depend on the seed of the function: `registerDoRNG` truncates
+        # its argument to an integer, hence the value has to be integer already when it arrives here
+        doRNG::registerDoRNG(seed = as.integer(seed))
         DoRNG.check = try(invisible(foreach::foreach(i=1:3) %dorng% sqrt(i)))
       } else {
         # a single core does not need a backend: `missForest` is called with parallelize = "no"

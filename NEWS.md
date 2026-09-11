@@ -38,6 +38,10 @@ title: "changeLog"
 - the proteins that do not have enough measured values left in a group are excluded from the candidates, and a value already missing can no longer be selected for the masking
 - the settings and the estimated curves are stored in the new `masking` slot of the `DEprot.RMSE` objects
 - the default parameters reproduce exactly the draw of the previous versions for a given `seed`
+- in `load.counts*` the columns of the counts are now reordered to match the same order fo the metadata table
+- in `impute.counts` the missForest mode was not using the seed provided by the user, now fixed
+- `diff.analyses.prolfqua`: the counts are handed to `prolfqua` directly in log2 scale and flagged as already transformed. They were converted back to the linear scale (`2^x - 1`) before the fit and log2-transformed again by `prolfqua`: the round trip does not return the starting values, the distortion grows towards the bottom of the distribution and does not cancel out in the contrast, and a value at or below 1 fell on 0 or on a negative intensity, switching the conversion of the whole contrast. The `"logistf"` strategy has been removed: Firth's regression models the detection of a protein through a binary response and cannot return a fold change, while it was receiving the log2 abundances as response and its coefficients were reported as log2(FoldChange)
+- now `heatmap.counts` keeps the order of samples/proteins provided for a subset (if no cluster is involved)
 - updated overview vignette, manual and tests accordingly
 
 <br>
