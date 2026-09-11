@@ -99,7 +99,7 @@
 
 
 <dt id="arg-replicate-column">replicate.column<a class="anchor" aria-label="anchor" href="#arg-replicate-column"></a></dt>
-<dd><p>String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (<code>"lmer"</code> and <code>"logistf"</code>). Default: <code>NULL</code>.</p></dd>
+<dd><p>String indicating the name of a column from the metadata table in which are stored the replicate IDs. This column is required only by the strategies that include the replicate in the model (<code>"lmer"</code>). Default: <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-linear-fc-th">linear.FC.th<a class="anchor" aria-label="anchor" href="#arg-linear-fc-th"></a></dt>
@@ -115,7 +115,7 @@
 
 
 <dt id="arg-strategy">strategy<a class="anchor" aria-label="anchor" href="#arg-strategy"></a></dt>
-<dd><p>String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "logistf" (Firth's bias-reduced logistic regression), "rlm" (robust lm). Default: <code>"lm"</code> (linear model).</p></dd>
+<dd><p>String indicating the method that prolfqua should use to fit the model. One among: "lm" (linear model, default), "lmer" (linear mixed-effects model), "rlm" (robust lm). Default: <code>"lm"</code> (linear model).</p></dd>
 
 
 <dt id="arg-moderate-variance">moderate.variance<a class="anchor" aria-label="anchor" href="#arg-moderate-variance"></a></dt>
@@ -173,6 +173,11 @@ normalized within <em>DEprot</em> this is a second normalization that has not be
 <code>robust.scaling = FALSE</code>. The effect is stronger on imputed counts, since the imputation shrinks the MAD of a
 sample proportionally to the number of values that were replaced, which makes the rescaling follow the pattern of the
 missing values.</p>
+<p>The counts are handed to <code>prolfqua</code> directly in log2 scale and flagged as already transformed, so that the model is
+fitted on the same values that are stored in the object. Firth's bias-reduced logistic regression
+(<code><a href="https://wolski.github.io/prolfqua/reference/strategy.html" class="external-link">prolfqua::strategy_logistf</a></code>) is not among the available strategies: it models the detection of a protein
+(presence/absence) through a binary response and does not return a fold change, which makes it incompatible with the
+contrast table produced here.</p>
 <p>The scaling factor applied to each sample is stored, for every contrast, in the <code>scaling.factors</code> element of
 <code>prolfqua.out</code>. A factor of 1 indicates a sample whose dispersion corresponds to the average of the samples of the
 contrast, while values above or below 1 indicate a sample whose fold changes are respectively compressed or expanded by
