@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.scatter.123}
 \title{plot.sPLSDA.scatter.123}
 \usage{
-plot.sPLSDA.scatter.123(
+\method{plot}{sPLSDA.scatter.123}(
   DEprot.sPLSDA.object,
   color.column = NULL,
   shape.column = NULL,

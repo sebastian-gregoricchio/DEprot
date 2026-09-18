@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.cumulative}
 \title{plot.sPLSDA.cumulative}
 \usage{
-plot.sPLSDA.cumulative(
+\method{plot}{sPLSDA.cumulative}(
   DEprot.sPLSDA.object,
   bar.color = "steelblue",
   line.color = "navyblue",

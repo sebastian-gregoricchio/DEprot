@@ -4,7 +4,7 @@
 \alias{plot.timecourse.profiles}
 \title{plot.timecourse.profiles}
 \usage{
-plot.timecourse.profiles(
+\method{plot}{timecourse.profiles}(
   DEprot.timecourse.object,
   clusters = NULL,
   top.n = NULL,

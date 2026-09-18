@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.auroc}
 \title{plot.sPLSDA.auroc}
 \usage{
-plot.sPLSDA.auroc(
+\method{plot}{sPLSDA.auroc}(
   DEprot.sPLSDA.object,
   component = NULL,
   point.colors = NULL,

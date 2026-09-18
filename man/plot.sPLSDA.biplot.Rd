@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.biplot}
 \title{plot.sPLSDA.biplot}
 \usage{
-plot.sPLSDA.biplot(
+\method{plot}{sPLSDA.biplot}(
   DEprot.sPLSDA.object,
   comp.x = 1,
   comp.y = 2,

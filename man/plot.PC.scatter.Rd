@@ -4,7 +4,7 @@
 \alias{plot.PC.scatter}
 \title{plot.PC.scatter}
 \usage{
-plot.PC.scatter(
+\method{plot}{PC.scatter}(
   DEprot.PCA.object,
   PC.x = 2,
   PC.y = 1,

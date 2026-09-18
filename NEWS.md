@@ -9,7 +9,7 @@ title: "changeLog"
 
 <br>
 
-#### [v2.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0) - August 24<sup>th</sup> 2026
+# DEprot [v2.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0) - September 18<sup>th</sup> 2026
 - added `estimate.power` function to compute sample size and power estimation
 - updated overview vignette, manual and tests accordingly
 - added `heatmap.counts.anno()`: the heatmap of `heatmap.counts()`, with the same data selection (`which.data`, `contrast`, `top.n`, `sample.subset`, `protein.subset`, `group.by.metadata.column`, `scale`), drawn with `ComplexHeatmap` instead of `ggplot2`. It returns the usual `DEprot.counts.heatmap` object, whose `heatmap` slot contains a `Heatmap` object, hence it can be customized, drawn and concatenated with the standard `ComplexHeatmap` syntax
@@ -42,11 +42,14 @@ title: "changeLog"
 - in `impute.counts` the missForest mode was not using the seed provided by the user, now fixed
 - `diff.analyses.prolfqua`: the counts are handed to `prolfqua` directly in log2 scale and flagged as already transformed. They were converted back to the linear scale (`2^x - 1`) before the fit and log2-transformed again by `prolfqua`: the round trip does not return the starting values, the distortion grows towards the bottom of the distribution and does not cancel out in the contrast, and a value at or below 1 fell on 0 or on a negative intensity, switching the conversion of the whole contrast. The `"logistf"` strategy has been removed: Firth's regression models the detection of a protein through a binary response and cannot return a fold change, while it was receiving the log2 abundances as response and its coefficients were reported as log2(FoldChange)
 - now `heatmap.counts` keeps the order of samples/proteins provided for a subset (if no cluster is involved)
+- `geneset.enrichment()` now applies `pvalueCutoff` and `qvalueCutoff` to the GSEA results as well: `clusterProfiler::GSEA()` does not provide a q-value threshold and, depending on the version installed, does not always filter on the adjusted p-values, hence genesets with an adjusted p-value and a q-value far above the thresholds requested were reported as significant. The three conditions (uncorrected p-value, adjusted p-value and q-value) are verified by DEprot itself on both ORA and GSEA results, and the genesets whose q-value could not be estimated (`NA`) are kept
+- in `NES.plot()`, and in the NES plot returned by `geneset.enrichment()`, the transparency of the bars stays mapped on the `-log10` of the adjusted p-value, but the legend is now labelled with the p-values themselves: the breaks are spaced logarithmically and picked among round values (0.05, 0.01, 0.001, ...), so that the most opaque bars remain the most significant while the numbers displayed can be read directly. An adjusted p-value of 0 no longer results in an infinite transparency
+- empty discoveries are handled: a warning is thrown when no geneset passes the thresholds, the plots built on the results are returned as `NULL` instead of interrupting the analyses, and `NES.plot()` stops with an explicit message
 - updated overview vignette, manual and tests accordingly
 
 <br>
 
-#### [v2.0.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.0.0) - August 7<sup>th</sup> 2026
+# DEprot [v2.0.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.0.0) - August 7<sup>th</sup> 2026
 - added the protein.info slot to the DEprot and DEprot.analyses objects: an optional annotation table with one row per protein (gene symbol, description, number of peptides, etc.), kept row-by-row aligned with the counts
 - `load.counts2()` (and `load.counts()`) accept a protein.info table at loading; the IDs can be given as row names, in a prot.id column or in any column indicated by protein.info.id.column. The table is re-ordered on the counts: unannotated proteins are filled with NA and annotations of proteins absent from the counts are discarded
 - added `add.protein.info()` to attach, replace or remove the annotation of an object built previously
@@ -87,7 +90,7 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v1.3.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.1) - August 3<sup>rd</sup> 2026
+# DEprot [v1.3.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.1) - August 3<sup>rd</sup> 2026
 - added `import.external()`: builds a `DEprot` object directly from DIA-NN, Spectronaut, FragPipe, MaxQuant and Proteome Discoverer reports, with the shortcuts `read.diann()`, `read.diann.matrix()`, `read.spectronaut()`, `read.fragpipe()` and `read.maxquant()`
 - added `import.msstats()` for the summarized objects of `MSstats` (label-free) and `MSstatsTMT` (isobaric); the metadata are reconstructed from the object annotation when not provided
 - `iq` (MaxLFQ summarization) and `nanoparquet` (DIA-NN `.parquet` reports) are optional dependencies: they are requested only when needed and never installed without confirmation
@@ -96,7 +99,7 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v1.3.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.0) - July 30<sup>th</sup> 2026
+# DEprot [v1.3.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.0) - July 30<sup>th</sup> 2026
 - `plot.volcano` and `plot.MA` can automatically plot the top N differential proteins
 - `export.report` will plot the top.n proteins in the volcano
 - updated vignette and manual accordingly
@@ -108,7 +111,7 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v1.2.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0) - July 12<sup>th</sup> 2026
+# DEprot [v1.2.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0) - July 12<sup>th</sup> 2026
 - `expression.boxplot` function can now show pair-wise comparisons
 - `diff.analyses.limma` can use `fdrtool` to adjust the p-values
 - added `plot` method for objects of class `DEprot`, `DEprot.analyses`, `DEprot.normality`
@@ -120,7 +123,7 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v1.1.3](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.3) - July 8<sup>th</sup> 2026
+# DEprot [v1.1.3](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.3) - July 8<sup>th</sup> 2026
 - `harmonize.batches()`: added `algorithm` (ComBat/limma), `ComBat.mode`, and `block`; limma helps on sparse designs where ComBat hits a singular matrix
 - `harmonize.batches()`: drop uncorrectable proteins with a warning, error on an empty result, and fix the `algorithm`/`block` defaults
 - `load.counts2` automatically converts the counts into log2 transformed.
@@ -129,18 +132,18 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v1.1.2](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.2) - June 16<sup>th</sup> 2026
+# DEprot [v1.1.2](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.2) - June 16<sup>th</sup> 2026
 - Update labeling of groups for `NES.plot` function
 - Bug fixing for heatmap function for showing the dendrogram in the plots
 
 <br>
 
-#### [v1.1.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.1) - June 8<sup>th</sup> 2026
+# DEprot [v1.1.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.1) - June 8<sup>th</sup> 2026
 - Bug fixed in the PCA calculation, functions/objects concerned: `perform.PCA`, `diff.analyses*`, `plot.PC.buplot` and the `test.toolbox`, as well as the vignette and manual.
 
 <br>
 
-#### [v1.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.0) - May 31<sup>st</sup> 2026
+# DEprot [v1.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.0) - May 31<sup>st</sup> 2026
 - Added the function `plot.PC.biplot`.
 - Added the function `SAINTq` and the `rime.dpo` and `rime.saintq` datasets.
 - Updated `plot.PC.scatter` to allow for the separate plotting of x and y zero-lines.
@@ -148,7 +151,7 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v1.0.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.0) - May 23<sup>rd</sup> 2026
+# DEprot [v1.0.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.0) - May 23<sup>rd</sup> 2026
 - The result from `randomize.missing.values` is now included in a separate slot. Also the a new `boxplot.random` and `randomization.method` slots for the randomized scores have been added.
 - In the DEprot.objects the slot `imputation` has been renamed into `imputation.method`. Many functions have been changed accordingly.
 - Due to the addition of new slots, multiple functions have been adapted.
@@ -160,14 +163,14 @@ the results table of `diff.analyses.proDA()` keeps the columns of the other diff
 
 <br>
 
-#### [v0.1.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.1) - February 16<sup>th</sup> 2026
+# DEprot [v0.1.1](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.1) - February 16<sup>th</sup> 2026
 - Bug fixing on the `check.normality` function, which was inverting the evaluation of the AD's test p-value.
 - Update of the vignette
 - Update of the CITATION files
 
 <br>
 
-#### [v0.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.0) -  January 13<sup>th</sup> 2026
+# DEprot [v0.1.0](https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.0) -  January 13<sup>th</sup> 2026
 First release.
 
 

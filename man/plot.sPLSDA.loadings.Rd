@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.loadings}
 \title{plot.sPLSDA.loadings}
 \usage{
-plot.sPLSDA.loadings(
+\method{plot}{sPLSDA.loadings}(
   DEprot.sPLSDA.object,
   component = 1,
   n.proteins = 25,

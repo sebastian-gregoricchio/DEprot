@@ -4,7 +4,7 @@
 \alias{plot.timecourse.protein}
 \title{plot.timecourse.protein}
 \usage{
-plot.timecourse.protein(
+\method{plot}{timecourse.protein}(
   DEprot.timecourse.object,
   protein.id,
   values = "counts",

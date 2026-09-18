@@ -4,7 +4,7 @@
 \alias{plot.counts}
 \title{plot.counts}
 \usage{
-plot.counts(
+\method{plot}{counts}(
   DEprot.object,
   which.data = "imputed",
   violin.color = "darkorange",

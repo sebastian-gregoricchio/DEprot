@@ -3,8 +3,10 @@
 ##########################################
 #
 #   .parse.ratio()           converts the 'x/y' strings of clusterProfiler into a numeric ratio
+#   .filter.enrichment()     applies the significance thresholds to the results of an enrichment
 #   .get.enrichment.table()  extracts an harmonized results table from any enrichment object
 #   .collect.enrichments()   applies .get.enrichment.table() over a named list of enrichments
+#   .scale.alpha.padj()      builds the transparency scale used for the adjusted p-values
 #
 ##########################################
 
@@ -39,6 +41,64 @@
     return(values)
 
   } # END .parse.ratio
+
+
+
+# ----------------------------------------------------------------------------------------
+
+#' @title .filter.enrichment
+#'
+#' @description Internal. Applies the significance thresholds to the results of an enrichment discovery. The GSEA function of clusterProfiler does not provide a 'qvalueCutoff' option and, depending on the version installed, it does not always apply the 'pvalueCutoff' to the adjusted p-values either. The thresholds are therefore re-applied here, so that the results returned by DEprot do not depend on the version of clusterProfiler used.
+#'
+#' @param enrichment An object of class \code{gseaResult} or \code{enrichResult} (clusterProfiler), or \code{NULL} when the analyses could not be performed.
+#' @param pvalueCutoff Numeric value indicating the threshold applied to both the uncorrected and the adjusted p-values. Default: \code{0.05}.
+#' @param qvalueCutoff Numeric value indicating the threshold applied to the q-values. Default: \code{0.05}.
+#'
+#' @return The input object with a filtered results table. Genesets for which the q-value could not be estimated (NA) are kept, while \code{NULL} inputs are returned as such.
+#'
+#' @keywords internal
+
+.filter.enrichment =
+  function(enrichment,
+           pvalueCutoff = 0.05,
+           qvalueCutoff = 0.05) {
+
+    ### the discovery is NULL when the enrichment failed: there is nothing to filter
+    if (is.null(enrichment)) {return(NULL)}
+
+    if (!(methods::is(enrichment, "gseaResult") | methods::is(enrichment, "enrichResult"))) {
+      return(enrichment)
+    }
+
+    results = enrichment@result
+
+    if (is.null(results)) {return(enrichment)}
+    if (nrow(results) == 0) {return(enrichment)}
+
+
+    ### each threshold is applied only if the corresponding column is available
+    keep = rep(TRUE, nrow(results))
+
+    if ("pvalue" %in% colnames(results)) {
+      keep = keep & !is.na(results$pvalue) & results$pvalue <= pvalueCutoff
+    }
+
+    if ("p.adjust" %in% colnames(results)) {
+      keep = keep & !is.na(results$p.adjust) & results$p.adjust <= pvalueCutoff
+    }
+
+    ## the q-value is NA when its estimation fails (too few genesets tested): these are kept
+    if ("qvalue" %in% colnames(results)) {
+      keep = keep & (is.na(results$qvalue) | results$qvalue <= qvalueCutoff)
+    }
+
+
+    ### base subsetting is used to keep the rownames, which clusterProfiler uses as geneset IDs
+    enrichment@result = results[keep, , drop = FALSE]
+
+    return(enrichment)
+
+  } # END .filter.enrichment
 
 
 
@@ -237,3 +297,86 @@
     return(results)
 
   } # END .collect.enrichments
+
+
+
+# ----------------------------------------------------------------------------------------
+
+#' @title .scale.alpha.padj
+#'
+#' @description Internal. Builds the ggplot2 transparency scale used to display the adjusted p-values. The transparency is mapped on the \code{-log10} of the adjusted p-value, hence the breaks are spaced logarithmically and the most opaque bars correspond to the most significant genesets, but the labels of the legend show the p-values themselves and not their logarithm.
+#'
+#' @param padj Numeric vector of the adjusted p-values displayed, used to define the breaks.
+#' @param alpha.range Numeric vector of length 2 indicating minimum and maximum value for the transparency. Default: \code{c(0.3, 1)}.
+#' @param name String indicating the title of the legend. Markdown is supported as long as the theme of the plot defines \code{legend.title = ggtext::element_markdown()}. Default: \code{"P~adj~"}.
+#' @param max.breaks Numeric value indicating the maximum number of breaks displayed in the legend. Default: \code{5}.
+#'
+#' @return A ggplot2 continuous alpha scale, to be combined with an \code{aes(alpha = -log10(p.adjust))} mapping.
+#'
+#' @import ggplot2
+#'
+#' @keywords internal
+
+.scale.alpha.padj =
+  function(padj,
+           alpha.range = c(0.3,1),
+           name = "P~adj~",
+           max.breaks = 5) {
+
+    ### only positive and finite values can be placed on a log scale
+    values = padj[is.finite(padj) & padj > 0]
+
+    if (length(values) == 0) {
+      return(ggplot2::scale_alpha_continuous(range = alpha.range, name = name))
+    }
+
+    log.range = range(-log10(values), na.rm = TRUE)
+
+
+    ### the breaks are searched among 'round' p-values: the decades alone when the values
+    ### span more than ~1.5 orders of magnitude, their halves and fifths otherwise
+    decades = 10^-(0:20)
+
+    if (diff(log.range) >= 1.5) {
+      candidates = decades
+    } else {
+      candidates = sort(unique(as.vector(outer(c(1,5,2), decades))), decreasing = TRUE)
+      candidates = candidates[candidates <= 1]
+    }
+
+    breaks = candidates[-log10(candidates) >= log.range[1] & -log10(candidates) <= log.range[2]]
+
+    if (length(breaks) > max.breaks) {
+      breaks = breaks[seq(1, length(breaks), by = ceiling(length(breaks)/max.breaks))]
+    }
+
+    ## no round p-value falls in the range when all the values are very close to each other:
+    ## in this case the range itself is split in equally spaced points on the log scale
+    if (length(breaks) < 2) {
+      breaks = signif(10^-seq(log.range[1], log.range[2], length.out = 3), 2)
+    }
+
+    breaks = sort(unique(breaks), decreasing = TRUE)
+
+
+    ### the scale is built on the -log10 of the p-values, the labels show the p-values
+    labels = vapply(X = breaks,
+                    FUN = function(x){
+                      if (x >= 1e-4) {
+                        format(x, scientific = FALSE, drop0trailing = TRUE, trim = TRUE)
+                      } else {
+                        format(x, scientific = TRUE, digits = 1, trim = TRUE)
+                      }},
+                    FUN.VALUE = character(1))
+
+    ## the legend is reversed to show the most significant (most opaque) values on the top
+    alpha.scale =
+      ggplot2::scale_alpha_continuous(range = alpha.range,
+                                      breaks = -log10(breaks),
+                                      labels = labels,
+                                      name = name,
+                                      guide = ggplot2::guide_legend(reverse = TRUE))
+
+    return(alpha.scale)
+
+  } # END .scale.alpha.padj

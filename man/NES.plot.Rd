@@ -45,7 +45,7 @@ NES.plot(
 A ggplot object.
 }
 \description{
-GSEA analyses NES plotter. Plotting of a bar plot indicating the Normalized Enrichment Score (NES) of a gsea result. Bars will have different colors by positive or negative enrichment and transparency proportional to their p-value.
+GSEA analyses NES plotter. Plotting of a bar plot indicating the Normalized Enrichment Score (NES) of a gsea result. Bars will have different colors by positive or negative enrichment and transparency proportional to the -log10 of their adjusted p-value, while the legend displays the adjusted p-values themselves.
 }
 \examples{
 NES.plot(enrichResult = DEprot::test.toolbox$gsea.results)

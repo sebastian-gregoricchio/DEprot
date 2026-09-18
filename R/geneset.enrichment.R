@@ -11,7 +11,7 @@
 #' @param universe Character vector indicating the background gene list of the ORA. Default: \code{NULL}, meaning that all the unique proteins present in the counts used for the differential analyses are taken. This is almost always the correct background for a proteomics experiment, since only the quantified proteins could have been called as differential. Ignored when \code{enrichment.type = "GSEA"}.
 #' @param gsub.pattern.prot.id String indicating a pattern to be passed to gsub and to remove from the prot.id. The same pattern is removed from the IDs of the \code{universe}. Default: \code{NULL} (non changes in the IDs).
 #' @param pvalueCutoff Numeric value indicating the adjusted pvalue cutoff on enrichment tests to report. Default: \code{0.05}.
-#' @param qvalueCutoff Numeric value indicating the qvalue cutoff on enrichment tests to report as significant (only for ORA). Tests must pass i) pvalueCutoff on unadjusted pvalues, ii) pvalueCutoff on adjusted pvalues and iii) qvalueCutoff on qvalues to be reported. Default: \code{0.05}.
+#' @param qvalueCutoff Numeric value indicating the qvalue cutoff on enrichment tests to report as significant. Tests must pass i) pvalueCutoff on unadjusted pvalues, ii) pvalueCutoff on adjusted pvalues and iii) qvalueCutoff on qvalues to be reported. The GSEA function of clusterProfiler does not provide a qvalue threshold and, depending on the version installed, does not always apply the pvalueCutoff to the adjusted pvalues: the three conditions are therefore verified by DEprot on the results of both ORA and GSEA. Genesets for which the qvalue could not be estimated (NA) are kept. Default: \code{0.05}.
 #' @param pAdjustMethod String indicating the method to use for the p-value adjustment. One mong "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{"BH"}.
 #' @param dotplot.n Numeric value indicating the maximum number of categories to plot in the dotplot. Default: \code{10}.
 #'
@@ -120,6 +120,10 @@ geneset.enrichment =
                         title = "NES enrichments") {
 
 
+      # nothing to plot when no geneset passed the thresholds
+      if (is.null(gsea.object)) {return(NULL)}
+      if (nrow(gsea.object@result) == 0) {return(NULL)}
+
       # extract results and clean
       result =
         gsea.object@result %>%
@@ -127,6 +131,12 @@ geneset.enrichment =
         dplyr::mutate(alias = gsub("_", " ", gsub(string.pattern.to.remove, "", ID)),
                       dataset = ifelse(NES >= 0, yes = pos.NES.label, no = neg.NES.label)) %>%
         dplyr::mutate(alias = factor(alias, levels = rev(alias)))
+
+      # an adjusted p-value of 0 would result in an infinite transparency: the zeros are
+      # floored to the smallest non-zero value available
+      min.padj = suppressWarnings(min(result$p.adjust[result$p.adjust > 0], na.rm = TRUE))
+      if (!is.finite(min.padj)) {min.padj = .Machine$double.xmin}
+      result$p.adjust[which(result$p.adjust == 0)] = min.padj
 
       geneSets_size = data.frame(sapply(gsea.object@geneSets, length), stringsAsFactors = F)
       geneSets_size$ID = rownames(geneSets_size)
@@ -151,7 +161,7 @@ geneset.enrichment =
                           stat = "identity",
                           show.legend = TRUE,
                           width = 0.8) +
-        scale_alpha_continuous(range = alpha.range) +
+        .scale.alpha.padj(padj = result$p.adjust, alpha.range = alpha.range) +
         scale_fill_manual(values = NES.colors, name = "dataset", drop = FALSE) +
         ylab(NULL) +
         ggtitle(title) +
@@ -161,6 +171,7 @@ geneset.enrichment =
               axis.text = element_text(color = "black",
                                        size = axes.text.size),
               panel.background = element_blank(),
+              legend.title = ggtext::element_markdown(),
               plot.title = ggtext::element_markdown(hjust = 0.5))
 
 
@@ -355,6 +366,19 @@ geneset.enrichment =
                                                             TERM2GENE = TERM2GENE),
                                       error = function(x)(return(NULL)))
 
+      ## clusterProfiler::GSEA does not provide a 'qvalueCutoff' option and does not always
+      ## apply the 'pvalueCutoff' to the adjusted p-values: the thresholds are re-applied here
+      enrichment.discovery = .filter.enrichment(enrichment = enrichment.discovery,
+                                                pvalueCutoff = pvalueCutoff,
+                                                qvalueCutoff = qvalueCutoff)
+
+      if (!is.null(enrichment.discovery)) {
+        if (nrow(enrichment.discovery@result) == 0) {
+          warning(paste0("No geneset passed the thresholds (p-value and adjusted p-value <= ", pvalueCutoff,
+                         ", q-value <= ", qvalueCutoff, "): the plots will be empty."))
+        }
+      }
+
 
       ## plot pathway networks
       pathway.network.clusters = tryCatch(aPEAR::findPathClusters(enrichment.discovery@result),error = function(x)(return(NULL)))
@@ -386,6 +410,19 @@ geneset.enrichment =
                                                                 pAdjustMethod = pAdjustMethod,
                                                                 TERM2GENE = TERM2GENE),
                                       error = function(x)(return(NULL)))
+
+      ## the thresholds are already applied by clusterProfiler::enricher, they are re-applied
+      ## for consistency with the GSEA and to be independent of the version installed
+      enrichment.discovery = .filter.enrichment(enrichment = enrichment.discovery,
+                                                pvalueCutoff = pvalueCutoff,
+                                                qvalueCutoff = qvalueCutoff)
+
+      if (!is.null(enrichment.discovery)) {
+        if (nrow(enrichment.discovery@result) == 0) {
+          warning(paste0("No geneset passed the thresholds (p-value and adjusted p-value <= ", pvalueCutoff,
+                         ", q-value <= ", qvalueCutoff, "): the plots will be empty."))
+        }
+      }
 
       used.universe = universe
 
@@ -421,7 +458,8 @@ geneset.enrichment =
                  ggtitle(paste0(contrasts.info$metadata.column,": **", contrasts.info$var.1, "** *vs* **", contrasts.info$var.2,"**")) +
                  viridis::scale_fill_viridis(option = "rocket", direction = -1, begin = 0.3) +
                  theme(plot.title = ggtext::element_markdown(hjust = 0.5),
-                       axis.ticks.y = element_blank()))
+                       axis.ticks.y = element_blank()),
+               error = function(x)(return(NULL)))
 
 
     ##################################################

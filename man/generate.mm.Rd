@@ -4,7 +4,7 @@
 \alias{generate.mm}
 \title{generate.mm}
 \usage{
-generate.mm(
+\method{generate}{mm}(
   DEprot.object,
   enrichment.object = NULL,
   quantification.software = NULL,

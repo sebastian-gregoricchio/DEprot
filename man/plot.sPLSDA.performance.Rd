@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.performance}
 \title{plot.sPLSDA.performance}
 \usage{
-plot.sPLSDA.performance(
+\method{plot}{sPLSDA.performance}(
   DEprot.sPLSDA.object,
   metric = "both",
   distance = "all",

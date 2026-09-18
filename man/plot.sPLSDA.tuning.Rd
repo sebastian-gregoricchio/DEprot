@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.tuning}
 \title{plot.sPLSDA.tuning}
 \usage{
-plot.sPLSDA.tuning(
+\method{plot}{sPLSDA.tuning}(
   DEprot.sPLSDA.object,
   component = NULL,
   line.colors = NULL,

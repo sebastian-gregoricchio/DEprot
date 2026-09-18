@@ -38,7 +38,7 @@ geneset.enrichment(
 
 \item{pvalueCutoff}{Numeric value indicating the adjusted pvalue cutoff on enrichment tests to report. Default: \code{0.05}.}
 
-\item{qvalueCutoff}{Numeric value indicating the qvalue cutoff on enrichment tests to report as significant (only for ORA). Tests must pass i) pvalueCutoff on unadjusted pvalues, ii) pvalueCutoff on adjusted pvalues and iii) qvalueCutoff on qvalues to be reported. Default: \code{0.05}.}
+\item{qvalueCutoff}{Numeric value indicating the qvalue cutoff on enrichment tests to report as significant. Tests must pass i) pvalueCutoff on unadjusted pvalues, ii) pvalueCutoff on adjusted pvalues and iii) qvalueCutoff on qvalues to be reported. The GSEA function of clusterProfiler does not provide a qvalue threshold and, depending on the version installed, does not always apply the pvalueCutoff to the adjusted pvalues: the three conditions are therefore verified by DEprot on the results of both ORA and GSEA. Genesets for which the qvalue could not be estimated (NA) are kept. Default: \code{0.05}.}
 
 \item{pAdjustMethod}{String indicating the method to use for the p-value adjustment. One mong "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none". Default: \code{"BH"}.}
 

@@ -4,7 +4,7 @@
 \alias{plot.PC.cumulative}
 \title{plot.PC.cumulative}
 \usage{
-plot.PC.cumulative(
+\method{plot}{PC.cumulative}(
   DEprot.PCA.object,
   bar.color = "steelblue",
   line.color = "navyblue",

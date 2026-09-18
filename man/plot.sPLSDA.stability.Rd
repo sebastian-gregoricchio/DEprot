@@ -4,7 +4,7 @@
 \alias{plot.sPLSDA.stability}
 \title{plot.sPLSDA.stability}
 \usage{
-plot.sPLSDA.stability(
+\method{plot}{sPLSDA.stability}(
   DEprot.sPLSDA.object,
   component = 1,
   n.proteins = 25,
