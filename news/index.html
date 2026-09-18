@@ -60,6 +60,213 @@
       <small>Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.1.0" id="deprot-v210---september-18th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.1.0" class="external-link">v2.1.0</a> - September 18<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v210---september-18th-2026"></a></h2>
+<ul><li>added <code>estimate.power</code> function to compute sample size and power estimation</li>
+<li>updated overview vignette, manual and tests accordingly</li>
+<li>added <code><a href="../reference/heatmap.counts.anno.html">heatmap.counts.anno()</a></code>: the heatmap of <code><a href="../reference/heatmap.counts.html">heatmap.counts()</a></code>, with the same data selection (<code>which.data</code>, <code>contrast</code>, <code>top.n</code>, <code>sample.subset</code>, <code>protein.subset</code>, <code>group.by.metadata.column</code>, <code>scale</code>), drawn with <code>ComplexHeatmap</code> instead of <code>ggplot2</code>. It returns the usual <code>DEprot.counts.heatmap</code> object, whose <code>heatmap</code> slot contains a <code>Heatmap</code> object, hence it can be customized, drawn and concatenated with the standard <code>ComplexHeatmap</code> syntax</li>
+<li>
+<code>ComplexHeatmap</code> and <code>circlize</code> added to the dependencies</li>
+<li>added function <code>generate.mm</code> to generate materials and methods paragraph</li>
+<li>
+<code>DEprot.analyses</code> is now defined as an extension of the <code>DEprot</code> class (<code>contains = "DEprot"</code>) instead of repeating its slot list: the two classes cannot drift apart anymore</li>
+<li>
+<code>analyses.result.list</code>, <code>contrasts</code> and <code>differential.analyses.params</code> are no longer slots of <code>DEprot</code>, where they were declared but never filled</li>
+<li>the functions accepting both classes test the input with <code>methods::is(x, "DEprot")</code>, which is satisfied by <code>DEprot.analyses</code> objects as well</li>
+<li>added an <code><a href="../reference/updateObject.html">updateObject()</a></code> method for <code>DEprot</code>: it removes the three unused slots from the objects restored from a <code>.rds</code> file written with a previous version</li>
+<li>added <code><a href="../reference/perform.sPLSDA.html">perform.sPLSDA()</a></code>: sparse Partial Least Squares Discriminant Analysis (sPLS-DA) on a <code>DEprot</code> object. Differently from the PCA and the PCoA, which show the largest source of variability whatever its origin, it looks for the directions separating a set of classes given by the user and selects the proteins responsible for that separation</li>
+<li>the tuning of <code>keepX</code> and the estimation of the classification performances happen inside <code><a href="../reference/perform.sPLSDA.html">perform.sPLSDA()</a></code>: neither of them changes as long as the model does not change. The tuning runs when <code>keepX = NULL</code>, the validation when <code>validate = TRUE</code>
+</li>
+<li>
+<code>ncomp</code> is raised to 3 when a lower value is requested, and the number of folds is capped to the size of the smallest class (leave-one-out below 3 samples per class)</li>
+<li>the sign of each component is fixed so that <code>reference.group</code> always sits on the positive side: the orientation returned by <code>mixOmics</code> is arbitrary and would change from one run to the next. The object stored in the <code>splsda</code> slot keeps the original mixOmics orientation</li>
+<li>alongside the sparse model, a plain PLS-DA is fitted on the same data: it involves no resampling, and its loading vector covers every protein of the matrix, which is what a GSEA needs. The sparse loadings are zero for every protein that was not selected, hence a ranking made mostly of ties</li>
+<li>added the <code>DEprot.sPLSDA</code> class, with its <code>show</code>, <code>summary</code> and <code>plot</code> methods</li>
+<li>added <code><a href="../reference/get.sPLSDA.results.html">get.sPLSDA.results()</a></code>, <code><a href="../reference/get.sPLSDA.proteins.html">get.sPLSDA.proteins()</a></code> and <code><a href="../reference/get.sPLSDA.ranking.html">get.sPLSDA.ranking()</a></code>
+</li>
+<li>added <code><a href="../reference/sPLSDA.enrichment.html">sPLSDA.enrichment()</a></code>: GSEA on the complete ranking, over-representation on the selected proteins, using as background the proteins that entered the model. It returns the usual <code>DEprot.enrichResult</code> object, hence <code><a href="../reference/NES.plot.html">NES.plot()</a></code>, <code><a href="../reference/plot.GSEA.html">plot.GSEA()</a></code>, <code><a href="../reference/simplify.enrichment.html">simplify.enrichment()</a></code>, <code><a href="../reference/combine.enrichments.html">combine.enrichments()</a></code> and <code><a href="../reference/divergent.enrichment.html">divergent.enrichment()</a></code> work on it unchanged</li>
+<li>added <code><a href="../reference/plot.sPLSDA.scatter.html">plot.sPLSDA.scatter()</a></code>, <code><a href="../reference/plot.sPLSDA.scatter.123.html">plot.sPLSDA.scatter.123()</a></code>, <code><a href="../reference/plot.sPLSDA.cumulative.html">plot.sPLSDA.cumulative()</a></code>, <code><a href="../reference/plot.sPLSDA.biplot.html">plot.sPLSDA.biplot()</a></code>, <code><a href="../reference/plot.sPLSDA.loadings.html">plot.sPLSDA.loadings()</a></code>, <code><a href="../reference/plot.sPLSDA.tuning.html">plot.sPLSDA.tuning()</a></code>, <code><a href="../reference/plot.sPLSDA.performance.html">plot.sPLSDA.performance()</a></code>, <code><a href="../reference/plot.sPLSDA.stability.html">plot.sPLSDA.stability()</a></code> and <code><a href="../reference/plot.sPLSDA.auroc.html">plot.sPLSDA.auroc()</a></code>
+</li>
+<li>
+<code><a href="../reference/dot-ordination.slots.html">.ordination.slots()</a></code> accepts <code>DEprot.sPLSDA</code> objects</li>
+<li>added the internal <code><a href="../reference/dot-append.protein.info.html">.append.protein.info()</a></code>, used by <code><a href="../reference/get.sPLSDA.results.html">get.sPLSDA.results()</a></code> to append the <code>protein.info</code> annotation</li>
+<li>
+<code>mixOmics</code> added to the dependencies</li>
+<li>
+<code><a href="../reference/compare.imp.methods.html">compare.imp.methods()</a></code> gains <code>masking</code>, which defines how the values of the test dataset are hidden. With <code>"MCAR"</code> (default, previous behaviour) every measured value has the same probability of being masked; with <code>"intensity"</code> the probability follows a logistic dropout curve estimated on the data, so that the masked values come from the low-intensity range at the rate at which the values are really lost</li>
+<li>one dropout curve is estimated for each group of replicates (<code>dropout.by = "group"</code>) or for each sample (<code>dropout.by = "sample"</code>): an IgG control and an IP do not have the same detection depth and cannot be masked with the same curve. The curves are fitted on the complete table, since the proteins absent from an entire group carry the information about the detection limit and cannot belong to the test dataset</li>
+<li>
+<code>max.NA.per.row</code> defines how many missing values a protein can already have to be usable in the test dataset. The error is computed only on the masked cells, hence a protein does not need to be complete: keeping only the complete ones restricted the comparison to the abundant proteins, which hold less than a fifth of the values of the bottom 3% of the distribution. <code>max.NA.fraction</code> caps the missingness reached after the masking, so that the table stays usable by <code>missForest</code> and by the other methods needing a minimum number of values per protein</li>
+<li>the number of missing values to introduce per group is now read from the names of the missingness table instead of the position in it: a group containing proteins missing in 0 and in all the replicates, without any of the intermediate cases, received 1 missing value where the pattern required all of them</li>
+<li>the proteins that do not have enough measured values left in a group are excluded from the candidates, and a value already missing can no longer be selected for the masking</li>
+<li>the settings and the estimated curves are stored in the new <code>masking</code> slot of the <code>DEprot.RMSE</code> objects</li>
+<li>the default parameters reproduce exactly the draw of the previous versions for a given <code>seed</code>
+</li>
+<li>in <code>load.counts*</code> the columns of the counts are now reordered to match the same order fo the metadata table</li>
+<li>in <code>impute.counts</code> the missForest mode was not using the seed provided by the user, now fixed</li>
+<li>
+<code>diff.analyses.prolfqua</code>: the counts are handed to <code>prolfqua</code> directly in log2 scale and flagged as already transformed. They were converted back to the linear scale (<code>2^x - 1</code>) before the fit and log2-transformed again by <code>prolfqua</code>: the round trip does not return the starting values, the distortion grows towards the bottom of the distribution and does not cancel out in the contrast, and a value at or below 1 fell on 0 or on a negative intensity, switching the conversion of the whole contrast. The <code>"logistf"</code> strategy has been removed: Firth’s regression models the detection of a protein through a binary response and cannot return a fold change, while it was receiving the log2 abundances as response and its coefficients were reported as log2(FoldChange)</li>
+<li>now <code>heatmap.counts</code> keeps the order of samples/proteins provided for a subset (if no cluster is involved)</li>
+<li>
+<code><a href="../reference/geneset.enrichment.html">geneset.enrichment()</a></code> now applies <code>pvalueCutoff</code> and <code>qvalueCutoff</code> to the GSEA results as well: <code><a href="https://rdrr.io/pkg/clusterProfiler/man/GSEA.html" class="external-link">clusterProfiler::GSEA()</a></code> does not provide a q-value threshold and, depending on the version installed, does not always filter on the adjusted p-values, hence genesets with an adjusted p-value and a q-value far above the thresholds requested were reported as significant. The three conditions (uncorrected p-value, adjusted p-value and q-value) are verified by DEprot itself on both ORA and GSEA results, and the genesets whose q-value could not be estimated (<code>NA</code>) are kept</li>
+<li>in <code><a href="../reference/NES.plot.html">NES.plot()</a></code>, and in the NES plot returned by <code><a href="../reference/geneset.enrichment.html">geneset.enrichment()</a></code>, the transparency of the bars stays mapped on the <code>-log10</code> of the adjusted p-value, but the legend is now labelled with the p-values themselves: the breaks are spaced logarithmically and picked among round values (0.05, 0.01, 0.001, …), so that the most opaque bars remain the most significant while the numbers displayed can be read directly. An adjusted p-value of 0 no longer results in an infinite transparency</li>
+<li>empty discoveries are handled: a warning is thrown when no geneset passes the thresholds, the plots built on the results are returned as <code>NULL</code> instead of interrupting the analyses, and <code><a href="../reference/NES.plot.html">NES.plot()</a></code> stops with an explicit message</li>
+<li>updated overview vignette, manual and tests accordingly</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="2.0.0" id="deprot-v200---august-7th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/2.0.0" class="external-link">v2.0.0</a> - August 7<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v200---august-7th-2026"></a></h2>
+<ul><li>added the protein.info slot to the DEprot and DEprot.analyses objects: an optional annotation table with one row per protein (gene symbol, description, number of peptides, etc.), kept row-by-row aligned with the counts</li>
+<li>
+<code><a href="../reference/load.counts2.html">load.counts2()</a></code> (and <code><a href="../reference/load.counts.html">load.counts()</a></code>) accept a protein.info table at loading; the IDs can be given as row names, in a prot.id column or in any column indicated by protein.info.id.column. The table is re-ordered on the counts: unannotated proteins are filled with NA and annotations of proteins absent from the counts are discarded</li>
+<li>added <code><a href="../reference/add.protein.info.html">add.protein.info()</a></code> to attach, replace or remove the annotation of an object built previously</li>
+<li>added <code><a href="../reference/get.protein.info.html">get.protein.info()</a></code> to extract the annotation table from an object, in the same fashion as get.metadata()</li>
+<li>the annotation is propagated by <code><a href="../reference/filter.proteins.html">filter.proteins()</a></code>, <code><a href="../reference/remove.undetected.proteins.html">remove.undetected.proteins()</a></code>, <code><a href="../reference/harmonize.batches.html">harmonize.batches()</a></code>, <code><a href="../reference/filter.samples.html">filter.samples()</a></code> and by all the <code>diff.analyses*()</code> functions</li>
+<li>
+<code><a href="../reference/get.results.html">get.results()</a></code> gains protein.info.columns and protein.info.prefix: the annotation is appended only on request, using the keywords “none” (default) and “all” or a vector of column names. The columns are bound to the results by protein ID (not by position) and colliding names are made unique</li>
+<li>
+<code><a href="../reference/export.analyses.html">export.analyses()</a></code> writes the annotated results tables</li>
+<li>objects created with previous versions of the package remain usable: the missing slot is interpreted as an absent annotation</li>
+<li>added <code><a href="../reference/missingness.diagnostic.html">missingness.diagnostic()</a></code>: classifies the missing values as MNAR-like or MCAR-like following the same rule of the double-imputation strategy, estimates the limit of detection by a logistic dropout model (<code>LOD50</code>), and returns the diagnostic plots (detection <em>vs</em> abundance densities, dropout curve, imputation map, Jaccard similarity of the detection patterns with dendrogram, per-sample and per-class summaries, UpSet of the MNAR-like patterns)</li>
+<li>the parameters of <code>randomize.missing.values</code> (<code>group.column</code>, <code>percentage.missing</code>, <code>tail.percentage</code>) are retrieved automatically when the randomization has already been run; the counts are selected at the lowest level available (raw &gt; normalized &gt; randomized &gt; imputed)</li>
+<li>contrast-level diagnostics are computed when a <code>DEprot.analyses</code> object is provided, including the directional MNAR classification and the <code>testable</code> flag for the proteins missing in both groups</li>
+<li>added class <code>DEprot.missingness</code> with <code>show</code>, <code>summary</code> and <code>plot</code> methods</li>
+<li>fixed the <code>ComplexUpset</code> themes in <code><a href="../reference/plot.upset.html">plot.upset()</a></code>, which were not valid anymore since <code>ggplot2</code> v4.0.0</li>
+<li>added time-course analyses: <code><a href="../reference/analyze.timecourse.html">analyze.timecourse()</a></code> returns an object of the new class <code>DEprot.timecourse</code> (with <code>show</code>, <code>summary</code> and <code>plot</code> methods). Time is handled as a <strong>numeric</strong> covariate: a natural-spline basis is fitted by <code>limma</code> and all the time coefficients are tested jointly by a moderated F-test, resulting in a single test per protein and therefore in no contrast to define</li>
+<li>
+<code><a href="../reference/analyze.timecourse.html">analyze.timecourse()</a></code>: the spline degrees of freedom are capped automatically at <code>n.timepoints - 2</code> (a saturated spline being equivalent to treating the time as a factor), and a linear trend is fitted below 4 timepoints; the <code>time.transform</code> option (<code>log2</code>, <code>log10</code>, <code>log1p</code>, <code>sqrt</code>) re-spaces log-spaced designs so that the last timepoint does not dominate the fit</li>
+<li>
+<code><a href="../reference/analyze.timecourse.html">analyze.timecourse()</a></code>: the results table reports the kinetic descriptors of each fitted trajectory (<code>amplitude</code>, <code>initial.slope</code>, <code>peak.time</code>, <code>trend.shape</code>: monotone/transient/complex) together with the cluster assignment, the membership and the ranking score</li>
+<li>
+<code><a href="../reference/analyze.timecourse.html">analyze.timecourse()</a></code>: the trending proteins are soft-clustered (c-means, or PAM) on the Z-scored <strong>fitted</strong> curves rather than on the raw timepoint means, which makes the clustering robust to unequal time spacing and to missing values; the fuzzifier and the number of clusters are estimated from the data when not provided</li>
+<li>added <code><a href="../reference/rank.timecourse.html">rank.timecourse()</a></code> to re-rank the proteins, globally and within each cluster, without refitting the model, and <code><a href="../reference/get.timecourse.results.html">get.timecourse.results()</a></code> to retrieve the results with cluster/top-N subsetting</li>
+<li>added <code><a href="../reference/plot.timecourse.protein.html">plot.timecourse.protein()</a></code> (measured points, mean ± SEM and fitted trajectory of individual proteins) and <code><a href="../reference/plot.timecourse.profiles.html">plot.timecourse.profiles()</a></code> (one panel per cluster, lines colored by membership). Both accept <code>values = "counts"</code>, <code>"log2FC"</code> (relative to <code>reference.time</code>) or <code>"zscore"</code>
+</li>
+<li>added <code><a href="../reference/heatmap.timecourse.html">heatmap.timecourse()</a></code>: heatmap of the trending proteins with the rows split by cluster, sortable by <code>rank</code>, <code>membership</code>, <code>peak.time</code>, <code>amplitude</code> or <code>hclust</code>, and displaying either the measured means or the smooth fitted trajectories</li>
+<li>added <code><a href="../reference/timecourse.enrichment.html">timecourse.enrichment()</a></code>: over-representation analyses run independently on each cluster, using all the quantified proteins as universe, returning an object of the new class <code>DEprot.timecourse.enrichment</code> (with <code>show</code> and <code>plot</code> methods). The dotplot shows the enrichment as dot size, the significance as color, and the number of proteins of the geneset written inside each dot</li>
+<li>
+<code>splines</code>, <code>e1071</code> and <code>cluster</code> added to the dependencies</li>
+<li>added <code><a href="../reference/combine.enrichments.html">combine.enrichments()</a></code>: merges a named list of enrichments in a single dotplot, with the discoveries on the x-axis and the genesets on the y-axis; the dots are sized by fold enrichment or gene ratio, colored by significance, and carry the protein count inside</li>
+<li>added <code><a href="../reference/divergent.enrichment.html">divergent.enrichment()</a></code>: plots two enrichments back-to-back, the second one with the sign inverted, to show together the two sides of the same contrast (<em>e.g.</em> ORA of the up- and down-regulated proteins); bar length can be <code>FoldEnrichment</code>, <code>GeneRatio</code>, <code>Count</code>, <code>NES</code> or <code>padj</code>
+</li>
+<li>both functions accept a mix of <code>DEprot.enrichResult</code>, <code>DEprot.timecourse.enrichment</code>, <code>enrichResult</code>/<code>gseaResult</code> (clusterProfiler) objects and plain result tables; a <code>DEprot.timecourse.enrichment</code> is expanded into one discovery per cluster</li>
+<li>added the internal helpers <code><a href="../reference/dot-parse.ratio.html">.parse.ratio()</a></code>, <code><a href="../reference/dot-get.enrichment.table.html">.get.enrichment.table()</a></code> and <code><a href="../reference/dot-collect.enrichments.html">.collect.enrichments()</a></code>, which harmonize the columns of GSEA and ORA results (for a GSEA the leading edge is used as equivalent of the ORA <code>Count</code>); <code><a href="../reference/timecourse.enrichment.html">timecourse.enrichment()</a></code> now uses the exported <code><a href="../reference/dot-parse.ratio.html">.parse.ratio()</a></code> instead of its local copy</li>
+<li>added <code><a href="../reference/export.external.html">export.external()</a></code>: converts a <code>DEprot</code>/<code>DEprot.analyses</code> object into a <code>SummarizedExperiment</code>, <code>QFeatures</code>, <code>MSnSet</code>, <code>limma::EList</code> or a plain list of tables, with the shortcuts <code><a href="../reference/as.SummarizedExperiment.html">as.SummarizedExperiment()</a></code>, <code><a href="../reference/as.QFeatures.html">as.QFeatures()</a></code> and <code><a href="../reference/as.MSnSet.html">as.MSnSet()</a></code>
+</li>
+<li>all the count matrices available are exported as assays, the metadata become the column annotation, and <code>protein.info</code> together with the differential results become the row annotation</li>
+<li>the parameters that the destination classes cannot store (log base, normalization/imputation methods, contrasts, thresholds) are kept in the metadata of the exported object; <code>keep.object = TRUE</code> allows a lossless round-trip</li>
+<li>
+<code>SummarizedExperiment</code>, <code>QFeatures</code> and <code>MSnbase</code> are optional dependencies: requested only when needed and never installed without confirmation</li>
+<li>added <code><a href="../reference/detect.outliers.html">detect.outliers()</a></code>: automatic per-sample QC flagging combining median inter-sample correlation, robust Mahalanobis distance in PC space and missing rate; returns a <code>DEprot.outliers</code> object (with <code>show</code> and <code>plot</code> methods) whose <code>outliers</code> slot can be passed directly to <code><a href="../reference/filter.samples.html">filter.samples()</a></code>
+</li>
+<li>added <code><a href="../reference/diff.analyses.proDA.html">diff.analyses.proDA()</a></code>: differential analyses on left-censored data using proDA. The missing values are not replaced but modelled as observations below the detection limit, so that the uncertainty on the undetected values propagates into lfcSE instead of being compressed by the imputation. It requires counts that still contain the missing values (which.data = “normalized”) and it is the natural continuation of a strongly-MNAR verdict of missingness.diagnostic(), whose output can be passed directly through missingness.object the results table of <code><a href="../reference/diff.analyses.proDA.html">diff.analyses.proDA()</a></code> keeps the columns of the other differential functions and adds n.detected.<group> and n.approx; each contrast stores a proDA.fit element with the fitted model and the per-sample dropout curves</group></li>
+<li>
+<code><a href="../reference/filter.samples.html">filter.samples()</a></code> recognizes the new engine and re-runs the contrasts with the stored parameters</li>
+<li>
+<code><a href="../reference/diff.analyses.limma.html">diff.analyses.limma()</a></code> now returns the lfdr column when padj.method = “fdrtool”, as already stated in the manual proDA added to the dependencies</li>
+<li>updated overview vignette, manual and tests accordingly</li>
+<li>added time-course vignette</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.1" id="deprot-v131---august-3rd-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.1" class="external-link">v1.3.1</a> - August 3<sup>rd</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v131---august-3rd-2026"></a></h2>
+<ul><li>added <code><a href="../reference/import.external.html">import.external()</a></code>: builds a <code>DEprot</code> object directly from DIA-NN, Spectronaut, FragPipe, MaxQuant and Proteome Discoverer reports, with the shortcuts <code>read.diann()</code>, <code>read.diann.matrix()</code>, <code>read.spectronaut()</code>, <code>read.fragpipe()</code> and <code>read.maxquant()</code>
+</li>
+<li>added <code><a href="../reference/import.msstats.html">import.msstats()</a></code> for the summarized objects of <code>MSstats</code> (label-free) and <code>MSstatsTMT</code> (isobaric); the metadata are reconstructed from the object annotation when not provided</li>
+<li>
+<code>iq</code> (MaxLFQ summarization) and <code>nanoparquet</code> (DIA-NN <code>.parquet</code> reports) are optional dependencies: they are requested only when needed and never installed without confirmation</li>
+<li>updated vignette and manual accordingly</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.3.0" id="deprot-v130---july-30th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.3.0" class="external-link">v1.3.0</a> - July 30<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v130---july-30th-2026"></a></h2>
+<ul><li>
+<code>plot.volcano</code> and <code>plot.MA</code> can automatically plot the top N differential proteins</li>
+<li>
+<code>export.report</code> will plot the top.n proteins in the volcano</li>
+<li>updated vignette and manual accordingly</li>
+<li>added Principal Coordinate Analysis: <code><a href="../reference/perform.PCoA.html">perform.PCoA()</a></code> with <code><a href="../reference/plot.PCoA.scatter.html">plot.PCoA.scatter()</a></code>, <code><a href="../reference/plot.PCoA.scatter.123.html">plot.PCoA.scatter.123()</a></code>, <code><a href="../reference/plot.PCoA.cumulative.html">plot.PCoA.cumulative()</a></code> and <code><a href="../reference/plot.PCoA.biplot.html">plot.PCoA.biplot()</a></code>, computed from a <code>DEprot.correlation</code> object</li>
+<li>updated correlation class, now contains also a slot with the correlation method used</li>
+<li>re-arrangement of internal functions</li>
+<li>update vignette and manual</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.2.0" id="deprot-v120---july-12th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.2.0" class="external-link">v1.2.0</a> - July 12<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v120---july-12th-2026"></a></h2>
+<ul><li>
+<code>expression.boxplot</code> function can now show pair-wise comparisons</li>
+<li>
+<code>diff.analyses.limma</code> can use <code>fdrtool</code> to adjust the p-values</li>
+<li>added <code>plot</code> method for objects of class <code>DEprot</code>, <code>DEprot.analyses</code>, <code>DEprot.normality</code>
+</li>
+<li>added function <code>filter.samples</code>
+</li>
+<li>added function <code>export.report</code> to export an HTML QC-report</li>
+<li>bug-fixed in <code>check.pvalues</code> when prolfqua tables are provided</li>
+<li>updated vignette and manual accordingly</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.3" id="deprot-v113---july-8th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.3" class="external-link">v1.1.3</a> - July 8<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v113---july-8th-2026"></a></h2>
+<ul><li>
+<code><a href="../reference/harmonize.batches.html">harmonize.batches()</a></code>: added <code>algorithm</code> (ComBat/limma), <code>ComBat.mode</code>, and <code>block</code>; limma helps on sparse designs where ComBat hits a singular matrix</li>
+<li>
+<code><a href="../reference/harmonize.batches.html">harmonize.batches()</a></code>: drop uncorrectable proteins with a warning, error on an empty result, and fix the <code>algorithm</code>/<code>block</code> defaults</li>
+<li>
+<code>load.counts2</code> automatically converts the counts into log2 transformed.</li>
+<li>
+<code>diff.analyses</code>, <code>diff.analyses.limma</code> and <code>diff.analyses.prolfqua</code> now return, for each group, the standard deviation (<code>sd.&lt;group&gt;</code>) and standard error of the mean (<code>sem.&lt;group&gt;</code>) of the log2 expression values, plus <code>lfcSE</code>, the standard error of the log2(FoldChange). The new columns are appended at the end of the <code>results</code> table. <code>lfcSE</code> is <code>NA</code> when <code>stat.test = "wilcoxon"</code>
+</li>
+<li>updated manual and vignette accordingly to take into account for these exceptions and modifications</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.2" id="deprot-v112---june-16th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.2" class="external-link">v1.1.2</a> - June 16<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v112---june-16th-2026"></a></h2>
+<ul><li>Update labeling of groups for <code>NES.plot</code> function</li>
+<li>Bug fixing for heatmap function for showing the dendrogram in the plots</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.1" id="deprot-v111---june-8th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.1" class="external-link">v1.1.1</a> - June 8<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v111---june-8th-2026"></a></h2>
+<ul><li>Bug fixed in the PCA calculation, functions/objects concerned: <code>perform.PCA</code>, <code>diff.analyses*</code>, <code>plot.PC.buplot</code> and the <code>test.toolbox</code>, as well as the vignette and manual.</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.1.0" id="deprot-v110---may-31st-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.1.0" class="external-link">v1.1.0</a> - May 31<sup>st</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v110---may-31st-2026"></a></h2>
+<ul><li>Added the function <code>plot.PC.biplot</code>.</li>
+<li>Added the function <code>SAINTq</code> and the <code>rime.dpo</code> and <code>rime.saintq</code> datasets.</li>
+<li>Updated <code>plot.PC.scatter</code> to allow for the separate plotting of x and y zero-lines.</li>
+<li>Updated the vignette to include the new functions.</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="1.0.0" id="deprot-v100---may-23rd-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/1.0.0" class="external-link">v1.0.0</a> - May 23<sup>rd</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v100---may-23rd-2026"></a></h2>
+<ul><li>The result from <code>randomize.missing.values</code> is now included in a separate slot. Also the a new <code>boxplot.random</code> and <code>randomization.method</code> slots for the randomized scores have been added.</li>
+<li>In the DEprot.objects the slot <code>imputation</code> has been renamed into <code>imputation.method</code>. Many functions have been changed accordingly.</li>
+<li>Due to the addition of new slots, multiple functions have been adapted.</li>
+<li>In the differential result tables now degrees of freedom and test statistic columns have been added.</li>
+<li>For power calculation analyses, an estimation of the distribution of the statistics has been added in the results list. For this also the dependencies of the package have been updated.</li>
+<li>For GSEA, gene ranking can be based now also on the test statistic value. Accordingly, the <code>compare.ranking</code> function have been updated to compare all three methods.</li>
+<li>Update of the vignette to include the <code>compare.imp.methods</code> function and the new updates.</li>
+<li>Fixing a bug in handling single-sample groups for <code>randomize.missing.values</code> function.</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.1.1" id="deprot-v011---february-16th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.1" class="external-link">v0.1.1</a> - February 16<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v011---february-16th-2026"></a></h2>
+<ul><li>Bug fixing on the <code>check.normality</code> function, which was inverting the evaluation of the AD’s test p-value.</li>
+<li>Update of the vignette</li>
+<li>Update of the CITATION files</li>
+</ul><p><br></p>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.1.0" id="deprot-v010---january-13th-2026">DEprot <a href="https://github.com/sebastian-gregoricchio/DEprot/releases/tag/0.1.0" class="external-link">v0.1.0</a> - January 13<sup>th</sup> 2026<a class="anchor" aria-label="anchor" href="#deprot-v010---january-13th-2026"></a></h2>
+<p>First release.</p>
+<p><br><br></p>
+<hr><div class="section level6">
+<h6 id="contributors-0-1-0">Contributors<a class="anchor" aria-label="anchor" href="#contributors-0-1-0"></a></h6>
+<p><a href="https://sebastian-gregoricchio.github.io/" class="external-link"><img src="https://badges.pufler.dev/contributors/sebastian-gregoricchio/DEprot?size=50&amp;padding=5&amp;bots=true" alt="contributors"></a></p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

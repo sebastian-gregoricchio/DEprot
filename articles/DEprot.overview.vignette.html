@@ -96,7 +96,7 @@ Eickhoff, Ph.D.</h4>
 Netherlands<br><a class="author_email" href="mailto:#"></a><a href="mailto:n.eickhoff@nki.nl" class="email">n.eickhoff@nki.nl</a>
       </address>
                   
-            <h4 data-toc-skip class="date">Last update: 11<sup>th</sup>
+            <h4 data-toc-skip class="date">Last update: 18<sup>th</sup>
 September, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/sebastian-gregoricchio/DEprot/blob/main/vignettes/DEprot.overview.vignette.Rmd" class="external-link"><code>vignettes/DEprot.overview.vignette.Rmd</code></a></small>
@@ -1462,14 +1462,14 @@ dropout curves.</p>
 <p><img src="DEprot.overview.vignette_files/figure-html/choice_of_imp-1.png" class="r-plt" alt="" width="1440" style="display: block; margin: auto;"></p>
 <p><br></p>
 <pre><code>&gt;            imputation.method      RMSE correlation.coeff processing.time rank
-&gt; RegImpute          RegImpute 0.6601285         0.8989965            9.05    1
-&gt; BPCA                    BPCA 0.6626976         0.8976505          117.00    2
-&gt; missForest        missForest 0.6920207         0.8831199           18.64    3
-&gt; tkNN                    tkNN 0.7080672         0.8683818            2.68    4
-&gt; corkNN                corkNN 0.7081231         0.8680934            2.41    5
-&gt; LLS                      LLS 0.7571358         0.8301528            3.81    6
-&gt; PPCA                    PPCA 0.7595902         0.8072285            1.09    7
-&gt; SVD                      SVD 0.7890931         0.7038743            3.46    8</code></pre>
+&gt; RegImpute          RegImpute 0.6601285         0.8989965            7.64    1
+&gt; BPCA                    BPCA 0.6626976         0.8976505          116.40    2
+&gt; missForest        missForest 0.6920207         0.8831199           15.31    3
+&gt; tkNN                    tkNN 0.7080672         0.8683818            2.30    4
+&gt; corkNN                corkNN 0.7081231         0.8680934            1.99    5
+&gt; LLS                      LLS 0.7571358         0.8301528            4.25    6
+&gt; PPCA                    PPCA 0.7595902         0.8072285            0.76    7
+&gt; SVD                      SVD 0.7890931         0.7038743            1.97    8</code></pre>
 <p><br></p>
 <p>The masking settings and the estimated curves are stored in the
 <code>masking</code> slot of the <code>DEprot.RMSE</code> object, so
@@ -2131,21 +2131,21 @@ component</strong></caption>
 </tr>
 <tr class="even">
 <td align="right">2</td>
-<td align="right">50</td>
-<td align="right">50</td>
-<td align="right">4.54</td>
+<td align="right">20</td>
+<td align="right">20</td>
+<td align="right">4.53</td>
 <td align="right">50.00</td>
-<td align="right">0.0166667</td>
-<td align="right">0.0166667</td>
+<td align="right">0.0500000</td>
+<td align="right">0.0500000</td>
 </tr>
 <tr class="odd">
 <td align="right">3</td>
 <td align="right">10</td>
 <td align="right">10</td>
-<td align="right">8.70</td>
-<td align="right">0.46</td>
-<td align="right">0.0333333</td>
-<td align="right">0.0333333</td>
+<td align="right">9.50</td>
+<td align="right">0.49</td>
+<td align="right">0.0000000</td>
+<td align="right">0.0000000</td>
 </tr>
 </tbody>
 </table>
@@ -6318,7 +6318,7 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <span id="cb137-34"><a href="#cb137-34" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">17</span>] fontLiberation_0.<span class="fl">1.0</span>        pkgdown_2.<span class="fl">2.1</span>              </span>
 <span id="cb137-35"><a href="#cb137-35" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">19</span>] reshape2_1.<span class="fl">4.5</span>              foreach_1.<span class="fl">5.2</span>              </span>
 <span id="cb137-36"><a href="#cb137-36" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">21</span>] BiocGenerics_0.<span class="fl">58.1</span>         qvalue_2.<span class="fl">44.0</span>              </span>
-<span id="cb137-37"><a href="#cb137-37" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">23</span>] withr_3.<span class="fl">0.3</span>                 xfun_0<span class="fl">.60</span>                  </span>
+<span id="cb137-37"><a href="#cb137-37" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">23</span>] withr_3.<span class="fl">0.3</span>                 xfun_0<span class="fl">.61</span>                  </span>
 <span id="cb137-38"><a href="#cb137-38" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">25</span>] ggfun_0.<span class="fl">2.1</span>                 survival_3<span class="fl">.8</span><span class="dv">-6</span>             </span>
 <span id="cb137-39"><a href="#cb137-39" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">27</span>] doRNG_1.<span class="dv">8</span>.<span class="fl">6.3</span>               commonmark_2.<span class="fl">0.0</span>           </span>
 <span id="cb137-40"><a href="#cb137-40" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">29</span>] memoise_2.<span class="fl">0.1</span>               prettydoc_0.<span class="fl">4.1</span>            </span>
@@ -6351,7 +6351,7 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <span id="cb137-67"><a href="#cb137-67" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">83</span>] nlme_3<span class="fl">.1</span><span class="dv">-169</span>                iterators_1.<span class="fl">0.14</span>           </span>
 <span id="cb137-68"><a href="#cb137-68" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">85</span>] compiler_4.<span class="fl">6.1</span>              RSpectra_0<span class="fl">.16</span><span class="dv">-2</span>            </span>
 <span id="cb137-69"><a href="#cb137-69" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">87</span>] stringi_1.<span class="fl">8.9</span>               jomo_2<span class="fl">.7</span><span class="dv">-6</span>                 </span>
-<span id="cb137-70"><a href="#cb137-70" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">89</span>] minqa_1.<span class="fl">2.8</span>                 arules_1.<span class="fl">7.14</span>              </span>
+<span id="cb137-70"><a href="#cb137-70" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">89</span>] minqa_1.<span class="fl">2.8</span>                 arules_1.<span class="fl">7.15</span>              </span>
 <span id="cb137-71"><a href="#cb137-71" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">91</span>] SummarizedExperiment_1.<span class="fl">42.0</span> lubridate_1.<span class="fl">9.5</span>            </span>
 <span id="cb137-72"><a href="#cb137-72" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">93</span>] HarmonizR_1.<span class="fl">10.0</span>            plyr_1.<span class="fl">8.9</span>                 </span>
 <span id="cb137-73"><a href="#cb137-73" tabindex="-1"></a><span class="sc">&gt;</span>  [<span class="dv">95</span>] crayon_1.<span class="fl">5.3</span>                abind_1<span class="fl">.4</span><span class="dv">-8</span>                </span>
@@ -6393,7 +6393,7 @@ requests</a> form on the <code>DEprot</code> github page.</p>
 <span id="cb137-109"><a href="#cb137-109" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">167</span>] rjson_0.<span class="fl">2.23</span>                ggridges_0.<span class="fl">5.7</span>             </span>
 <span id="cb137-110"><a href="#cb137-110" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">169</span>] parallel_4.<span class="fl">6.1</span>              ape_5<span class="fl">.8</span><span class="dv">-1</span>                  </span>
 <span id="cb137-111"><a href="#cb137-111" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">171</span>] SnowballC_0.<span class="fl">7.1</span>             limma_3.<span class="fl">68.5</span>               </span>
-<span id="cb137-112"><a href="#cb137-112" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">173</span>] enrichit_0.<span class="fl">2.1</span>              jsonlite_2.<span class="fl">0.0</span>             </span>
+<span id="cb137-112"><a href="#cb137-112" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">173</span>] enrichit_0.<span class="fl">2.4</span>              jsonlite_2.<span class="fl">0.0</span>             </span>
 <span id="cb137-113"><a href="#cb137-113" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">175</span>] mitml_0<span class="fl">.4</span><span class="dv">-5</span>                 bit64_4.<span class="fl">8.6</span>                </span>
 <span id="cb137-114"><a href="#cb137-114" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">177</span>] xgboost_3.<span class="dv">2</span>.<span class="fl">1.1</span>             yulab.utils_0.<span class="fl">2.5</span>          </span>
 <span id="cb137-115"><a href="#cb137-115" tabindex="-1"></a><span class="sc">&gt;</span> [<span class="dv">179</span>] litedown_0<span class="fl">.11</span>               ranger_0.<span class="fl">18.0</span>              </span>

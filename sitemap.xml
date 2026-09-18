@@ -75,6 +75,7 @@
 <url><loc>/reference/dot-dropout.weights.html</loc></url>
 <url><loc>/reference/dot-estimate.dropout.html</loc></url>
 <url><loc>/reference/dot-extract.msstats.table.html</loc></url>
+<url><loc>/reference/dot-filter.enrichment.html</loc></url>
 <url><loc>/reference/dot-filter.long.report.html</loc></url>
 <url><loc>/reference/dot-finalize.import.html</loc></url>
 <url><loc>/reference/dot-get.enrichment.table.html</loc></url>
@@ -109,6 +110,7 @@
 <url><loc>/reference/dot-read.table.any.html</loc></url>
 <url><loc>/reference/dot-require.package.html</loc></url>
 <url><loc>/reference/dot-sample.idx.html</loc></url>
+<url><loc>/reference/dot-scale.alpha.padj.html</loc></url>
 <url><loc>/reference/dot-scale.loadings.html</loc></url>
 <url><loc>/reference/dot-simulate.timecourse.html</loc></url>
 <url><loc>/reference/dot-splsda.auc.html</loc></url>
