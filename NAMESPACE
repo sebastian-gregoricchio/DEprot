@@ -154,11 +154,17 @@ importFrom(data.table,
   as.data.table,
   fread
 )
-importFrom(doParallel,registerDoParallel)
+importFrom(doParallel,
+  registerDoParallel,
+  stopImplicitCluster
+)
 importFrom(e1071,cmeans)
 importFrom(farver,get_channel)
 importFrom(fdrtool,fdrtool)
-importFrom(foreach,foreach)
+importFrom(foreach,
+  foreach,
+  registerDoSEQ
+)
 importFrom(ggpubr,
   stat_compare_means,
   stat_cor,
