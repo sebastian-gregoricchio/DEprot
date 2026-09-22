@@ -68,7 +68,8 @@ A new dataset containing only proteins with known values is created, a certain p
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">compare.imp.methods</span><span class="op">(</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for class 'imp.methods'</span></span>
+<span><span class="fu">compare</span><span class="op">(</span></span>
 <span>  <span class="va">DEprot.object</span>,</span>
 <span>  percentage.test <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  correlation.method <span class="op">=</span> <span class="st">"pearson"</span>,</span>
@@ -269,8 +270,8 @@ A new dataset containing only proteins with known values is created, a certain p
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">comparison</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        imputation.method      RMSE correlation.coeff processing.time rank</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PPCA                PPCA 0.3887226         0.9951168            0.20    1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> BPCA                BPCA 0.4023051         0.9922868            0.31    2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> PPCA                PPCA 0.3887226         0.9951168            0.17    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> BPCA                BPCA 0.4023051         0.9922868            0.33    2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> corkNN            corkNN 0.4653915         0.9859361            0.00    3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> LLS                  LLS 0.6882444         0.9158262            0.01    4</span>
 <span class="r-in"><span></span></span>
