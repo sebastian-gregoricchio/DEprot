@@ -44,5 +44,8 @@ utils::globalVariables(unique(c(
 
   # --- estimate.power / diff.analyses / timecourse NSE ---
   "logFC", "name", "adj_pval", "t_statistic",
-  "n.per.group", "average.power", "expected.TP", "facet.row"
+  "n.per.group", "average.power", "expected.TP", "facet.row",
+
+  # --- expression.boxplot (global p-value label) ---
+  "label"
 )))

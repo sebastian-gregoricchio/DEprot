@@ -192,6 +192,8 @@ coordinate; they are an interpretative aid and must not be read as PCA rotations
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Compute the sample correlations</span></span></span>
 <span class="r-in"><span><span class="va">correlation</span> <span class="op">&lt;-</span> <span class="fu"><a href="plot.correlation.heatmap.html">plot.correlation.heatmap</a></span><span class="op">(</span>DEprot.object <span class="op">=</span> <span class="fu">DEprot</span><span class="fu">::</span><span class="va"><a href="test.toolbox.html">test.toolbox</a></span><span class="op">$</span><span class="va">dpo.imp</span>,</span></span>
 <span class="r-in"><span>                                        correlation.method <span class="op">=</span> <span class="st">"spearman"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found more than one class "dist" in cache; using the first, from namespace 'BiocGenerics'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Also defined by 'spam'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Perform the Principal Coordinate Analyses (PCoA)</span></span></span>
 <span class="r-in"><span><span class="va">pcoa</span> <span class="op">&lt;-</span> <span class="fu">perform.PCoA</span><span class="op">(</span>DEprot.correlation.object <span class="op">=</span> <span class="va">correlation</span>,</span></span>
@@ -201,6 +203,10 @@ coordinate; they are an interpretative aid and must not be read as PCA rotations
 <span class="r-msg co"><span class="r-pr">#&gt;</span> The dissimilarities are not euclidean-embeddable: 3 negative eigenvalue(s) detected (largest relative magnitude = 0.081).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>        The negative eigenvalues are non-negligible. Consider using 'distance.transformation = "sqrt"' or 'correction = "cailliez"'/'correction = "lingoes"'.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>        The proportions of variance are computed using only the positive eigenvalues as denominator.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found more than one class "dist" in cache; using the first, from namespace 'BiocGenerics'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Also defined by 'spam'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found more than one class "dist" in cache; using the first, from namespace 'BiocGenerics'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Also defined by 'spam'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Show the stored plots</span></span></span>
 <span class="r-in"><span><span class="va">pcoa</span><span class="op">@</span><span class="va">scatter.plot</span></span></span>
@@ -216,6 +222,10 @@ coordinate; they are an interpretative aid and must not be read as PCA rotations
 <span class="r-in"><span><span class="va">pcoa.sqrt</span> <span class="op">&lt;-</span> <span class="fu">perform.PCoA</span><span class="op">(</span>DEprot.correlation.object <span class="op">=</span> <span class="va">correlation</span>,</span></span>
 <span class="r-in"><span>                          distance.transformation <span class="op">=</span> <span class="st">"sqrt"</span>,</span></span>
 <span class="r-in"><span>                          color.column <span class="op">=</span> <span class="st">"condition"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found more than one class "dist" in cache; using the first, from namespace 'BiocGenerics'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Also defined by 'spam'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Found more than one class "dist" in cache; using the first, from namespace 'BiocGenerics'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Also defined by 'spam'</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

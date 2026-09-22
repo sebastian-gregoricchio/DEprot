@@ -14,18 +14,20 @@
 #' @param ncol Numeric value indicating the number of columns of the facet grid, used only when several proteins are plotted. Default: \code{NULL} (automatic).
 #' @param free.y Logic value indicating whether each panel should have its own y-axis, used only when several proteins are plotted. Proteins of different abundance are otherwise flattened onto a common scale. Default: \code{TRUE}.
 #' @param pairwise.comparisons Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}, independently within each protein. Default: \code{FALSE}.
-#' @param pairwise.test.type String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). When the pairwise brackets are displayed, the global p-value shown at the top of the plot is computed with the same test and the same arguments: with two groups the two labels report therefore the same value, while with more groups the multi-sample version of the family is used (\code{"anova"} or \code{"kruskal.test"}). Rank-based tests always rely on the normal approximation (\code{exact = FALSE}), which keeps the p-values stable in presence of ties. Default: \code{"wilcox.test"}.
+#' @param pairwise.test.type String indicating the statistical test to use for the pairwise comparisons. The value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). When the pairwise brackets are displayed, the global p-value shown at the top of the plot is computed with the same test and the same arguments: with two groups the two labels report therefore the same value, while with more groups the multi-sample version of the family is used (\code{"anova"} or \code{"kruskal.test"}). The Wilcoxon p-values follow the defaults of \code{wilcox.test}: exact when both groups have less than 50 values (older R versions require also the absence of ties), normal approximation with continuity correction otherwise. With few replicates the exact p-value has a floor: two groups of 3 samples cannot go below 0.1, even when they do not overlap at all. Names of paired tests are accepted too (e.g. \code{"paired t-test"}, \code{"signed-rank"}, \code{"Friedman"}) and switch on \code{paired.test}. Default: \code{"wilcox.test"}.
 #' @param pairwise.include.ns Logical value indicating whether the non-significant comparisons (p > 0.05) should be displayed. If \code{FALSE}, only the significant comparisons are shown. Default: \code{TRUE}.
-#' @param pairwise.p.label String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}, \code{*}, \code{**}, \code{***}, \code{****}) drawn directly by \code{ggpubr::stat_compare_means}, or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. Default: \code{"p.signif"}.
+#' @param pairwise.p.label String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}: p > 0.05, \code{*}: p <= 0.05, \code{**}: p <= 0.01, \code{***}: p <= 0.001, \code{****}: p <= 0.0001), or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. The symbols are derived from the same p-values of the numeric labels. Default: \code{"p.signif"}.
 #' @param pairwise.p.decimals Numeric value indicating the number of decimals used to approximate the numeric p-values (used only when \code{pairwise.p.label} shows the numeric value). Values below 0.1 are rendered in scientific notation with a superscript exponent, e.g. 3.20\out{&times;10<sup>-2</sup>}. The actual (real) p-value is always displayed, so the uninformative \code{p < 2.2e-16} is never shown. Default: \code{2}.
+#' @param paired.test Logical value indicating whether paired statistical tests should be performed. The samples are matched between groups through the IDs stored in \code{replicate.column}, as in \code{diff.analyses}, and each comparison uses only the replicates measured in both groups. The t-tests become paired t-tests and the Wilcoxon rank-sum test a Wilcoxon signed-rank test. With more than two groups the global p-value comes from a repeated-measures ANOVA (\code{"t.test"}, \code{"anova"}) or from a Friedman test (\code{"wilcox.test"}, \code{"kruskal.test"}), computed on the replicates measured in all the groups. The pairing applies to the global p-value also when \code{pairwise.comparisons = FALSE}. Default: \code{FALSE}.
+#' @param replicate.column String indicating the name of a column from the metadata table in which are stored the replicate IDs used to pair the samples. It is required when \code{paired.test = TRUE}, or when \code{pairwise.test.type} indicates a paired test. A replicate ID cannot be repeated within a group. Default: \code{NULL}.
 #'
 #' @return A boxplot of class ggplot2, faceted by protein when several proteins are provided.
 #'
 #' @import dplyr
 #' @import ggplot2
-#' @importFrom ggpubr stat_compare_means stat_pvalue_manual
+#' @importFrom ggpubr stat_pvalue_manual
 #' @import ggtext
-#' @importFrom stats sd t.test wilcox.test
+#' @importFrom stats anova friedman.test kruskal.test lm oneway.test sd t.test wilcox.test
 #' @importFrom utils combn
 #'
 #' @author Sebastian Gregoricchio
@@ -75,6 +77,17 @@
 #'                    pairwise.include.ns = FALSE)
 #'
 #'
+#' # Paired t-test: the samples of the different conditions are matched through their replicate ID
+#' expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+#'                    protein.id = "protein.44",
+#'                    group.by.metadata.column = "combined.id",
+#'                    shape.column = "replicate",
+#'                    pairwise.comparisons = TRUE,
+#'                    pairwise.test.type = "t.test",
+#'                    paired.test = TRUE,
+#'                    replicate.column = "replicate")
+#'
+#'
 #' @export expression.boxplot
 
 
@@ -96,7 +109,9 @@ expression.boxplot =
            pairwise.test.type = "wilcox.test",
            pairwise.include.ns = TRUE,
            pairwise.p.label = "p.signif",
-           pairwise.p.decimals = 2) {
+           pairwise.p.decimals = 2,
+           paired.test = FALSE,
+           replicate.column = NULL) {
 
 
     ### Internal functions
@@ -121,18 +136,92 @@ expression.boxplot =
 
 
     ## two-sample equivalent of each supported test family, with the arguments used to compute it.
-    ## Both the global p-value and the 2-by-2 brackets go through this function: the arguments must be
-    ## identical, otherwise with two groups wilcox.test() would fall back on its own default (exact test
-    ## when n < 50 and no ties) and return a p-value different from the one shown on the bracket.
+    ## Both the global p-value and the 2-by-2 brackets go through this function, hence with two groups
+    ## the two labels cannot disagree.
     ## For exactly two groups: one-way ANOVA == pooled (var.equal) t-test, Kruskal-Wallis == Wilcoxon rank-sum.
+    ## The Wilcoxon test keeps the defaults of wilcox.test(), i.e. the exact p-value whenever it can be computed.
+    ## With few replicates the normal approximation is anti-conservative: two groups of 3 samples that do not
+    ## overlap give 0.081 (0.0495 without continuity correction), while the exact p-value cannot go below 0.1.
+    ## In a paired design the t-tests become paired t-tests and the rank-sum test a signed-rank test.
     two.sample.equivalent =
-      function(test) {
+      function(test, paired = FALSE) {
         switch(test,
-               "t.test"       = list(method = "t.test",      args = list()),
-               "wilcox.test"  = list(method = "wilcox.test", args = list(exact = FALSE)),
-               "anova"        = list(method = "t.test",      args = list(var.equal = TRUE)),
-               "kruskal.test" = list(method = "wilcox.test", args = list(exact = FALSE, correct = FALSE)))
+               "t.test"       = list(method = "t.test",      args = list(paired = paired)),
+               "wilcox.test"  = list(method = "wilcox.test", args = list(paired = paired)),
+               "anova"        = list(method = "t.test",      args = list(paired = paired, var.equal = TRUE)),
+               "kruskal.test" = list(method = "wilcox.test", args = list(paired = paired)))
       }
+
+
+
+    ## values of two groups entering a two-sample test. In a paired design the two vectors are aligned on
+    ## the replicate IDs, and a replicate missing in one of the groups is dropped from both.
+    extract.pair =
+      function(tb, group.1, group.2, paired = FALSE) {
+        d1 = tb[as.character(tb$group) == group.1,,drop=F]
+        d2 = tb[as.character(tb$group) == group.2,,drop=F]
+
+        if (isTRUE(paired)) {
+          shared.reps = intersect(d1$pair.id[!is.na(d1$pair.id)], d2$pair.id[!is.na(d2$pair.id)])
+          return(list(x = d1$expression[match(shared.reps, d1$pair.id)],
+                      y = d2$expression[match(shared.reps, d2$pair.id)]))
+        } else {
+          return(list(x = d1$expression, y = d2$expression))
+        }
+      }
+
+
+
+    ## p-value of a two-sample test, NA when it cannot be computed (e.g. less than two values per group)
+    two.sample.p =
+      function(values, test) {
+        if (length(values$x) < 2 | length(values$y) < 2) {return(NA_real_)}
+
+        pval = tryCatch(expr = suppressWarnings(do.call(test$method, c(list(x = values$x, y = values$y), test$args))$p.value),
+                        error = function(e){return(NA_real_)})
+        return(pval)
+      }
+
+
+
+    ## p-value of the multi-sample version of the family, used with more than two groups.
+    ## In a paired design only the replicates measured in all the groups are kept (complete blocks), and the
+    ## repeated-measures ANOVA is the F-test of the group term once the replicate effect is removed.
+    multi.sample.p =
+      function(tb, groups, test, paired = FALSE) {
+        tb = tb[as.character(tb$group) %in% groups,,drop=F]
+        tb$group = factor(as.character(tb$group), levels = groups)
+
+        if (isTRUE(paired)) {
+          rep.counts = table(tb$pair.id)
+          tb = tb[tb$pair.id %in% names(rep.counts)[rep.counts == length(groups)],,drop=F]
+          if (length(unique(tb$pair.id)) < 2) {return(NA_real_)}
+          tb$pair.id = factor(tb$pair.id)
+        }
+
+        pval =
+          tryCatch(expr =
+                     suppressWarnings(
+                       switch(paste0(test, ifelse(test = isTRUE(paired), yes = ".paired", no = "")),
+                              "anova"               = stats::oneway.test(expression ~ group, data = tb, var.equal = TRUE)$p.value,
+                              "kruskal.test"        = stats::kruskal.test(expression ~ group, data = tb)$p.value,
+                              "anova.paired"        = stats::anova(stats::lm(expression ~ pair.id + group, data = tb))["group", "Pr(>F)"],
+                              "kruskal.test.paired" = stats::friedman.test(y = tb$expression, groups = tb$group, blocks = tb$pair.id)$p.value)),
+                   error = function(e){return(NA_real_)})
+        return(pval)
+      }
+
+
+
+    ## name of each test in the global label (for the unpaired tests the same names used by ggpubr)
+    test.names = c("t.test"              = "T-test",
+                   "wilcox.test"         = "Wilcoxon",
+                   "anova"               = "Anova",
+                   "kruskal.test"        = "Kruskal-Wallis",
+                   "t.test.paired"       = "Paired t-test",
+                   "wilcox.test.paired"  = "Wilcoxon signed-rank",
+                   "anova.paired"        = "Repeated-measures Anova",
+                   "kruskal.test.paired" = "Friedman")
 
     ######################################################################################
 
@@ -153,6 +242,15 @@ expression.boxplot =
         #return(invisible())
       } else {
         meta = DEprot.object@metadata
+      }
+    }
+
+
+    ### check the column used to pair the samples
+    if (!is.null(replicate.column)) {
+      if (!(replicate.column %in% colnames(DEprot.object@metadata))) {
+        stop(paste0("The 'replicate.column' is not present in the metadata of the object provided.\n",
+                    "       Available column IDs: ", paste0(colnames(DEprot.object@metadata), collapse = ", ")))
       }
     }
 
@@ -306,6 +404,73 @@ expression.boxplot =
 
 
 
+    ### Normalize the requested test type (case/format insensitive: dots, spaces, hyphens and apostrophes are ignored).
+    ### This happens before the plot is built because the global p-value shown at the top must be computed
+    ### with the very same test, and the very same arguments, used for the 2-by-2 comparisons.
+    .test.key = gsub("[[:space:]._'\u2019-]", "", tolower(trimws(pairwise.test.type)))
+
+    ## the names of explicitly unpaired or paired tests are listed apart, since they define the design as well
+    unpaired.keys = c("welch","welcht","welchttest","unpairedt","unpairedttest",
+                      "mannwhitney","mannwhitneyu","mannwhitneyutest","mww","wmw","utest","u","ranksum","ranksumtest","wilcoxonranksum","wilcoxonranksumtest")
+
+    paired.keys = c("pairedt","pairedttest","pairedstudentttest","pairedstudentsttest",
+                    "pairedwilcox","pairedwilcoxon","pairedwilcoxtest","pairedwilcoxontest","signedrank","signedranktest","wilcoxonsignedrank","wilcoxonsignedranktest",
+                    "rmanova","repeatedmeasuresanova","pairedanova",
+                    "friedman","friedmantest")
+
+    requested.test =
+      if (.test.key %in% c("ttest","t","student","students","studentt","studentst","studentttest","studentsttest",
+                           "welch","welcht","welchttest","unpairedt","unpairedttest",
+                           "pairedt","pairedttest","pairedstudentttest","pairedstudentsttest")) {
+        "t.test"
+      } else if (.test.key %in% c("wilcox","wilcoxon","wilcoxtest","wilcoxontest",
+                                  "mannwhitney","mannwhitneyu","mannwhitneyutest","mww","wmw","utest","u","ranksum","ranksumtest","wilcoxonranksum","wilcoxonranksumtest",
+                                  "pairedwilcox","pairedwilcoxon","pairedwilcoxtest","pairedwilcoxontest","signedrank","signedranktest","wilcoxonsignedrank","wilcoxonsignedranktest")) {
+        "wilcox.test"
+      } else if (.test.key %in% c("anova","aov","onewayanova","oneway","ftest","f",
+                                  "rmanova","repeatedmeasuresanova","pairedanova")) {
+        "anova"
+      } else if (.test.key %in% c("kruskal","kruskalwallis","kruskaltest","kruskalwallistest","kw",
+                                  "friedman","friedmantest")) {
+        "kruskal.test"
+      } else {
+        stop(paste0("The 'pairwise.test.type' value ('", pairwise.test.type, "') is not recognized.\n",
+                    "       Supported tests: 't.test', 'wilcox.test', 'anova', 'kruskal.test' (case/format insensitive)."))
+      }
+
+
+
+    ### Paired design: the samples are matched between groups through their replicate ID, as in diff.analyses().
+    ### A test named as paired (e.g. "paired t-test") switches it on, while a test named as unpaired (e.g. "Welch",
+    ### "Mann-Whitney") cannot be combined with it. As for the family, the name given in 'pairwise.test.type'
+    ### counts only when the brackets are shown.
+    paired = isTRUE(paired.test)
+
+    if (isTRUE(pairwise.comparisons)) {
+      if (.test.key %in% paired.keys) {
+        paired = TRUE
+      } else if (.test.key %in% unpaired.keys & paired) {
+        stop(paste0("The 'pairwise.test.type' value ('", pairwise.test.type, "') indicates an unpaired test, while 'paired.test = TRUE'."))
+      }
+    }
+
+    if (paired) {
+      if (is.null(replicate.column)) {
+        stop("A paired test was required, but no 'replicate.column' was provided: the samples cannot be matched between groups.")
+      }
+
+      exp.tb$pair.id = as.character(DEprot.object@metadata[[replicate.column]][match(exp.tb$column.id, DEprot.object@metadata$column.id)])
+
+      ## a replicate ID repeated within a group would make the pairing ambiguous
+      sample.reps = unique(exp.tb[!is.na(exp.tb$pair.id), c("column.id", "group", "pair.id"), drop=F])
+
+      if (any(duplicated(sample.reps[, c("group", "pair.id"), drop=F]))) {
+        stop("At least one replicate ID in the 'replicate.column' is duplicated within a group: the samples cannot be paired.")
+      }
+    }
+
+
+
     ### Values actually usable by a test: non-finite values (NA, NaN, and the -Inf coming from the
     ### log of a zero count) are dropped once and the same table is used for the global p-value,
     ### for the pairwise ones and for the positioning of the brackets.
@@ -321,65 +486,85 @@ expression.boxplot =
     group.sizes = table(as.character(finite.tb$group))
     usable.groups = ordered.groups[ordered.groups %in% names(group.sizes)[group.sizes >= 2]]
 
+    ## in a paired design, two groups sharing less than two replicates cannot be compared
+    if (paired & length(usable.groups) >= 2) {
+      unmatched.groups =
+        unlist(lapply(utils::combn(usable.groups, 2, simplify = FALSE),
+                      function(pair) {
+                        shared.reps = intersect(exp.tb$pair.id[as.character(exp.tb$group) == pair[1]],
+                                                exp.tb$pair.id[as.character(exp.tb$group) == pair[2]])
+                        if (sum(!is.na(shared.reps)) < 2) {return(paste0(pair[1], " vs ", pair[2]))}
+                        return(NULL)
+                      }))
 
-
-    ### Normalize the requested test type (case/format insensitive: dots, spaces, hyphens and apostrophes are ignored).
-    ### This happens before the plot is built because the global p-value shown at the top must be computed
-    ### with the very same test, and the very same arguments, used for the 2-by-2 comparisons.
-    .test.key = gsub("[[:space:]._'\u2019-]", "", tolower(trimws(pairwise.test.type)))
-
-    requested.test =
-      if (.test.key %in% c("ttest","t","student","students","studentt","studentst","welch","welcht","welchttest","unpairedttest","pairedttest","studentttest")) {
-        "t.test"
-      } else if (.test.key %in% c("wilcox","wilcoxon","wilcoxtest","wilcoxontest","mannwhitney","mannwhitneyu","mannwhitneyutest","mww","wmw","utest","u","ranksum","wilcoxonranksum")) {
-        "wilcox.test"
-      } else if (.test.key %in% c("anova","aov","onewayanova","oneway","ftest","f")) {
-        "anova"
-      } else if (.test.key %in% c("kruskal","kruskalwallis","kruskaltest","kruskalwallistest","kw")) {
-        "kruskal.test"
-      } else {
-        stop(paste0("The 'pairwise.test.type' value ('", pairwise.test.type, "') is not recognized.\n",
-                    "       Supported tests: 't.test', 'wilcox.test', 'anova', 'kruskal.test' (case/format insensitive)."))
+      if (length(unmatched.groups) > 0) {
+        warning(paste0("The following groups share less than two replicate IDs, hence they cannot be compared by a paired test: ",
+                       paste0(unmatched.groups, collapse = ", "), "."))
       }
+    }
+
+
 
     ## two-sample equivalent applied to each 2-by-2 comparison (kept consistent between label styles)
-    two.sample = two.sample.equivalent(requested.test)
+    two.sample = two.sample.equivalent(requested.test, paired = paired)
 
 
-    ### Test used for the global p-value displayed at the top of the plot.
+
+    ### Global p-value displayed at the top of each panel. It is computed here, and not by ggpubr, so that
+    ### it follows the same rules of the brackets (test, arguments, pairing and values used).
     ### With two groups it is exactly the pairwise test, arguments included, so that the two labels
-    ### cannot disagree; with more groups its multi-sample version is used (ANOVA or Kruskal-Wallis).
+    ### cannot disagree; with more groups its multi-sample version is used (ANOVA or Kruskal-Wallis, and
+    ### in a paired design repeated-measures ANOVA or Friedman test).
     ### The family follows 'pairwise.test.type' only when the brackets are shown, otherwise the
     ### historical Wilcoxon/Kruskal-Wallis behaviour is kept.
     global.family = ifelse(test = isTRUE(pairwise.comparisons), yes = requested.test, no = "wilcox.test")
+    global.two.sample = two.sample.equivalent(global.family, paired = paired)
+    global.multi.sample = ifelse(test = global.family %in% c("t.test", "anova"), yes = "anova", no = "kruskal.test")
 
-    global.test =
-      if (length(unique(as.character(finite.tb$group))) == 2) {
-        two.sample.equivalent(global.family)
-      } else {
-        switch(global.family,
-               "t.test"       = list(method = "anova",        args = list()),
-               "wilcox.test"  = list(method = "kruskal.test", args = list()),
-               "anova"        = list(method = "anova",        args = list()),
-               "kruskal.test" = list(method = "kruskal.test", args = list()))
-      }
+    global.tb =
+      do.call(rbind,
+              lapply(protein.id,
+                     function(prot) {
+                       prot.tb = finite.tb[as.character(finite.tb$prot.id) == prot,,drop=F]
 
+                       ## groups with at least two values for this protein (ordered as displayed)
+                       prot.sizes = table(as.character(prot.tb$group))
+                       prot.groups = ordered.groups[ordered.groups %in% names(prot.sizes)[prot.sizes >= 2]]
 
+                       if (length(prot.groups) < 2) {return(NULL)}
 
-    ### Vertical offset for the global test label, so that it does not overlap with the
-    ### pairwise p-value brackets.
-    ### With several panels the position is left to ggpubr: a single value computed on the
-    ### whole dataset would fall outside most of the panels.
-    kw.label.y = NULL
+                       if (length(prot.groups) == 2) {
+                         pval = two.sample.p(values = extract.pair(tb = prot.tb, group.1 = prot.groups[1], group.2 = prot.groups[2], paired = paired),
+                                             test = global.two.sample)
+                         test.id = global.two.sample$method
+                       } else {
+                         pval = multi.sample.p(tb = prot.tb, groups = prot.groups, test = global.multi.sample, paired = paired)
+                         test.id = global.multi.sample
+                       }
 
-    if (isTRUE(pairwise.comparisons) & !multiple.proteins & length(usable.groups) >= 2) {
-      .pw.ncomparisons = choose(length(usable.groups), 2)
-      .pw.range = range(finite.tb$expression, na.rm = TRUE)
-      .pw.span = diff(.pw.range)
-      if (!is.finite(.pw.span) || .pw.span == 0) {.pw.span = ifelse(.pw.range[2] == 0, 1, abs(.pw.range[2]))}
-      # reserve room above the highest bracket (covers both stars and numeric layouts)
-      kw.label.y = .pw.range[2] + (.pw.span * (0.10 + (0.13 * .pw.ncomparisons)))
-    }
+                       if (is.na(pval)) {return(NULL)}
+
+                       ## vertical position: when the brackets are shown the label goes above them, reserving
+                       ## room for all the possible comparisons (covers both stars and numeric layouts);
+                       ## otherwise it sits at the top of the data of the panel, as done by ggpubr
+                       if (isTRUE(pairwise.comparisons) & length(usable.groups) >= 2) {
+                         y.range = range(prot.tb$expression)
+                         y.span = diff(y.range)
+                         if (!is.finite(y.span) || y.span == 0) {y.span = ifelse(y.range[2] == 0, 1, abs(y.range[2]))}
+                         label.y = y.range[2] + (y.span * (0.10 + (0.13 * choose(length(usable.groups), 2))))
+                       } else {
+                         panel.values = if (multiple.proteins & isTRUE(free.y)) {prot.tb$expression} else {finite.tb$expression}
+                         label.y = max(c(panel.values, ifelse(test = scale.expression == TRUE, yes = 0, no = -Inf)))
+                       }
+
+                       p.text = ifelse(test = pval < 2.2e-16, yes = "p < 2.2e-16", no = paste("p =", signif(pval, 2)))
+
+                       data.frame(prot.id = prot,
+                                  x = 1,
+                                  y = label.y,
+                                  label = paste0(test.names[[paste0(test.id, ifelse(test = paired, yes = ".paired", no = ""))]], ", ", p.text),
+                                  stringsAsFactors = FALSE)
+                     }))
 
 
 
@@ -432,11 +617,6 @@ expression.boxplot =
       ylab(ifelse(test = scale.expression == TRUE,
                   yes = paste0("centered log<sub>",DEprot.object@log.base,"</sub>(expression)"),
                   no = paste0("log<sub>",DEprot.object@log.base,"</sub>(expression)"))) +
-      ggpubr::stat_compare_means(data = finite.tb,
-                                 method = global.test$method,
-                                 method.args = global.test$args,
-                                 label.y = kw.label.y,
-                                 show.legend = FALSE) +
       guides(color = "none", fill = "none") +
       theme_classic() +
       theme(axis.title.x = ggtext::element_markdown(color = "black"),
@@ -459,6 +639,23 @@ expression.boxplot =
         facet_wrap(~ prot.id,
                    ncol = ncol,
                    scales = ifelse(isTRUE(free.y), yes = "free_y", no = "fixed"))
+    }
+
+
+
+    ### Add the global p-value: one label per panel, placed where ggpubr::stat_compare_means() put it
+    ### (above the first group, left-aligned)
+    if (!is.null(global.tb)) {
+      global.tb$prot.id = factor(global.tb$prot.id, levels = protein.id)
+
+      boxplot =
+        boxplot +
+        geom_text(data = global.tb,
+                  mapping = aes(x = x, y = y, label = label),
+                  hjust = 0.2,
+                  vjust = 0,
+                  inherit.aes = FALSE,
+                  show.legend = FALSE)
     }
 
 
@@ -492,124 +689,108 @@ expression.boxplot =
         comparisons.list = utils::combn(usable.groups, 2, simplify = FALSE)
 
 
-        if (label.style == "stars") {
-          ##### Significance symbols: drawn directly through ggpubr::stat_compare_means (unadjusted pairwise p-values).
-          #####                       The comparisons are recomputed within each panel, hence protein by protein.
-          boxplot =
-            boxplot +
-            ggpubr::stat_compare_means(data = finite.tb,
-                                       comparisons = comparisons.list,
-                                       method = two.sample$method,
-                                       method.args = two.sample$args,
-                                       label = "p.signif",
-                                       hide.ns = !isTRUE(pairwise.include.ns),
-                                       tip.length = 0.01,
-                                       size = 3.3)
+        ##### The p-values are computed here for both label styles, protein by protein, through the same
+        ##### functions used for the global p-value: the significance symbols are derived from the numbers
+        ##### shown by the numeric labels. The real value is always available (never 'p < 2.2e-16'), the
+        ##### numeric labels are formatted manually (custom decimals + scientific superscript when < 0.1),
+        ##### and the brackets are drawn with ggpubr::stat_pvalue_manual.
 
-        } else {
-          ##### Numeric p-value: computed exactly (the real value is always shown, never 'p < 2.2e-16'),
-          #####                  formatted manually (custom decimals + scientific superscript when < 0.1),
-          #####                  and drawn with ggpubr::stat_pvalue_manual. The p-values and the positions
-          #####                  of the brackets are computed independently for each protein.
+        ## p-value formatter: returns a plain string using Unicode superscripts, e.g. "3.20\u00d710\u207b\u00b2"
+        format.pairwise.p =
+          function(p, decimals) {
+            if (is.na(p)) {return("NA")}
 
-          ## p-value formatter: returns a plain string using Unicode superscripts, e.g. "3.20\u00d710\u207b\u00b2"
-          format.pairwise.p =
-            function(p, decimals) {
-              if (is.na(p)) {return("NA")}
+            superscript = c("0" = "\u2070", "1" = "\u00b9", "2" = "\u00b2", "3" = "\u00b3", "4" = "\u2074",
+                            "5" = "\u2075", "6" = "\u2076", "7" = "\u2077", "8" = "\u2078", "9" = "\u2079",
+                            "-" = "\u207b")
+            to.superscript = function(n) {paste0(superscript[strsplit(as.character(n), "")[[1]]], collapse = "")}
 
-              superscript = c("0" = "\u2070", "1" = "\u00b9", "2" = "\u00b2", "3" = "\u00b3", "4" = "\u2074",
-                              "5" = "\u2075", "6" = "\u2076", "7" = "\u2077", "8" = "\u2078", "9" = "\u2079",
-                              "-" = "\u207b")
-              to.superscript = function(n) {paste0(superscript[strsplit(as.character(n), "")[[1]]], collapse = "")}
+            prefix = ""
+            if (p <= 0) {p = .Machine$double.xmin; prefix = "< "} # numeric underflow safeguard
 
-              prefix = ""
-              if (p <= 0) {p = .Machine$double.xmin; prefix = "< "} # numeric underflow safeguard
+            exponent = floor(log10(p))
 
-              exponent = floor(log10(p))
-
-              if (exponent <= -2) {
-                # scientific notation with superscript exponent (e.g. 3.20 x 10^-2)
-                mantissa = round(p / (10^exponent), decimals)
-                if (mantissa >= 10) {mantissa = mantissa / 10; exponent = exponent + 1}
-                lab = paste0(formatC(mantissa, format = "f", digits = decimals), "\u00d7", "10", to.superscript(exponent))
-              } else {
-                # plain decimal notation (0.1 <= p <= 1)
-                lab = formatC(round(p, decimals), format = "f", digits = decimals)
-              }
-
-              return(paste0(prefix, lab))
+            if (exponent <= -2) {
+              # scientific notation with superscript exponent (e.g. 3.20 x 10^-2)
+              mantissa = round(p / (10^exponent), decimals)
+              if (mantissa >= 10) {mantissa = mantissa / 10; exponent = exponent + 1}
+              lab = paste0(formatC(mantissa, format = "f", digits = decimals), "\u00d7", "10", to.superscript(exponent))
+            } else {
+              # plain decimal notation (0.1 <= p <= 1)
+              lab = formatC(round(p, decimals), format = "f", digits = decimals)
             }
 
-
-          ## exact per-pair p-values, computed within each protein
-          pairwise.tb =
-            do.call(rbind,
-                    lapply(protein.id,
-                           function(prot) {
-                             prot.tb = finite.tb[as.character(finite.tb$prot.id) == prot,,drop=F]
-
-                             if (nrow(prot.tb) == 0) {return(NULL)}
-
-                             prot.pairs =
-                               do.call(rbind,
-                                       lapply(comparisons.list,
-                                              function(pair) {
-                                                d1 = prot.tb$expression[as.character(prot.tb$group) == pair[1]]
-                                                d2 = prot.tb$expression[as.character(prot.tb$group) == pair[2]]
-
-                                                if (length(d1) < 2 | length(d2) < 2) {return(NULL)}
-
-                                                pval = tryCatch(expr = suppressWarnings(do.call(two.sample$method, c(list(x = d1, y = d2), two.sample$args))$p.value),
-                                                                error = function(e){return(NA_real_)})
-                                                data.frame(prot.id = prot, group1 = pair[1], group2 = pair[2], p.value = pval, stringsAsFactors = FALSE)
-                                              }))
-
-                             if (is.null(prot.pairs)) {return(NULL)}
-
-                             ## keep only computable comparisons (and, if required, only the significant ones)
-                             prot.pairs = prot.pairs[!is.na(prot.pairs$p.value),,drop=F]
-                             if (!isTRUE(pairwise.include.ns)) {
-                               prot.pairs = prot.pairs[prot.pairs$p.value <= 0.05,,drop=F]
-                             }
-
-                             if (nrow(prot.pairs) == 0) {return(NULL)}
-
-                             ## y positions of the brackets (stacked above the data of THIS protein)
-                             y.range = range(prot.tb$expression, na.rm = TRUE)
-                             y.span = diff(y.range)
-                             if (!is.finite(y.span) || y.span == 0) {y.span = ifelse(y.range[2] == 0, 1, abs(y.range[2]))}
-                             prot.pairs$y.position = y.range[2] + (0.08 * y.span) + ((seq_len(nrow(prot.pairs)) - 1) * (0.09 * y.span))
-
-                             return(prot.pairs)
-                           }))
+            return(paste0(prefix, lab))
+          }
 
 
-          if (!is.null(pairwise.tb)) {
-            if (nrow(pairwise.tb) > 0) {
-              ## formatted labels
+        ## per-pair p-values, computed within each protein
+        pairwise.tb =
+          do.call(rbind,
+                  lapply(protein.id,
+                         function(prot) {
+                           prot.tb = finite.tb[as.character(finite.tb$prot.id) == prot,,drop=F]
+
+                           if (nrow(prot.tb) == 0) {return(NULL)}
+
+                           prot.pairs =
+                             do.call(rbind,
+                                     lapply(comparisons.list,
+                                            function(pair) {
+                                              pval = two.sample.p(values = extract.pair(tb = prot.tb, group.1 = pair[1], group.2 = pair[2], paired = paired),
+                                                                  test = two.sample)
+                                              data.frame(prot.id = prot, group1 = pair[1], group2 = pair[2], p.value = pval, stringsAsFactors = FALSE)
+                                            }))
+
+                           ## keep only computable comparisons (and, if required, only the significant ones)
+                           prot.pairs = prot.pairs[!is.na(prot.pairs$p.value),,drop=F]
+                           if (!isTRUE(pairwise.include.ns)) {
+                             prot.pairs = prot.pairs[prot.pairs$p.value <= 0.05,,drop=F]
+                           }
+
+                           if (nrow(prot.pairs) == 0) {return(NULL)}
+
+                           ## y positions of the brackets (stacked above the data of THIS protein)
+                           y.range = range(prot.tb$expression, na.rm = TRUE)
+                           y.span = diff(y.range)
+                           if (!is.finite(y.span) || y.span == 0) {y.span = ifelse(y.range[2] == 0, 1, abs(y.range[2]))}
+                           prot.pairs$y.position = y.range[2] + (0.08 * y.span) + ((seq_len(nrow(prot.pairs)) - 1) * (0.09 * y.span))
+
+                           return(prot.pairs)
+                         }))
+
+
+        if (!is.null(pairwise.tb)) {
+          if (nrow(pairwise.tb) > 0) {
+            ## labels: significance symbols (same thresholds of the 'pairwise.include.ns' filter) or formatted p-values
+            if (label.style == "stars") {
+              pairwise.tb$p.label = as.character(cut(x = pairwise.tb$p.value,
+                                                     breaks = c(-Inf, 0.0001, 0.001, 0.01, 0.05, Inf),
+                                                     labels = c("****", "***", "**", "*", "ns")))
+            } else {
               pairwise.tb$p.label = vapply(X = pairwise.tb$p.value,
                                            FUN = function(x){format.pairwise.p(p = x, decimals = p.dec)},
                                            FUN.VALUE = character(1))
-
-              ## the facetting variable must be carried over, otherwise every bracket would be
-              ## drawn in every panel
-              pairwise.tb$prot.id = factor(pairwise.tb$prot.id, levels = protein.id)
-
-              bracket.columns = c(switch(multiple.proteins + 1, NULL, "prot.id"),
-                                  "group1", "group2", "y.position", "p.label")
-
-              boxplot =
-                boxplot +
-                ggpubr::stat_pvalue_manual(data = pairwise.tb[,bracket.columns,drop=FALSE],
-                                           label = "p.label",
-                                           xmin = "group1",
-                                           xmax = "group2",
-                                           y.position = "y.position",
-                                           tip.length = 0.01,
-                                           size = 3.3,
-                                           bracket.size = 0.3,
-                                           inherit.aes = FALSE)
             }
+
+            ## the facetting variable must be carried over, otherwise every bracket would be
+            ## drawn in every panel
+            pairwise.tb$prot.id = factor(pairwise.tb$prot.id, levels = protein.id)
+
+            bracket.columns = c(switch(multiple.proteins + 1, NULL, "prot.id"),
+                                "group1", "group2", "y.position", "p.label")
+
+            boxplot =
+              boxplot +
+              ggpubr::stat_pvalue_manual(data = pairwise.tb[,bracket.columns,drop=FALSE],
+                                         label = "p.label",
+                                         xmin = "group1",
+                                         xmax = "group2",
+                                         y.position = "y.position",
+                                         tip.length = 0.01,
+                                         size = 3.3,
+                                         bracket.size = 0.3,
+                                         inherit.aes = FALSE)
           }
         }
       }

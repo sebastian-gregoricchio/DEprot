@@ -20,7 +20,9 @@ expression.boxplot(
   pairwise.test.type = "wilcox.test",
   pairwise.include.ns = TRUE,
   pairwise.p.label = "p.signif",
-  pairwise.p.decimals = 2
+  pairwise.p.decimals = 2,
+  paired.test = FALSE,
+  replicate.column = NULL
 )
 }
 \arguments{
@@ -48,13 +50,17 @@ expression.boxplot(
 
 \item{pairwise.comparisons}{Logical value indicating whether the p-values of all the pairwise (2-by-2) comparisons between the groups should be added on top of the boxplot using \code{ggpubr}. When \code{TRUE}, a comparison is computed for each possible pair of groups defined by \code{group.by.metadata.column}, independently within each protein. Default: \code{FALSE}.}
 
-\item{pairwise.test.type}{String indicating the statistical test to use for the pairwise comparisons. Any of the \code{ggpubr}-supported tests is accepted and the value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their exact two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). When the pairwise brackets are displayed, the global p-value shown at the top of the plot is computed with the same test and the same arguments: with two groups the two labels report therefore the same value, while with more groups the multi-sample version of the family is used (\code{"anova"} or \code{"kruskal.test"}). Rank-based tests always rely on the normal approximation (\code{exact = FALSE}), which keeps the p-values stable in presence of ties. Default: \code{"wilcox.test"}.}
+\item{pairwise.test.type}{String indicating the statistical test to use for the pairwise comparisons. The value is case/format-insensitive: capitalization, dots, spaces and hyphens are ignored (e.g. \code{"wilcox.test"}, \code{"Wilcoxon"}, \code{"WILCOX"}, \code{"mann-whitney"} are all equivalent). Supported families: \code{"t.test"} (Student's/Welch t-test), \code{"wilcox.test"} (Wilcoxon/Mann-Whitney), \code{"anova"} and \code{"kruskal.test"}. Since the comparisons are performed 2-by-2, the two latter are applied through their two-sample equivalents (\code{"anova"} -> pooled t-test, \code{"kruskal.test"} -> Wilcoxon rank-sum). When the pairwise brackets are displayed, the global p-value shown at the top of the plot is computed with the same test and the same arguments: with two groups the two labels report therefore the same value, while with more groups the multi-sample version of the family is used (\code{"anova"} or \code{"kruskal.test"}). The Wilcoxon p-values follow the defaults of \code{wilcox.test}: exact when both groups have less than 50 values (older R versions require also the absence of ties), normal approximation with continuity correction otherwise. With few replicates the exact p-value has a floor: two groups of 3 samples cannot go below 0.1, even when they do not overlap at all. Names of paired tests are accepted too (e.g. \code{"paired t-test"}, \code{"signed-rank"}, \code{"Friedman"}) and switch on \code{paired.test}. Default: \code{"wilcox.test"}.}
 
 \item{pairwise.include.ns}{Logical value indicating whether the non-significant comparisons (p > 0.05) should be displayed. If \code{FALSE}, only the significant comparisons are shown. Default: \code{TRUE}.}
 
-\item{pairwise.p.label}{String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}, \code{*}, \code{**}, \code{***}, \code{****}) drawn directly by \code{ggpubr::stat_compare_means}, or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. Default: \code{"p.signif"}.}
+\item{pairwise.p.label}{String indicating how the pairwise p-values should be displayed (case/format-insensitive). Use \code{"p.signif"} (aliases: \code{"stars"}, \code{"significance"}, \code{"symbol"}) to show the significance symbols (\code{ns}: p > 0.05, \code{*}: p <= 0.05, \code{**}: p <= 0.01, \code{***}: p <= 0.001, \code{****}: p <= 0.0001), or \code{"p.value"} (aliases: \code{"number"}, \code{"numeric"}, \code{"exact"}) to show the numeric p-value. The symbols are derived from the same p-values of the numeric labels. Default: \code{"p.signif"}.}
 
 \item{pairwise.p.decimals}{Numeric value indicating the number of decimals used to approximate the numeric p-values (used only when \code{pairwise.p.label} shows the numeric value). Values below 0.1 are rendered in scientific notation with a superscript exponent, e.g. 3.20\out{&times;10<sup>-2</sup>}. The actual (real) p-value is always displayed, so the uninformative \code{p < 2.2e-16} is never shown. Default: \code{2}.}
+
+\item{paired.test}{Logical value indicating whether paired statistical tests should be performed. The samples are matched between groups through the IDs stored in \code{replicate.column}, as in \code{diff.analyses}, and each comparison uses only the replicates measured in both groups. The t-tests become paired t-tests and the Wilcoxon rank-sum test a Wilcoxon signed-rank test. With more than two groups the global p-value comes from a repeated-measures ANOVA (\code{"t.test"}, \code{"anova"}) or from a Friedman test (\code{"wilcox.test"}, \code{"kruskal.test"}), computed on the replicates measured in all the groups. The pairing applies to the global p-value also when \code{pairwise.comparisons = FALSE}. Default: \code{FALSE}.}
+
+\item{replicate.column}{String indicating the name of a column from the metadata table in which are stored the replicate IDs used to pair the samples. It is required when \code{paired.test = TRUE}, or when \code{pairwise.test.type} indicates a paired test. A replicate ID cannot be repeated within a group. Default: \code{NULL}.}
 }
 \value{
 A boxplot of class ggplot2, faceted by protein when several proteins are provided.
@@ -105,6 +111,17 @@ expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
                    pairwise.p.label = "stars",
                    pairwise.p.decimals = 3,
                    pairwise.include.ns = FALSE)
+
+
+# Paired t-test: the samples of the different conditions are matched through their replicate ID
+expression.boxplot(DEprot.object = DEprot::test.toolbox$dpo.imp,
+                   protein.id = "protein.44",
+                   group.by.metadata.column = "combined.id",
+                   shape.column = "replicate",
+                   pairwise.comparisons = TRUE,
+                   pairwise.test.type = "t.test",
+                   paired.test = TRUE,
+                   replicate.column = "replicate")
 
 
 }

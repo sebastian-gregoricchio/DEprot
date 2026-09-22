@@ -12,6 +12,13 @@ build.plot <-
     return(p)
   }
 
+## text labels drawn by a plot (global p-value and pairwise brackets)
+plot.labels <-
+  function(p) {
+    built <- build.plot(p)
+    return(unique(unlist(lapply(built$data, function(d) {if ("label" %in% colnames(d)) {as.character(d$label)}}))))
+  }
+
 proteins <- rownames(tb.dpo.imp@imputed.counts)[1:3]
 
 
@@ -138,6 +145,125 @@ test_that("the pairwise comparisons are computed", {
                                 pairwise.test.type = "t.test")
 
   expect_no_error(build.plot(t.based))
+})
+
+
+test_that("the Wilcoxon p-values are exact with few replicates", {
+  skip_if_not_installed("ggpubr")
+
+  ## two groups of 3 samples that do not overlap: the exact p-value is 0.1, the normal approximation
+  ## would give 0.081 (0.0495 without continuity correction, i.e. one star)
+  meta <- tb.dpo.imp@metadata
+  fbs  <- meta$column.id[meta$condition == "FBS" & meta$replicate != "rep4"]
+  dmso <- meta$column.id[meta$condition == "6h.DMSO" & meta$replicate != "rep4"]
+
+  dpo <- tb.dpo.imp
+  dpo@imputed.counts[proteins[1], fbs]  <- c(1, 2, 3)
+  dpo@imputed.counts[proteins[1], dmso] <- c(4, 5, 6)
+
+  numeric.p <- expression.boxplot(DEprot.object = dpo,
+                                  protein.id = proteins[1],
+                                  sample.subset = c(fbs, dmso),
+                                  group.by.metadata.column = "condition",
+                                  pairwise.comparisons = TRUE,
+                                  pairwise.p.label = "p.value",
+                                  pairwise.p.decimals = 3)
+
+  expect_true(all(c("Wilcoxon, p = 0.1", "0.100") %in% plot.labels(numeric.p)))
+
+  kruskal.p <- expression.boxplot(DEprot.object = dpo,
+                                  protein.id = proteins[1],
+                                  sample.subset = c(fbs, dmso),
+                                  group.by.metadata.column = "condition",
+                                  pairwise.comparisons = TRUE,
+                                  pairwise.test.type = "kruskal.test")
+
+  expect_true("ns" %in% plot.labels(kruskal.p))
+  expect_false("*" %in% plot.labels(kruskal.p))
+})
+
+
+test_that("the paired tests match the samples through the replicate IDs", {
+  skip_if_not_installed("ggpubr")
+
+  meta <- tb.dpo.imp@metadata
+  fbs  <- meta[meta$condition == "FBS",]
+  dmso <- meta[meta$condition == "6h.DMSO",]
+  dmso <- dmso[match(fbs$replicate, dmso$replicate),]
+
+  x <- tb.dpo.imp@imputed.counts[proteins[1], fbs$column.id]
+  y <- tb.dpo.imp@imputed.counts[proteins[1], dmso$column.id]
+
+  ## "paired t-test" switches on the paired design
+  paired.t <- expression.boxplot(DEprot.object = tb.dpo.imp,
+                                 protein.id = proteins[1],
+                                 sample.subset = c(fbs$column.id, dmso$column.id),
+                                 group.by.metadata.column = "condition",
+                                 pairwise.comparisons = TRUE,
+                                 pairwise.test.type = "paired t-test",
+                                 replicate.column = "replicate")
+
+  expect_true(paste0("Paired t-test, p = ", signif(stats::t.test(x, y, paired = TRUE)$p.value, 2)) %in% plot.labels(paired.t))
+
+  signed.rank <- expression.boxplot(DEprot.object = tb.dpo.imp,
+                                    protein.id = proteins[1],
+                                    sample.subset = c(fbs$column.id, dmso$column.id),
+                                    group.by.metadata.column = "condition",
+                                    pairwise.comparisons = TRUE,
+                                    pairwise.test.type = "wilcox.test",
+                                    paired.test = TRUE,
+                                    replicate.column = "replicate")
+
+  expect_true(paste0("Wilcoxon signed-rank, p = ", signif(stats::wilcox.test(x, y, paired = TRUE)$p.value, 2)) %in% plot.labels(signed.rank))
+
+  ## more than two groups: repeated-measures ANOVA and Friedman test on the global label
+  all.tb <- data.frame(expression = tb.dpo.imp@imputed.counts[proteins[1], meta$column.id],
+                       group = factor(meta$condition),
+                       replicate = factor(meta$replicate))
+
+  rm.anova <- expression.boxplot(DEprot.object = tb.dpo.imp,
+                                 protein.id = proteins[1],
+                                 group.by.metadata.column = "condition",
+                                 pairwise.comparisons = TRUE,
+                                 pairwise.test.type = "anova",
+                                 paired.test = TRUE,
+                                 replicate.column = "replicate")
+
+  expected.anova <- stats::anova(stats::lm(expression ~ replicate + group, data = all.tb))["group", "Pr(>F)"]
+  expect_true(paste0("Repeated-measures Anova, p = ", signif(expected.anova, 2)) %in% plot.labels(rm.anova))
+
+  friedman <- expression.boxplot(DEprot.object = tb.dpo.imp,
+                                 protein.id = proteins[1],
+                                 group.by.metadata.column = "condition",
+                                 paired.test = TRUE,
+                                 replicate.column = "replicate")
+
+  expected.friedman <- stats::friedman.test(y = all.tb$expression, groups = all.tb$group, blocks = all.tb$replicate)$p.value
+  expect_true(paste0("Friedman, p = ", signif(expected.friedman, 2)) %in% plot.labels(friedman))
+
+  ## a paired test needs the replicate IDs, unique within each group, and cannot be combined with an unpaired test
+  expect_error(expression.boxplot(DEprot.object = tb.dpo.imp,
+                                  protein.id = proteins[1],
+                                  group.by.metadata.column = "condition",
+                                  pairwise.comparisons = TRUE,
+                                  pairwise.test.type = "paired t-test"))
+  expect_error(expression.boxplot(DEprot.object = tb.dpo.imp,
+                                  protein.id = proteins[1],
+                                  group.by.metadata.column = "condition",
+                                  paired.test = TRUE,
+                                  replicate.column = "not.a.column"))
+  expect_error(expression.boxplot(DEprot.object = tb.dpo.imp,
+                                  protein.id = proteins[1],
+                                  group.by.metadata.column = "condition",
+                                  paired.test = TRUE,
+                                  replicate.column = "cell"))
+  expect_error(expression.boxplot(DEprot.object = tb.dpo.imp,
+                                  protein.id = proteins[1],
+                                  group.by.metadata.column = "condition",
+                                  pairwise.comparisons = TRUE,
+                                  pairwise.test.type = "Mann-Whitney",
+                                  paired.test = TRUE,
+                                  replicate.column = "replicate"))
 })
 
 
